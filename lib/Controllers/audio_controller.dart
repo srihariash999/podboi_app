@@ -1,7 +1,7 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:podboi/database.dart';
+import 'package:podboi/misc/database.dart';
 // import 'package:rxdart/streams.dart';
 
 late MediaItem _mediaItem;

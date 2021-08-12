@@ -3,7 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:podboi/Controllers/audio_controller.dart';
-import 'package:podboi/homepage.dart';
+import 'package:podboi/UI/home_page.dart';
+// import 'package:podboi/misc/homepage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,12 +31,14 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: Stack(
-        children: [
-          HomePage(),
-          MiniPlayer(),
-        ],
-      ),
+      home: HomePage(),
+
+      //  Stack(
+      //   children: [
+      //     HomePage(),
+      //     MiniPlayer(),
+      //   ],
+      // ),
     );
   }
 }
