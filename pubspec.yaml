@@ -35,13 +35,16 @@ dependencies:
       url: https://github.com/amugofjava/podcast_search/
       ref: feature/null-safety
   just_audio: ^0.9.5
-  audio_session: ^0.1.5
+  audio_session: ^0.1.5   
   # audio_service: ^0.17.1
   just_audio_background: ^0.0.1-beta.1
   flutter_tts: ^3.0.0
   rxdart: ^0.27.0
   line_icons: ^2.0.1
   feather_icons: ^1.0.1
+  intl: ^0.17.0
+  flutter_html: ^2.1.1
+  expandable: ^5.0.1
   
   
 dev_dependencies:

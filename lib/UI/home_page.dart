@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:podboi/Controllers/home_screen_controller.dart';
+import 'package:podboi/Shared/episode_display_widget.dart';
+import 'package:podboi/Shared/podcast_display_widget.dart';
+import 'package:podboi/UI/podcast_page.dart';
+import 'package:podboi/UI/search_page.dart';
+import 'package:podcast_search/podcast_search.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -122,26 +129,15 @@ class HomePage extends StatelessWidget {
   Padding buildSearchRow(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(
-        top: 12.0,
-        bottom: 16.0,
-        left: 34.0,
+        top: 18.0,
+        bottom: 12.0,
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 6.0),
-            child: Icon(
-              LineIcons.search,
-              color: Colors.black.withOpacity(0.60),
-            ),
-          ),
-          SizedBox(
-            width: 16.0,
-          ),
           Container(
-            width: MediaQuery.of(context).size.width * 0.65,
+            width: MediaQuery.of(context).size.width * 0.85,
             child: Theme(
               data: ThemeData(
                 primaryColor: Colors.black.withOpacity(0.30),
@@ -153,28 +149,40 @@ class HomePage extends StatelessWidget {
                   fontWeight: FontWeight.w300,
                   color: Colors.black.withOpacity(0.60),
                 ),
+                onTap: () {
+                  showSearch(
+                    context: context,
+                    delegate: CustomSearchDelegate(),
+                  );
+                },
                 decoration: InputDecoration(
-                  hintText: "Search",
+                  prefixIcon: Icon(
+                    LineIcons.search,
+                    color: Colors.black.withOpacity(0.40),
+                  ),
+                  isCollapsed: true,
+                  contentPadding: const EdgeInsets.symmetric(vertical: 16.0),
+                  hintText: "  Search",
+                  alignLabelWithHint: true,
                   hintStyle: TextStyle(
                     fontSize: 16.0,
                     fontWeight: FontWeight.w300,
                     color: Colors.black.withOpacity(0.30),
                   ),
+                  fillColor: Colors.black.withOpacity(0.05),
+                  filled: true,
                   focusColor: Colors.black.withOpacity(0.30),
-                  enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.black.withOpacity(0.30),
-                    ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.circular(20.0),
                   ),
-                  focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.black.withOpacity(0.30),
-                    ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.circular(20.0),
                   ),
-                  border: UnderlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.black.withOpacity(0.30),
-                    ),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.circular(20.0),
                   ),
                 ),
               ),
@@ -215,39 +223,53 @@ class HomePage extends StatelessWidget {
             height: 16.0,
           ),
           Container(
-            height: 160.0,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              physics: BouncingScrollPhysics(),
-              children: [
-                PodcastDisplayWidget(
-                  name: "99% invisible",
-                  posterUrl:
-                      "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/99%25_Invisible_logo.jpg/1200px-99%25_Invisible_logo.jpg",
-                ),
-                PodcastDisplayWidget(
-                  name: "No Such Thing As A Fish",
-                  posterUrl:
-                      "https://upload.wikimedia.org/wikipedia/en/e/e1/No_Such_Thing_As_A_Fish_logo.jpg",
-                ),
-                PodcastDisplayWidget(
-                  name: "Decoder Ring",
-                  posterUrl:
-                      "https://megaphone.imgix.net/podcasts/9a4c2c2a-3e8b-11e8-bd53-9b1115bac0fa/image/uploads_2F1525125320167-fd4zi01j82i-e7a9a485ccc4505ac3ddaacdb5fbfd57_2Fdecoder-ring-3000px.jpg?w=525&h=525",
-                ),
-                PodcastDisplayWidget(
-                  name: "Terrible Lizards",
-                  posterUrl:
-                      "https://is4-ssl.mzstatic.com/image/thumb/Podcasts125/v4/2e/45/35/2e4535eb-6609-0b06-c703-69b2420b433d/mza_11307628467914885774.png/1200x1200bb.jpg",
-                ),
-                PodcastDisplayWidget(
-                  name: "Lore",
-                  posterUrl:
-                      "https://images.squarespace-cdn.com/content/v1/53bc57f0e4b00052ff4d7ccd/1479474490617-GFZQ09UDJYDS482NVHLJ/lore-logo-light.png?format=1500w",
-                ),
-              ],
-            ),
-          ),
+              height: 160.0,
+              child: Consumer(builder: (context, ref, child) {
+                List<Item> _topPodcasts = ref.watch(
+                  homeScreenController.select((value) => value.topPodcasts),
+                );
+                return ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  physics: BouncingScrollPhysics(),
+                  itemCount: _topPodcasts.length,
+                  itemBuilder: (context, index) {
+                    Item _item = _topPodcasts[index];
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          PageRouteBuilder(
+                            transitionDuration: Duration(milliseconds: 500),
+                            transitionsBuilder: (context, animation,
+                                secondaryAnimation, child) {
+                              const begin = Offset(1.0, 0.0);
+                              const end = Offset.zero;
+                              const curve = Curves.ease;
+
+                              final tween = Tween(begin: begin, end: end);
+                              final curvedAnimation = CurvedAnimation(
+                                parent: animation,
+                                curve: curve,
+                              );
+
+                              return SlideTransition(
+                                position: tween.animate(curvedAnimation),
+                                child: child,
+                              );
+                            },
+                            pageBuilder: (_, __, ___) => PodcastPage(
+                              podcast: _item,
+                            ),
+                          ),
+                        );
+                      },
+                      child: PodcastDisplayWidget(
+                        name: _item.collectionName ?? 'N/A',
+                        posterUrl: _item.bestArtworkUrl ?? '',
+                      ),
+                    );
+                  },
+                );
+              })),
         ],
       ),
     );
@@ -319,143 +341,35 @@ class HomePage extends StatelessWidget {
   }
 }
 
-class EpisodeDisplayWidget extends StatelessWidget {
-  final String posterUrl;
-  final String episodeTitle;
-  final String episodeDuration;
-  final String episodeUploadDate;
-  const EpisodeDisplayWidget({
-    Key? key,
-    required this.posterUrl,
-    required this.episodeTitle,
-    required this.episodeDuration,
-    required this.episodeUploadDate,
-  }) : super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 100.0,
-      width: MediaQuery.of(context).size.width * 0.80,
-      child: Row(
-        children: [
-          Container(
-            height: 50.0,
-            width: 50.0,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12.0),
-            ),
-            clipBehavior: Clip.antiAlias,
-            child: Image.network(
-              posterUrl,
-              fit: BoxFit.cover,
-            ),
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(left: 14.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          episodeTitle.length > 30
-                              ? episodeTitle.substring(0, 27) + '...'
-                              : episodeTitle,
-                          textAlign: TextAlign.start,
-                          style: TextStyle(
-                            fontFamily: 'Segoe',
-                            fontSize: 14.0,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ),
-                      Text(
-                        episodeDuration,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontFamily: 'Segoe',
-                          fontSize: 12.0,
-                          fontWeight: FontWeight.w200,
-                          color: Colors.black.withOpacity(0.50),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 6.0,
-                  ),
-                  Text(
-                    episodeUploadDate,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontFamily: 'Segoe',
-                      fontSize: 12.0,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black.withOpacity(0.30),
+
+
+/*
+
+PodcastDisplayWidget(
+                      name: "99% invisible",
+                      posterUrl:
+                          "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/99%25_Invisible_logo.jpg/1200px-99%25_Invisible_logo.jpg",
                     ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
+                    PodcastDisplayWidget(
+                      name: "No Such Thing As A Fish",
+                      posterUrl:
+                          "https://upload.wikimedia.org/wikipedia/en/e/e1/No_Such_Thing_As_A_Fish_logo.jpg",
+                    ),
+                    PodcastDisplayWidget(
+                      name: "Decoder Ring",
+                      posterUrl:
+                          "https://megaphone.imgix.net/podcasts/9a4c2c2a-3e8b-11e8-bd53-9b1115bac0fa/image/uploads_2F1525125320167-fd4zi01j82i-e7a9a485ccc4505ac3ddaacdb5fbfd57_2Fdecoder-ring-3000px.jpg?w=525&h=525",
+                    ),
+                    PodcastDisplayWidget(
+                      name: "Terrible Lizards",
+                      posterUrl:
+                          "https://is4-ssl.mzstatic.com/image/thumb/Podcasts125/v4/2e/45/35/2e4535eb-6609-0b06-c703-69b2420b433d/mza_11307628467914885774.png/1200x1200bb.jpg",
+                    ),
+                    PodcastDisplayWidget(
+                      name: "Lore",
+                      posterUrl:
+                          "https://images.squarespace-cdn.com/content/v1/53bc57f0e4b00052ff4d7ccd/1479474490617-GFZQ09UDJYDS482NVHLJ/lore-logo-light.png?format=1500w",
+                    ),
 
-class PodcastDisplayWidget extends StatelessWidget {
-  final String posterUrl;
-  final String name;
-  const PodcastDisplayWidget({
-    Key? key,
-    required this.name,
-    required this.posterUrl,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 160.0,
-      width: 100.0,
-      margin: EdgeInsets.only(left: 6.0, right: 6.0),
-      child: Column(
-        children: [
-          Container(
-            height: 100.0,
-            width: 100.0,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12.0),
-            ),
-            clipBehavior: Clip.antiAlias,
-            child: Image.network(
-              posterUrl,
-              fit: BoxFit.cover,
-            ),
-          ),
-          SizedBox(
-            height: 4.0,
-          ),
-          Expanded(
-            child: Text(
-              name,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontFamily: 'Segoe',
-                fontSize: 13.0,
-                fontWeight: FontWeight.w400,
-                color: Colors.black,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
+*/
