@@ -41,15 +41,19 @@ dependencies:
   flutter_tts: ^3.0.0
   rxdart: ^0.27.0
   line_icons: ^2.0.1
-  feather_icons: ^1.0.1
+  feather_icons: ^1.1.0-nullsafety.0
   intl: ^0.17.0
   flutter_html: ^2.1.1
   expandable: ^5.0.1
+  hive: ^2.0.4
+  path_provider: ^2.0.2
   
   
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  hive_generator: any
+  build_runner: any  
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

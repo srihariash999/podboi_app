@@ -16,8 +16,8 @@ class SearchScreenViewNotifier extends StateNotifier<SearchState> {
   SearchScreenViewNotifier() : super(SearchState.initial());
 
   getsearchResults(String query) async {
+    print(" new query poooooooo : $query");
     if (query != _prevQuery) {
-       state = state.copyWith(isLoading: true);
       _prevQuery = query;
       SearchResult charts = await _search.search(query);
       List<Item> _searchResults = [];

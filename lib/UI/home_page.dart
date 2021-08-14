@@ -143,6 +143,7 @@ class HomePage extends StatelessWidget {
                 primaryColor: Colors.black.withOpacity(0.30),
               ),
               child: TextField(
+                readOnly: true,
                 cursorColor: Colors.black.withOpacity(0.30),
                 style: TextStyle(
                   fontSize: 16.0,

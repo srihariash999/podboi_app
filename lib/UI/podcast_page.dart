@@ -1,4 +1,5 @@
 import 'package:expandable/expandable.dart';
+import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,11 +18,11 @@ class PodcastPage extends StatelessWidget {
       body: Consumer(
         builder: (context, ref, child) {
           var _viewController = ref.watch(
-            podcastPageViewController(podcast.feedUrl!),
+            podcastPageViewController(podcast),
           );
           Future<void> refresh() async {
             ref
-                .read(podcastPageViewController(podcast.feedUrl!).notifier)
+                .read(podcastPageViewController(podcast).notifier)
                 .loadPodcastEpisodes(podcast.feedUrl!);
           }
 
@@ -66,7 +67,7 @@ class PodcastPage extends StatelessWidget {
   Container buildTopUI(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(16.0),
-      height: 200.0,
+      height: 220.0,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -111,7 +112,7 @@ class PodcastPage extends StatelessWidget {
                         child: Text(
                           podcast.collectionName ?? 'N/A',
                           style: TextStyle(
-                            fontSize: 20.0,
+                            fontSize: 18.0,
                             color: Colors.black.withOpacity(0.70),
                             fontFamily: 'Segoe',
                             fontWeight: FontWeight.w800,
@@ -185,6 +186,73 @@ class PodcastPage extends StatelessWidget {
                 ),
               ],
             ),
+          ),
+          Consumer(
+            builder: (context, ref, child) {
+              bool _isSubbed = ref.watch(
+                podcastPageViewController(podcast)
+                    .select((value) => value.isSubscribed),
+              );
+              return _isSubbed
+                  ? Container(
+                      decoration: BoxDecoration(
+                        color: Colors.green.withOpacity(0.2),
+                      ),
+                      padding: EdgeInsets.all(12.0),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'Subscribed',
+                            style: TextStyle(
+                              fontFamily: 'Segoe',
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.black.withOpacity(0.7),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 12.0,
+                          ),
+                          Icon(FeatherIcons.checkCircle,
+                              color: Colors.green.withOpacity(0.7)),
+                        ],
+                      ),
+                    )
+                  : GestureDetector(
+                      onTap: () {
+                        ref
+                            .read(podcastPageViewController(podcast).notifier)
+                            .saveToSubscriptions(podcast);
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.orange.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(16.0),
+                        ),
+                        padding: EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'Subscribe',
+                              style: TextStyle(
+                                fontFamily: 'Segoe',
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.w400,
+                                color: Colors.black.withOpacity(0.7),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 12.0,
+                            ),
+                            Icon(FeatherIcons.plusCircle,
+                                color: Colors.orange.withOpacity(0.7)),
+                          ],
+                        ),
+                      ),
+                    );
+            },
           ),
         ],
       ),
