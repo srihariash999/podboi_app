@@ -17,7 +17,7 @@ class SubscriptionAdapter extends TypeAdapter<Subscription> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Subscription(
-      podcast: fields[0] as Item,
+      podcast: (fields[0] as Map).cast<String, dynamic>(),
       dateAdded: fields[1] as DateTime,
     );
   }

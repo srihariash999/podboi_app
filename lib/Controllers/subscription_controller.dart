@@ -11,7 +11,27 @@ Box _subBox = Hive.box('subscriptionsBox');
 
 class SubscriptionsPageNotifier extends StateNotifier<SubscriptionState> {
   SubscriptionsPageNotifier() : super(SubscriptionState.initial()) {
-    loadSubscriptions();
+    _initLoadSubs();
+  }
+
+  Future<void> _initLoadSubs() async {
+    state = state.copyWith(isLoading: true);
+    List<Subscription> _subs = [];
+    for (var i in _subBox.values) {
+      _subs.add(i as Subscription);
+    }
+    state = state.copyWith(subscriptionsList: _subs, isLoading: false);
+    Box _subsBox = Hive.box('subscriptionsBox');
+    _subsBox.watch().listen((event) async {
+      print(" new event occured");
+      List<Subscription> _subs = [];
+      for (var i in _subBox.values) {
+        _subs.add(i as Subscription);
+      }
+      state = state.copyWith(subscriptionsList: _subs, isLoading: false);
+
+      print("reached end of event callback");
+    });
   }
 
   Future<void> loadSubscriptions() async {

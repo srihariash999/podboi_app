@@ -1,5 +1,4 @@
 import 'package:hive/hive.dart';
-import 'package:podcast_search/podcast_search.dart';
 
 part 'subscriptions.g.dart';
 
@@ -8,7 +7,7 @@ class Subscription {
   Subscription({required this.podcast, required this.dateAdded});
 
   @HiveField(0)
-  Item podcast;
+  Map<String, dynamic> podcast;
 
   @HiveField(1)
   DateTime dateAdded;

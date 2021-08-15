@@ -1,7 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hive/hive.dart';
 import 'package:podboi/Services/database/db_service.dart';
-import 'package:podboi/Services/database/subscriptions.dart';
 import 'package:podcast_search/podcast_search.dart';
 
 final podcastPageViewController = StateNotifierProvider.family<
@@ -32,19 +30,38 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
     );
   }
 
-  saveToSubscriptions(Item podcast) async {
+  saveToSubscriptionsAction(Item podcast) async {
     state = state.copyWith(isLoading: true);
-    Box _subBox = Hive.box('subscriptionsBox');
-    await _subBox.add(
-      Subscription(
-        podcast: podcast,
-        dateAdded: DateTime.now(),
-      ),
-    );
-    state = state.copyWith(
-      isLoading: false,
-      isSubscribed: true,
-    );
+    bool _saved = await savePodcastToSubs(podcast);
+    if (_saved) {
+      print(" podcast ${podcast.collectionName}  is saved to subs");
+      state = state.copyWith(
+        isLoading: false,
+        isSubscribed: true,
+      );
+    } else {
+      state = state.copyWith(
+        isLoading: false,
+        isSubscribed: false,
+      );
+    }
+  }
+
+  removeFromSubscriptionsAction(Item podcast) async {
+    state = state.copyWith(isLoading: true);
+    bool _removed = await removePodcastFromSubs(podcast);
+    if (_removed) {
+      print(" podcast ${podcast.collectionName}  is removed from subs");
+      state = state.copyWith(
+        isLoading: false,
+        isSubscribed: false,
+      );
+    } else {
+      state = state.copyWith(
+        isLoading: false,
+        isSubscribed: true,
+      );
+    }
   }
 }
 

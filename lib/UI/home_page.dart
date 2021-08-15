@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:podboi/Controllers/home_screen_controller.dart';
-import 'package:podboi/Shared/episode_display_widget.dart';
+// import 'package:podboi/Shared/episode_display_widget.dart';
 import 'package:podboi/Shared/podcast_display_widget.dart';
 import 'package:podboi/UI/podcast_page.dart';
 import 'package:podboi/UI/search_page.dart';
@@ -56,70 +56,81 @@ class HomePage extends StatelessWidget {
               borderRadius: BorderRadius.circular(16.0),
             ),
             padding: EdgeInsets.all(20.0),
-            child: Column(
-              children: [
-                EpisodeDisplayWidget(
-                  posterUrl:
-                      "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/99%25_Invisible_logo.jpg/1200px-99%25_Invisible_logo.jpg",
-                  episodeTitle: "454- War,Famine,Pestilence, and Design",
-                  episodeDuration: "31m",
-                  episodeUploadDate: "Yesterday",
+            child: Center(
+              child: Text(
+                ' No new episodes to show',
+                style: TextStyle(
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black.withOpacity(0.6),
+                  fontFamily: 'Segoe',
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: Divider(
-                    color: Colors.black.withOpacity(0.20),
-                  ),
-                ),
-                EpisodeDisplayWidget(
-                  posterUrl:
-                      "https://upload.wikimedia.org/wikipedia/en/e/e1/No_Such_Thing_As_A_Fish_logo.jpg",
-                  episodeTitle:
-                      "No Such Thing As Crossing the Futility Boundary",
-                  episodeDuration: "51m",
-                  episodeUploadDate: "Friday",
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: Divider(
-                    color: Colors.black.withOpacity(0.20),
-                  ),
-                ),
-                EpisodeDisplayWidget(
-                  posterUrl:
-                      "https://megaphone.imgix.net/podcasts/9a4c2c2a-3e8b-11e8-bd53-9b1115bac0fa/image/uploads_2F1525125320167-fd4zi01j82i-e7a9a485ccc4505ac3ddaacdb5fbfd57_2Fdecoder-ring-3000px.jpg?w=525&h=525",
-                  episodeTitle: "Selling Out",
-                  episodeDuration: "49m",
-                  episodeUploadDate: "Friday",
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: Divider(
-                    color: Colors.black.withOpacity(0.20),
-                  ),
-                ),
-                EpisodeDisplayWidget(
-                  posterUrl:
-                      "https://is4-ssl.mzstatic.com/image/thumb/Podcasts125/v4/2e/45/35/2e4535eb-6609-0b06-c703-69b2420b433d/mza_11307628467914885774.png/1200x1200bb.jpg",
-                  episodeTitle: "Your Dinosaur Questions Answered",
-                  episodeDuration: "1h",
-                  episodeUploadDate: "21 July",
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: Divider(
-                    color: Colors.black.withOpacity(0.20),
-                  ),
-                ),
-                EpisodeDisplayWidget(
-                  posterUrl:
-                      "https://images.squarespace-cdn.com/content/v1/53bc57f0e4b00052ff4d7ccd/1479474490617-GFZQ09UDJYDS482NVHLJ/lore-logo-light.png?format=1500w",
-                  episodeTitle: "Epsiode 175: Head Case ",
-                  episodeDuration: "39m",
-                  episodeUploadDate: "19 July",
-                ),
-              ],
+              ),
             ),
+            // child: Column(
+            //   children: [
+            //     EpisodeDisplayWidget(
+            //       posterUrl:
+            //           "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/99%25_Invisible_logo.jpg/1200px-99%25_Invisible_logo.jpg",
+            //       episodeTitle: "454- War,Famine,Pestilence, and Design",
+            //       episodeDuration: "31m",
+            //       episodeUploadDate: "Yesterday",
+            //     ),
+            //     Padding(
+            //       padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            //       child: Divider(
+            //         color: Colors.black.withOpacity(0.20),
+            //       ),
+            //     ),
+            //     EpisodeDisplayWidget(
+            //       posterUrl:
+            //           "https://upload.wikimedia.org/wikipedia/en/e/e1/No_Such_Thing_As_A_Fish_logo.jpg",
+            //       episodeTitle:
+            //           "No Such Thing As Crossing the Futility Boundary",
+            //       episodeDuration: "51m",
+            //       episodeUploadDate: "Friday",
+            //     ),
+            //     Padding(
+            //       padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            //       child: Divider(
+            //         color: Colors.black.withOpacity(0.20),
+            //       ),
+            //     ),
+            //     EpisodeDisplayWidget(
+            //       posterUrl:
+            //           "https://megaphone.imgix.net/podcasts/9a4c2c2a-3e8b-11e8-bd53-9b1115bac0fa/image/uploads_2F1525125320167-fd4zi01j82i-e7a9a485ccc4505ac3ddaacdb5fbfd57_2Fdecoder-ring-3000px.jpg?w=525&h=525",
+            //       episodeTitle: "Selling Out",
+            //       episodeDuration: "49m",
+            //       episodeUploadDate: "Friday",
+            //     ),
+            //     Padding(
+            //       padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            //       child: Divider(
+            //         color: Colors.black.withOpacity(0.20),
+            //       ),
+            //     ),
+            //     EpisodeDisplayWidget(
+            //       posterUrl:
+            //           "https://is4-ssl.mzstatic.com/image/thumb/Podcasts125/v4/2e/45/35/2e4535eb-6609-0b06-c703-69b2420b433d/mza_11307628467914885774.png/1200x1200bb.jpg",
+            //       episodeTitle: "Your Dinosaur Questions Answered",
+            //       episodeDuration: "1h",
+            //       episodeUploadDate: "21 July",
+            //     ),
+            //     Padding(
+            //       padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            //       child: Divider(
+            //         color: Colors.black.withOpacity(0.20),
+            //       ),
+            //     ),
+            //     EpisodeDisplayWidget(
+            //       posterUrl:
+            //           "https://images.squarespace-cdn.com/content/v1/53bc57f0e4b00052ff4d7ccd/1479474490617-GFZQ09UDJYDS482NVHLJ/lore-logo-light.png?format=1500w",
+            //       episodeTitle: "Epsiode 175: Head Case ",
+            //       episodeDuration: "39m",
+            //       episodeUploadDate: "19 July",
+            //     ),
+            //   ],
+            // ),
           ),
         ],
       ),
