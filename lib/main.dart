@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hive/hive.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:podboi/Controllers/audio_controller.dart';
-import 'package:podboi/UI/home_page.dart';
+import 'package:podboi/Services/database/subscriptions.dart';
+import 'package:podboi/UI/base_screen.dart';
+
 // import 'package:podboi/misc/homepage.dart';
 
 void main() async {
@@ -13,7 +17,18 @@ void main() async {
     androidNotificationChannelName: 'Audio playback',
     androidNotificationOngoing: true,
   );
-  runApp(ProviderScope(child: MyApp()));
+  var dir = await getApplicationDocumentsDirectory();
+
+  Hive
+    ..init(dir.path)
+    ..registerAdapter(SubscriptionAdapter());
+
+  await Hive.openBox('subscriptionsBox');
+  runApp(
+    ProviderScope(
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatefulWidget {
@@ -31,7 +46,7 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: HomePage(),
+      home: BaseScreen(),
 
       //  Stack(
       //   children: [
