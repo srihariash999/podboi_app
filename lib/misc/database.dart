@@ -4,7 +4,7 @@ class Song {
   final String artist;
   final String icon;
   final String album;
-  final Duration duration;
+  final Duration? duration;
   Song(
       {required this.url,
       required this.name,

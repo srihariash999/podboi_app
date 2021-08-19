@@ -36,8 +36,8 @@ dependencies:
       ref: feature/null-safety
   just_audio: ^0.9.5
   audio_session: ^0.1.5   
-  # audio_service: ^0.17.1
-  just_audio_background: ^0.0.1-beta.1
+  audio_service: ^0.17.1
+  # just_audio_background: ^0.0.1-beta.1
   flutter_tts: ^3.0.0
   rxdart: ^0.27.0
   line_icons: ^2.0.1
