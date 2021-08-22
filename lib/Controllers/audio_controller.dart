@@ -329,7 +329,16 @@ class AudioPlayerTask extends BackgroundAudioTask {
   }
 
   @override
-  Future<void> onSkipToNext() async {}
+  Future<void> onSkipToNext() {
+    // TODO: implement onSkipToNext
+    return super.onSkipToNext();
+  }
+
+  @override
+  Future<void> onSkipToPrevious() {
+    // TODO: implement onSkipToPrevious
+    return super.onSkipToPrevious();
+  }
 
   @override
   Future<void> onPlay() async {
