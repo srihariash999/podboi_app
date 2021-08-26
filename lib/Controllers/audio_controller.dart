@@ -23,8 +23,56 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
 
     if (AudioService.running) {
       print(" it is running");
+      await AudioService.stop();
+      await AudioService.start(
+          backgroundTaskEntrypoint: _backgroundTaskEntrypoint,
+          androidNotificationChannelName: 'Podboi',
+          params: {
+            'songUrl': song.url,
+            'albumArt': song.icon,
+            'name': song.name,
+            'album': song.album,
+            'artist': song.artist,
+            'duration': song.duration?.inSeconds
+          },
+          androidNotificationColor: 0xFF4d91be,
+          // androidNotificationIcon: 'drawable/ic_launcher.png',
+          androidShowNotificationBadge: true,
+          // androidEnableQueue: true,
+          androidStopForegroundOnPause: true,
+          androidResumeOnClick: true
+          // fastForwardInterval: Duration(seconds: _fastForwardSeconds),
+          // rewindInterval: Duration(seconds: _rewindSeconds),
+          );
       await AudioService.play();
-      state = state.copyWith(isPlaying: true);
+
+      state = state.copyWith(
+        isPlaying: true,
+        playbackStateStream: AudioService.playbackStateStream,
+        positionStream: AudioService.positionStream,
+        mediaItem: MediaItem(
+            id: song.url,
+            title: song.name,
+            artUri: Uri.parse(song.icon),
+            album: song.album,
+            duration: song.duration,
+            artist: song.artist),
+      );
+      state.playbackStateStream.listen((PlaybackState event) {
+        print(" new event yo : $event");
+        if (event.playing) {
+          state = state.copyWith(
+            isPlaying: true,
+            mediaItem: MediaItem(
+                id: song.url,
+                title: song.name,
+                artUri: Uri.parse(song.icon),
+                album: song.album,
+                duration: song.duration,
+                artist: song.artist),
+          );
+        }
+      });
     } else {
       print(" fresh init");
       await AudioService.connect();
@@ -37,6 +85,8 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
             'albumArt': song.icon,
             'name': song.name,
             'album': song.album,
+            'artist': song.artist,
+            'duration': song.duration?.inSeconds
           },
           androidNotificationColor: 0xFF4d91be,
           // androidNotificationIcon: 'drawable/ic_launcher.png',
@@ -91,9 +141,17 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
     state = state.copyWith(isPlaying: false);
   }
 
-  // seekTo(double val) {
-  //   // AudioService.seekTo(Duration(seconds: val.toInt()));
-  // }
+  seekTo(double val) {
+    AudioService.seekTo(Duration(seconds: val.toInt()));
+  }
+
+  rewind() async {
+    AudioService.rewind();
+  }
+
+  fastForward() async {
+    AudioService.fastForward();
+  }
 }
 
 class AudioState {
@@ -154,36 +212,71 @@ class AudioPlayerTask extends BackgroundAudioTask {
   late MediaItem _mediaItem;
   @override
   Future<void> onStart(Map<String, dynamic>? params) async {
-    AudioServiceBackground.setState(controls: [
-      MediaControl.pause,
-      MediaControl.stop,
-      MediaControl.skipToNext,
-      MediaControl.skipToPrevious
-    ], systemActions: [
-      MediaAction.seekTo
-    ], playing: true, processingState: AudioProcessingState.connecting);
+    AudioServiceBackground.setState(
+      controls: [
+        MediaControl.rewind,
+        MediaControl.pause,
+        MediaControl.fastForward,
+      ],
+      systemActions: [MediaAction.seekBackward, MediaAction.seekForward],
+      playing: true,
+      processingState: AudioProcessingState.connecting,
+    );
     // Connect to the URL
     _mediaItem = MediaItem(
-        id: params!['songUrl'],
-        title: params['name'],
-        artUri: Uri.parse(params['albumArt']),
-        album: params['album'],
-        // duration: songList[0].duration,
-        artist: songList[0].artist);
+      id: params!['songUrl'],
+      title: params['name'],
+      artUri: Uri.parse(params['albumArt']),
+      album: params['album'],
+      duration: Duration(seconds: params['duration']),
+      artist: params['artist'],
+    );
     // _mainRef = params['ref'];
     await _audioPlayer.setUrl(_mediaItem.id);
     AudioServiceBackground.setMediaItem(_mediaItem);
     // Now we're ready to play
     _audioPlayer.play();
     // Broadcast that we're playing, and what controls are available.
-    AudioServiceBackground.setState(controls: [
-      MediaControl.pause,
-      MediaControl.stop,
-      MediaControl.skipToNext,
-      MediaControl.skipToPrevious
-    ], systemActions: [
-      MediaAction.seekTo
-    ], playing: true, processingState: AudioProcessingState.ready);
+    AudioServiceBackground.setState(
+      controls: [
+        MediaControl.rewind,
+        MediaControl.pause,
+        MediaControl.fastForward,
+      ],
+      systemActions: [MediaAction.seekBackward, MediaAction.seekForward],
+      playing: true,
+      processingState: AudioProcessingState.ready,
+    );
+  }
+
+  @override
+  Future<void> onRewind() async {
+    print(" this is called <- seek backward");
+
+    Duration curr = _audioPlayer.position;
+    print(" curr is : ${curr.inSeconds}");
+    Duration newDur = curr.inSeconds > 10
+        ? Duration(seconds: curr.inSeconds - 10)
+        : Duration(seconds: 0);
+     _audioPlayer.seek(newDur);
+    AudioServiceBackground.setState(position: newDur);
+
+    return super.onRewind();
+  }
+
+  @override
+  Future<void> onFastForward() async {
+    print(" this is called -> seek forward");
+
+    Duration curr = _audioPlayer.position;
+    print(" curr is : ${curr.inSeconds}");
+    Duration newDur = curr.inSeconds < _mediaItem.duration!.inSeconds - 10
+        ? Duration(seconds: curr.inSeconds + 10)
+        : Duration(seconds: _mediaItem.duration!.inSeconds);
+     _audioPlayer.seek(newDur);
+    AudioServiceBackground.setState(position: newDur);
+
+    return super.onFastForward();
   }
 
   @override
@@ -198,28 +291,32 @@ class AudioPlayerTask extends BackgroundAudioTask {
 
   @override
   Future<void> onPlay() async {
-    AudioServiceBackground.setState(controls: [
-      MediaControl.pause,
-      MediaControl.stop,
-      MediaControl.skipToNext,
-      MediaControl.skipToPrevious
-    ], systemActions: [
-      MediaAction.seekTo
-    ], playing: true, processingState: AudioProcessingState.ready);
+    AudioServiceBackground.setState(
+      controls: [
+        MediaControl.rewind,
+        MediaControl.pause,
+        MediaControl.fastForward,
+      ],
+      systemActions: [MediaAction.seekBackward, MediaAction.seekForward],
+      playing: true,
+      processingState: AudioProcessingState.ready,
+    );
     await _audioPlayer.play();
     return super.onPlay();
   }
 
   @override
   Future<void> onPause() async {
-    AudioServiceBackground.setState(controls: [
-      MediaControl.play,
-      MediaControl.stop,
-      MediaControl.skipToNext,
-      MediaControl.skipToPrevious
-    ], systemActions: [
-      MediaAction.seekTo
-    ], playing: false, processingState: AudioProcessingState.ready);
+    AudioServiceBackground.setState(
+      controls: [
+        MediaControl.rewind,
+        MediaControl.play,
+        MediaControl.fastForward,
+      ],
+      systemActions: [MediaAction.seekBackward, MediaAction.seekForward],
+      playing: false,
+      processingState: AudioProcessingState.ready,
+    );
     await _audioPlayer.pause();
     // await _mainRef.read(audioController.notifier).pauseAction();
     return super.onPause();

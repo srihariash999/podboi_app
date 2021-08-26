@@ -15,7 +15,7 @@ class HomeScreenStateNotifier extends StateNotifier<HomeScreenState> {
 
   getTopPodcasts() async {
     SearchResult charts =
-        await _search.charts(limit: 10, country: Country.UNITED_KINGDOM);
+        await _search.charts(limit: 25, country: Country.UNITED_KINGDOM);
     List<Item> _topPodcasts = [];
     for (var i in charts.items) {
       _topPodcasts.add(i);

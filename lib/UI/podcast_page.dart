@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 // import 'package:podboi/Controllers/audio_controller.dart';
 import 'package:podboi/Controllers/podcast_page_controller.dart';
 import 'package:podboi/Shared/detailed_episode_widget.dart';
+import 'package:podboi/UI/mini_player.dart';
 // import 'package:podboi/misc/database.dart';
 import 'package:podcast_search/podcast_search.dart';
 
@@ -68,6 +69,7 @@ class PodcastPage extends StatelessWidget {
                 },
               ),
             ),
+            Align(alignment: Alignment.bottomCenter, child: MiniPlayer()),
           ],
         ),
       ),
