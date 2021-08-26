@@ -2,10 +2,10 @@ import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:podboi/Controllers/audio_controller.dart';
+// import 'package:podboi/Controllers/audio_controller.dart';
 import 'package:podboi/Controllers/podcast_page_controller.dart';
 import 'package:podboi/Shared/detailed_episode_widget.dart';
-import 'package:podboi/misc/database.dart';
+// import 'package:podboi/misc/database.dart';
 import 'package:podcast_search/podcast_search.dart';
 
 class PodcastPage extends StatelessWidget {
@@ -57,23 +57,10 @@ class PodcastPage extends StatelessWidget {
                             itemBuilder: (context, index) {
                               Episode _episode =
                                   _viewController.podcastEpisodes[index];
-                              return GestureDetector(
-                                onTap: () async {
-                                  print("episode link: ${_episode.contentUrl}");
-                                  await ref
-                                      .read(audioController.notifier)
-                                      .playAction(
-                                        Song(
-                                            url: _episode.contentUrl!,
-                                            icon: podcast.bestArtworkUrl!,
-                                            name: _episode.title,
-                                            duration: _episode.duration,
-                                            artist: "${_episode.author}",
-                                            album: _episode.description),
-                                      );
-                                },
-                                child: DetailedEpsiodeViewWidget(
-                                    episode: _episode),
+                              return DetailedEpsiodeViewWidget(
+                                episode: _episode,
+                                ref: ref,
+                                podcast: podcast,
                               );
                             },
                           ),

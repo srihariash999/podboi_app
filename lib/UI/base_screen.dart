@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:podboi/UI/home_page.dart';
+import 'package:podboi/UI/mini_player.dart';
 import 'package:podboi/UI/subscriptions_page.dart';
 
 class BaseScreen extends StatefulWidget {
@@ -15,21 +16,28 @@ class _BaseScreenState extends State<BaseScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: PageView.builder(
-        controller: _pageController,
-        itemCount: 2,
-        onPageChanged: (newIndex) {
-          setState(() {
-            _selectedPage = newIndex;
-          });
-        },
-        itemBuilder: (context, index) {
-          if (index == 0) {
-            return HomePage();
-          } else {
-            return SubscriptionsPage();
-          }
-        },
+      body: Column(
+        children: [
+          Expanded(
+            child: PageView.builder(
+              controller: _pageController,
+              itemCount: 2,
+              onPageChanged: (newIndex) {
+                setState(() {
+                  _selectedPage = newIndex;
+                });
+              },
+              itemBuilder: (context, index) {
+                if (index == 0) {
+                  return HomePage();
+                } else {
+                  return SubscriptionsPage();
+                }
+              },
+            ),
+          ),
+          Align(alignment: Alignment.bottomCenter, child: MiniPlayer()),
+        ],
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedPage,

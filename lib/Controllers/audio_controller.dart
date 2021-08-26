@@ -6,21 +6,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:podboi/misc/database.dart';
 import 'package:rxdart/streams.dart';
-// import 'package:rxdart/streams.dart';
-
-// late ProviderRefBase _mainRef;
-
-// final _audioPlayer = AudioPlayer();
-
-// int current = 0;
 
 final audioController =
     StateNotifierProvider<AudioStateNotifier, AudioState>((ref) {
-  return AudioStateNotifier();
+  return AudioStateNotifier(ref);
 });
 
 class AudioStateNotifier extends StateNotifier<AudioState> {
-  AudioStateNotifier() : super(AudioState.initial()) {
+  final ref;
+  AudioStateNotifier(this.ref) : super(AudioState.initial()) {
     // _mainRef = ref;
   }
 
@@ -36,9 +30,14 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
       await AudioService.connect();
 
       await AudioService.start(
-          backgroundTaskEntrypoint: _audioPlayerTaskEntrypoint,
+          backgroundTaskEntrypoint: _backgroundTaskEntrypoint,
           androidNotificationChannelName: 'Podboi',
-          params: {'mediaI': song.url},
+          params: {
+            'songUrl': song.url,
+            'albumArt': song.icon,
+            'name': song.name,
+            'album': song.album,
+          },
           androidNotificationColor: 0xFF4d91be,
           // androidNotificationIcon: 'drawable/ic_launcher.png',
           androidShowNotificationBadge: true,
@@ -60,6 +59,21 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
             duration: song.duration,
             artist: song.artist),
       );
+      state.playbackStateStream.listen((PlaybackState event) {
+        print(" new event yo : $event");
+        if (event.playing) {
+          state = state.copyWith(
+            isPlaying: true,
+            mediaItem: MediaItem(
+                id: song.url,
+                title: song.name,
+                artUri: Uri.parse(song.icon),
+                album: song.album,
+                duration: song.duration,
+                artist: song.artist),
+          );
+        }
+      });
     }
   }
 
@@ -69,53 +83,13 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
 
   pauseAction() async {
     await AudioService.pause();
-    state = state.copyWith(isPlaying: false);
+    print(" pause called <_____________________>");
   }
 
   stopAction() async {
     await AudioService.stop();
+    state = state.copyWith(isPlaying: false);
   }
-
-  // skipToNext() async {
-  //   if (current < songList.length - 1)
-  //     current = current + 1;
-  //   else
-  //     current = 0;
-
-  //   _mediaItem = MediaItem(
-  //       id: songList[current].url,
-  //       title: songList[current].name,
-  //       artUri: Uri.parse(songList[current].icon),
-  //       album: songList[current].album,
-  //       duration: songList[current].duration,
-  //       artist: songList[current].artist);
-
-  //   // AudioServiceBackground.setMediaItem(_mediaItem);
-  //   await _audioPlayer.setUrl(_mediaItem.id);
-  //   _audioPlayer.play();
-  //   state = state.copyWith(mediaItem: _mediaItem);
-  //   // AudioServiceBackground.setState(position: Duration.zero);
-  // }
-
-  // skipToPrevious() async {
-  //   if (current != 0)
-  //     current = current - 1;
-  //   else
-  //     current = songList.length - 1;
-  //   _mediaItem = MediaItem(
-  //       id: songList[current].url,
-  //       title: songList[current].name,
-  //       artUri: Uri.parse(songList[current].icon),
-  //       album: songList[current].album,
-  //       duration: songList[current].duration,
-  //       artist: songList[current].artist);
-
-  //   // AudioServiceBackground.setMediaItem(_mediaItem);
-  //   await _audioPlayer.setUrl(_mediaItem.id);
-  //   _audioPlayer.play();
-  //   state = state.copyWith(mediaItem: _mediaItem);
-  //   // AudioServiceBackground.setState(position: Duration.zero);
-  // }
 
   // seekTo(double val) {
   //   // AudioService.seekTo(Duration(seconds: val.toInt()));
@@ -170,146 +144,16 @@ class AudioState {
   }
 }
 
-void _audioPlayerTaskEntrypoint() async {
+_backgroundTaskEntrypoint() {
   AudioServiceBackground.run(() => AudioPlayerTask());
 }
 
-// class AudioPlayerTask extends BackgroundAudioTask {
-//   final _audioPlayer = AudioPlayer();
-//   late String songUrl;
-
-//   @override
-//   Future<void> onStart(Map<String, dynamic>? params) async {
-//     songUrl = params?['media'];
-//     AudioServiceBackground.setState(controls: [
-//       MediaControl.pause,
-//       MediaControl.stop,
-//       MediaControl.skipToNext,
-//       MediaControl.skipToPrevious
-//     ], systemActions: [
-//       MediaAction.seekTo
-//     ], playing: true, processingState: AudioProcessingState.connecting);
-//     // Connect to the URL
-//     await _audioPlayer.setUrl(songUrl);
-//     AudioServiceBackground.setMediaItem(songUrl);
-//     // Now we're ready to play
-//     _audioPlayer.play();
-//     // Broadcast that we're playing, and what controls are available.
-//     AudioServiceBackground.setState(controls: [
-//       MediaControl.pause,
-//       MediaControl.stop,
-//       MediaControl.skipToNext,
-//       MediaControl.skipToPrevious
-//     ], systemActions: [
-//       MediaAction.seekTo
-//     ], playing: true, processingState: AudioProcessingState.ready);
-//   }
-
-//   @override
-//   Future<void> onStop() async {
-//     AudioServiceBackground.setState(
-//         controls: [],
-//         playing: false,
-//         processingState: AudioProcessingState.ready);
-//     await _audioPlayer.stop();
-//     await super.onStop();
-//   }
-
-//   @override
-//   Future<void> onPlay() async {
-//     AudioServiceBackground.setState(controls: [
-//       MediaControl.pause,
-//       MediaControl.stop,
-//       MediaControl.skipToNext,
-//       MediaControl.skipToPrevious
-//     ], systemActions: [
-//       MediaAction.seekTo
-//     ], playing: true, processingState: AudioProcessingState.ready);
-//     await _audioPlayer.play();
-//     return super.onPlay();
-//   }
-
-//   @override
-//   Future<void> onPause() async {
-//     AudioServiceBackground.setState(controls: [
-//       MediaControl.play,
-//       MediaControl.stop,
-//       MediaControl.skipToNext,
-//       MediaControl.skipToPrevious
-//     ], systemActions: [
-//       MediaAction.seekTo
-//     ], playing: false, processingState: AudioProcessingState.ready);
-//     await _audioPlayer.pause();
-//     return super.onPause();
-//   }
-
-//   @override
-//   Future<void> onSkipToNext() async {
-//     // if (current < songList.length - 1)
-//     //   current = current + 1;
-//     // else
-//     //   current = 0;
-//     // mediaItem = MediaItem(
-//     //     id: songList[current].url,
-//     //     title: songList[current].name,
-//     //     artUri: Uri.parse(songList[current].icon),
-//     //     album: songList[current].album,
-//     //     duration: songList[current].duration,
-//     //     artist: songList[current].artist);
-//     // AudioServiceBackground.setMediaItem(mediaItem);
-//     // await _audioPlayer.setUrl(mediaItem.id);
-//     // AudioServiceBackground.setState(position: Duration.zero);
-//     return super.onSkipToNext();
-//   }
-
-//   @override
-//   Future<void> onSkipToPrevious() async {
-//     // if (current != 0)
-//     //   current = current - 1;
-//     // else
-//     //   current = songList.length - 1;
-//     // mediaItem = MediaItem(
-//     //     id: songList[current].url,
-//     //     title: songList[current].name,
-//     //     artUri: Uri.parse(songList[current].icon),
-//     //     album: songList[current].album,
-//     //     duration: songList[current].duration,
-//     //     artist: songList[current].artist);
-//     // AudioServiceBackground.setMediaItem(mediaItem);
-//     // await _audioPlayer.setUrl(mediaItem.id);
-//     // AudioServiceBackground.setState(position: Duration.zero);
-//     return super.onSkipToPrevious();
-//   }
-
-//   @override
-//   Future<void> onSeekTo(Duration position) {
-//     _audioPlayer.seek(position);
-//     AudioServiceBackground.setState(position: position);
-//     return super.onSeekTo(position);
-//   }
-// }
-
 class AudioPlayerTask extends BackgroundAudioTask {
-  // final List<MediaItem> _queue = [];
-  final AudioPlayer _audioPlayer = AudioPlayer();
-  // late AudioSession _session;
-  // late AudioProcessingState _skipState;
-  // late bool _playing;
-  // bool _interrupted = false;
-  // late bool _stopAtEnd;
-  // late int _cacheMax;
-  // int _index = 0;
-  // late bool _isQueue;
-  // bool get hasNext => _queue.length > 0;
-  late String _songUrl;
-  // MediaItem get mediaItem => hasNext ? _queue[_index] : null;
-
-  // late StreamSubscription<PlayerState> _playerStateSubscription;
-  // late StreamSubscription<PlaybackEvent> _eventSubscription;
-
+  final _audioPlayer = AudioPlayer();
+  // late ProviderRefBase _mainRef;
+  late MediaItem _mediaItem;
   @override
   Future<void> onStart(Map<String, dynamic>? params) async {
-    // AudioServiceBackground.androidForceEnableMediaButtons();
     AudioServiceBackground.setState(controls: [
       MediaControl.pause,
       MediaControl.stop,
@@ -318,32 +162,20 @@ class AudioPlayerTask extends BackgroundAudioTask {
     ], systemActions: [
       MediaAction.seekTo
     ], playing: true, processingState: AudioProcessingState.connecting);
-    print("${params?['mediaI']}");
-    _songUrl = params?['mediaI'];
-    print(" trying to  set: $_songUrl");
-    AudioServiceBackground.setMediaItem(MediaItem(
-        id: _songUrl, album: "Some album", title: "na vatta lo song"));
-    await _audioPlayer.setUrl(_songUrl);
-    print(" url is set: $_songUrl");
-    return super.onStart(params);
-  }
-
-  @override
-  Future<void> onSkipToNext() {
-    // TODO: implement onSkipToNext
-    return super.onSkipToNext();
-  }
-
-  @override
-  Future<void> onSkipToPrevious() {
-    // TODO: implement onSkipToPrevious
-    return super.onSkipToPrevious();
-  }
-
-  @override
-  Future<void> onPlay() async {
-    await _audioPlayer.play();
-    print("audio is playing");
+    // Connect to the URL
+    _mediaItem = MediaItem(
+        id: params!['songUrl'],
+        title: params['name'],
+        artUri: Uri.parse(params['albumArt']),
+        album: params['album'],
+        // duration: songList[0].duration,
+        artist: songList[0].artist);
+    // _mainRef = params['ref'];
+    await _audioPlayer.setUrl(_mediaItem.id);
+    AudioServiceBackground.setMediaItem(_mediaItem);
+    // Now we're ready to play
+    _audioPlayer.play();
+    // Broadcast that we're playing, and what controls are available.
     AudioServiceBackground.setState(controls: [
       MediaControl.pause,
       MediaControl.stop,
@@ -352,23 +184,34 @@ class AudioPlayerTask extends BackgroundAudioTask {
     ], systemActions: [
       MediaAction.seekTo
     ], playing: true, processingState: AudioProcessingState.ready);
+  }
+
+  @override
+  Future<void> onStop() async {
+    AudioServiceBackground.setState(
+        controls: [],
+        playing: false,
+        processingState: AudioProcessingState.ready);
+    await _audioPlayer.stop();
+    await super.onStop();
+  }
+
+  @override
+  Future<void> onPlay() async {
+    AudioServiceBackground.setState(controls: [
+      MediaControl.pause,
+      MediaControl.stop,
+      MediaControl.skipToNext,
+      MediaControl.skipToPrevious
+    ], systemActions: [
+      MediaAction.seekTo
+    ], playing: true, processingState: AudioProcessingState.ready);
+    await _audioPlayer.play();
     return super.onPlay();
   }
 
   @override
-  Future<void> onStop() {
-    _audioPlayer.stop();
-    AudioServiceBackground.setState(
-        controls: [],
-        systemActions: [],
-        playing: false,
-        processingState: AudioProcessingState.stopped);
-    return super.onStop();
-  }
-
-  @override
-  Future<void> onPause() {
-    _audioPlayer.pause();
+  Future<void> onPause() async {
     AudioServiceBackground.setState(controls: [
       MediaControl.play,
       MediaControl.stop,
@@ -377,7 +220,53 @@ class AudioPlayerTask extends BackgroundAudioTask {
     ], systemActions: [
       MediaAction.seekTo
     ], playing: false, processingState: AudioProcessingState.ready);
-
+    await _audioPlayer.pause();
+    // await _mainRef.read(audioController.notifier).pauseAction();
     return super.onPause();
+  }
+
+  @override
+  Future<void> onSkipToNext() async {
+    // if (current < songList.length - 1)
+    //   current = current + 1;
+    // else
+    //   current = 0;
+    // mediaItem = MediaItem(
+    //     id: songList[current].url,
+    //     title: songList[current].name,
+    //     artUri: Uri.parse(songList[current].icon),
+    //     album: songList[current].album,
+    //     duration: songList[current].duration,
+    //     artist: songList[current].artist);
+    // AudioServiceBackground.setMediaItem(mediaItem);
+    // await _audioPlayer.setUrl(mediaItem.id);
+    // AudioServiceBackground.setState(position: Duration.zero);
+    return super.onSkipToNext();
+  }
+
+  @override
+  Future<void> onSkipToPrevious() async {
+    // if (current != 0)
+    //   current = current - 1;
+    // else
+    //   current = songList.length - 1;
+    // mediaItem = MediaItem(
+    //     id: songList[current].url,
+    //     title: songList[current].name,
+    //     artUri: Uri.parse(songList[current].icon),
+    //     album: songList[current].album,
+    //     duration: songList[current].duration,
+    //     artist: songList[current].artist);
+    // AudioServiceBackground.setMediaItem(mediaItem);
+    // await _audioPlayer.setUrl(mediaItem.id);
+    // AudioServiceBackground.setState(position: Duration.zero);
+    return super.onSkipToPrevious();
+  }
+
+  @override
+  Future<void> onSeekTo(Duration position) {
+    _audioPlayer.seek(position);
+    AudioServiceBackground.setState(position: position);
+    return super.onSeekTo(position);
   }
 }
