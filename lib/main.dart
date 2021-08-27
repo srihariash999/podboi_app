@@ -7,16 +7,11 @@ import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:podboi/Services/database/subscriptions.dart';
 import 'package:podboi/UI/base_screen.dart';
-
-// import 'package:podboi/misc/homepage.dart';
+import 'package:podboi/UI/welcome_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // await JustAudioBackground.init(
-  //   androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
-  //   androidNotificationChannelName: 'Audio playback',
-  //   androidNotificationOngoing: true,
-  // );
+
   var dir = await getApplicationDocumentsDirectory();
 
   Hive
@@ -24,6 +19,7 @@ void main() async {
     ..registerAdapter(SubscriptionAdapter());
 
   await Hive.openBox('subscriptionsBox');
+  await Hive.openBox('generalBox');
   runApp(
     ProviderScope(
       child: AudioServiceWidget(child: MyApp()),
@@ -38,22 +34,15 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  double minHeight = 70;
   @override
   Widget build(BuildContext context) {
+    String? _name = Hive.box('generalBox').get('userName');
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: BaseScreen(),
-
-      //  Stack(
-      //   children: [
-      //     HomePage(),
-      //     MiniPlayer(),
-      //   ],
-      // ),
+      home: _name == null ? WelcomePage() : BaseScreen(),
     );
   }
 }

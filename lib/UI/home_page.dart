@@ -9,20 +9,27 @@ import 'package:podboi/UI/search_page.dart';
 import 'package:podcast_search/podcast_search.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
+  HomePage({Key? key, required this.ref}) : super(key: key);
+  final WidgetRef ref;
+
+  Future<void> _refresh() async {
+    ref.read(homeScreenController.notifier).getTopPodcasts();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: ListView(
-          physics: BouncingScrollPhysics(),
-          children: [
-            buildTopUi(),
-            buildSearchRow(context),
-            buildDiscoverPodcastsRow(context),
-            buildNewEpisodes(),
-          ],
+        child: RefreshIndicator(
+          onRefresh: _refresh,
+          child: ListView(
+            children: [
+              buildTopUi(),
+              buildSearchRow(context),
+              buildDiscoverPodcastsRow(context),
+              buildNewEpisodes(),
+            ],
+          ),
         ),
       ),
     );
@@ -224,7 +231,7 @@ class HomePage extends StatelessWidget {
             ),
           ),
           Text(
-            "Top podcasts today on Podboi",
+            "Top podcasts today on Podboi in India",
             style: TextStyle(
                 fontFamily: 'Segoe',
                 fontSize: 14.0,
@@ -240,47 +247,61 @@ class HomePage extends StatelessWidget {
                 List<Item> _topPodcasts = ref.watch(
                   homeScreenController.select((value) => value.topPodcasts),
                 );
-                return ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  physics: BouncingScrollPhysics(),
-                  itemCount: _topPodcasts.length,
-                  itemBuilder: (context, index) {
-                    Item _item = _topPodcasts[index];
-                    return GestureDetector(
-                      onTap: () {
-                        Navigator.of(context).push(
-                          PageRouteBuilder(
-                            transitionDuration: Duration(milliseconds: 500),
-                            transitionsBuilder: (context, animation,
-                                secondaryAnimation, child) {
-                              const begin = Offset(1.0, 0.0);
-                              const end = Offset.zero;
-                              const curve = Curves.ease;
+                return _topPodcasts.length == 0
+                    ? Container(
+                        alignment: Alignment.center,
+                        child: Text(
+                          " No Podcasts to show",
+                          style: TextStyle(
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black.withOpacity(0.6),
+                            fontFamily: 'Segoe',
+                          ),
+                        ),
+                      )
+                    : ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        physics: BouncingScrollPhysics(),
+                        itemCount: _topPodcasts.length,
+                        itemBuilder: (context, index) {
+                          Item _item = _topPodcasts[index];
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                PageRouteBuilder(
+                                  transitionDuration:
+                                      Duration(milliseconds: 500),
+                                  transitionsBuilder: (context, animation,
+                                      secondaryAnimation, child) {
+                                    const begin = Offset(1.0, 0.0);
+                                    const end = Offset.zero;
+                                    const curve = Curves.ease;
 
-                              final tween = Tween(begin: begin, end: end);
-                              final curvedAnimation = CurvedAnimation(
-                                parent: animation,
-                                curve: curve,
-                              );
+                                    final tween = Tween(begin: begin, end: end);
+                                    final curvedAnimation = CurvedAnimation(
+                                      parent: animation,
+                                      curve: curve,
+                                    );
 
-                              return SlideTransition(
-                                position: tween.animate(curvedAnimation),
-                                child: child,
+                                    return SlideTransition(
+                                      position: tween.animate(curvedAnimation),
+                                      child: child,
+                                    );
+                                  },
+                                  pageBuilder: (_, __, ___) => PodcastPage(
+                                    podcast: _item,
+                                  ),
+                                ),
                               );
                             },
-                            pageBuilder: (_, __, ___) => PodcastPage(
-                              podcast: _item,
+                            child: PodcastDisplayWidget(
+                              name: _item.collectionName ?? 'N/A',
+                              posterUrl: _item.bestArtworkUrl ?? '',
                             ),
-                          ),
-                        );
-                      },
-                      child: PodcastDisplayWidget(
-                        name: _item.collectionName ?? 'N/A',
-                        posterUrl: _item.bestArtworkUrl ?? '',
-                      ),
-                    );
-                  },
-                );
+                          );
+                        },
+                      );
               })),
         ],
       ),
@@ -297,19 +318,27 @@ class HomePage extends StatelessWidget {
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              GestureDetector(
-                onTap: () {},
-                child: Icon(
-                  LineIcons.bars,
-                ),
-              ),
+              Consumer(builder: (context, ref, child) {
+                String _name = ref.watch(
+                    homeScreenController.select((value) => value.userName));
+                return Text(
+                  "Hi $_name",
+                  style: TextStyle(
+                    // fontFamily: 'Segoe',
+                    fontSize: 26.0,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w700,
+                  ),
+                );
+              }),
               Container(
                 height: 60.0,
                 width: 55.0,
                 clipBehavior: Clip.antiAlias,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.0),
+                  borderRadius: BorderRadius.circular(16.0),
                 ),
                 child: Image.network(
                   "https://images.unsplash.com/photo-1581803118522-7b72a50f7e9f?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=334&q=80",
@@ -320,19 +349,6 @@ class HomePage extends StatelessWidget {
           ),
           SizedBox(
             height: 16.0,
-          ),
-          Row(
-            children: [
-              Text(
-                "Hi Howell",
-                style: TextStyle(
-                  // fontFamily: 'Segoe',
-                  fontSize: 26.0,
-                  color: Colors.black,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ],
           ),
           Row(
             children: [
@@ -352,36 +368,3 @@ class HomePage extends StatelessWidget {
     );
   }
 }
-
-
-
-
-/*
-
-PodcastDisplayWidget(
-                      name: "99% invisible",
-                      posterUrl:
-                          "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/99%25_Invisible_logo.jpg/1200px-99%25_Invisible_logo.jpg",
-                    ),
-                    PodcastDisplayWidget(
-                      name: "No Such Thing As A Fish",
-                      posterUrl:
-                          "https://upload.wikimedia.org/wikipedia/en/e/e1/No_Such_Thing_As_A_Fish_logo.jpg",
-                    ),
-                    PodcastDisplayWidget(
-                      name: "Decoder Ring",
-                      posterUrl:
-                          "https://megaphone.imgix.net/podcasts/9a4c2c2a-3e8b-11e8-bd53-9b1115bac0fa/image/uploads_2F1525125320167-fd4zi01j82i-e7a9a485ccc4505ac3ddaacdb5fbfd57_2Fdecoder-ring-3000px.jpg?w=525&h=525",
-                    ),
-                    PodcastDisplayWidget(
-                      name: "Terrible Lizards",
-                      posterUrl:
-                          "https://is4-ssl.mzstatic.com/image/thumb/Podcasts125/v4/2e/45/35/2e4535eb-6609-0b06-c703-69b2420b433d/mza_11307628467914885774.png/1200x1200bb.jpg",
-                    ),
-                    PodcastDisplayWidget(
-                      name: "Lore",
-                      posterUrl:
-                          "https://images.squarespace-cdn.com/content/v1/53bc57f0e4b00052ff4d7ccd/1479474490617-GFZQ09UDJYDS482NVHLJ/lore-logo-light.png?format=1500w",
-                    ),
-
-*/

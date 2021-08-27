@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:podboi/Controllers/general_box_controller.dart';
 import 'package:podcast_search/podcast_search.dart';
 
 var _search = Search();
@@ -11,11 +12,16 @@ final homeScreenController =
 class HomeScreenStateNotifier extends StateNotifier<HomeScreenState> {
   HomeScreenStateNotifier() : super(HomeScreenState.initial()) {
     getTopPodcasts();
+    _getUserName();
+  }
+
+  _getUserName() async {
+    state = state.copyWith(userName: getSavedUserName());
   }
 
   getTopPodcasts() async {
     SearchResult charts =
-        await _search.charts(limit: 25, country: Country.UNITED_KINGDOM);
+        await _search.charts(limit: 25, country: Country.INDIA);
     List<Item> _topPodcasts = [];
     for (var i in charts.items) {
       _topPodcasts.add(i);
@@ -26,15 +32,14 @@ class HomeScreenStateNotifier extends StateNotifier<HomeScreenState> {
 
 class HomeScreenState {
   final List<Item> topPodcasts;
-  HomeScreenState({required this.topPodcasts});
+  final String userName;
+  HomeScreenState({required this.topPodcasts, required this.userName});
   factory HomeScreenState.initial() {
-    return HomeScreenState(
-      topPodcasts: [],
-    );
+    return HomeScreenState(topPodcasts: [], userName: '');
   }
-  HomeScreenState copyWith({List<Item>? topPodcasts}) {
+  HomeScreenState copyWith({List<Item>? topPodcasts, String? userName}) {
     return HomeScreenState(
-      topPodcasts: topPodcasts ?? this.topPodcasts,
-    );
+        topPodcasts: topPodcasts ?? this.topPodcasts,
+        userName: userName ?? this.userName);
   }
 }

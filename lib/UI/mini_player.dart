@@ -24,12 +24,11 @@ class _MiniPlayerState extends State<MiniPlayer> {
             var _contState = ref.watch(audioController);
             if (_contState.mediaItem != null) {
               print(" this is init");
-              return _contState.isPlaying == false
+              return _contState.isPlayerShow == false
                   ? Container(
                       height: _height,
                       width: MediaQuery.of(context).size.width,
                       color: Colors.red.withOpacity(0.2),
-                      child: Text(" nothing playing"),
                     )
                   : AnimatedContainer(
                       // height: _height,
@@ -46,7 +45,7 @@ class _MiniPlayerState extends State<MiniPlayer> {
                         color: Colors.grey.withOpacity(0.05),
                       ),
                       height: _height,
-                      duration: Duration(milliseconds: 400),
+                      duration: Duration(milliseconds: 200),
                       child: _height == 80.0
                           ? buildSmallPlayer(_contState, ref)
                           : buildLargePlayer(_contState, ref),
@@ -112,13 +111,13 @@ class _MiniPlayerState extends State<MiniPlayer> {
                 child: Column(
                   children: [
                     Expanded(
-                      child: Container(
-                        clipBehavior: Clip.antiAlias,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(24.0),
-                        ),
-                        child: Hero(
-                          tag: 'albumArt',
+                      child: Hero(
+                        tag: 'albumArt',
+                        child: Container(
+                          clipBehavior: Clip.antiAlias,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(24.0),
+                          ),
                           child: Image.network(
                             _contState.mediaItem!.artUri.toString(),
                           ),
@@ -299,20 +298,23 @@ class _MiniPlayerState extends State<MiniPlayer> {
                 },
                 child: Row(
                   children: [
+                    Icon(
+                      Icons.expand_less,
+                    ),
                     Flexible(
-                        child: Container(
-                      height: 60,
-                      width: 60,
-                      clipBehavior: Clip.antiAlias,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(14.0)),
-                      child: _contState.mediaItem != null
-                          ? Hero(
-                              tag: 'albumArt',
-                              child: Image.network(
-                                  _contState.mediaItem!.artUri.toString()),
-                            )
-                          : null,
+                        child: Hero(
+                      tag: 'albumArt',
+                      child: Container(
+                        height: 60,
+                        width: 60,
+                        clipBehavior: Clip.antiAlias,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(14.0)),
+                        child: _contState.mediaItem != null
+                            ? Image.network(
+                                _contState.mediaItem!.artUri.toString())
+                            : null,
+                      ),
                     )),
                     Flexible(
                       flex: 3,

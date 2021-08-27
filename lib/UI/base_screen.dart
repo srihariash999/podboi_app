@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podboi/UI/home_page.dart';
 import 'package:podboi/UI/mini_player.dart';
 import 'package:podboi/UI/subscriptions_page.dart';
@@ -29,7 +30,11 @@ class _BaseScreenState extends State<BaseScreen> {
               },
               itemBuilder: (context, index) {
                 if (index == 0) {
-                  return HomePage();
+                  return Consumer(builder: (context, ref, child) {
+                    return HomePage(
+                      ref: ref,
+                    );
+                  });
                 } else {
                   return SubscriptionsPage();
                 }

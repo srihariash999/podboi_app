@@ -5,7 +5,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:podboi/Controllers/audio_controller.dart';
-import 'package:podboi/misc/database.dart';
+import 'package:podboi/DataModels/song.dart';
 import 'package:podcast_search/podcast_search.dart';
 
 class DetailedEpsiodeViewWidget extends StatelessWidget {

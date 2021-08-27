@@ -4,7 +4,8 @@ import 'package:audio_service/audio_service.dart';
 // import 'package:audio_session/audio_session.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:podboi/misc/database.dart';
+import 'package:podboi/DataModels/song.dart';
+
 import 'package:rxdart/streams.dart';
 
 final audioController =
@@ -24,6 +25,7 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
     if (AudioService.running) {
       print(" it is running");
       await AudioService.stop();
+      await AudioService.connect();
       await AudioService.start(
           backgroundTaskEntrypoint: _backgroundTaskEntrypoint,
           androidNotificationChannelName: 'Podboi',
@@ -48,6 +50,7 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
 
       state = state.copyWith(
         isPlaying: true,
+        isPlayerShow: true,
         playbackStateStream: AudioService.playbackStateStream,
         positionStream: AudioService.positionStream,
         mediaItem: MediaItem(
@@ -101,6 +104,7 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
 
       state = state.copyWith(
         isPlaying: true,
+        isPlayerShow: true,
         mediaItem: MediaItem(
             id: song.url,
             title: song.name,
@@ -129,16 +133,26 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
 
   resumeAction() async {
     await AudioService.play();
+    state = state.copyWith(
+      isPlaying: true,
+      isPlayerShow: true,
+    );
   }
 
   pauseAction() async {
     await AudioService.pause();
+    state.copyWith(
+      isPlaying: false,
+    );
     print(" pause called <_____________________>");
   }
 
   stopAction() async {
     await AudioService.stop();
-    state = state.copyWith(isPlaying: false);
+    state = state.copyWith(
+      isPlayerShow: false,
+      isPlaying: false,
+    );
   }
 
   seekTo(double val) {
@@ -159,6 +173,7 @@ class AudioState {
   // final Stream<Duration> positionStream;
   // final Stream<PlayerState> playerStateStream;
   final bool isPlaying;
+  final bool isPlayerShow;
   final ValueStream<MediaItem?> currentMediaItemStream;
   final ValueStream<PlaybackState> playbackStateStream;
   final ValueStream<Duration> positionStream;
@@ -170,6 +185,7 @@ class AudioState {
     required this.playbackStateStream,
     required this.isPlaying,
     required this.positionStream,
+    required this.isPlayerShow,
   });
   factory AudioState.initial() {
     return AudioState(
@@ -179,20 +195,19 @@ class AudioState {
       currentMediaItemStream: AudioService.currentMediaItemStream,
       playbackStateStream: AudioService.playbackStateStream,
       positionStream: AudioService.positionStream,
+      isPlayerShow: false,
     );
   }
   AudioState copyWith(
       {MediaItem? mediaItem,
-      // Stream<Duration>? positionStream,
-      // Stream<PlayerState>? playerStateStream,
+      bool? isPlayerShow,
       bool? isPlaying,
       ValueStream<MediaItem?>? currentMediaItemStream,
       ValueStream<PlaybackState>? playbackStateStream,
       ValueStream<Duration>? positionStream}) {
     return AudioState(
       mediaItem: mediaItem,
-      // positionStream: positionStream ?? this.positionStream,
-      // playerStateStream: playerStateStream ?? this.playerStateStream,
+      isPlayerShow: isPlayerShow ?? this.isPlayerShow,
       isPlaying: isPlaying ?? this.isPlaying,
       currentMediaItemStream:
           currentMediaItemStream ?? this.currentMediaItemStream,
@@ -258,7 +273,7 @@ class AudioPlayerTask extends BackgroundAudioTask {
     Duration newDur = curr.inSeconds > 10
         ? Duration(seconds: curr.inSeconds - 10)
         : Duration(seconds: 0);
-     _audioPlayer.seek(newDur);
+    _audioPlayer.seek(newDur);
     AudioServiceBackground.setState(position: newDur);
 
     return super.onRewind();
@@ -273,7 +288,7 @@ class AudioPlayerTask extends BackgroundAudioTask {
     Duration newDur = curr.inSeconds < _mediaItem.duration!.inSeconds - 10
         ? Duration(seconds: curr.inSeconds + 10)
         : Duration(seconds: _mediaItem.duration!.inSeconds);
-     _audioPlayer.seek(newDur);
+    _audioPlayer.seek(newDur);
     AudioServiceBackground.setState(position: newDur);
 
     return super.onFastForward();
@@ -281,10 +296,11 @@ class AudioPlayerTask extends BackgroundAudioTask {
 
   @override
   Future<void> onStop() async {
+    print(" audio stopped called");
     AudioServiceBackground.setState(
         controls: [],
         playing: false,
-        processingState: AudioProcessingState.ready);
+        processingState: AudioProcessingState.stopped);
     await _audioPlayer.stop();
     await super.onStop();
   }
