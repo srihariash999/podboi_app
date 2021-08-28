@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:podboi/Controllers/home_screen_controller.dart';
+import 'package:podboi/Controllers/profile_screen_controller.dart';
 // import 'package:podboi/Shared/episode_display_widget.dart';
 import 'package:podboi/Shared/podcast_display_widget.dart';
 import 'package:podboi/UI/podcast_page.dart';
+import 'package:podboi/UI/profile_screen.dart';
 import 'package:podboi/UI/search_page.dart';
 import 'package:podcast_search/podcast_search.dart';
 
@@ -213,10 +215,12 @@ class HomePage extends StatelessWidget {
             height: 16.0,
           ),
           Consumer(builder: (context, ref, child) {
-            String _name = ref
-                .watch(homeScreenController.select((value) => value.userName));
-            String _avatar = ref.watch(
-                homeScreenController.select((value) => value.userAvatar));
+            print(' homescreen built');
+            String _name = ref.watch(
+              profileController.select((value) => value.userName),
+            );
+            String _avatar = ref
+                .watch(profileController.select((value) => value.userAvatar));
 
             print(_avatar);
             return Row(
@@ -232,16 +236,42 @@ class HomePage extends StatelessWidget {
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                Container(
-                  height: 60.0,
-                  width: 55.0,
-                  child: Icon(
-                    _avatar == 'user'
-                        ? LineIcons.user
-                        : _avatar == 'userNinja'
-                            ? LineIcons.userNinja
-                            : LineIcons.userAstronaut,
-                    size: 38.0,
+                GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      PageRouteBuilder(
+                          transitionDuration: Duration(milliseconds: 500),
+                          transitionsBuilder:
+                              (context, animation, secondaryAnimation, child) {
+                            const begin = Offset(1.0, 0.0);
+                            const end = Offset.zero;
+                            const curve = Curves.ease;
+
+                            final tween = Tween(begin: begin, end: end);
+                            final curvedAnimation = CurvedAnimation(
+                              parent: animation,
+                              curve: curve,
+                            );
+
+                            return SlideTransition(
+                              position: tween.animate(curvedAnimation),
+                              child: child,
+                            );
+                          },
+                          pageBuilder: (_, __, ___) => ProfileScreen()),
+                    );
+                  },
+                  child: Container(
+                    height: 60.0,
+                    width: 55.0,
+                    child: Icon(
+                      _avatar == 'user'
+                          ? LineIcons.user
+                          : _avatar == 'userNinja'
+                              ? LineIcons.userNinja
+                              : LineIcons.userAstronaut,
+                      size: 38.0,
+                    ),
                   ),
                 ),
               ],
