@@ -345,20 +345,55 @@ class _MiniPlayerState extends State<MiniPlayer> {
                       padding: const EdgeInsets.all(8.0),
                       child: Row(
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.only(right: 8.0),
-                            child: IconButton(
-                                icon: Icon(
-                                  FeatherIcons.pauseCircle,
-                                  size: 32.0,
-                                ),
-                                onPressed: () {
-                                  ref
-                                      .read(audioController.notifier)
-                                      .pauseAction();
-                                  // AudioService.pause();
-                                }),
-                          ),
+                          IconButton(
+                              icon: Icon(
+                                Icons.replay_10,
+                                size: 32.0,
+                              ),
+                              onPressed: () {
+                                ref.read(audioController.notifier).rewind();
+                                // AudioService.pause();
+                              }),
+                          IconButton(
+                              icon: Icon(
+                                FeatherIcons.pauseCircle,
+                                size: 32.0,
+                              ),
+                              onPressed: () {
+                                ref
+                                    .read(audioController.notifier)
+                                    .pauseAction();
+                                // AudioService.pause();
+                              }),
+                          IconButton(
+                              icon: Icon(
+                                Icons.forward_10,
+                                size: 32.0,
+                              ),
+                              onPressed: () {
+                                ref
+                                    .read(audioController.notifier)
+                                    .fastForward();
+                                // AudioService.pause();
+                              }),
+                        ],
+                      ),
+                    );
+                  else
+                    return Container(
+                      child: Row(
+                        children: [
+                          IconButton(
+                              icon: Icon(
+                                FeatherIcons.playCircle,
+                                size: 32.0,
+                              ),
+                              onPressed: () {
+                                ref
+                                    .read(audioController.notifier)
+                                    .resumeAction();
+                                // AudioService.pause();
+                              }),
                           IconButton(
                               icon: Icon(
                                 FeatherIcons.stopCircle,
@@ -366,12 +401,11 @@ class _MiniPlayerState extends State<MiniPlayer> {
                               ),
                               onPressed: () {
                                 ref.read(audioController.notifier).stopAction();
+                                // AudioService.pause();
                               }),
                         ],
                       ),
                     );
-                  else
-                    return Container();
                 })
           ],
         ),

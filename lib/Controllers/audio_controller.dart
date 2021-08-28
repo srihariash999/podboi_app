@@ -23,7 +23,18 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
     // current = id;
 
     if (AudioService.running) {
-      print(" it is running");
+      print(" it is running : ${song.url}");
+      state = state.copyWith(
+        isPlaying: false,
+        isPlayerShow: true,
+        mediaItem: MediaItem(
+            id: song.url,
+            title: song.name,
+            artUri: Uri.parse(song.icon),
+            album: song.album,
+            duration: song.duration,
+            artist: song.artist),
+      );
       await AudioService.stop();
       await AudioService.connect();
       await AudioService.start(
@@ -66,6 +77,7 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
         if (event.playing) {
           state = state.copyWith(
             isPlaying: true,
+            isPlayerShow: true,
             mediaItem: MediaItem(
                 id: song.url,
                 title: song.name,
@@ -77,7 +89,18 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
         }
       });
     } else {
-      print(" fresh init");
+      print(" fresh init : ${song.url}");
+      state = state.copyWith(
+        isPlaying: false,
+        isPlayerShow: true,
+        mediaItem: MediaItem(
+            id: song.url,
+            title: song.name,
+            artUri: Uri.parse(song.icon),
+            album: song.album,
+            duration: song.duration,
+            artist: song.artist),
+      );
       await AudioService.connect();
 
       await AudioService.start(
@@ -115,9 +138,23 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
       );
       state.playbackStateStream.listen((PlaybackState event) {
         print(" new event yo : $event");
+
         if (event.playing) {
           state = state.copyWith(
             isPlaying: true,
+            isPlayerShow: true,
+            mediaItem: MediaItem(
+                id: song.url,
+                title: song.name,
+                artUri: Uri.parse(song.icon),
+                album: song.album,
+                duration: song.duration,
+                artist: song.artist),
+          );
+        } else {
+          state = state.copyWith(
+            isPlaying: false,
+            isPlayerShow: true,
             mediaItem: MediaItem(
                 id: song.url,
                 title: song.name,
@@ -128,22 +165,23 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
           );
         }
       });
+
+      state.positionStream.listen((Duration event) async {
+        if (event.inSeconds >= song.duration!.inSeconds - 1) {
+          await AudioService.stop();
+          state = state.copyWith(isPlayerShow: false, isPlaying: false);
+        }
+      });
     }
   }
 
   resumeAction() async {
     await AudioService.play();
-    state = state.copyWith(
-      isPlaying: true,
-      isPlayerShow: true,
-    );
   }
 
   pauseAction() async {
     await AudioService.pause();
-    state.copyWith(
-      isPlaying: false,
-    );
+
     print(" pause called <_____________________>");
   }
 
@@ -318,11 +356,13 @@ class AudioPlayerTask extends BackgroundAudioTask {
       processingState: AudioProcessingState.ready,
     );
     await _audioPlayer.play();
+
     return super.onPlay();
   }
 
   @override
   Future<void> onPause() async {
+    await _audioPlayer.pause();
     AudioServiceBackground.setState(
       controls: [
         MediaControl.rewind,
@@ -333,8 +373,7 @@ class AudioPlayerTask extends BackgroundAudioTask {
       playing: false,
       processingState: AudioProcessingState.ready,
     );
-    await _audioPlayer.pause();
-    // await _mainRef.read(audioController.notifier).pauseAction();
+
     return super.onPause();
   }
 

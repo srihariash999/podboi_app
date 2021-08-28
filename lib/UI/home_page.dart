@@ -20,126 +20,13 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: RefreshIndicator(
-          onRefresh: _refresh,
-          child: ListView(
-            children: [
-              buildTopUi(),
-              buildSearchRow(context),
-              buildDiscoverPodcastsRow(context),
-              buildNewEpisodes(),
-            ],
-          ),
+        child: Column(
+          children: [
+            buildTopUi(),
+            buildSearchRow(context),
+            Expanded(child: buildDiscoverPodcastsRow(context)),
+          ],
         ),
-      ),
-    );
-  }
-
-  Padding buildNewEpisodes() {
-    return Padding(
-      padding: const EdgeInsets.only(
-        left: 16.0,
-        right: 16.0,
-        top: 18.0,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "New Episodes",
-            style: TextStyle(
-              fontFamily: 'Segoe',
-              fontSize: 20.0,
-              fontWeight: FontWeight.w600,
-              color: Colors.black,
-            ),
-          ),
-          SizedBox(
-            height: 16.0,
-          ),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16.0),
-            ),
-            padding: EdgeInsets.all(20.0),
-            child: Center(
-              child: Text(
-                ' No new episodes to show',
-                style: TextStyle(
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.black.withOpacity(0.6),
-                  fontFamily: 'Segoe',
-                ),
-              ),
-            ),
-            // child: Column(
-            //   children: [
-            //     EpisodeDisplayWidget(
-            //       posterUrl:
-            //           "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/99%25_Invisible_logo.jpg/1200px-99%25_Invisible_logo.jpg",
-            //       episodeTitle: "454- War,Famine,Pestilence, and Design",
-            //       episodeDuration: "31m",
-            //       episodeUploadDate: "Yesterday",
-            //     ),
-            //     Padding(
-            //       padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            //       child: Divider(
-            //         color: Colors.black.withOpacity(0.20),
-            //       ),
-            //     ),
-            //     EpisodeDisplayWidget(
-            //       posterUrl:
-            //           "https://upload.wikimedia.org/wikipedia/en/e/e1/No_Such_Thing_As_A_Fish_logo.jpg",
-            //       episodeTitle:
-            //           "No Such Thing As Crossing the Futility Boundary",
-            //       episodeDuration: "51m",
-            //       episodeUploadDate: "Friday",
-            //     ),
-            //     Padding(
-            //       padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            //       child: Divider(
-            //         color: Colors.black.withOpacity(0.20),
-            //       ),
-            //     ),
-            //     EpisodeDisplayWidget(
-            //       posterUrl:
-            //           "https://megaphone.imgix.net/podcasts/9a4c2c2a-3e8b-11e8-bd53-9b1115bac0fa/image/uploads_2F1525125320167-fd4zi01j82i-e7a9a485ccc4505ac3ddaacdb5fbfd57_2Fdecoder-ring-3000px.jpg?w=525&h=525",
-            //       episodeTitle: "Selling Out",
-            //       episodeDuration: "49m",
-            //       episodeUploadDate: "Friday",
-            //     ),
-            //     Padding(
-            //       padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            //       child: Divider(
-            //         color: Colors.black.withOpacity(0.20),
-            //       ),
-            //     ),
-            //     EpisodeDisplayWidget(
-            //       posterUrl:
-            //           "https://is4-ssl.mzstatic.com/image/thumb/Podcasts125/v4/2e/45/35/2e4535eb-6609-0b06-c703-69b2420b433d/mza_11307628467914885774.png/1200x1200bb.jpg",
-            //       episodeTitle: "Your Dinosaur Questions Answered",
-            //       episodeDuration: "1h",
-            //       episodeUploadDate: "21 July",
-            //     ),
-            //     Padding(
-            //       padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            //       child: Divider(
-            //         color: Colors.black.withOpacity(0.20),
-            //       ),
-            //     ),
-            //     EpisodeDisplayWidget(
-            //       posterUrl:
-            //           "https://images.squarespace-cdn.com/content/v1/53bc57f0e4b00052ff4d7ccd/1479474490617-GFZQ09UDJYDS482NVHLJ/lore-logo-light.png?format=1500w",
-            //       episodeTitle: "Epsiode 175: Head Case ",
-            //       episodeDuration: "39m",
-            //       episodeUploadDate: "19 July",
-            //     ),
-            //   ],
-            // ),
-          ),
-        ],
       ),
     );
   }
@@ -241,27 +128,31 @@ class HomePage extends StatelessWidget {
           SizedBox(
             height: 16.0,
           ),
-          Container(
-              height: 160.0,
-              child: Consumer(builder: (context, ref, child) {
-                List<Item> _topPodcasts = ref.watch(
-                  homeScreenController.select((value) => value.topPodcasts),
-                );
-                return _topPodcasts.length == 0
-                    ? Container(
-                        alignment: Alignment.center,
-                        child: Text(
-                          " No Podcasts to show",
-                          style: TextStyle(
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black.withOpacity(0.6),
-                            fontFamily: 'Segoe',
-                          ),
+          Expanded(
+            child: Consumer(builder: (context, ref, child) {
+              List<Item> _topPodcasts = ref.watch(
+                homeScreenController.select((value) => value.topPodcasts),
+              );
+              return _topPodcasts.length == 0
+                  ? Container(
+                      alignment: Alignment.center,
+                      child: Text(
+                        " No Podcasts to show",
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black.withOpacity(0.6),
+                          fontFamily: 'Segoe',
                         ),
-                      )
-                    : ListView.builder(
-                        scrollDirection: Axis.horizontal,
+                      ),
+                    )
+                  : RefreshIndicator(
+                      onRefresh: _refresh,
+                      child: GridView.builder(
+                        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                          maxCrossAxisExtent: 150.0,
+                          mainAxisExtent: 160.0,
+                        ),
                         physics: BouncingScrollPhysics(),
                         itemCount: _topPodcasts.length,
                         itemBuilder: (context, index) {
@@ -295,14 +186,19 @@ class HomePage extends StatelessWidget {
                                 ),
                               );
                             },
-                            child: PodcastDisplayWidget(
-                              name: _item.collectionName ?? 'N/A',
-                              posterUrl: _item.bestArtworkUrl ?? '',
+                            child: Hero(
+                              tag: 'logo${_item.collectionId}',
+                              child: PodcastDisplayWidget(
+                                name: _item.collectionName ?? 'N/A',
+                                posterUrl: _item.bestArtworkUrl ?? '',
+                              ),
                             ),
                           );
                         },
-                      );
-              })),
+                      ),
+                    );
+            }),
+          ),
         ],
       ),
     );
@@ -316,14 +212,18 @@ class HomePage extends StatelessWidget {
           SizedBox(
             height: 16.0,
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Consumer(builder: (context, ref, child) {
-                String _name = ref.watch(
-                    homeScreenController.select((value) => value.userName));
-                return Text(
+          Consumer(builder: (context, ref, child) {
+            String _name = ref
+                .watch(homeScreenController.select((value) => value.userName));
+            String _avatar = ref.watch(
+                homeScreenController.select((value) => value.userAvatar));
+
+            print(_avatar);
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
                   "Hi $_name",
                   style: TextStyle(
                     // fontFamily: 'Segoe',
@@ -331,22 +231,22 @@ class HomePage extends StatelessWidget {
                     color: Colors.black,
                     fontWeight: FontWeight.w700,
                   ),
-                );
-              }),
-              Container(
-                height: 60.0,
-                width: 55.0,
-                clipBehavior: Clip.antiAlias,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16.0),
                 ),
-                child: Image.network(
-                  "https://images.unsplash.com/photo-1581803118522-7b72a50f7e9f?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=334&q=80",
-                  fit: BoxFit.cover,
+                Container(
+                  height: 60.0,
+                  width: 55.0,
+                  child: Icon(
+                    _avatar == 'user'
+                        ? LineIcons.user
+                        : _avatar == 'userNinja'
+                            ? LineIcons.userNinja
+                            : LineIcons.userAstronaut,
+                    size: 38.0,
+                  ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            );
+          }),
           SizedBox(
             height: 16.0,
           ),
