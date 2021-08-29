@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 
 class EpisodeDisplayWidget extends StatelessWidget {
+  final BuildContext context;
   final String posterUrl;
   final String episodeTitle;
   final String episodeDuration;
   final String episodeUploadDate;
   const EpisodeDisplayWidget({
     Key? key,
+    required this.context,
     required this.posterUrl,
     required this.episodeTitle,
     required this.episodeDuration,
@@ -19,10 +21,11 @@ class EpisodeDisplayWidget extends StatelessWidget {
       height: 100.0,
       width: MediaQuery.of(context).size.width * 0.80,
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Container(
-            height: 50.0,
-            width: 50.0,
+            height: 80.0,
+            width: 80.0,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12.0),
             ),
@@ -40,30 +43,31 @@ class EpisodeDisplayWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Expanded(
                         child: Text(
-                          episodeTitle.length > 30
-                              ? episodeTitle.substring(0, 27) + '...'
-                              : episodeTitle,
+                          episodeTitle,
                           textAlign: TextAlign.start,
                           style: TextStyle(
                             fontFamily: 'Segoe',
                             fontSize: 14.0,
                             fontWeight: FontWeight.w400,
-                            color: Colors.black,
+                            color: Theme.of(context).accentColor,
                           ),
                         ),
                       ),
-                      Text(
-                        episodeDuration,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontFamily: 'Segoe',
-                          fontSize: 12.0,
-                          fontWeight: FontWeight.w200,
-                          color: Colors.black.withOpacity(0.50),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10.0, right: 12.0),
+                        child: Text(
+                          episodeDuration,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontFamily: 'Segoe',
+                            fontSize: 12.0,
+                            fontWeight: FontWeight.w200,
+                            color: Theme.of(context).accentColor.withOpacity(0.50),
+                          ),
                         ),
                       ),
                     ],
@@ -72,13 +76,13 @@ class EpisodeDisplayWidget extends StatelessWidget {
                     height: 6.0,
                   ),
                   Text(
-                    episodeUploadDate,
+                    "Played : " + episodeUploadDate,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontFamily: 'Segoe',
                       fontSize: 12.0,
                       fontWeight: FontWeight.w500,
-                      color: Colors.black.withOpacity(0.30),
+                      color: Theme.of(context).accentColor.withOpacity(0.30),
                     ),
                   ),
                 ],

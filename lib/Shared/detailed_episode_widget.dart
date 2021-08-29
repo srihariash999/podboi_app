@@ -5,6 +5,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:podboi/Controllers/audio_controller.dart';
+import 'package:podboi/Controllers/history_controller.dart';
 import 'package:podboi/DataModels/song.dart';
 import 'package:podcast_search/podcast_search.dart';
 
@@ -80,22 +81,34 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                 ),
               ),
               IconButton(
-                  onPressed: () async {
-                    print("episode link: ${_episode.contentUrl}");
-                    await _ref.read(audioController.notifier).playAction(
-                          Song(
-                              url: _episode.contentUrl!,
-                              icon: _podcast.bestArtworkUrl!,
-                              name: _episode.title,
-                              duration: _episode.duration,
-                              artist: "${_episode.author}",
-                              album: "${_podcast.collectionName}"),
-                        );
-                  },
-                  icon: Icon(
-                    FeatherIcons.play,
-                    color: Theme.of(context).accentColor,
-                  ))
+                onPressed: () async {
+                  print("episode link: ${_episode.contentUrl}");
+                  _ref.read(audioController.notifier).playAction(
+                        Song(
+                            url: _episode.contentUrl!,
+                            icon: _podcast.bestArtworkUrl!,
+                            name: _episode.title,
+                            duration: _episode.duration,
+                            artist: "${_episode.author}",
+                            album: "${_podcast.collectionName}"),
+                      );
+
+                  _ref.read(historyController.notifier).saveToHistoryAction(
+                      url: _episode.contentUrl!.toString(),
+                      name: _episode.title,
+                      artist: "${_episode.author}",
+                      icon: _podcast.bestArtworkUrl!,
+                      album: "${_podcast.collectionName}",
+                      duration: _episode.duration!.inSeconds.toString(),
+                      listenedOn: DateTime.now().toString(),
+                      podcastArtWork: _podcast.bestArtworkUrl!,
+                      podcastName: "${_podcast.collectionName}");
+                },
+                icon: Icon(
+                  FeatherIcons.play,
+                  color: Theme.of(context).accentColor,
+                ),
+              )
             ],
           ),
           SizedBox(height: 8.0),

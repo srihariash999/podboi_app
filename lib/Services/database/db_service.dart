@@ -1,8 +1,11 @@
 import 'package:hive/hive.dart';
+import 'package:podboi/DataModels/ListeningHistoryItem.dart';
 import 'package:podboi/Services/conversion_helpers.dart';
 // import 'package:podboi/Services/conversion_helpers.dart';
 import 'package:podboi/Services/database/subscriptions.dart';
 import 'package:podcast_search/podcast_search.dart';
+
+Box _historyBox = Hive.box('historyBox');
 
 Future<bool> isPodcastSubbed(Item podcast) async {
   var _isSubbed = false;
@@ -69,4 +72,18 @@ Future<bool> removePodcastFromSubs(Item podcast) async {
     print(" error deleting podcast: $e");
     return false;
   }
+}
+
+Future<List<ListeningHistoryItem>> getLhiList() async {
+  List<ListeningHistoryItem> _lhis = [];
+  for (var i in _historyBox.values) {
+    _lhis.add(lhiFromMap(i));
+  }
+  return _lhis;
+}
+
+Future<bool> saveLhi(ListeningHistoryItem lhi) async {
+  print(" here to save to history yo ${lhi.name} ");
+  _historyBox.add(lhiToMap(lhi));
+  return true;
 }

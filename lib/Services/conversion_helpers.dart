@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:podboi/DataModels/ListeningHistoryItem.dart';
 import 'package:podcast_search/podcast_search.dart';
 
 Map<String, dynamic> itemToMap(Item item) {
@@ -32,6 +33,8 @@ Map<String, dynamic> itemToMap(Item item) {
     'genre': item.genre?.map((x) => genreToMap(x)).toList(),
   };
 }
+
+//$ Methods for Item class.
 
 String itemToJson(Map itemMap) => json.encode(itemMap);
 
@@ -66,6 +69,7 @@ Item itemFromMap(Map<String, dynamic> map) {
   );
 }
 
+//$ Methods for 'Genre' class
 String genreToJson(Genre genre) => json.encode(genreToMap(genre));
 
 Map<String, dynamic> genreToMap(Genre genre) {
@@ -80,4 +84,34 @@ Genre genreFromMap(Map<dynamic, dynamic> genreMap) {
     genreMap['id'] ?? 0,
     genreMap['name'] ?? 'random genre',
   );
+}
+
+// $ Methods for ListeningHistoryItem class.abstract
+
+ListeningHistoryItem lhiFromMap(Map<dynamic, dynamic> lhiMap) {
+  return ListeningHistoryItem(
+    url: lhiMap['url'],
+    name: lhiMap['name'],
+    artist: lhiMap['artist'],
+    icon: lhiMap['icon'],
+    album: lhiMap['album'],
+    duration: lhiMap['duration'],
+    listenedOn: lhiMap['listenedOn'],
+    podcastArtWork: lhiMap['podcastArtWork'],
+    podcastName: lhiMap['podcastName'],
+  );
+}
+
+Map<dynamic, dynamic> lhiToMap(ListeningHistoryItem lhi) {
+  return {
+    'url': lhi.url,
+    'name': lhi.name,
+    'artist': lhi.artist,
+    'icon': lhi.icon,
+    'album': lhi.album,
+    'duration': lhi.duration,
+    'listenedOn': lhi.listenedOn,
+    'podcastArtWork': lhi.podcastArtWork,
+    'podcastName': lhi.podcastName,
+  };
 }
