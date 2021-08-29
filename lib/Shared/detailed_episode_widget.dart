@@ -43,7 +43,7 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                       : '' + "Episode ${_episode.episode ?? ''}",
                   style: TextStyle(
                     fontSize: 12.0,
-                    color: Colors.black.withOpacity(0.40),
+                    color: Theme.of(context).accentColor.withOpacity(0.40),
                     fontFamily: 'Segoe',
                     fontWeight: FontWeight.w800,
                   ),
@@ -52,7 +52,7 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                   DateFormat('yMMMd').format(_episode.publicationDate!),
                   style: TextStyle(
                     fontSize: 12.0,
-                    color: Colors.black.withOpacity(0.40),
+                    color: Theme.of(context).accentColor.withOpacity(0.40),
                     fontFamily: 'Segoe',
                     fontWeight: FontWeight.w800,
                   ),
@@ -72,7 +72,7 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                     _episode.title,
                     style: TextStyle(
                       fontSize: 16.0,
-                      color: Colors.black.withOpacity(0.8),
+                      color: Theme.of(context).accentColor.withOpacity(0.8),
                       fontFamily: 'Segoe',
                       fontWeight: FontWeight.w400,
                     ),
@@ -92,7 +92,10 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                               album: "${_podcast.collectionName}"),
                         );
                   },
-                  icon: Icon(FeatherIcons.play))
+                  icon: Icon(
+                    FeatherIcons.play,
+                    color: Theme.of(context).accentColor,
+                  ))
             ],
           ),
           SizedBox(height: 8.0),
@@ -101,15 +104,17 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16.0),
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.white38,
             ),
             alignment: Alignment.center,
             child: ExpandablePanel(
+              theme:
+                  ExpandableThemeData(iconColor: Theme.of(context).accentColor),
               header: Text(
                 " Episode ${_episode.episode ?? ''} Description ",
                 style: TextStyle(
                   fontSize: 14.0,
-                  color: Colors.black.withOpacity(0.8),
+                  color: Theme.of(context).accentColor.withOpacity(0.8),
                   fontFamily: 'Segoe',
                   fontWeight: FontWeight.w400,
                 ),
@@ -132,7 +137,7 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                   "${_episode.duration?.inMinutes} minutes",
                   style: TextStyle(
                     fontSize: 10.0,
-                    color: Colors.black.withOpacity(0.40),
+                    color: Theme.of(context).accentColor.withOpacity(0.40),
                     fontFamily: 'Segoe',
                     fontWeight: FontWeight.w800,
                   ),
@@ -145,7 +150,7 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                       : ' -- ',
                   style: TextStyle(
                     fontSize: 10.0,
-                    color: Colors.black.withOpacity(0.40),
+                    color: Theme.of(context).accentColor.withOpacity(0.40),
                     fontFamily: 'Segoe',
                     fontWeight: FontWeight.w800,
                   ),

@@ -21,10 +21,11 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).backgroundColor,
       body: SafeArea(
         child: Column(
           children: [
-            buildTopUi(),
+            buildTopUi(context),
             buildSearchRow(context),
             Expanded(child: buildDiscoverPodcastsRow(context)),
           ],
@@ -47,16 +48,11 @@ class HomePage extends StatelessWidget {
             width: MediaQuery.of(context).size.width * 0.85,
             child: Theme(
               data: ThemeData(
-                primaryColor: Colors.black.withOpacity(0.30),
+                primaryColor: Theme.of(context).primaryColor.withOpacity(0.20),
               ),
               child: TextField(
                 readOnly: true,
                 cursorColor: Colors.black.withOpacity(0.30),
-                style: TextStyle(
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.w300,
-                  color: Colors.black.withOpacity(0.60),
-                ),
                 onTap: () {
                   showSearch(
                     context: context,
@@ -66,7 +62,7 @@ class HomePage extends StatelessWidget {
                 decoration: InputDecoration(
                   prefixIcon: Icon(
                     LineIcons.search,
-                    color: Colors.black.withOpacity(0.40),
+                    color: Theme.of(context).primaryColor,
                   ),
                   isCollapsed: true,
                   contentPadding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -74,10 +70,10 @@ class HomePage extends StatelessWidget {
                   alignLabelWithHint: true,
                   hintStyle: TextStyle(
                     fontSize: 16.0,
-                    fontWeight: FontWeight.w300,
-                    color: Colors.black.withOpacity(0.30),
+                    fontWeight: FontWeight.w500,
+                    color: Theme.of(context).primaryColor.withOpacity(0.7),
                   ),
-                  fillColor: Colors.black.withOpacity(0.05),
+                  fillColor: Theme.of(context).highlightColor.withOpacity(0.5),
                   filled: true,
                   focusColor: Colors.black.withOpacity(0.30),
                   enabledBorder: OutlineInputBorder(
@@ -116,16 +112,17 @@ class HomePage extends StatelessWidget {
               fontFamily: 'Segoe',
               fontSize: 20.0,
               fontWeight: FontWeight.w600,
-              color: Colors.black,
+              color: Theme.of(context).accentColor,
             ),
           ),
           Text(
             "Top podcasts today on Podboi in India",
             style: TextStyle(
-                fontFamily: 'Segoe',
-                fontSize: 14.0,
-                fontWeight: FontWeight.w200,
-                color: Colors.black.withOpacity(0.50)),
+              fontFamily: 'Segoe',
+              fontSize: 14.0,
+              fontWeight: FontWeight.w200,
+              color: Theme.of(context).accentColor.withOpacity(0.50),
+            ),
           ),
           SizedBox(
             height: 16.0,
@@ -143,7 +140,7 @@ class HomePage extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 16.0,
                           fontWeight: FontWeight.w500,
-                          color: Colors.black.withOpacity(0.6),
+                          color: Theme.of(context).accentColor.withOpacity(0.6),
                           fontFamily: 'Segoe',
                         ),
                       ),
@@ -193,6 +190,7 @@ class HomePage extends StatelessWidget {
                               child: PodcastDisplayWidget(
                                 name: _item.collectionName ?? 'N/A',
                                 posterUrl: _item.bestArtworkUrl ?? '',
+                                context: context,
                               ),
                             ),
                           );
@@ -206,7 +204,7 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Padding buildTopUi() {
+  Padding buildTopUi(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Column(
@@ -215,14 +213,11 @@ class HomePage extends StatelessWidget {
             height: 16.0,
           ),
           Consumer(builder: (context, ref, child) {
-            print(' homescreen built');
             String _name = ref.watch(
               profileController.select((value) => value.userName),
             );
             String _avatar = ref
                 .watch(profileController.select((value) => value.userAvatar));
-
-            print(_avatar);
             return Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.end,
@@ -232,7 +227,7 @@ class HomePage extends StatelessWidget {
                   style: TextStyle(
                     // fontFamily: 'Segoe',
                     fontSize: 26.0,
-                    color: Colors.black,
+                    color: Theme.of(context).accentColor,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -271,6 +266,7 @@ class HomePage extends StatelessWidget {
                               ? LineIcons.userNinja
                               : LineIcons.userAstronaut,
                       size: 38.0,
+                      color: Theme.of(context).accentColor,
                     ),
                   ),
                 ),
@@ -287,7 +283,7 @@ class HomePage extends StatelessWidget {
                 style: TextStyle(
                   fontFamily: 'Segoe',
                   fontSize: 16.0,
-                  color: Colors.black.withOpacity(0.50),
+                  color: Theme.of(context).accentColor.withOpacity(0.50),
                   fontWeight: FontWeight.w300,
                 ),
               ),

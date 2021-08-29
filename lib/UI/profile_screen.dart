@@ -1,8 +1,10 @@
 import 'package:feather_icons/feather_icons.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:podboi/Controllers/profile_screen_controller.dart';
+import 'package:podboi/Controllers/theme_controller.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -10,6 +12,7 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).backgroundColor,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -21,6 +24,7 @@ class ProfileScreen extends StatelessWidget {
               },
               icon: Icon(
                 FeatherIcons.arrowLeft,
+                color: Theme.of(context).accentColor,
               ),
             ),
             SizedBox(
@@ -48,7 +52,7 @@ class ProfileScreen extends StatelessWidget {
                               style: TextStyle(
                                 // fontFamily: 'Segoe',
                                 fontSize: 28.0,
-                                color: Colors.black,
+                                color: Theme.of(context).accentColor,
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
@@ -65,6 +69,7 @@ class ProfileScreen extends StatelessWidget {
                                       ? LineIcons.userNinja
                                       : LineIcons.userAstronaut,
                               size: 38.0,
+                              color: Theme.of(context).accentColor,
                             ),
                           ),
                         ),
@@ -92,7 +97,7 @@ class ProfileScreen extends StatelessWidget {
                         padding: EdgeInsets.symmetric(vertical: 12.0),
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
-                            color: Color(0xFF3d5a80),
+                            color: Theme.of(context).buttonColor,
                             borderRadius: BorderRadius.circular(18.0)),
                         child: Text(
                           'EDIT',
@@ -122,7 +127,7 @@ class ProfileScreen extends StatelessWidget {
                       style: TextStyle(
                         // fontFamily: 'Segoe',
                         fontSize: 20.0,
-                        color: Colors.black,
+                        color: Theme.of(context).accentColor,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -130,7 +135,7 @@ class ProfileScreen extends StatelessWidget {
                   Icon(
                     LineIcons.history,
                     size: 28.0,
-                    color: Colors.black.withOpacity(0.7),
+                    color: Theme.of(context).primaryColorLight,
                   ),
                 ],
               ),
@@ -141,7 +146,7 @@ class ProfileScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Divider(
-                color: Colors.black.withOpacity(0.2),
+                color: Theme.of(context).accentColor.withOpacity(0.2),
                 height: 1.0,
               ),
             ),
@@ -159,16 +164,46 @@ class ProfileScreen extends StatelessWidget {
                       style: TextStyle(
                         // fontFamily: 'Segoe',
                         fontSize: 20.0,
-                        color: Colors.black,
+                        color: Theme.of(context).accentColor,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
-                  Icon(
-                    FeatherIcons.droplet,
-                    size: 28.0,
-                    color: Colors.black.withOpacity(0.7),
-                  ),
+                  Consumer(builder: (context, ref, child) {
+                    String _currentTheme =
+                        ref.watch(themeController).currentTheme;
+                    print(" ******* switch is built: $_currentTheme");
+                    return Row(
+                      children: [
+                        Icon(
+                          _currentTheme == 'light'
+                              ? FeatherIcons.sun
+                              : FeatherIcons.moon,
+                          size: 30.0,
+                          color: Theme.of(context).primaryColorLight,
+                        ),
+                        SizedBox(
+                          width: 6.0,
+                        ),
+                        CupertinoSwitch(
+                          value: _currentTheme == 'light',
+                          trackColor: Theme.of(context).primaryColorLight,
+                          activeColor: Theme.of(context).primaryColorLight,
+                          onChanged: (val) async {
+                            if (val) {
+                              ref
+                                  .read(themeController.notifier)
+                                  .changeTheme('light');
+                            } else {
+                              ref
+                                  .read(themeController.notifier)
+                                  .changeTheme('dark');
+                            }
+                          },
+                        ),
+                      ],
+                    );
+                  }),
                 ],
               ),
             ),
@@ -178,7 +213,7 @@ class ProfileScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Divider(
-                color: Colors.black.withOpacity(0.2),
+                color: Theme.of(context).accentColor.withOpacity(0.2),
                 height: 1.0,
               ),
             ),
@@ -219,7 +254,7 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white,
+      color: Theme.of(context).backgroundColor.withOpacity(0.8),
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -234,7 +269,7 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget> {
                 style: TextStyle(
                   fontSize: 16.0,
                   fontWeight: FontWeight.w700,
-                  color: Colors.black.withOpacity(0.7),
+                  color: Theme.of(context).accentColor.withOpacity(0.9),
                   fontFamily: 'Segoe',
                 ),
               ),
@@ -246,20 +281,21 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget> {
               width: MediaQuery.of(context).size.width * 0.85,
               child: Theme(
                 data: ThemeData(
-                  primaryColor: Colors.black.withOpacity(0.30),
+                  primaryColor:
+                      Theme.of(context).primaryColor.withOpacity(0.30),
                 ),
                 child: TextField(
                   controller: _nameController,
-                  cursorColor: Colors.black.withOpacity(0.30),
+                  cursorColor: Theme.of(context).accentColor,
                   style: TextStyle(
                     fontSize: 18.0,
                     fontWeight: FontWeight.w700,
-                    color: Colors.black.withOpacity(0.60),
+                    color: Theme.of(context).accentColor,
                   ),
                   decoration: InputDecoration(
                     prefixIcon: Icon(
                       LineIcons.user,
-                      color: Colors.black.withOpacity(0.40),
+                      color: Theme.of(context).accentColor,
                     ),
                     isCollapsed: true,
                     contentPadding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -268,9 +304,10 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget> {
                     hintStyle: TextStyle(
                       fontSize: 16.0,
                       fontWeight: FontWeight.w500,
-                      color: Colors.black.withOpacity(0.50),
+                      color: Theme.of(context).accentColor.withOpacity(0.50),
                     ),
-                    fillColor: Colors.black.withOpacity(0.05),
+                    fillColor:
+                        Theme.of(context).highlightColor.withOpacity(0.4),
                     filled: true,
                     focusColor: Colors.black.withOpacity(0.30),
                     enabledBorder: OutlineInputBorder(
@@ -301,7 +338,7 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget> {
                 style: TextStyle(
                   fontSize: 16.0,
                   fontWeight: FontWeight.w700,
-                  color: Colors.black.withOpacity(0.7),
+                  color: Theme.of(context).accentColor.withOpacity(0.9),
                   fontFamily: 'Segoe',
                 ),
               ),
@@ -322,8 +359,8 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget> {
                     LineIcons.user,
                     size: 52.0,
                     color: _selectedAvatar == 'user'
-                        ? Colors.black
-                        : Colors.black.withOpacity(0.4),
+                        ? Theme.of(context).accentColor
+                        : Theme.of(context).accentColor.withOpacity(0.4),
                   ),
                 ),
                 GestureDetector(
@@ -336,8 +373,8 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget> {
                     LineIcons.userNinja,
                     size: 52.0,
                     color: _selectedAvatar == 'userNinja'
-                        ? Colors.black
-                        : Colors.black.withOpacity(0.4),
+                        ? Theme.of(context).accentColor
+                        : Theme.of(context).accentColor.withOpacity(0.4),
                   ),
                 ),
                 GestureDetector(
@@ -350,8 +387,8 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget> {
                     LineIcons.userAstronaut,
                     size: 52.0,
                     color: _selectedAvatar == 'userAstronaut'
-                        ? Colors.black
-                        : Colors.black.withOpacity(0.4),
+                        ? Theme.of(context).accentColor
+                        : Theme.of(context).accentColor.withOpacity(0.4),
                   ),
                 ),
               ],
@@ -375,7 +412,7 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget> {
                       style: TextStyle(
                         fontSize: 16.0,
                         fontWeight: FontWeight.w500,
-                        color: Color(0xFF3d5a80),
+                        color: Colors.white.withOpacity(0.9),
                       ),
                     ),
                   ),
@@ -391,7 +428,7 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget> {
                       padding: EdgeInsets.symmetric(vertical: 12.0),
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                          color: Color(0xFF3d5a80),
+                          color: Theme.of(context).buttonColor,
                           borderRadius: BorderRadius.circular(18.0)),
                       child: Text(
                         _loading ? 'Saving...' : 'Save',

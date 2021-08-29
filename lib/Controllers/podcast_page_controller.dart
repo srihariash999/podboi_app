@@ -19,6 +19,7 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
     Podcast _podcast;
     List<Episode> _episodes = [];
     try {
+      print(" feed url : $feedUrl");
       _podcast = await Podcast.loadFeed(url: feedUrl);
 
       if (_podcast.episodes != null) {

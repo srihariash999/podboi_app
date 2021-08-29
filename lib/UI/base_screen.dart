@@ -17,6 +17,7 @@ class _BaseScreenState extends State<BaseScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).backgroundColor,
       body: Column(
         children: [
           Expanded(
@@ -56,11 +57,13 @@ class _BaseScreenState extends State<BaseScreen> {
               ),
               curve: Curves.ease);
         },
+        backgroundColor: Theme.of(context).backgroundColor,
+        showUnselectedLabels: false,
         items: [
           BottomNavigationBarItem(
             activeIcon: Icon(
               Icons.home,
-              color: Color(0xFF4E3878),
+              color: Theme.of(context).accentColor,
             ),
             // ignore: deprecated_member_use
             title: Text(
@@ -68,15 +71,15 @@ class _BaseScreenState extends State<BaseScreen> {
               style: TextStyle(
                   fontSize: 12.0,
                   fontWeight: FontWeight.w500,
-                  color: Color(0xFF4E3878),
+                  color: Theme.of(context).accentColor,
                   fontFamily: 'Segoe'),
             ),
-            icon: Icon(Icons.home),
+            icon: Icon(Icons.home, color: Colors.grey.withOpacity(0.5)),
           ),
           BottomNavigationBarItem(
             activeIcon: Icon(
               Icons.book,
-              color: Color(0xFF4E3878),
+              color: Theme.of(context).accentColor,
             ),
             // ignore: deprecated_member_use
             title: Text(
@@ -84,10 +87,13 @@ class _BaseScreenState extends State<BaseScreen> {
               style: TextStyle(
                   fontSize: 12.0,
                   fontWeight: FontWeight.w500,
-                  color: Color(0xFF4E3878),
+                  color: Theme.of(context).accentColor,
                   fontFamily: 'Segoe'),
             ),
-            icon: Icon(Icons.book),
+            icon: Icon(
+              Icons.book,
+              color: Colors.grey.withOpacity(0.5),
+            ),
           ),
         ],
       ),

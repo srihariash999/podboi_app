@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
-
-
 class PodcastDisplayWidget extends StatelessWidget {
   final String posterUrl;
   final String name;
+  final BuildContext context;
   const PodcastDisplayWidget({
     Key? key,
     required this.name,
     required this.posterUrl,
+    required this.context,
   }) : super(key: key);
 
   @override
@@ -42,7 +42,7 @@ class PodcastDisplayWidget extends StatelessWidget {
                 fontFamily: 'Segoe',
                 fontSize: 13.0,
                 fontWeight: FontWeight.w400,
-                color: Colors.black,
+                color: Theme.of(context).accentColor,
               ),
             ),
           ),

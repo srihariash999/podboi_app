@@ -16,45 +16,48 @@ class _MiniPlayerState extends State<MiniPlayer> {
   double _height = 80.0;
   @override
   Widget build(BuildContext context) {
-    return Material(
-      child: Align(
-        alignment: Alignment.bottomCenter,
-        child: Consumer(
-          builder: (context, ref, child) {
-            var _contState = ref.watch(audioController);
-            if (_contState.mediaItem != null) {
-              print(" this is init");
-              return _contState.isPlayerShow == false
-                  ? Container(
-                      height: _height,
-                      width: MediaQuery.of(context).size.width,
-                      color: Colors.red.withOpacity(0.2),
-                    )
-                  : AnimatedContainer(
-                      // height: _height,
-                      clipBehavior: Clip.antiAlias,
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.black.withOpacity(0.4),
-                          width: 1.0,
-                        ),
-                        borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(16.0),
-                          topLeft: Radius.circular(16.0),
-                        ),
-                        color: Colors.grey.withOpacity(0.05),
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: Consumer(
+        builder: (context, ref, child) {
+          var _contState = ref.watch(audioController);
+          if (_contState.mediaItem != null) {
+            print(" this is init");
+            return _contState.isPlayerShow == false
+                ? Container(
+                    height: _height,
+                    width: MediaQuery.of(context).size.width,
+                    color: Colors.red.withOpacity(0.2),
+                  )
+                : AnimatedContainer(
+                    // height: _height,
+                    clipBehavior: Clip.antiAlias,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(16.0),
+                        topLeft: Radius.circular(16.0),
                       ),
-                      height: _height,
-                      duration: Duration(milliseconds: 200),
-                      child: _height == 80.0
-                          ? buildSmallPlayer(_contState, ref)
-                          : buildLargePlayer(_contState, ref),
-                    );
-            } else {
-              return Container();
-            }
-          },
-        ),
+                    ),
+                    height: _height,
+                    duration: Duration(milliseconds: 200),
+                    child: _height == 80.0
+                        ? Material(
+                            color: Theme.of(context)
+                                .highlightColor
+                                .withOpacity(0.3),
+                            child: buildSmallPlayer(_contState, ref),
+                          )
+                        : Material(
+                            color: Theme.of(context)
+                                .highlightColor
+                                .withOpacity(0.3),
+                            child: buildLargePlayer(_contState, ref),
+                          ),
+                  );
+          } else {
+            return Container();
+          }
+        },
       ),
     );
   }
@@ -68,7 +71,7 @@ class _MiniPlayerState extends State<MiniPlayer> {
         Expanded(
           flex: 5,
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               IconButton(
@@ -83,6 +86,7 @@ class _MiniPlayerState extends State<MiniPlayer> {
                 },
                 icon: Icon(
                   Icons.expand_more,
+                  color: Theme.of(context).accentColor,
                   size: 36.0,
                 ),
               ),
@@ -133,6 +137,7 @@ class _MiniPlayerState extends State<MiniPlayer> {
                         maxLines: 2,
                         style: TextStyle(
                             fontSize: 16.0,
+                            color: Theme.of(context).accentColor,
                             fontWeight: FontWeight.w500,
                             fontFamily: 'Segoe'),
                       ),
@@ -159,11 +164,13 @@ class _MiniPlayerState extends State<MiniPlayer> {
                 final playing = snapshot.data?.playing ?? false;
                 if (playing)
                   return Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       IconButton(
                         icon: Icon(
                           Icons.replay_10,
+                          color: Theme.of(context).accentColor,
                           size: 50.0,
                         ),
                         onPressed: () {
@@ -177,6 +184,7 @@ class _MiniPlayerState extends State<MiniPlayer> {
                       IconButton(
                         icon: Icon(
                           FeatherIcons.pauseCircle,
+                          color: Theme.of(context).accentColor,
                           size: 50.0,
                         ),
                         onPressed: () {
@@ -190,6 +198,7 @@ class _MiniPlayerState extends State<MiniPlayer> {
                       IconButton(
                         icon: Icon(
                           Icons.forward_10,
+                          color: Theme.of(context).accentColor,
                           size: 50.0,
                         ),
                         onPressed: () {
@@ -200,22 +209,29 @@ class _MiniPlayerState extends State<MiniPlayer> {
                     ],
                   );
                 else
-                  return IconButton(
-                      icon: Icon(
-                        FeatherIcons.playCircle,
-                        size: 42.0,
-                      ),
-                      onPressed: () {
-                        ref.read(audioController.notifier).resumeAction();
-                        // if (AudioService.running) {
-                        //   AudioService.play();
-                        // } else {
-                        //   AudioService.start(
-                        //     backgroundTaskEntrypoint:
-                        //         _backgroundTaskEntrypoint,
-                        //   );
-                        // }
-                      });
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      IconButton(
+                          icon: Icon(
+                            FeatherIcons.playCircle,
+                            color: Theme.of(context).accentColor,
+                            size: 42.0,
+                          ),
+                          onPressed: () {
+                            ref.read(audioController.notifier).resumeAction();
+                          }),
+                      IconButton(
+                          icon: Icon(
+                            FeatherIcons.stopCircle,
+                            color: Theme.of(context).accentColor,
+                            size: 42.0,
+                          ),
+                          onPressed: () {
+                            ref.read(audioController.notifier).stopAction();
+                          }),
+                    ],
+                  );
               }),
         ),
         StreamBuilder<Duration>(
@@ -232,6 +248,9 @@ class _MiniPlayerState extends State<MiniPlayer> {
                           children: [
                             Text(
                               _formatDuration(snap.data!),
+                              style: TextStyle(
+                                color: Theme.of(context).accentColor,
+                              ),
                             ),
                             Text(
                               '- ' +
@@ -241,6 +260,9 @@ class _MiniPlayerState extends State<MiniPlayer> {
                                                 .inSeconds -
                                             snap.data!.inSeconds),
                                   ),
+                              style: TextStyle(
+                                color: Theme.of(context).accentColor,
+                              ),
                             ),
                           ],
                         ),
@@ -300,6 +322,7 @@ class _MiniPlayerState extends State<MiniPlayer> {
                   children: [
                     Icon(
                       Icons.expand_less,
+                      color: Theme.of(context).accentColor,
                     ),
                     Flexible(
                         child: Hero(
@@ -324,7 +347,10 @@ class _MiniPlayerState extends State<MiniPlayer> {
                           _contState.mediaItem != null
                               ? _contState.mediaItem!.title
                               : "  ",
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
                           style: TextStyle(
+                            color: Theme.of(context).accentColor,
                             fontSize: 14.0,
                             fontWeight: FontWeight.w500,
                             fontFamily: 'Segoe',
@@ -348,6 +374,7 @@ class _MiniPlayerState extends State<MiniPlayer> {
                           IconButton(
                               icon: Icon(
                                 Icons.replay_10,
+                                color: Theme.of(context).accentColor,
                                 size: 32.0,
                               ),
                               onPressed: () {
@@ -357,6 +384,7 @@ class _MiniPlayerState extends State<MiniPlayer> {
                           IconButton(
                               icon: Icon(
                                 FeatherIcons.pauseCircle,
+                                color: Theme.of(context).accentColor,
                                 size: 32.0,
                               ),
                               onPressed: () {
@@ -368,6 +396,7 @@ class _MiniPlayerState extends State<MiniPlayer> {
                           IconButton(
                               icon: Icon(
                                 Icons.forward_10,
+                                color: Theme.of(context).accentColor,
                                 size: 32.0,
                               ),
                               onPressed: () {
@@ -386,6 +415,7 @@ class _MiniPlayerState extends State<MiniPlayer> {
                           IconButton(
                               icon: Icon(
                                 FeatherIcons.playCircle,
+                                color: Theme.of(context).accentColor,
                                 size: 32.0,
                               ),
                               onPressed: () {
@@ -397,6 +427,7 @@ class _MiniPlayerState extends State<MiniPlayer> {
                           IconButton(
                               icon: Icon(
                                 FeatherIcons.stopCircle,
+                                color: Theme.of(context).accentColor,
                                 size: 32.0,
                               ),
                               onPressed: () {

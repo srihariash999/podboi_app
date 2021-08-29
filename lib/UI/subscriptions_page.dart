@@ -17,6 +17,7 @@ class SubscriptionsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).backgroundColor,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -29,7 +30,7 @@ class SubscriptionsPage extends StatelessWidget {
                 style: TextStyle(
                   fontFamily: 'Segoe',
                   fontSize: 22.0,
-                  color: Colors.black,
+                  color: Theme.of(context).accentColor,
                   fontWeight: FontWeight.w700,
                 ),
               ),
