@@ -13,8 +13,9 @@ class CustomSearchDelegate extends SearchDelegate<String> {
   ThemeData appBarTheme(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     return theme.copyWith(
-      primaryColor: Colors.white,
+      primaryColor: Theme.of(context).accentColor,
       appBarTheme: AppBarTheme(
+        backgroundColor: Theme.of(context).backgroundColor,
         elevation: 0.0,
         iconTheme: IconThemeData(
           color: Colors.black.withOpacity(0.7),
@@ -25,7 +26,7 @@ class CustomSearchDelegate extends SearchDelegate<String> {
           fontSize: 16.0,
           decoration: TextDecoration.none,
           fontWeight: FontWeight.w400,
-          color: Colors.black.withOpacity(0.8),
+          color: Theme.of(context).accentColor.withOpacity(0.8),
           fontFamily: 'Segoe',
         ),
       ),
@@ -35,12 +36,12 @@ class CustomSearchDelegate extends SearchDelegate<String> {
         hintStyle: TextStyle(
           fontSize: 16.0,
           fontWeight: FontWeight.w400,
-          color: Colors.black.withOpacity(0.4),
+          color: Theme.of(context).accentColor.withOpacity(0.4),
           fontFamily: 'Segoe',
         ),
-        fillColor: Colors.black.withOpacity(0.05),
+        fillColor: Theme.of(context).highlightColor.withOpacity(0.4),
         filled: true,
-        focusColor: Colors.black.withOpacity(0.30),
+        focusColor: Theme.of(context).accentColor.withOpacity(0.30),
         enabledBorder: OutlineInputBorder(
           borderSide: BorderSide.none,
           borderRadius: BorderRadius.circular(20.0),
@@ -62,7 +63,10 @@ class CustomSearchDelegate extends SearchDelegate<String> {
 
   @override
   Widget buildLeading(BuildContext context) => IconButton(
-        icon: Icon(Icons.close),
+        icon: Icon(
+          Icons.close,
+          color: Theme.of(context).accentColor,
+        ),
         onPressed: () => Navigator.of(context).pop(),
       );
 
@@ -77,24 +81,26 @@ class CustomSearchDelegate extends SearchDelegate<String> {
       }
       return _viewController.isLoading
           ? Container(
-              color: Colors.white,
+              color: Theme.of(context).buttonColor,
               alignment: Alignment.center,
               child: CircularProgressIndicator(
                 strokeWidth: 1.0,
-                color: Colors.black,
+                color: Theme.of(context).highlightColor,
               ),
             )
           : _viewController.searchResults.length == 0
               ? Container(
-                  color: Colors.white,
+                  color: Theme.of(context).backgroundColor,
                   alignment: Alignment.center,
-                  child: Text(
-                    " Search for a podcast",
-                    style: Theme.of(context).primaryTextTheme.headline3,
-                  ),
+                  child: Text(" Search for a podcast",
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.w500,
+                        color: Theme.of(context).accentColor,
+                      )),
                 )
               : Container(
-                  color: Colors.white,
+                  color: Theme.of(context).backgroundColor,
                   child: ListView.builder(
                       itemCount: _viewController.searchResults.length,
                       itemBuilder: (context, index) {
@@ -181,7 +187,8 @@ class CustomSearchDelegate extends SearchDelegate<String> {
                                                     fontFamily: 'Segoe',
                                                     fontSize: 14.0,
                                                     fontWeight: FontWeight.w500,
-                                                    color: Colors.black,
+                                                    color: Theme.of(context)
+                                                        .accentColor,
                                                   ),
                                                 ),
                                               ),
@@ -205,7 +212,8 @@ class CustomSearchDelegate extends SearchDelegate<String> {
                                                   fontFamily: 'Segoe',
                                                   fontSize: 12.0,
                                                   fontWeight: FontWeight.w200,
-                                                  color: Colors.black
+                                                  color: Theme.of(context)
+                                                      .accentColor
                                                       .withOpacity(0.50),
                                                 ),
                                               ),
@@ -219,7 +227,8 @@ class CustomSearchDelegate extends SearchDelegate<String> {
                                                     fontFamily: 'Segoe',
                                                     fontSize: 12.0,
                                                     fontWeight: FontWeight.w200,
-                                                    color: Colors.black
+                                                    color: Theme.of(context)
+                                                        .accentColor
                                                         .withOpacity(0.50),
                                                   ),
                                                 ),
@@ -239,10 +248,8 @@ class CustomSearchDelegate extends SearchDelegate<String> {
     });
   }
 
-  
-
   @override
   Widget buildSuggestions(BuildContext context) => Container(
-        color: Colors.white,
+        color: Theme.of(context).backgroundColor,
       );
 }

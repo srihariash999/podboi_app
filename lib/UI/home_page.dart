@@ -2,137 +2,34 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:podboi/Controllers/home_screen_controller.dart';
+import 'package:podboi/Controllers/profile_screen_controller.dart';
 // import 'package:podboi/Shared/episode_display_widget.dart';
 import 'package:podboi/Shared/podcast_display_widget.dart';
 import 'package:podboi/UI/podcast_page.dart';
+import 'package:podboi/UI/profile_screen.dart';
 import 'package:podboi/UI/search_page.dart';
 import 'package:podcast_search/podcast_search.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
+  HomePage({Key? key, required this.ref}) : super(key: key);
+  final WidgetRef ref;
+
+  Future<void> _refresh() async {
+    ref.read(homeScreenController.notifier).getTopPodcasts();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).backgroundColor,
       body: SafeArea(
-        child: ListView(
-          physics: BouncingScrollPhysics(),
+        child: Column(
           children: [
-            buildTopUi(),
+            buildTopUi(context),
             buildSearchRow(context),
-            buildDiscoverPodcastsRow(context),
-            buildNewEpisodes(),
+            Expanded(child: buildDiscoverPodcastsRow(context)),
           ],
         ),
-      ),
-    );
-  }
-
-  Padding buildNewEpisodes() {
-    return Padding(
-      padding: const EdgeInsets.only(
-        left: 16.0,
-        right: 16.0,
-        top: 18.0,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "New Episodes",
-            style: TextStyle(
-              fontFamily: 'Segoe',
-              fontSize: 20.0,
-              fontWeight: FontWeight.w600,
-              color: Colors.black,
-            ),
-          ),
-          SizedBox(
-            height: 16.0,
-          ),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16.0),
-            ),
-            padding: EdgeInsets.all(20.0),
-            child: Center(
-              child: Text(
-                ' No new episodes to show',
-                style: TextStyle(
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.black.withOpacity(0.6),
-                  fontFamily: 'Segoe',
-                ),
-              ),
-            ),
-            // child: Column(
-            //   children: [
-            //     EpisodeDisplayWidget(
-            //       posterUrl:
-            //           "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/99%25_Invisible_logo.jpg/1200px-99%25_Invisible_logo.jpg",
-            //       episodeTitle: "454- War,Famine,Pestilence, and Design",
-            //       episodeDuration: "31m",
-            //       episodeUploadDate: "Yesterday",
-            //     ),
-            //     Padding(
-            //       padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            //       child: Divider(
-            //         color: Colors.black.withOpacity(0.20),
-            //       ),
-            //     ),
-            //     EpisodeDisplayWidget(
-            //       posterUrl:
-            //           "https://upload.wikimedia.org/wikipedia/en/e/e1/No_Such_Thing_As_A_Fish_logo.jpg",
-            //       episodeTitle:
-            //           "No Such Thing As Crossing the Futility Boundary",
-            //       episodeDuration: "51m",
-            //       episodeUploadDate: "Friday",
-            //     ),
-            //     Padding(
-            //       padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            //       child: Divider(
-            //         color: Colors.black.withOpacity(0.20),
-            //       ),
-            //     ),
-            //     EpisodeDisplayWidget(
-            //       posterUrl:
-            //           "https://megaphone.imgix.net/podcasts/9a4c2c2a-3e8b-11e8-bd53-9b1115bac0fa/image/uploads_2F1525125320167-fd4zi01j82i-e7a9a485ccc4505ac3ddaacdb5fbfd57_2Fdecoder-ring-3000px.jpg?w=525&h=525",
-            //       episodeTitle: "Selling Out",
-            //       episodeDuration: "49m",
-            //       episodeUploadDate: "Friday",
-            //     ),
-            //     Padding(
-            //       padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            //       child: Divider(
-            //         color: Colors.black.withOpacity(0.20),
-            //       ),
-            //     ),
-            //     EpisodeDisplayWidget(
-            //       posterUrl:
-            //           "https://is4-ssl.mzstatic.com/image/thumb/Podcasts125/v4/2e/45/35/2e4535eb-6609-0b06-c703-69b2420b433d/mza_11307628467914885774.png/1200x1200bb.jpg",
-            //       episodeTitle: "Your Dinosaur Questions Answered",
-            //       episodeDuration: "1h",
-            //       episodeUploadDate: "21 July",
-            //     ),
-            //     Padding(
-            //       padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            //       child: Divider(
-            //         color: Colors.black.withOpacity(0.20),
-            //       ),
-            //     ),
-            //     EpisodeDisplayWidget(
-            //       posterUrl:
-            //           "https://images.squarespace-cdn.com/content/v1/53bc57f0e4b00052ff4d7ccd/1479474490617-GFZQ09UDJYDS482NVHLJ/lore-logo-light.png?format=1500w",
-            //       episodeTitle: "Epsiode 175: Head Case ",
-            //       episodeDuration: "39m",
-            //       episodeUploadDate: "19 July",
-            //     ),
-            //   ],
-            // ),
-          ),
-        ],
       ),
     );
   }
@@ -151,16 +48,11 @@ class HomePage extends StatelessWidget {
             width: MediaQuery.of(context).size.width * 0.85,
             child: Theme(
               data: ThemeData(
-                primaryColor: Colors.black.withOpacity(0.30),
+                primaryColor: Theme.of(context).primaryColor.withOpacity(0.20),
               ),
               child: TextField(
                 readOnly: true,
                 cursorColor: Colors.black.withOpacity(0.30),
-                style: TextStyle(
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.w300,
-                  color: Colors.black.withOpacity(0.60),
-                ),
                 onTap: () {
                   showSearch(
                     context: context,
@@ -170,7 +62,7 @@ class HomePage extends StatelessWidget {
                 decoration: InputDecoration(
                   prefixIcon: Icon(
                     LineIcons.search,
-                    color: Colors.black.withOpacity(0.40),
+                    color: Theme.of(context).primaryColor,
                   ),
                   isCollapsed: true,
                   contentPadding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -178,10 +70,10 @@ class HomePage extends StatelessWidget {
                   alignLabelWithHint: true,
                   hintStyle: TextStyle(
                     fontSize: 16.0,
-                    fontWeight: FontWeight.w300,
-                    color: Colors.black.withOpacity(0.30),
+                    fontWeight: FontWeight.w500,
+                    color: Theme.of(context).primaryColor.withOpacity(0.7),
                   ),
-                  fillColor: Colors.black.withOpacity(0.05),
+                  fillColor: Theme.of(context).highlightColor.withOpacity(0.5),
                   filled: true,
                   focusColor: Colors.black.withOpacity(0.30),
                   enabledBorder: OutlineInputBorder(
@@ -220,74 +112,99 @@ class HomePage extends StatelessWidget {
               fontFamily: 'Segoe',
               fontSize: 20.0,
               fontWeight: FontWeight.w600,
-              color: Colors.black,
+              color: Theme.of(context).accentColor,
             ),
           ),
           Text(
-            "Top podcasts today on Podboi",
+            "Top podcasts today on Podboi in India",
             style: TextStyle(
-                fontFamily: 'Segoe',
-                fontSize: 14.0,
-                fontWeight: FontWeight.w200,
-                color: Colors.black.withOpacity(0.50)),
+              fontFamily: 'Segoe',
+              fontSize: 14.0,
+              fontWeight: FontWeight.w200,
+              color: Theme.of(context).accentColor.withOpacity(0.50),
+            ),
           ),
           SizedBox(
             height: 16.0,
           ),
-          Container(
-              height: 160.0,
-              child: Consumer(builder: (context, ref, child) {
-                List<Item> _topPodcasts = ref.watch(
-                  homeScreenController.select((value) => value.topPodcasts),
-                );
-                return ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  physics: BouncingScrollPhysics(),
-                  itemCount: _topPodcasts.length,
-                  itemBuilder: (context, index) {
-                    Item _item = _topPodcasts[index];
-                    return GestureDetector(
-                      onTap: () {
-                        Navigator.of(context).push(
-                          PageRouteBuilder(
-                            transitionDuration: Duration(milliseconds: 500),
-                            transitionsBuilder: (context, animation,
-                                secondaryAnimation, child) {
-                              const begin = Offset(1.0, 0.0);
-                              const end = Offset.zero;
-                              const curve = Curves.ease;
+          Expanded(
+            child: Consumer(builder: (context, ref, child) {
+              List<Item> _topPodcasts = ref.watch(
+                homeScreenController.select((value) => value.topPodcasts),
+              );
+              return _topPodcasts.length == 0
+                  ? Container(
+                      alignment: Alignment.center,
+                      child: Text(
+                        " No Podcasts to show",
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.w500,
+                          color: Theme.of(context).accentColor.withOpacity(0.6),
+                          fontFamily: 'Segoe',
+                        ),
+                      ),
+                    )
+                  : RefreshIndicator(
+                      onRefresh: _refresh,
+                      child: GridView.builder(
+                        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                          maxCrossAxisExtent: 150.0,
+                          mainAxisExtent: 160.0,
+                        ),
+                        physics: BouncingScrollPhysics(),
+                        itemCount: _topPodcasts.length,
+                        itemBuilder: (context, index) {
+                          Item _item = _topPodcasts[index];
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                PageRouteBuilder(
+                                  transitionDuration:
+                                      Duration(milliseconds: 500),
+                                  transitionsBuilder: (context, animation,
+                                      secondaryAnimation, child) {
+                                    const begin = Offset(1.0, 0.0);
+                                    const end = Offset.zero;
+                                    const curve = Curves.ease;
 
-                              final tween = Tween(begin: begin, end: end);
-                              final curvedAnimation = CurvedAnimation(
-                                parent: animation,
-                                curve: curve,
-                              );
+                                    final tween = Tween(begin: begin, end: end);
+                                    final curvedAnimation = CurvedAnimation(
+                                      parent: animation,
+                                      curve: curve,
+                                    );
 
-                              return SlideTransition(
-                                position: tween.animate(curvedAnimation),
-                                child: child,
+                                    return SlideTransition(
+                                      position: tween.animate(curvedAnimation),
+                                      child: child,
+                                    );
+                                  },
+                                  pageBuilder: (_, __, ___) => PodcastPage(
+                                    podcast: _item,
+                                  ),
+                                ),
                               );
                             },
-                            pageBuilder: (_, __, ___) => PodcastPage(
-                              podcast: _item,
+                            child: Hero(
+                              tag: 'logo${_item.collectionId}',
+                              child: PodcastDisplayWidget(
+                                name: _item.collectionName ?? 'N/A',
+                                posterUrl: _item.bestArtworkUrl ?? '',
+                                context: context,
+                              ),
                             ),
-                          ),
-                        );
-                      },
-                      child: PodcastDisplayWidget(
-                        name: _item.collectionName ?? 'N/A',
-                        posterUrl: _item.bestArtworkUrl ?? '',
+                          );
+                        },
                       ),
                     );
-                  },
-                );
-              })),
+            }),
+          ),
         ],
       ),
     );
   }
 
-  Padding buildTopUi() {
+  Padding buildTopUi(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Column(
@@ -295,44 +212,69 @@ class HomePage extends StatelessWidget {
           SizedBox(
             height: 16.0,
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              GestureDetector(
-                onTap: () {},
-                child: Icon(
-                  LineIcons.bars,
+          Consumer(builder: (context, ref, child) {
+            String _name = ref.watch(
+              profileController.select((value) => value.userName),
+            );
+            String _avatar = ref
+                .watch(profileController.select((value) => value.userAvatar));
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  "Hi $_name",
+                  style: TextStyle(
+                    // fontFamily: 'Segoe',
+                    fontSize: 26.0,
+                    color: Theme.of(context).accentColor,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
-              ),
-              Container(
-                height: 60.0,
-                width: 55.0,
-                clipBehavior: Clip.antiAlias,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.0),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      PageRouteBuilder(
+                          transitionDuration: Duration(milliseconds: 500),
+                          transitionsBuilder:
+                              (context, animation, secondaryAnimation, child) {
+                            const begin = Offset(1.0, 0.0);
+                            const end = Offset.zero;
+                            const curve = Curves.ease;
+
+                            final tween = Tween(begin: begin, end: end);
+                            final curvedAnimation = CurvedAnimation(
+                              parent: animation,
+                              curve: curve,
+                            );
+
+                            return SlideTransition(
+                              position: tween.animate(curvedAnimation),
+                              child: child,
+                            );
+                          },
+                          pageBuilder: (_, __, ___) => ProfileScreen()),
+                    );
+                  },
+                  child: Container(
+                    height: 60.0,
+                    width: 55.0,
+                    child: Icon(
+                      _avatar == 'user'
+                          ? LineIcons.user
+                          : _avatar == 'userNinja'
+                              ? LineIcons.userNinja
+                              : LineIcons.userAstronaut,
+                      size: 38.0,
+                      color: Theme.of(context).accentColor,
+                    ),
+                  ),
                 ),
-                child: Image.network(
-                  "https://images.unsplash.com/photo-1581803118522-7b72a50f7e9f?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=334&q=80",
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ],
-          ),
+              ],
+            );
+          }),
           SizedBox(
             height: 16.0,
-          ),
-          Row(
-            children: [
-              Text(
-                "Hi Howell",
-                style: TextStyle(
-                  // fontFamily: 'Segoe',
-                  fontSize: 26.0,
-                  color: Colors.black,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ],
           ),
           Row(
             children: [
@@ -341,7 +283,7 @@ class HomePage extends StatelessWidget {
                 style: TextStyle(
                   fontFamily: 'Segoe',
                   fontSize: 16.0,
-                  color: Colors.black.withOpacity(0.50),
+                  color: Theme.of(context).accentColor.withOpacity(0.50),
                   fontWeight: FontWeight.w300,
                 ),
               ),
@@ -352,36 +294,3 @@ class HomePage extends StatelessWidget {
     );
   }
 }
-
-
-
-
-/*
-
-PodcastDisplayWidget(
-                      name: "99% invisible",
-                      posterUrl:
-                          "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/99%25_Invisible_logo.jpg/1200px-99%25_Invisible_logo.jpg",
-                    ),
-                    PodcastDisplayWidget(
-                      name: "No Such Thing As A Fish",
-                      posterUrl:
-                          "https://upload.wikimedia.org/wikipedia/en/e/e1/No_Such_Thing_As_A_Fish_logo.jpg",
-                    ),
-                    PodcastDisplayWidget(
-                      name: "Decoder Ring",
-                      posterUrl:
-                          "https://megaphone.imgix.net/podcasts/9a4c2c2a-3e8b-11e8-bd53-9b1115bac0fa/image/uploads_2F1525125320167-fd4zi01j82i-e7a9a485ccc4505ac3ddaacdb5fbfd57_2Fdecoder-ring-3000px.jpg?w=525&h=525",
-                    ),
-                    PodcastDisplayWidget(
-                      name: "Terrible Lizards",
-                      posterUrl:
-                          "https://is4-ssl.mzstatic.com/image/thumb/Podcasts125/v4/2e/45/35/2e4535eb-6609-0b06-c703-69b2420b433d/mza_11307628467914885774.png/1200x1200bb.jpg",
-                    ),
-                    PodcastDisplayWidget(
-                      name: "Lore",
-                      posterUrl:
-                          "https://images.squarespace-cdn.com/content/v1/53bc57f0e4b00052ff4d7ccd/1479474490617-GFZQ09UDJYDS482NVHLJ/lore-logo-light.png?format=1500w",
-                    ),
-
-*/

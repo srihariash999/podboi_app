@@ -16,18 +16,30 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
   Future<void> loadPodcastEpisodes(String feedUrl) async {
     state = state.copyWith(isLoading: true);
     bool _isSubbed = await isPodcastSubbed(podcast);
-    Podcast _podcast = await Podcast.loadFeed(url: feedUrl);
+    Podcast _podcast;
     List<Episode> _episodes = [];
-    if (_podcast.episodes != null) {
-      for (var i in _podcast.episodes!) {
-        _episodes.add(i);
+    try {
+      print(" feed url : $feedUrl");
+      _podcast = await Podcast.loadFeed(url: feedUrl);
+
+      if (_podcast.episodes != null) {
+        for (var i in _podcast.episodes!) {
+          _episodes.add(i);
+        }
       }
+      state = state.copyWith(
+        podcastEpisodes: _episodes,
+        isLoading: false,
+        isSubscribed: _isSubbed,
+      );
+    } on PodcastFailedException catch (e) {
+      print(" error in getting pod eps: ${e.toString()}");
+      state = state.copyWith(
+        podcastEpisodes: _episodes,
+        isLoading: false,
+        isSubscribed: _isSubbed,
+      );
     }
-    state = state.copyWith(
-      podcastEpisodes: _episodes,
-      isLoading: false,
-      isSubscribed: _isSubbed,
-    );
   }
 
   saveToSubscriptionsAction(Item podcast) async {

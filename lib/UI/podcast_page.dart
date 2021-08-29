@@ -2,10 +2,11 @@ import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:podboi/Controllers/audio_controller.dart';
+// import 'package:podboi/Controllers/audio_controller.dart';
 import 'package:podboi/Controllers/podcast_page_controller.dart';
 import 'package:podboi/Shared/detailed_episode_widget.dart';
-import 'package:podboi/misc/database.dart';
+import 'package:podboi/UI/mini_player.dart';
+// import 'package:podboi/misc/database.dart';
 import 'package:podcast_search/podcast_search.dart';
 
 class PodcastPage extends StatelessWidget {
@@ -15,7 +16,7 @@ class PodcastPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).backgroundColor,
       body: SafeArea(
         child: Column(
           children: [
@@ -36,7 +37,7 @@ class PodcastPage extends StatelessWidget {
                       ? Container(
                           alignment: Alignment.center,
                           child: CircularProgressIndicator(
-                            color: Colors.black,
+                            color: Theme.of(context).accentColor,
                             strokeWidth: 1,
                           ),
                         )
@@ -49,7 +50,9 @@ class PodcastPage extends StatelessWidget {
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 20.0),
                                 child: Divider(
-                                  color: Colors.black.withOpacity(0.2),
+                                  color: Theme.of(context)
+                                      .accentColor
+                                      .withOpacity(0.2),
                                 ),
                               );
                             },
@@ -57,23 +60,10 @@ class PodcastPage extends StatelessWidget {
                             itemBuilder: (context, index) {
                               Episode _episode =
                                   _viewController.podcastEpisodes[index];
-                              return GestureDetector(
-                                onTap: () async {
-                                  print("episode link: ${_episode.contentUrl}");
-                                  await ref
-                                      .read(audioController.notifier)
-                                      .playAction(
-                                        Song(
-                                            url: _episode.contentUrl!,
-                                            icon: podcast.bestArtworkUrl!,
-                                            name: _episode.title,
-                                            duration: _episode.duration,
-                                            artist: "${_episode.author}",
-                                            album: _episode.description),
-                                      );
-                                },
-                                child: DetailedEpsiodeViewWidget(
-                                    episode: _episode),
+                              return DetailedEpsiodeViewWidget(
+                                episode: _episode,
+                                ref: ref,
+                                podcast: podcast,
                               );
                             },
                           ),
@@ -81,6 +71,7 @@ class PodcastPage extends StatelessWidget {
                 },
               ),
             ),
+            Align(alignment: Alignment.bottomCenter, child: MiniPlayer()),
           ],
         ),
       ),
@@ -102,7 +93,10 @@ class PodcastPage extends StatelessWidget {
             },
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 12.0),
-              child: Icon(Icons.arrow_back),
+              child: Icon(
+                Icons.arrow_back,
+                color: Theme.of(context).accentColor,
+              ),
             ),
           ),
           Expanded(
@@ -142,7 +136,8 @@ class PodcastPage extends StatelessWidget {
                         podcast.collectionName ?? 'N/A',
                         style: TextStyle(
                           fontSize: 18.0,
-                          color: Colors.black.withOpacity(0.70),
+                          color:
+                              Theme.of(context).accentColor.withOpacity(0.70),
                           fontFamily: 'Segoe',
                           fontWeight: FontWeight.w800,
                         ),
@@ -164,7 +159,9 @@ class PodcastPage extends StatelessWidget {
                                     .format(podcast.releaseDate!),
                                 style: TextStyle(
                                   fontSize: 14.0,
-                                  color: Colors.black.withOpacity(0.50),
+                                  color: Theme.of(context)
+                                      .accentColor
+                                      .withOpacity(0.50),
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -175,7 +172,9 @@ class PodcastPage extends StatelessWidget {
                                 podcast.country ?? '',
                                 style: TextStyle(
                                   fontSize: 14.0,
-                                  color: Colors.black.withOpacity(0.50),
+                                  color: Theme.of(context)
+                                      .accentColor
+                                      .withOpacity(0.50),
                                   // fontFamily: 'Segoe',
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -198,7 +197,9 @@ class PodcastPage extends StatelessWidget {
                                     gName,
                                     style: TextStyle(
                                       fontSize: 12.0,
-                                      color: Colors.black.withOpacity(0.70),
+                                      color: Theme.of(context)
+                                          .accentColor
+                                          .withOpacity(0.70),
                                       fontFamily: 'Segoe',
                                       fontWeight: FontWeight.w500,
                                     ),
@@ -233,8 +234,8 @@ class PodcastPage extends StatelessWidget {
                           width: 110.0,
                           height: 1.0,
                           child: LinearProgressIndicator(
-                            color: Colors.black,
-                            backgroundColor: Colors.white,
+                            color: Theme.of(context).accentColor,
+                            backgroundColor: Theme.of(context).highlightColor,
                             minHeight: 1,
                           ),
                         )
@@ -261,7 +262,7 @@ class PodcastPage extends StatelessWidget {
                                         fontFamily: 'Segoe',
                                         fontSize: 16.0,
                                         fontWeight: FontWeight.w400,
-                                        color: Colors.black.withOpacity(0.7),
+                                        color: Colors.green.withOpacity(0.7),
                                       ),
                                     ),
                                     SizedBox(
@@ -295,7 +296,7 @@ class PodcastPage extends StatelessWidget {
                                         fontFamily: 'Segoe',
                                         fontSize: 16.0,
                                         fontWeight: FontWeight.w400,
-                                        color: Colors.black.withOpacity(0.7),
+                                        color: Colors.orange.withOpacity(0.7),
                                       ),
                                     ),
                                     SizedBox(
@@ -317,7 +318,7 @@ class PodcastPage extends StatelessWidget {
                       "Content Advisory: ",
                       style: TextStyle(
                         fontSize: 12.0,
-                        color: Colors.black.withOpacity(0.50),
+                        color: Theme.of(context).accentColor.withOpacity(0.50),
                         fontFamily: 'Segoe',
                         fontWeight: FontWeight.w600,
                       ),
@@ -326,7 +327,7 @@ class PodcastPage extends StatelessWidget {
                       "${podcast.contentAdvisoryRating}",
                       style: TextStyle(
                         fontSize: 12.0,
-                        color: Colors.black.withOpacity(0.80),
+                        color: Theme.of(context).accentColor.withOpacity(0.80),
                         fontFamily: 'Segoe',
                         fontWeight: FontWeight.w600,
                       ),

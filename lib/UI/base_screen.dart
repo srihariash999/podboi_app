@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podboi/UI/home_page.dart';
+import 'package:podboi/UI/mini_player.dart';
 import 'package:podboi/UI/subscriptions_page.dart';
 
 class BaseScreen extends StatefulWidget {
@@ -15,21 +17,33 @@ class _BaseScreenState extends State<BaseScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: PageView.builder(
-        controller: _pageController,
-        itemCount: 2,
-        onPageChanged: (newIndex) {
-          setState(() {
-            _selectedPage = newIndex;
-          });
-        },
-        itemBuilder: (context, index) {
-          if (index == 0) {
-            return HomePage();
-          } else {
-            return SubscriptionsPage();
-          }
-        },
+      backgroundColor: Theme.of(context).backgroundColor,
+      body: Column(
+        children: [
+          Expanded(
+            child: PageView.builder(
+              controller: _pageController,
+              itemCount: 2,
+              onPageChanged: (newIndex) {
+                setState(() {
+                  _selectedPage = newIndex;
+                });
+              },
+              itemBuilder: (context, index) {
+                if (index == 0) {
+                  return Consumer(builder: (context, ref, child) {
+                    return HomePage(
+                      ref: ref,
+                    );
+                  });
+                } else {
+                  return SubscriptionsPage();
+                }
+              },
+            ),
+          ),
+          Align(alignment: Alignment.bottomCenter, child: MiniPlayer()),
+        ],
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedPage,
@@ -43,11 +57,13 @@ class _BaseScreenState extends State<BaseScreen> {
               ),
               curve: Curves.ease);
         },
+        backgroundColor: Theme.of(context).backgroundColor,
+        showUnselectedLabels: false,
         items: [
           BottomNavigationBarItem(
             activeIcon: Icon(
               Icons.home,
-              color: Color(0xFF4E3878),
+              color: Theme.of(context).accentColor,
             ),
             // ignore: deprecated_member_use
             title: Text(
@@ -55,15 +71,15 @@ class _BaseScreenState extends State<BaseScreen> {
               style: TextStyle(
                   fontSize: 12.0,
                   fontWeight: FontWeight.w500,
-                  color: Color(0xFF4E3878),
+                  color: Theme.of(context).accentColor,
                   fontFamily: 'Segoe'),
             ),
-            icon: Icon(Icons.home),
+            icon: Icon(Icons.home, color: Colors.grey.withOpacity(0.5)),
           ),
           BottomNavigationBarItem(
             activeIcon: Icon(
               Icons.book,
-              color: Color(0xFF4E3878),
+              color: Theme.of(context).accentColor,
             ),
             // ignore: deprecated_member_use
             title: Text(
@@ -71,10 +87,13 @@ class _BaseScreenState extends State<BaseScreen> {
               style: TextStyle(
                   fontSize: 12.0,
                   fontWeight: FontWeight.w500,
-                  color: Color(0xFF4E3878),
+                  color: Theme.of(context).accentColor,
                   fontFamily: 'Segoe'),
             ),
-            icon: Icon(Icons.book),
+            icon: Icon(
+              Icons.book,
+              color: Colors.grey.withOpacity(0.5),
+            ),
           ),
         ],
       ),
