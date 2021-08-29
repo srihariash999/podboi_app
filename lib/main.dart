@@ -22,6 +22,7 @@ void main() async {
 
   await Hive.openBox('subscriptionsBox');
   await Hive.openBox('generalBox');
+  await Hive.openBox('historyBox');
 
   runApp(
     ProviderScope(
@@ -46,6 +47,7 @@ class _MyAppState extends State<MyApp> {
       SystemChrome.setSystemUIOverlayStyle(
           SystemUiOverlayStyle(statusBarColor: Theme.of(context).accentColor));
       return MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
         theme: _currTheme,
         home: _name == null ? WelcomePage() : BaseScreen(),
