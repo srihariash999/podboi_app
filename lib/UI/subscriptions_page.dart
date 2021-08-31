@@ -103,21 +103,42 @@ class SubscriptionsPage extends StatelessWidget {
                                     ),
                                   );
                                 },
-                                child: Hero(
-                                  tag: 'logo${_podcast.collectionId}',
-                                  child: Container(
-                                    height: 100.0,
-                                    width: 100.0,
-                                    // margin: EdgeInsets.all(4.0),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(12.0),
+                                child: Stack(
+                                  children: [
+                                    Container(
+                                      height: 100.0,
+                                      width: 100.0,
+                                      // margin: EdgeInsets.all(4.0),
+                                      decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(12.0),
+                                      ),
+                                      clipBehavior: Clip.antiAlias,
+                                      child: Center(
+                                        child: Text(
+                                          '${_podcast.collectionName}',
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
                                     ),
-                                    clipBehavior: Clip.antiAlias,
-                                    child: Image.network(
-                                      _podcast.bestArtworkUrl ?? '',
-                                      fit: BoxFit.cover,
+                                    Hero(
+                                      tag: 'logo${_podcast.collectionId}',
+                                      child: Container(
+                                        height: 100.0,
+                                        width: 100.0,
+                                        // margin: EdgeInsets.all(4.0),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(12.0),
+                                        ),
+                                        clipBehavior: Clip.antiAlias,
+                                        child: Image.network(
+                                          _podcast.bestArtworkUrl ?? '',
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
                                     ),
-                                  ),
+                                  ],
                                 ),
                               );
                             },

@@ -19,6 +19,16 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
     // _mainRef = ref;
   }
 
+  Future<bool> getAudioStatus() async {
+    await AudioService.start(
+        backgroundTaskEntrypoint: _backgroundTaskEntrypoint);
+    if (AudioService.running) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   playAction(Song song) async {
     // current = id;
 
@@ -265,41 +275,45 @@ class AudioPlayerTask extends BackgroundAudioTask {
   late MediaItem _mediaItem;
   @override
   Future<void> onStart(Map<String, dynamic>? params) async {
-    AudioServiceBackground.setState(
-      controls: [
-        MediaControl.rewind,
-        MediaControl.pause,
-        MediaControl.fastForward,
-      ],
-      systemActions: [MediaAction.seekBackward, MediaAction.seekForward],
-      playing: true,
-      processingState: AudioProcessingState.connecting,
-    );
-    // Connect to the URL
-    _mediaItem = MediaItem(
-      id: params!['songUrl'],
-      title: params['name'],
-      artUri: Uri.parse(params['albumArt']),
-      album: params['album'],
-      duration: Duration(seconds: params['duration']),
-      artist: params['artist'],
-    );
-    // _mainRef = params['ref'];
-    await _audioPlayer.setUrl(_mediaItem.id);
-    AudioServiceBackground.setMediaItem(_mediaItem);
-    // Now we're ready to play
-    _audioPlayer.play();
-    // Broadcast that we're playing, and what controls are available.
-    AudioServiceBackground.setState(
-      controls: [
-        MediaControl.rewind,
-        MediaControl.pause,
-        MediaControl.fastForward,
-      ],
-      systemActions: [MediaAction.seekBackward, MediaAction.seekForward],
-      playing: true,
-      processingState: AudioProcessingState.ready,
-    );
+    if (!_audioPlayer.playing) {
+      AudioServiceBackground.setState(
+        controls: [
+          MediaControl.rewind,
+          MediaControl.pause,
+          MediaControl.fastForward,
+        ],
+        systemActions: [MediaAction.seekBackward, MediaAction.seekForward],
+        playing: true,
+        processingState: AudioProcessingState.connecting,
+      );
+      // Connect to the URL
+      _mediaItem = MediaItem(
+        id: params!['songUrl'],
+        title: params['name'],
+        artUri: Uri.parse(params['albumArt']),
+        album: params['album'],
+        duration: Duration(seconds: params['duration']),
+        artist: params['artist'],
+      );
+      // _mainRef = params['ref'];
+      await _audioPlayer.setUrl(_mediaItem.id);
+      AudioServiceBackground.setMediaItem(_mediaItem);
+      // Now we're ready to play
+      _audioPlayer.play();
+      // Broadcast that we're playing, and what controls are available.
+      AudioServiceBackground.setState(
+        controls: [
+          MediaControl.rewind,
+          MediaControl.pause,
+          MediaControl.fastForward,
+        ],
+        systemActions: [MediaAction.seekBackward, MediaAction.seekForward],
+        playing: true,
+        processingState: AudioProcessingState.ready,
+      );
+    } else {
+      print(" already playing ");
+    }
   }
 
   @override

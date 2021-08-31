@@ -24,15 +24,15 @@ class HomeScreenStateNotifier extends StateNotifier<HomeScreenState> {
 
   getTopPodcasts() async {
     try {
-      state = state.copyWith(topPodcasts: []);
+      state = state.copyWith(topPodcasts: [], isLoading: true);
       SearchResult charts =
-          await _search.charts(limit: 25, country: Country.INDIA);
+          await _search.charts(limit: 18, country: Country.INDIA);
       print(" top pods called : ${charts.items.length}");
       List<Item> _topPodcasts = [];
       for (var i in charts.items) {
         _topPodcasts.add(i);
       }
-      state = state.copyWith(topPodcasts: _topPodcasts);
+      state = state.copyWith(topPodcasts: _topPodcasts, isLoading: false);
     } catch (e) {
       print(" error in top pods: $e ");
     }
@@ -43,22 +43,32 @@ class HomeScreenState {
   final List<Item> topPodcasts;
   final String userName;
   final String userAvatar;
-  HomeScreenState(
-      {required this.topPodcasts,
-      required this.userName,
-      required this.userAvatar});
+  final bool isLoading;
+  HomeScreenState({
+    required this.topPodcasts,
+    required this.userName,
+    required this.userAvatar,
+    required this.isLoading,
+  });
   factory HomeScreenState.initial() {
-    return HomeScreenState(topPodcasts: [], userName: '', userAvatar: '');
+    return HomeScreenState(
+      topPodcasts: [],
+      userName: '',
+      userAvatar: '',
+      isLoading: false,
+    );
   }
   HomeScreenState copyWith({
     List<Item>? topPodcasts,
     String? userName,
     String? userAvatar,
+    bool? isLoading,
   }) {
     return HomeScreenState(
       topPodcasts: topPodcasts ?? this.topPodcasts,
       userName: userName ?? this.userName,
       userAvatar: userAvatar ?? this.userAvatar,
+      isLoading: isLoading ?? this.isLoading,
     );
   }
 }
