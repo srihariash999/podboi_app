@@ -4,7 +4,7 @@
 
 <p float="left">
   
-<img src="./Screenshots/podboi_logo.png" width="400" height="160"> 
+<img src="./Screenshots/podboi_logo.png" width="512" height="512"> 
 
 </p>
 
