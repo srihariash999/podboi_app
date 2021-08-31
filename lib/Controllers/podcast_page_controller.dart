@@ -29,6 +29,7 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
       }
       state = state.copyWith(
         podcastEpisodes: _episodes,
+        description: _podcast.description,
         isLoading: false,
         isSubscribed: _isSubbed,
       );
@@ -79,6 +80,7 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
 
 class PodcastPageState {
   final List<Episode> podcastEpisodes;
+  final String description;
   final bool isLoading;
   final bool isSubscribed;
   final String? icon;
@@ -87,10 +89,12 @@ class PodcastPageState {
     required this.podcastEpisodes,
     required this.isSubscribed,
     required this.icon,
+    required this.description,
   });
   factory PodcastPageState.initial() {
     return PodcastPageState(
       isLoading: true,
+      description: '',
       podcastEpisodes: [],
       isSubscribed: false,
       icon: null,
@@ -101,12 +105,14 @@ class PodcastPageState {
     bool? isLoading,
     bool? isSubscribed,
     String? icon,
+    String? description,
   }) {
     return PodcastPageState(
       isLoading: isLoading ?? this.isLoading,
       podcastEpisodes: podcastEpisodes ?? this.podcastEpisodes,
       isSubscribed: isSubscribed ?? this.isSubscribed,
       icon: icon ?? this.icon,
+      description: description ?? this.description,
     );
   }
 }

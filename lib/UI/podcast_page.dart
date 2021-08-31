@@ -1,5 +1,7 @@
+import 'package:expandable/expandable.dart';
 import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 // import 'package:podboi/Controllers/audio_controller.dart';
@@ -19,8 +21,21 @@ class PodcastPage extends StatelessWidget {
       backgroundColor: Theme.of(context).backgroundColor,
       body: SafeArea(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            buildTopUI(context),
+            GestureDetector(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                    vertical: 12.0, horizontal: 12.0),
+                child: Icon(
+                  Icons.arrow_back,
+                  color: Theme.of(context).accentColor,
+                ),
+              ),
+            ),
             Expanded(
               child: Consumer(
                 builder: (context, ref, child) {
@@ -56,10 +71,14 @@ class PodcastPage extends StatelessWidget {
                                 ),
                               );
                             },
-                            itemCount: _viewController.podcastEpisodes.length,
+                            itemCount:
+                                _viewController.podcastEpisodes.length + 1,
                             itemBuilder: (context, index) {
+                              if (index == 0) {
+                                return buildTopUI(context);
+                              }
                               Episode _episode =
-                                  _viewController.podcastEpisodes[index];
+                                  _viewController.podcastEpisodes[index - 1];
                               return DetailedEpsiodeViewWidget(
                                 episode: _episode,
                                 ref: ref,
@@ -78,144 +97,128 @@ class PodcastPage extends StatelessWidget {
     );
   }
 
-  Container buildTopUI(BuildContext context) {
+  Widget buildTopUI(BuildContext context) {
     return Container(
       padding: EdgeInsets.only(left: 16.0, right: 16.0),
-      height: 230.0,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          GestureDetector(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12.0),
-              child: Icon(
-                Icons.arrow_back,
-                color: Theme.of(context).accentColor,
-              ),
-            ),
-          ),
-          Expanded(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 16.0),
-                  child: Hero(
-                    tag: 'logo${podcast.collectionId}',
-                    child: Container(
-                      width: 100.0,
-                      height: 100.0,
-                      clipBehavior: Clip.antiAlias,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12.0),
-                      ),
-                      child: Image.network(
-                        podcast.bestArtworkUrl ?? '',
-                        fit: BoxFit.cover,
-                      ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 16.0),
+                child: Hero(
+                  tag: 'logo${podcast.collectionId}',
+                  child: Container(
+                    width: 100.0,
+                    height: 100.0,
+                    clipBehavior: Clip.antiAlias,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
+                    child: Image.network(
+                      podcast.bestArtworkUrl ?? '',
+                      fit: BoxFit.cover,
                     ),
                   ),
                 ),
-                SizedBox(
-                  width: 16.0,
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      height: 50.0,
-                      width: MediaQuery.of(context).size.width * 0.60,
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        podcast.collectionName ?? 'N/A',
-                        style: TextStyle(
-                          fontSize: 18.0,
-                          color:
-                              Theme.of(context).accentColor.withOpacity(0.70),
-                          fontFamily: 'Segoe',
-                          fontWeight: FontWeight.w800,
-                        ),
+              ),
+              SizedBox(
+                width: 16.0,
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    height: 50.0,
+                    width: MediaQuery.of(context).size.width * 0.60,
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      podcast.collectionName ?? 'N/A',
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 17.0,
+                        color: Theme.of(context).accentColor.withOpacity(0.70),
+                        fontFamily: 'Segoe',
+                        fontWeight: FontWeight.w800,
                       ),
                     ),
-                    Expanded(
-                      child: Column(
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: 8.0,
+                      ),
+                      Row(
                         mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          SizedBox(
-                            height: 8.0,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Text(
-                                DateFormat('yMMMd')
-                                    .format(podcast.releaseDate!),
-                                style: TextStyle(
-                                  fontSize: 14.0,
-                                  color: Theme.of(context)
-                                      .accentColor
-                                      .withOpacity(0.50),
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              SizedBox(
-                                width: 18.0,
-                              ),
-                              Text(
-                                podcast.country ?? '',
-                                style: TextStyle(
-                                  fontSize: 14.0,
-                                  color: Theme.of(context)
-                                      .accentColor
-                                      .withOpacity(0.50),
-                                  // fontFamily: 'Segoe',
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
+                          Text(
+                            DateFormat('yMMMd').format(podcast.releaseDate!),
+                            style: TextStyle(
+                              fontSize: 14.0,
+                              color: Theme.of(context)
+                                  .accentColor
+                                  .withOpacity(0.50),
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                           SizedBox(
-                            height: 4.0,
+                            width: 18.0,
                           ),
-                          Container(
-                            width: MediaQuery.of(context).size.width * 0.60,
-                            child: Wrap(
-                              children: podcast.genre!.map(
-                                (i) {
-                                  int x = podcast.genre!.indexOf(i);
-                                  int l = podcast.genre!.length;
-                                  String gName = i.name;
-                                  if (x < l - 1) gName += " , ";
-                                  return Text(
-                                    gName,
-                                    style: TextStyle(
-                                      fontSize: 12.0,
-                                      color: Theme.of(context)
-                                          .accentColor
-                                          .withOpacity(0.70),
-                                      fontFamily: 'Segoe',
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  );
-                                },
-                              ).toList(),
+                          Text(
+                            podcast.country ?? '',
+                            style: TextStyle(
+                              fontSize: 14.0,
+                              color: Theme.of(context)
+                                  .accentColor
+                                  .withOpacity(0.50),
+                              // fontFamily: 'Segoe',
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ],
                       ),
-                    )
-                  ],
-                ),
-              ],
-            ),
+                      SizedBox(
+                        height: 4.0,
+                      ),
+                      Container(
+                        width: MediaQuery.of(context).size.width * 0.60,
+                        child: Wrap(
+                          children: podcast.genre!.map(
+                            (i) {
+                              int x = podcast.genre!.indexOf(i);
+                              int l = podcast.genre!.length;
+                              String gName = i.name;
+                              if (x < l - 1) gName += " , ";
+                              return Text(
+                                gName,
+                                style: TextStyle(
+                                  fontSize: 12.0,
+                                  color: Theme.of(context)
+                                      .accentColor
+                                      .withOpacity(0.70),
+                                  fontFamily: 'Segoe',
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              );
+                            },
+                          ).toList(),
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ],
           ),
+          SizedBox(height: 10.0),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -339,6 +342,61 @@ class PodcastPage extends StatelessWidget {
           ),
           SizedBox(
             height: 6.0,
+          ),
+          Container(
+            padding: const EdgeInsets.all(8.0),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5.0),
+              color: Colors.white38,
+            ),
+            child: ExpandablePanel(
+              theme:
+                  ExpandableThemeData(iconColor: Theme.of(context).accentColor),
+              header: Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Text(
+                  "About Podcast",
+                  style: TextStyle(
+                    fontSize: 17.0,
+                    color: Theme.of(context).accentColor.withOpacity(0.6),
+                    fontFamily: 'Segoe',
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              collapsed: Container(),
+              expanded: Consumer(
+                builder: (context, ref, child) {
+                  String _description = ref.watch(
+                      podcastPageViewController(podcast)
+                          .select((value) => value.description));
+                  bool _isLoading = ref.watch(
+                    podcastPageViewController(podcast)
+                        .select((value) => value.isLoading),
+                  );
+                  return _isLoading
+                      ? Container(
+                          width: 200.0,
+                          height: 1.0,
+                          child: LinearProgressIndicator(
+                            color: Theme.of(context).accentColor,
+                            backgroundColor: Theme.of(context).highlightColor,
+                            minHeight: 1,
+                          ),
+                        )
+                      : Html(
+                          data: _description,
+                        );
+                },
+              ),
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.only(top: 16.0, bottom: 12.0),
+            child: Divider(
+              color: Theme.of(context).accentColor,
+              height: 4.0,
+            ),
           ),
         ],
       ),

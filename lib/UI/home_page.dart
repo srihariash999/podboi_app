@@ -132,71 +132,95 @@ class HomePage extends StatelessWidget {
               List<Item> _topPodcasts = ref.watch(
                 homeScreenController.select((value) => value.topPodcasts),
               );
-              return _topPodcasts.length == 0
+              bool _isLoading = ref.watch(
+                  homeScreenController.select((value) => value.isLoading));
+              return _isLoading
                   ? Container(
                       alignment: Alignment.center,
-                      child: Text(
-                        " No Podcasts to show",
-                        style: TextStyle(
-                          fontSize: 16.0,
-                          fontWeight: FontWeight.w500,
-                          color: Theme.of(context).accentColor.withOpacity(0.6),
-                          fontFamily: 'Segoe',
-                        ),
+                      child: CircularProgressIndicator(
+                        color: Theme.of(context).accentColor,
+                        strokeWidth: 1.0,
                       ),
                     )
-                  : RefreshIndicator(
-                      onRefresh: _refresh,
-                      child: GridView.builder(
-                        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                          maxCrossAxisExtent: 150.0,
-                          mainAxisExtent: 160.0,
-                        ),
-                        physics: BouncingScrollPhysics(),
-                        itemCount: _topPodcasts.length,
-                        itemBuilder: (context, index) {
-                          Item _item = _topPodcasts[index];
-                          return GestureDetector(
-                            onTap: () {
-                              Navigator.of(context).push(
-                                PageRouteBuilder(
-                                  transitionDuration:
-                                      Duration(milliseconds: 500),
-                                  transitionsBuilder: (context, animation,
-                                      secondaryAnimation, child) {
-                                    const begin = Offset(1.0, 0.0);
-                                    const end = Offset.zero;
-                                    const curve = Curves.ease;
+                  : _topPodcasts.length == 0
+                      ? RefreshIndicator(
+                          onRefresh: _refresh,
+                          child: ListView(
+                            children: [
+                              Container(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.50,
+                                alignment: Alignment.center,
+                                child: Text(
+                                  " No Podcasts to show",
+                                  style: TextStyle(
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.w500,
+                                    color: Theme.of(context)
+                                        .accentColor
+                                        .withOpacity(0.6),
+                                    fontFamily: 'Segoe',
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : RefreshIndicator(
+                          onRefresh: _refresh,
+                          child: GridView.builder(
+                            gridDelegate:
+                                SliverGridDelegateWithMaxCrossAxisExtent(
+                              maxCrossAxisExtent: 150.0,
+                              mainAxisExtent: 160.0,
+                            ),
+                            physics: BouncingScrollPhysics(),
+                            itemCount: _topPodcasts.length,
+                            itemBuilder: (context, index) {
+                              Item _item = _topPodcasts[index];
+                              return GestureDetector(
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                    PageRouteBuilder(
+                                      transitionDuration:
+                                          Duration(milliseconds: 500),
+                                      transitionsBuilder: (context, animation,
+                                          secondaryAnimation, child) {
+                                        const begin = Offset(1.0, 0.0);
+                                        const end = Offset.zero;
+                                        const curve = Curves.ease;
 
-                                    final tween = Tween(begin: begin, end: end);
-                                    final curvedAnimation = CurvedAnimation(
-                                      parent: animation,
-                                      curve: curve,
-                                    );
+                                        final tween =
+                                            Tween(begin: begin, end: end);
+                                        final curvedAnimation = CurvedAnimation(
+                                          parent: animation,
+                                          curve: curve,
+                                        );
 
-                                    return SlideTransition(
-                                      position: tween.animate(curvedAnimation),
-                                      child: child,
-                                    );
-                                  },
-                                  pageBuilder: (_, __, ___) => PodcastPage(
-                                    podcast: _item,
+                                        return SlideTransition(
+                                          position:
+                                              tween.animate(curvedAnimation),
+                                          child: child,
+                                        );
+                                      },
+                                      pageBuilder: (_, __, ___) => PodcastPage(
+                                        podcast: _item,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: Hero(
+                                  tag: 'logo${_item.collectionId}',
+                                  child: PodcastDisplayWidget(
+                                    name: _item.collectionName ?? 'N/A',
+                                    posterUrl: _item.bestArtworkUrl ?? '',
+                                    context: context,
                                   ),
                                 ),
                               );
                             },
-                            child: Hero(
-                              tag: 'logo${_item.collectionId}',
-                              child: PodcastDisplayWidget(
-                                name: _item.collectionName ?? 'N/A',
-                                posterUrl: _item.bestArtworkUrl ?? '',
-                                context: context,
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    );
+                          ),
+                        );
             }),
           ),
         ],
@@ -220,7 +244,7 @@ class HomePage extends StatelessWidget {
                 .watch(profileController.select((value) => value.userAvatar));
             return Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
                   "Hi $_name",
