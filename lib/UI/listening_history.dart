@@ -36,7 +36,7 @@ class ListeningHistoryView extends StatelessWidget {
                         },
                         icon: Icon(
                           FeatherIcons.arrowLeft,
-                          color: Theme.of(context).accentColor,
+                          color: Theme.of(context).colorScheme.secondary,
                         ),
                       ),
                       SizedBox(
@@ -47,7 +47,7 @@ class ListeningHistoryView extends StatelessWidget {
                         style: TextStyle(
                           // fontFamily: 'Segoe',
                           fontSize: 22.0,
-                          color: Theme.of(context).accentColor,
+                          color: Theme.of(context).colorScheme.secondary,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -69,7 +69,8 @@ class ListeningHistoryView extends StatelessWidget {
                                 alignment: Alignment.center,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 1.0,
-                                  color: Theme.of(context).accentColor,
+                                  color:
+                                      Theme.of(context).colorScheme.secondary,
                                 ),
                               )
                             : _list.length == 0
@@ -81,7 +82,8 @@ class ListeningHistoryView extends StatelessWidget {
                                         // fontFamily: 'Segoe',
                                         fontSize: 18.0,
                                         color: Theme.of(context)
-                                            .accentColor
+                                            .colorScheme
+                                            .secondary
                                             .withOpacity(0.7),
                                         fontWeight: FontWeight.w500,
                                       ),
@@ -96,21 +98,21 @@ class ListeningHistoryView extends StatelessWidget {
                                             _list[index];
                                         return GestureDetector(
                                           onTap: () async {
-                                            await ref
-                                                .read(audioController.notifier)
-                                                .playAction(
-                                                  Song(
-                                                    url: _lhi.url,
-                                                    icon: _lhi.icon,
-                                                    name: _lhi.name,
-                                                    duration: Duration(
-                                                      seconds: int.parse(
-                                                          _lhi.duration),
-                                                    ),
-                                                    artist: _lhi.artist,
-                                                    album: _lhi.album,
-                                                  ),
-                                                );
+                                            // await ref
+                                            //     .read(audioController.notifier)
+                                            //     .playAction(
+                                            //       Song(
+                                            //         url: _lhi.url,
+                                            //         icon: _lhi.icon,
+                                            //         name: _lhi.name,
+                                            //         duration: Duration(
+                                            //           seconds: int.parse(
+                                            //               _lhi.duration),
+                                            //         ),
+                                            //         artist: _lhi.artist,
+                                            //         album: _lhi.album,
+                                            //       ),
+                                            //     );
                                           },
                                           child: EpisodeDisplayWidget(
                                             context: context,
@@ -134,7 +136,8 @@ class ListeningHistoryView extends StatelessWidget {
                                               horizontal: 22.0),
                                           child: Divider(
                                             color: Theme.of(context)
-                                                .accentColor
+                                                .colorScheme
+                                                .secondary
                                                 .withOpacity(0.2),
                                           ),
                                         );

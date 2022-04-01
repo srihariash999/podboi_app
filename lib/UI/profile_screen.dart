@@ -30,7 +30,7 @@ class ProfileScreen extends StatelessWidget {
                     },
                     icon: Icon(
                       FeatherIcons.arrowLeft,
-                      color: Theme.of(context).accentColor,
+                      color: Theme.of(context).colorScheme.secondary,
                     ),
                   ),
                   SizedBox(
@@ -58,7 +58,9 @@ class ProfileScreen extends StatelessWidget {
                                     style: TextStyle(
                                       // fontFamily: 'Segoe',
                                       fontSize: 28.0,
-                                      color: Theme.of(context).accentColor,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondary,
                                       fontWeight: FontWeight.w700,
                                     ),
                                   ),
@@ -75,7 +77,8 @@ class ProfileScreen extends StatelessWidget {
                                             ? LineIcons.userNinja
                                             : LineIcons.userAstronaut,
                                     size: 38.0,
-                                    color: Theme.of(context).accentColor,
+                                    color:
+                                        Theme.of(context).colorScheme.secondary,
                                   ),
                                 ),
                               ),
@@ -163,7 +166,8 @@ class ProfileScreen extends StatelessWidget {
                                   style: TextStyle(
                                     // fontFamily: 'Segoe',
                                     fontSize: 20.0,
-                                    color: Theme.of(context).accentColor,
+                                    color:
+                                        Theme.of(context).colorScheme.secondary,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -185,7 +189,10 @@ class ProfileScreen extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20.0),
                     child: Divider(
-                      color: Theme.of(context).accentColor.withOpacity(0.2),
+                      color: Theme.of(context)
+                          .colorScheme
+                          .secondary
+                          .withOpacity(0.2),
                       height: 1.0,
                     ),
                   ),
@@ -203,7 +210,7 @@ class ProfileScreen extends StatelessWidget {
                             style: TextStyle(
                               // fontFamily: 'Segoe',
                               fontSize: 20.0,
-                              color: Theme.of(context).accentColor,
+                              color: Theme.of(context).colorScheme.secondary,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -280,7 +287,10 @@ class ProfileScreen extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20.0),
                     child: Divider(
-                      color: Theme.of(context).accentColor.withOpacity(0.2),
+                      color: Theme.of(context)
+                          .colorScheme
+                          .secondary
+                          .withOpacity(0.2),
                       height: 1.0,
                     ),
                   ),
@@ -340,7 +350,8 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget> {
                 style: TextStyle(
                   fontSize: 16.0,
                   fontWeight: FontWeight.w700,
-                  color: Theme.of(context).accentColor.withOpacity(0.9),
+                  color:
+                      Theme.of(context).colorScheme.secondary.withOpacity(0.9),
                   fontFamily: 'Segoe',
                 ),
               ),
@@ -357,16 +368,16 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget> {
                 ),
                 child: TextField(
                   controller: _nameController,
-                  cursorColor: Theme.of(context).accentColor,
+                  cursorColor: Theme.of(context).colorScheme.secondary,
                   style: TextStyle(
                     fontSize: 18.0,
                     fontWeight: FontWeight.w700,
-                    color: Theme.of(context).accentColor,
+                    color: Theme.of(context).colorScheme.secondary,
                   ),
                   decoration: InputDecoration(
                     prefixIcon: Icon(
                       LineIcons.user,
-                      color: Theme.of(context).accentColor,
+                      color: Theme.of(context).colorScheme.secondary,
                     ),
                     isCollapsed: true,
                     contentPadding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -375,7 +386,10 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget> {
                     hintStyle: TextStyle(
                       fontSize: 16.0,
                       fontWeight: FontWeight.w500,
-                      color: Theme.of(context).accentColor.withOpacity(0.50),
+                      color: Theme.of(context)
+                          .colorScheme
+                          .secondary
+                          .withOpacity(0.50),
                     ),
                     fillColor:
                         Theme.of(context).highlightColor.withOpacity(0.4),
@@ -409,7 +423,8 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget> {
                 style: TextStyle(
                   fontSize: 16.0,
                   fontWeight: FontWeight.w700,
-                  color: Theme.of(context).accentColor.withOpacity(0.9),
+                  color:
+                      Theme.of(context).colorScheme.secondary.withOpacity(0.9),
                   fontFamily: 'Segoe',
                 ),
               ),
@@ -430,8 +445,11 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget> {
                     LineIcons.user,
                     size: 52.0,
                     color: _selectedAvatar == 'user'
-                        ? Theme.of(context).accentColor
-                        : Theme.of(context).accentColor.withOpacity(0.4),
+                        ? Theme.of(context).colorScheme.secondary
+                        : Theme.of(context)
+                            .colorScheme
+                            .secondary
+                            .withOpacity(0.4),
                   ),
                 ),
                 GestureDetector(
@@ -444,8 +462,11 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget> {
                     LineIcons.userNinja,
                     size: 52.0,
                     color: _selectedAvatar == 'userNinja'
-                        ? Theme.of(context).accentColor
-                        : Theme.of(context).accentColor.withOpacity(0.4),
+                        ? Theme.of(context).colorScheme.secondary
+                        : Theme.of(context)
+                            .colorScheme
+                            .secondary
+                            .withOpacity(0.4),
                   ),
                 ),
                 GestureDetector(
@@ -458,8 +479,11 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget> {
                     LineIcons.userAstronaut,
                     size: 52.0,
                     color: _selectedAvatar == 'userAstronaut'
-                        ? Theme.of(context).accentColor
-                        : Theme.of(context).accentColor.withOpacity(0.4),
+                        ? Theme.of(context).colorScheme.secondary
+                        : Theme.of(context)
+                            .colorScheme
+                            .secondary
+                            .withOpacity(0.4),
                   ),
                 ),
               ],

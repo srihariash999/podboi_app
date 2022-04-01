@@ -32,7 +32,7 @@ class PodcastPage extends StatelessWidget {
                     vertical: 12.0, horizontal: 12.0),
                 child: Icon(
                   Icons.arrow_back,
-                  color: Theme.of(context).accentColor,
+                  color: Theme.of(context).colorScheme.secondary,
                 ),
               ),
             ),
@@ -52,7 +52,7 @@ class PodcastPage extends StatelessWidget {
                       ? Container(
                           alignment: Alignment.center,
                           child: CircularProgressIndicator(
-                            color: Theme.of(context).accentColor,
+                            color: Theme.of(context).colorScheme.secondary,
                             strokeWidth: 1,
                           ),
                         )
@@ -66,7 +66,8 @@ class PodcastPage extends StatelessWidget {
                                     horizontal: 20.0),
                                 child: Divider(
                                   color: Theme.of(context)
-                                      .accentColor
+                                      .colorScheme
+                                      .secondary
                                       .withOpacity(0.2),
                                 ),
                               );
@@ -143,7 +144,10 @@ class PodcastPage extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontSize: 17.0,
-                        color: Theme.of(context).accentColor.withOpacity(0.70),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .secondary
+                            .withOpacity(0.70),
                         fontFamily: 'Segoe',
                         fontWeight: FontWeight.w800,
                       ),
@@ -164,7 +168,8 @@ class PodcastPage extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 14.0,
                               color: Theme.of(context)
-                                  .accentColor
+                                  .colorScheme
+                                  .secondary
                                   .withOpacity(0.50),
                               fontWeight: FontWeight.w600,
                             ),
@@ -177,7 +182,8 @@ class PodcastPage extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 14.0,
                               color: Theme.of(context)
-                                  .accentColor
+                                  .colorScheme
+                                  .secondary
                                   .withOpacity(0.50),
                               // fontFamily: 'Segoe',
                               fontWeight: FontWeight.w600,
@@ -202,7 +208,8 @@ class PodcastPage extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: 12.0,
                                   color: Theme.of(context)
-                                      .accentColor
+                                      .colorScheme
+                                      .secondary
                                       .withOpacity(0.70),
                                   fontFamily: 'Segoe',
                                   fontWeight: FontWeight.w500,
@@ -237,7 +244,7 @@ class PodcastPage extends StatelessWidget {
                           width: 110.0,
                           height: 1.0,
                           child: LinearProgressIndicator(
-                            color: Theme.of(context).accentColor,
+                            color: Theme.of(context).colorScheme.secondary,
                             backgroundColor: Theme.of(context).highlightColor,
                             minHeight: 1,
                           ),
@@ -321,7 +328,10 @@ class PodcastPage extends StatelessWidget {
                       "Content Advisory: ",
                       style: TextStyle(
                         fontSize: 12.0,
-                        color: Theme.of(context).accentColor.withOpacity(0.50),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .secondary
+                            .withOpacity(0.50),
                         fontFamily: 'Segoe',
                         fontWeight: FontWeight.w600,
                       ),
@@ -330,7 +340,10 @@ class PodcastPage extends StatelessWidget {
                       "${podcast.contentAdvisoryRating}",
                       style: TextStyle(
                         fontSize: 12.0,
-                        color: Theme.of(context).accentColor.withOpacity(0.80),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .secondary
+                            .withOpacity(0.80),
                         fontFamily: 'Segoe',
                         fontWeight: FontWeight.w600,
                       ),
@@ -350,15 +363,18 @@ class PodcastPage extends StatelessWidget {
               color: Colors.white38,
             ),
             child: ExpandablePanel(
-              theme:
-                  ExpandableThemeData(iconColor: Theme.of(context).accentColor),
+              theme: ExpandableThemeData(
+                  iconColor: Theme.of(context).colorScheme.secondary),
               header: Padding(
                 padding: const EdgeInsets.only(top: 8.0),
                 child: Text(
                   "About Podcast",
                   style: TextStyle(
                     fontSize: 17.0,
-                    color: Theme.of(context).accentColor.withOpacity(0.6),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .secondary
+                        .withOpacity(0.6),
                     fontFamily: 'Segoe',
                     fontWeight: FontWeight.w600,
                   ),
@@ -379,7 +395,7 @@ class PodcastPage extends StatelessWidget {
                           width: 200.0,
                           height: 1.0,
                           child: LinearProgressIndicator(
-                            color: Theme.of(context).accentColor,
+                            color: Theme.of(context).colorScheme.secondary,
                             backgroundColor: Theme.of(context).highlightColor,
                             minHeight: 1,
                           ),
@@ -394,7 +410,7 @@ class PodcastPage extends StatelessWidget {
           Container(
             padding: EdgeInsets.only(top: 16.0, bottom: 12.0),
             child: Divider(
-              color: Theme.of(context).accentColor,
+              color: Theme.of(context).colorScheme.secondary,
               height: 4.0,
             ),
           ),

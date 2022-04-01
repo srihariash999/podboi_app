@@ -82,16 +82,22 @@ ThemeData _lightTheme = ThemeData(
   primaryColor: Color(0xFF302F4D),
   primaryColorLight: Color(0xFF302F4D),
   backgroundColor: Colors.white,
-  accentColor: Colors.black,
   highlightColor: Color(0xFF98c1d9),
+  // ignore: deprecated_member_use
   buttonColor: Color(0xFF3d5a80),
+  colorScheme: ColorScheme.light(
+    secondary: Colors.black,
+  ),
 );
 
 ThemeData _darkTheme = ThemeData(
   primaryColor: Color(0xFF302F4D),
   primaryColorLight: Colors.white,
   backgroundColor: Color(0xFF120D31),
-  accentColor: Colors.white,
+  colorScheme: ColorScheme.dark(
+    secondary: Colors.white,
+  ),
   highlightColor: Color(0xFF98c1d9),
+  // ignore: deprecated_member_use
   buttonColor: Color(0xFF3d5a80),
 );

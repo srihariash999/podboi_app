@@ -42,7 +42,7 @@ class PodcastDisplayWidget extends StatelessWidget {
                 fontFamily: 'Segoe',
                 fontSize: 13.0,
                 fontWeight: FontWeight.w400,
-                color: Theme.of(context).accentColor,
+                color: Theme.of(context).colorScheme.secondary,
               ),
             ),
           ),

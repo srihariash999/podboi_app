@@ -13,7 +13,7 @@ class CustomSearchDelegate extends SearchDelegate<String> {
   ThemeData appBarTheme(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     return theme.copyWith(
-      primaryColor: Theme.of(context).accentColor,
+      primaryColor: Theme.of(context).colorScheme.secondary,
       appBarTheme: AppBarTheme(
         backgroundColor: Theme.of(context).backgroundColor,
         elevation: 0.0,
@@ -26,7 +26,7 @@ class CustomSearchDelegate extends SearchDelegate<String> {
           fontSize: 16.0,
           decoration: TextDecoration.none,
           fontWeight: FontWeight.w400,
-          color: Theme.of(context).accentColor.withOpacity(0.8),
+          color: Theme.of(context).colorScheme.secondary.withOpacity(0.8),
           fontFamily: 'Segoe',
         ),
       ),
@@ -36,12 +36,12 @@ class CustomSearchDelegate extends SearchDelegate<String> {
         hintStyle: TextStyle(
           fontSize: 16.0,
           fontWeight: FontWeight.w400,
-          color: Theme.of(context).accentColor.withOpacity(0.4),
+          color: Theme.of(context).colorScheme.secondary.withOpacity(0.4),
           fontFamily: 'Segoe',
         ),
         fillColor: Theme.of(context).highlightColor.withOpacity(0.4),
         filled: true,
-        focusColor: Theme.of(context).accentColor.withOpacity(0.30),
+        focusColor: Theme.of(context).colorScheme.secondary.withOpacity(0.30),
         enabledBorder: OutlineInputBorder(
           borderSide: BorderSide.none,
           borderRadius: BorderRadius.circular(20.0),
@@ -65,7 +65,7 @@ class CustomSearchDelegate extends SearchDelegate<String> {
   Widget buildLeading(BuildContext context) => IconButton(
         icon: Icon(
           Icons.close,
-          color: Theme.of(context).accentColor,
+          color: Theme.of(context).colorScheme.secondary,
         ),
         onPressed: () => Navigator.of(context).pop(),
       );
@@ -96,7 +96,7 @@ class CustomSearchDelegate extends SearchDelegate<String> {
                       style: TextStyle(
                         fontSize: 20.0,
                         fontWeight: FontWeight.w500,
-                        color: Theme.of(context).accentColor,
+                        color: Theme.of(context).colorScheme.secondary,
                       )),
                 )
               : Container(
@@ -188,7 +188,8 @@ class CustomSearchDelegate extends SearchDelegate<String> {
                                                     fontSize: 14.0,
                                                     fontWeight: FontWeight.w500,
                                                     color: Theme.of(context)
-                                                        .accentColor,
+                                                        .colorScheme
+                                                        .secondary,
                                                   ),
                                                 ),
                                               ),
@@ -213,7 +214,8 @@ class CustomSearchDelegate extends SearchDelegate<String> {
                                                   fontSize: 12.0,
                                                   fontWeight: FontWeight.w200,
                                                   color: Theme.of(context)
-                                                      .accentColor
+                                                      .colorScheme
+                                                      .secondary
                                                       .withOpacity(0.50),
                                                 ),
                                               ),
@@ -228,7 +230,8 @@ class CustomSearchDelegate extends SearchDelegate<String> {
                                                     fontSize: 12.0,
                                                     fontWeight: FontWeight.w200,
                                                     color: Theme.of(context)
-                                                        .accentColor
+                                                        .colorScheme
+                                                        .secondary
                                                         .withOpacity(0.50),
                                                   ),
                                                 ),
