@@ -53,7 +53,7 @@ class EpisodeDisplayWidget extends StatelessWidget {
                             fontFamily: 'Segoe',
                             fontSize: 14.0,
                             fontWeight: FontWeight.w400,
-                            color: Theme.of(context).accentColor,
+                            color: Theme.of(context).colorScheme.secondary,
                           ),
                         ),
                       ),
@@ -66,7 +66,10 @@ class EpisodeDisplayWidget extends StatelessWidget {
                             fontFamily: 'Segoe',
                             fontSize: 12.0,
                             fontWeight: FontWeight.w200,
-                            color: Theme.of(context).accentColor.withOpacity(0.50),
+                            color: Theme.of(context)
+                                .colorScheme
+                                .secondary
+                                .withOpacity(0.50),
                           ),
                         ),
                       ),
@@ -82,7 +85,10 @@ class EpisodeDisplayWidget extends StatelessWidget {
                       fontFamily: 'Segoe',
                       fontSize: 12.0,
                       fontWeight: FontWeight.w500,
-                      color: Theme.of(context).accentColor.withOpacity(0.30),
+                      color: Theme.of(context)
+                          .colorScheme
+                          .secondary
+                          .withOpacity(0.30),
                     ),
                   ),
                 ],

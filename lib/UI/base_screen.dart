@@ -63,7 +63,7 @@ class _BaseScreenState extends State<BaseScreen> {
           BottomNavigationBarItem(
             activeIcon: Icon(
               Icons.home,
-              color: Theme.of(context).accentColor,
+              color: Theme.of(context).colorScheme.secondary,
             ),
             // ignore: deprecated_member_use
             title: Text(
@@ -71,7 +71,7 @@ class _BaseScreenState extends State<BaseScreen> {
               style: TextStyle(
                   fontSize: 12.0,
                   fontWeight: FontWeight.w500,
-                  color: Theme.of(context).accentColor,
+                  color: Theme.of(context).colorScheme.secondary,
                   fontFamily: 'Segoe'),
             ),
             icon: Icon(Icons.home, color: Colors.grey.withOpacity(0.5)),
@@ -79,7 +79,7 @@ class _BaseScreenState extends State<BaseScreen> {
           BottomNavigationBarItem(
             activeIcon: Icon(
               Icons.book,
-              color: Theme.of(context).accentColor,
+              color: Theme.of(context).colorScheme.secondary,
             ),
             // ignore: deprecated_member_use
             title: Text(
@@ -87,7 +87,7 @@ class _BaseScreenState extends State<BaseScreen> {
               style: TextStyle(
                   fontSize: 12.0,
                   fontWeight: FontWeight.w500,
-                  color: Theme.of(context).accentColor,
+                  color: Theme.of(context).colorScheme.secondary,
                   fontFamily: 'Segoe'),
             ),
             icon: Icon(

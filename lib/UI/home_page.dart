@@ -112,16 +112,16 @@ class HomePage extends StatelessWidget {
               fontFamily: 'Segoe',
               fontSize: 20.0,
               fontWeight: FontWeight.w600,
-              color: Theme.of(context).accentColor,
+              color: Theme.of(context).colorScheme.secondary,
             ),
           ),
           Text(
-            "Top podcasts today on Podboi in India",
+            "Top podcasts today on Podboi today",
             style: TextStyle(
               fontFamily: 'Segoe',
               fontSize: 14.0,
               fontWeight: FontWeight.w200,
-              color: Theme.of(context).accentColor.withOpacity(0.50),
+              color: Theme.of(context).colorScheme.secondary.withOpacity(0.50),
             ),
           ),
           SizedBox(
@@ -138,7 +138,7 @@ class HomePage extends StatelessWidget {
                   ? Container(
                       alignment: Alignment.center,
                       child: CircularProgressIndicator(
-                        color: Theme.of(context).accentColor,
+                        color: Theme.of(context).colorScheme.secondary,
                         strokeWidth: 1.0,
                       ),
                     )
@@ -157,7 +157,8 @@ class HomePage extends StatelessWidget {
                                     fontSize: 16.0,
                                     fontWeight: FontWeight.w500,
                                     color: Theme.of(context)
-                                        .accentColor
+                                        .colorScheme
+                                        .secondary
                                         .withOpacity(0.6),
                                     fontFamily: 'Segoe',
                                   ),
@@ -251,7 +252,7 @@ class HomePage extends StatelessWidget {
                   style: TextStyle(
                     // fontFamily: 'Segoe',
                     fontSize: 26.0,
-                    color: Theme.of(context).accentColor,
+                    color: Theme.of(context).colorScheme.secondary,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -290,7 +291,7 @@ class HomePage extends StatelessWidget {
                               ? LineIcons.userNinja
                               : LineIcons.userAstronaut,
                       size: 38.0,
-                      color: Theme.of(context).accentColor,
+                      color: Theme.of(context).colorScheme.secondary,
                     ),
                   ),
                 ),
@@ -307,7 +308,8 @@ class HomePage extends StatelessWidget {
                 style: TextStyle(
                   fontFamily: 'Segoe',
                   fontSize: 16.0,
-                  color: Theme.of(context).accentColor.withOpacity(0.50),
+                  color:
+                      Theme.of(context).colorScheme.secondary.withOpacity(0.50),
                   fontWeight: FontWeight.w300,
                 ),
               ),

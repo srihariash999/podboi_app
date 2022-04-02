@@ -25,12 +25,16 @@ void main() async {
   await Hive.openBox('generalBox');
   await Hive.openBox('historyBox');
 
+  // await initAudioService();
+
   runApp(
     ProviderScope(
-      child: AudioServiceWidget(child: MyApp()),
+      child: MyApp(),
     ),
   );
 }
+
+
 
 class MyApp extends StatefulWidget {
   // This widget is the root of your application.
@@ -46,12 +50,12 @@ class _MyAppState extends State<MyApp> {
     return Consumer(builder: (context, ref, child) {
       ThemeData _currTheme = ref.watch(themeController).themeData;
 
-      ref.watch(audioController.notifier).getAudioStatus().then((value) {
-        print(" This is main ^^^^^^^^^^^^ : $value");
-      });
+      // ref.watch(audioController.notifier).getAudioStatus().then((value) {
+      //   print(" This is main ^^^^^^^^^^^^ : $value");
+      // });
 
-      SystemChrome.setSystemUIOverlayStyle(
-          SystemUiOverlayStyle(statusBarColor: Theme.of(context).accentColor));
+      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+          statusBarColor: Theme.of(context).colorScheme.secondary));
       return MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',

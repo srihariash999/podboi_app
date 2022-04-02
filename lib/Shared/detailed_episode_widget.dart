@@ -44,7 +44,10 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                       : '' + "Episode ${_episode.episode ?? ''}",
                   style: TextStyle(
                     fontSize: 12.0,
-                    color: Theme.of(context).accentColor.withOpacity(0.40),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .secondary
+                        .withOpacity(0.40),
                     fontFamily: 'Segoe',
                     fontWeight: FontWeight.w800,
                   ),
@@ -53,7 +56,10 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                   DateFormat('yMMMd').format(_episode.publicationDate!),
                   style: TextStyle(
                     fontSize: 12.0,
-                    color: Theme.of(context).accentColor.withOpacity(0.40),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .secondary
+                        .withOpacity(0.40),
                     fontFamily: 'Segoe',
                     fontWeight: FontWeight.w800,
                   ),
@@ -73,7 +79,10 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                     _episode.title,
                     style: TextStyle(
                       fontSize: 16.0,
-                      color: Theme.of(context).accentColor.withOpacity(0.8),
+                      color: Theme.of(context)
+                          .colorScheme
+                          .secondary
+                          .withOpacity(0.8),
                       fontFamily: 'Segoe',
                       fontWeight: FontWeight.w400,
                     ),
@@ -83,7 +92,7 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
               IconButton(
                 onPressed: () async {
                   print("episode link: ${_episode.contentUrl}");
-                  _ref.read(audioController.notifier).playAction(
+                  _ref.read(audioController.notifier).requestPlayingSong(
                         Song(
                             url: _episode.contentUrl!,
                             icon: _podcast.bestArtworkUrl!,
@@ -92,6 +101,15 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                             artist: "${_episode.author}",
                             album: "${_podcast.collectionName}"),
                       );
+                  // _ref.read(audioController.notifier).playAction(
+                  //       Song(
+                  //           url: _episode.contentUrl!,
+                  //           icon: _podcast.bestArtworkUrl!,
+                  //           name: _episode.title,
+                  //           duration: _episode.duration,
+                  //           artist: "${_episode.author}",
+                  //           album: "${_podcast.collectionName}"),
+                  //     );
 
                   _ref.read(historyController.notifier).saveToHistoryAction(
                       url: _episode.contentUrl!.toString(),
@@ -106,7 +124,7 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                 },
                 icon: Icon(
                   FeatherIcons.play,
-                  color: Theme.of(context).accentColor,
+                  color: Theme.of(context).colorScheme.secondary,
                 ),
               )
             ],
@@ -121,13 +139,14 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
             ),
             alignment: Alignment.center,
             child: ExpandablePanel(
-              theme:
-                  ExpandableThemeData(iconColor: Theme.of(context).accentColor),
+              theme: ExpandableThemeData(
+                  iconColor: Theme.of(context).colorScheme.secondary),
               header: Text(
                 " Episode ${_episode.episode ?? ''} Description ",
                 style: TextStyle(
                   fontSize: 14.0,
-                  color: Theme.of(context).accentColor.withOpacity(0.8),
+                  color:
+                      Theme.of(context).colorScheme.secondary.withOpacity(0.8),
                   fontFamily: 'Segoe',
                   fontWeight: FontWeight.w400,
                 ),
@@ -150,7 +169,10 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                   "${_episode.duration?.inMinutes} minutes",
                   style: TextStyle(
                     fontSize: 10.0,
-                    color: Theme.of(context).accentColor.withOpacity(0.40),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .secondary
+                        .withOpacity(0.40),
                     fontFamily: 'Segoe',
                     fontWeight: FontWeight.w800,
                   ),
@@ -163,7 +185,10 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                       : ' -- ',
                   style: TextStyle(
                     fontSize: 10.0,
-                    color: Theme.of(context).accentColor.withOpacity(0.40),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .secondary
+                        .withOpacity(0.40),
                     fontFamily: 'Segoe',
                     fontWeight: FontWeight.w800,
                   ),

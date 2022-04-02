@@ -5,6 +5,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podboi/Controllers/audio_controller.dart';
 import 'package:flutter/material.dart';
 
+const double _smallPlayerSize = 80.0;
+const double _largePlayerSize = 380.0;
+
+// Mini Player widget.  ( Having two states, one for small, one for large players);
+
 class MiniPlayer extends StatefulWidget {
   const MiniPlayer({Key? key}) : super(key: key);
 
@@ -13,19 +18,22 @@ class MiniPlayer extends StatefulWidget {
 }
 
 class _MiniPlayerState extends State<MiniPlayer> {
-  double _height = 80.0;
+  // _height variable sets the height of the player.
+  double _height = _smallPlayerSize;
+
   @override
   Widget build(BuildContext context) {
     return Align(
       alignment: Alignment.bottomCenter,
       child: Consumer(
         builder: (context, ref, child) {
+          // Ref to the controller.
           var _contState = ref.watch(audioController);
-          if (_contState.mediaItem != null) {
-            print(" this is init");
+
+          if (_contState.audioHandler.mediaItem.value != null) {
             return _contState.isPlayerShow == false
                 ? Container(
-                    height: _height,
+                    height: 0,
                     width: MediaQuery.of(context).size.width,
                     color: Colors.red.withOpacity(0.2),
                   )
@@ -40,7 +48,7 @@ class _MiniPlayerState extends State<MiniPlayer> {
                     ),
                     height: _height,
                     duration: Duration(milliseconds: 200),
-                    child: _height == 80.0
+                    child: _height == _smallPlayerSize
                         ? Material(
                             color: Theme.of(context)
                                 .highlightColor
@@ -77,26 +85,26 @@ class _MiniPlayerState extends State<MiniPlayer> {
               IconButton(
                 onPressed: () {
                   setState(() {
-                    if (_height == 380.0) {
-                      _height = 80.0;
+                    if (_height == _largePlayerSize) {
+                      _height = _smallPlayerSize;
                     } else {
-                      _height = 380.0;
+                      _height = _largePlayerSize;
                     }
                   });
                 },
                 icon: Icon(
                   Icons.expand_more,
-                  color: Theme.of(context).accentColor,
+                  color: Theme.of(context).colorScheme.secondary,
                   size: 36.0,
                 ),
               ),
               GestureDetector(
                 onTap: () {
                   setState(() {
-                    if (_height == 380.0) {
-                      _height = 80.0;
+                    if (_height == _largePlayerSize) {
+                      _height = _smallPlayerSize;
                     } else {
-                      _height = 380.0;
+                      _height = _largePlayerSize;
                     }
                   });
                 },
@@ -104,10 +112,10 @@ class _MiniPlayerState extends State<MiniPlayer> {
                   int sensitivity = 8;
                   if (details.delta.dy > sensitivity) {
                     setState(() {
-                      if (_height == 380.0) {
-                        _height = 80.0;
+                      if (_height == _largePlayerSize) {
+                        _height = _smallPlayerSize;
                       } else {
-                        _height = 380.0;
+                        _height = _largePlayerSize;
                       }
                     });
                   }
@@ -122,9 +130,13 @@ class _MiniPlayerState extends State<MiniPlayer> {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(24.0),
                           ),
-                          child: Image.network(
-                            _contState.mediaItem!.artUri.toString(),
-                          ),
+                          child: _contState.audioHandler.mediaItem.value != null
+                              ? Image.network(
+                                  _contState
+                                      .audioHandler.mediaItem.value!.artUri
+                                      .toString(),
+                                )
+                              : null,
                         ),
                       ),
                     ),
@@ -132,12 +144,14 @@ class _MiniPlayerState extends State<MiniPlayer> {
                       padding: EdgeInsets.only(top: 4.0),
                       width: MediaQuery.of(context).size.width * 0.75,
                       child: Text(
-                        '${_contState.mediaItem?.title}',
+                        _contState.audioHandler.mediaItem.value != null
+                            ? _contState.audioHandler.mediaItem.value!.title
+                            : " -- ",
                         textAlign: TextAlign.center,
                         maxLines: 2,
                         style: TextStyle(
                             fontSize: 16.0,
-                            color: Theme.of(context).accentColor,
+                            color: Theme.of(context).colorScheme.secondary,
                             fontWeight: FontWeight.w500,
                             fontFamily: 'Segoe'),
                       ),
@@ -159,7 +173,7 @@ class _MiniPlayerState extends State<MiniPlayer> {
         Expanded(
           flex: 2,
           child: StreamBuilder<PlaybackState>(
-              stream: _contState.playbackStateStream,
+              stream: _contState.audioHandler.playbackState,
               builder: (context, snapshot) {
                 final playing = snapshot.data?.playing ?? false;
                 if (playing)
@@ -170,12 +184,11 @@ class _MiniPlayerState extends State<MiniPlayer> {
                       IconButton(
                         icon: Icon(
                           Icons.replay_10,
-                          color: Theme.of(context).accentColor,
+                          color: Theme.of(context).colorScheme.secondary,
                           size: 50.0,
                         ),
                         onPressed: () {
                           ref.read(audioController.notifier).rewind();
-                          // AudioService.pause();
                         },
                       ),
                       SizedBox(
@@ -184,12 +197,11 @@ class _MiniPlayerState extends State<MiniPlayer> {
                       IconButton(
                         icon: Icon(
                           FeatherIcons.pauseCircle,
-                          color: Theme.of(context).accentColor,
+                          color: Theme.of(context).colorScheme.secondary,
                           size: 50.0,
                         ),
                         onPressed: () {
-                          ref.read(audioController.notifier).pauseAction();
-                          // AudioService.pause();
+                          ref.read(audioController.notifier).pause();
                         },
                       ),
                       SizedBox(
@@ -198,12 +210,11 @@ class _MiniPlayerState extends State<MiniPlayer> {
                       IconButton(
                         icon: Icon(
                           Icons.forward_10,
-                          color: Theme.of(context).accentColor,
+                          color: Theme.of(context).colorScheme.secondary,
                           size: 50.0,
                         ),
                         onPressed: () {
                           ref.read(audioController.notifier).fastForward();
-                          // AudioService.pause();
                         },
                       ),
                     ],
@@ -215,20 +226,20 @@ class _MiniPlayerState extends State<MiniPlayer> {
                       IconButton(
                           icon: Icon(
                             FeatherIcons.playCircle,
-                            color: Theme.of(context).accentColor,
+                            color: Theme.of(context).colorScheme.secondary,
                             size: 42.0,
                           ),
                           onPressed: () {
-                            ref.read(audioController.notifier).resumeAction();
+                            ref.read(audioController.notifier).resume();
                           }),
                       IconButton(
                           icon: Icon(
                             FeatherIcons.stopCircle,
-                            color: Theme.of(context).accentColor,
+                            color: Theme.of(context).colorScheme.secondary,
                             size: 42.0,
                           ),
                           onPressed: () {
-                            ref.read(audioController.notifier).stopAction();
+                            ref.read(audioController.notifier).stop();
                           }),
                     ],
                   );
@@ -237,7 +248,9 @@ class _MiniPlayerState extends State<MiniPlayer> {
         StreamBuilder<Duration>(
             stream: _contState.positionStream,
             builder: (context, snap) {
-              if (snap.hasData) {
+              if (snap.hasData &&
+                  _contState.audioHandler.mediaItem.value != null &&
+                  _contState.audioHandler.mediaItem.value!.duration != null) {
                 return Container(
                   child: Column(
                     children: [
@@ -249,19 +262,23 @@ class _MiniPlayerState extends State<MiniPlayer> {
                             Text(
                               _formatDuration(snap.data!),
                               style: TextStyle(
-                                color: Theme.of(context).accentColor,
+                                color: Theme.of(context).colorScheme.secondary,
                               ),
                             ),
                             Text(
                               '- ' +
                                   _formatDuration(
                                     Duration(
-                                        seconds: _contState.mediaItem!.duration!
+                                        seconds: _contState
+                                                .audioHandler
+                                                .mediaItem
+                                                .value!
+                                                .duration!
                                                 .inSeconds -
                                             snap.data!.inSeconds),
                                   ),
                               style: TextStyle(
-                                color: Theme.of(context).accentColor,
+                                color: Theme.of(context).colorScheme.secondary,
                               ),
                             ),
                           ],
@@ -269,13 +286,16 @@ class _MiniPlayerState extends State<MiniPlayer> {
                       ),
                       Slider(
                         min: 0.0,
-                        max: _contState.mediaItem!.duration!.inSeconds
+                        max: _contState
+                            .audioHandler.mediaItem.value!.duration!.inSeconds
                             .toDouble(),
                         value: snap.data!.inSeconds.toDouble(),
                         inactiveColor: Colors.black.withOpacity(0.1),
                         activeColor: Colors.red[400],
                         onChanged: (double d) {
-                          ref.read(audioController.notifier).seekTo(d);
+                          ref
+                              .read(audioController.notifier)
+                              .seekTo(Duration(seconds: d.toInt()));
                         },
                       ),
                     ],
@@ -299,10 +319,10 @@ class _MiniPlayerState extends State<MiniPlayer> {
               child: GestureDetector(
                 onTap: () {
                   setState(() {
-                    if (_height == 380.0) {
-                      _height = 80.0;
+                    if (_height == _largePlayerSize) {
+                      _height = _smallPlayerSize;
                     } else {
-                      _height = 380.0;
+                      _height = _largePlayerSize;
                     }
                   });
                 },
@@ -310,10 +330,10 @@ class _MiniPlayerState extends State<MiniPlayer> {
                   int sensitivity = 8;
                   if (details.delta.dy < -sensitivity) {
                     setState(() {
-                      if (_height == 380.0) {
-                        _height = 80.0;
+                      if (_height == _largePlayerSize) {
+                        _height = _smallPlayerSize;
                       } else {
-                        _height = 380.0;
+                        _height = _largePlayerSize;
                       }
                     });
                   }
@@ -322,7 +342,7 @@ class _MiniPlayerState extends State<MiniPlayer> {
                   children: [
                     Icon(
                       Icons.expand_less,
-                      color: Theme.of(context).accentColor,
+                      color: Theme.of(context).colorScheme.secondary,
                     ),
                     Flexible(
                         child: Hero(
@@ -333,9 +353,11 @@ class _MiniPlayerState extends State<MiniPlayer> {
                         clipBehavior: Clip.antiAlias,
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(14.0)),
-                        child: _contState.mediaItem != null
+                        child: _contState.audioHandler.mediaItem.value != null
                             ? Image.network(
-                                _contState.mediaItem!.artUri.toString())
+                                _contState.audioHandler.mediaItem.value!.artUri
+                                    .toString(),
+                              )
                             : null,
                       ),
                     )),
@@ -344,13 +366,13 @@ class _MiniPlayerState extends State<MiniPlayer> {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 10.0),
                         child: Text(
-                          _contState.mediaItem != null
-                              ? _contState.mediaItem!.title
+                          _contState.audioHandler.mediaItem.value != null
+                              ? _contState.audioHandler.mediaItem.value!.title
                               : "  ",
                           maxLines: 3,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                            color: Theme.of(context).accentColor,
+                            color: Theme.of(context).colorScheme.secondary,
                             fontSize: 14.0,
                             fontWeight: FontWeight.w500,
                             fontFamily: 'Segoe',
@@ -363,7 +385,7 @@ class _MiniPlayerState extends State<MiniPlayer> {
               ),
             ),
             StreamBuilder<PlaybackState>(
-                stream: _contState.playbackStateStream,
+                stream: _contState.audioHandler.playbackState,
                 builder: (context, snapshot) {
                   final playing = snapshot.data?.playing ?? false;
                   if (playing)
@@ -374,36 +396,32 @@ class _MiniPlayerState extends State<MiniPlayer> {
                           IconButton(
                               icon: Icon(
                                 Icons.replay_10,
-                                color: Theme.of(context).accentColor,
+                                color: Theme.of(context).colorScheme.secondary,
                                 size: 32.0,
                               ),
                               onPressed: () {
                                 ref.read(audioController.notifier).rewind();
-                                // AudioService.pause();
                               }),
                           IconButton(
                               icon: Icon(
                                 FeatherIcons.pauseCircle,
-                                color: Theme.of(context).accentColor,
+                                color: Theme.of(context).colorScheme.secondary,
                                 size: 32.0,
                               ),
                               onPressed: () {
-                                ref
-                                    .read(audioController.notifier)
-                                    .pauseAction();
+                                ref.read(audioController.notifier).pause();
                                 // AudioService.pause();
                               }),
                           IconButton(
                               icon: Icon(
                                 Icons.forward_10,
-                                color: Theme.of(context).accentColor,
+                                color: Theme.of(context).colorScheme.secondary,
                                 size: 32.0,
                               ),
                               onPressed: () {
                                 ref
                                     .read(audioController.notifier)
                                     .fastForward();
-                                // AudioService.pause();
                               }),
                         ],
                       ),
@@ -415,24 +433,20 @@ class _MiniPlayerState extends State<MiniPlayer> {
                           IconButton(
                               icon: Icon(
                                 FeatherIcons.playCircle,
-                                color: Theme.of(context).accentColor,
+                                color: Theme.of(context).colorScheme.secondary,
                                 size: 32.0,
                               ),
                               onPressed: () {
-                                ref
-                                    .read(audioController.notifier)
-                                    .resumeAction();
-                                // AudioService.pause();
+                                ref.read(audioController.notifier).resume();
                               }),
                           IconButton(
                               icon: Icon(
                                 FeatherIcons.stopCircle,
-                                color: Theme.of(context).accentColor,
+                                color: Theme.of(context).colorScheme.secondary,
                                 size: 32.0,
                               ),
                               onPressed: () {
-                                ref.read(audioController.notifier).stopAction();
-                                // AudioService.pause();
+                                ref.read(audioController.notifier).stop();
                               }),
                         ],
                       ),
@@ -446,9 +460,11 @@ class _MiniPlayerState extends State<MiniPlayer> {
         StreamBuilder<Duration>(
             stream: _contState.positionStream,
             builder: (context, snap) {
-              if (snap.hasData) {
+              if (snap.hasData &&
+                  _contState.audioHandler.mediaItem.value != null &&
+                  _contState.audioHandler.mediaItem.value!.duration != null) {
                 return Container(
-                  width: MediaQuery.of(context).size.width * 0.95,
+                  width: MediaQuery.of(context).size.width * 0.9,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10.0),
                   ),
@@ -458,37 +474,27 @@ class _MiniPlayerState extends State<MiniPlayer> {
                       Container(
                         height: 5.0,
                         width: MediaQuery.of(context).size.width *
-                            0.95 *
+                            0.9 *
                             (snap.data!.inSeconds.toDouble() /
-                                _contState.mediaItem!.duration!.inSeconds
+                                _contState.audioHandler.mediaItem.value!
+                                    .duration!.inSeconds
                                     .toDouble()),
                         color: Colors.red[400],
                       ),
                       Container(
                         height: 5.0,
-                        width: MediaQuery.of(context).size.width * 0.95 -
+                        width: MediaQuery.of(context).size.width * 0.9 -
                             (MediaQuery.of(context).size.width *
-                                0.95 *
+                                0.9 *
                                 (snap.data!.inSeconds.toDouble() /
-                                    _contState.mediaItem!.duration!.inSeconds
+                                    _contState.audioHandler.mediaItem.value!
+                                        .duration!.inSeconds
                                         .toDouble())),
-                        color: Colors.black.withOpacity(0.1),
+                        color: Colors.black.withOpacity(0.2),
                       ),
                     ],
                   ),
                 );
-                // Container(
-                //   child: Slider(
-                //     min: 0.0,
-                //     max: _contState.mediaItem!.duration!.inSeconds.toDouble(),
-                //     value: snap.data!.inSeconds.toDouble(),
-                //     inactiveColor: Colors.black.withOpacity(0.1),
-                //     activeColor: Colors.orange.withOpacity(0.8),
-                //     onChanged: (double d) {
-                //       ref.read(audioController.notifier).seekTo(d);
-                //     },
-                //   ),
-                // );
               } else {
                 return Container();
               }
