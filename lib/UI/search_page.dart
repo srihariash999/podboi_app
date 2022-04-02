@@ -86,6 +86,7 @@ class CustomSearchDelegate extends SearchDelegate<String> {
         return _viewController.isLoading
             ? Container(
                 margin: const EdgeInsets.only(top: 10.0),
+                // ignore: deprecated_member_use
                 color: Theme.of(context).buttonColor,
                 alignment: Alignment.center,
                 child: CircularProgressIndicator(

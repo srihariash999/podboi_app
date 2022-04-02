@@ -125,6 +125,9 @@ class PodcastPage extends StatelessWidget {
                 ),
               ],
             ),
+            SizedBox(
+              height: 4.0,
+            ),
             Expanded(
               child: Consumer(
                 builder: (context, ref, child) {
@@ -196,10 +199,11 @@ class PodcastPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.only(top: 16.0),
+                padding: const EdgeInsets.only(top: 8.0),
                 child: Hero(
                   tag: 'logo${podcast.collectionId}',
                   child: Container(

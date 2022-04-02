@@ -106,6 +106,7 @@ class ProfileScreen extends StatelessWidget {
                               padding: EdgeInsets.symmetric(vertical: 12.0),
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
+                                  // ignore: deprecated_member_use
                                   color: Theme.of(context).buttonColor,
                                   borderRadius: BorderRadius.circular(18.0)),
                               child: Text(
@@ -523,6 +524,7 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget> {
                       padding: EdgeInsets.symmetric(vertical: 12.0),
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
+                          // ignore: deprecated_member_use
                           color: Theme.of(context).buttonColor,
                           borderRadius: BorderRadius.circular(18.0)),
                       child: Text(
