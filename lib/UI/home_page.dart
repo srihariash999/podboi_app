@@ -23,12 +23,17 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
       body: SafeArea(
-        child: Column(
-          children: [
-            buildTopUi(context),
-            buildSearchRow(context),
-            Expanded(child: buildDiscoverPodcastsRow(context)),
-          ],
+        child: RefreshIndicator(
+          onRefresh: _refresh,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                buildTopUi(context),
+                buildSearchRow(context),
+                buildDiscoverPodcastsRow(context),
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -127,103 +132,137 @@ class HomePage extends StatelessWidget {
           SizedBox(
             height: 16.0,
           ),
-          Expanded(
-            child: Consumer(builder: (context, ref, child) {
-              List<Item> _topPodcasts = ref.watch(
-                homeScreenController.select((value) => value.topPodcasts),
-              );
-              bool _isLoading = ref.watch(
-                  homeScreenController.select((value) => value.isLoading));
-              return _isLoading
-                  ? Container(
-                      alignment: Alignment.center,
-                      child: CircularProgressIndicator(
-                        color: Theme.of(context).colorScheme.secondary,
-                        strokeWidth: 1.0,
-                      ),
-                    )
-                  : _topPodcasts.length == 0
-                      ? RefreshIndicator(
-                          onRefresh: _refresh,
-                          child: ListView(
-                            children: [
-                              Container(
-                                height:
-                                    MediaQuery.of(context).size.height * 0.50,
-                                alignment: Alignment.center,
-                                child: Text(
-                                  " No Podcasts to show",
-                                  style: TextStyle(
-                                    fontSize: 16.0,
-                                    fontWeight: FontWeight.w500,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .secondary
-                                        .withOpacity(0.6),
-                                    fontFamily: 'Segoe',
-                                  ),
-                                ),
+          Consumer(builder: (context, ref, child) {
+            List<Item> _topPodcasts = ref.watch(
+              homeScreenController.select((value) => value.topPodcasts),
+            );
+            bool _isLoading = ref
+                .watch(homeScreenController.select((value) => value.isLoading));
+            return _isLoading
+                ? Container(
+                    alignment: Alignment.center,
+                    child: CircularProgressIndicator(
+                      color: Theme.of(context).colorScheme.secondary,
+                      strokeWidth: 1.0,
+                    ),
+                  )
+                : _topPodcasts.length == 0
+                    ? Column(
+                        children: [
+                          Container(
+                            height: MediaQuery.of(context).size.height * 0.50,
+                            alignment: Alignment.center,
+                            child: Text(
+                              " No Podcasts to show",
+                              style: TextStyle(
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.w500,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .secondary
+                                    .withOpacity(0.6),
+                                fontFamily: 'Segoe',
                               ),
-                            ],
-                          ),
-                        )
-                      : RefreshIndicator(
-                          onRefresh: _refresh,
-                          child: GridView.builder(
-                            gridDelegate:
-                                SliverGridDelegateWithMaxCrossAxisExtent(
-                              maxCrossAxisExtent: 150.0,
-                              mainAxisExtent: 160.0,
                             ),
-                            physics: BouncingScrollPhysics(),
-                            itemCount: _topPodcasts.length,
-                            itemBuilder: (context, index) {
-                              Item _item = _topPodcasts[index];
-                              return GestureDetector(
-                                onTap: () {
-                                  Navigator.of(context).push(
-                                    PageRouteBuilder(
-                                      transitionDuration:
-                                          Duration(milliseconds: 500),
-                                      transitionsBuilder: (context, animation,
-                                          secondaryAnimation, child) {
-                                        const begin = Offset(1.0, 0.0);
-                                        const end = Offset.zero;
-                                        const curve = Curves.ease;
+                          ),
+                        ],
+                      )
+                    : Wrap(
+                        children: _topPodcasts.map((Item _item) {
+                        return Padding(
+                          padding: const EdgeInsets.only(
+                              top: 4.0, bottom: 4.0, left: 2.0, right: 2.0),
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                PageRouteBuilder(
+                                  transitionDuration:
+                                      Duration(milliseconds: 500),
+                                  transitionsBuilder: (context, animation,
+                                      secondaryAnimation, child) {
+                                    const begin = Offset(1.0, 0.0);
+                                    const end = Offset.zero;
+                                    const curve = Curves.ease;
 
-                                        final tween =
-                                            Tween(begin: begin, end: end);
-                                        final curvedAnimation = CurvedAnimation(
-                                          parent: animation,
-                                          curve: curve,
-                                        );
+                                    final tween = Tween(begin: begin, end: end);
+                                    final curvedAnimation = CurvedAnimation(
+                                      parent: animation,
+                                      curve: curve,
+                                    );
 
-                                        return SlideTransition(
-                                          position:
-                                              tween.animate(curvedAnimation),
-                                          child: child,
-                                        );
-                                      },
-                                      pageBuilder: (_, __, ___) => PodcastPage(
-                                        podcast: _item,
-                                      ),
-                                    ),
-                                  );
-                                },
-                                child: Hero(
-                                  tag: 'logo${_item.collectionId}',
-                                  child: PodcastDisplayWidget(
-                                    name: _item.collectionName ?? 'N/A',
-                                    posterUrl: _item.bestArtworkUrl ?? '',
-                                    context: context,
+                                    return SlideTransition(
+                                      position: tween.animate(curvedAnimation),
+                                      child: child,
+                                    );
+                                  },
+                                  pageBuilder: (_, __, ___) => PodcastPage(
+                                    podcast: _item,
                                   ),
                                 ),
                               );
                             },
+                            child: Hero(
+                              tag: 'logo${_item.collectionId}',
+                              child: PodcastDisplayWidget(
+                                name: _item.collectionName ?? 'N/A',
+                                posterUrl: _item.bestArtworkUrl ?? '',
+                                context: context,
+                              ),
+                            ),
                           ),
                         );
-            }),
-          ),
+                      }).toList());
+            // GridView.builder(
+            //     gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+            //       maxCrossAxisExtent: 150.0,
+            //       mainAxisExtent: 160.0,
+            //     ),
+            //     physics: BouncingScrollPhysics(),
+            //     itemCount: _topPodcasts.length,
+            //     itemBuilder: (context, index) {
+            //       Item _item = _topPodcasts[index];
+            //       return GestureDetector(
+            //         onTap: () {
+            //           Navigator.of(context).push(
+            //             PageRouteBuilder(
+            //               transitionDuration:
+            //                   Duration(milliseconds: 500),
+            //               transitionsBuilder: (context, animation,
+            //                   secondaryAnimation, child) {
+            //                 const begin = Offset(1.0, 0.0);
+            //                 const end = Offset.zero;
+            //                 const curve = Curves.ease;
+
+            //                 final tween = Tween(begin: begin, end: end);
+            //                 final curvedAnimation = CurvedAnimation(
+            //                   parent: animation,
+            //                   curve: curve,
+            //                 );
+
+            //                 return SlideTransition(
+            //                   position: tween.animate(curvedAnimation),
+            //                   child: child,
+            //                 );
+            //               },
+            //               pageBuilder: (_, __, ___) => PodcastPage(
+            //                 podcast: _item,
+            //               ),
+            //             ),
+            //           );
+            //         },
+            //         child: Hero(
+            //           tag: 'logo${_item.collectionId}',
+            //           child: PodcastDisplayWidget(
+            //             name: _item.collectionName ?? 'N/A',
+            //             posterUrl: _item.bestArtworkUrl ?? '',
+            //             context: context,
+            //           ),
+            //         ),
+            //       );
+
+            //     },
+            //   );
+          }),
         ],
       ),
     );

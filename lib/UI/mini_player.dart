@@ -98,19 +98,9 @@ class _MiniPlayerState extends State<MiniPlayer> {
                   size: 36.0,
                 ),
               ),
-              GestureDetector(
-                onTap: () {
-                  setState(() {
-                    if (_height == _largePlayerSize) {
-                      _height = _smallPlayerSize;
-                    } else {
-                      _height = _largePlayerSize;
-                    }
-                  });
-                },
-                onVerticalDragUpdate: (details) {
-                  int sensitivity = 8;
-                  if (details.delta.dy > sensitivity) {
+              Expanded(
+                child: GestureDetector(
+                  onTap: () {
                     setState(() {
                       if (_height == _largePlayerSize) {
                         _height = _smallPlayerSize;
@@ -118,45 +108,58 @@ class _MiniPlayerState extends State<MiniPlayer> {
                         _height = _largePlayerSize;
                       }
                     });
-                  }
-                },
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: Hero(
-                        tag: 'albumArt',
-                        child: Container(
-                          clipBehavior: Clip.antiAlias,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(24.0),
+                  },
+                  onVerticalDragUpdate: (details) {
+                    int sensitivity = 8;
+                    if (details.delta.dy > sensitivity) {
+                      setState(() {
+                        if (_height == _largePlayerSize) {
+                          _height = _smallPlayerSize;
+                        } else {
+                          _height = _largePlayerSize;
+                        }
+                      });
+                    }
+                  },
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: Hero(
+                          tag: 'albumArt',
+                          child: Container(
+                            clipBehavior: Clip.antiAlias,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(24.0),
+                            ),
+                            child:
+                                _contState.audioHandler.mediaItem.value != null
+                                    ? Image.network(
+                                        _contState.audioHandler.mediaItem.value!
+                                            .artUri
+                                            .toString(),
+                                      )
+                                    : null,
                           ),
-                          child: _contState.audioHandler.mediaItem.value != null
-                              ? Image.network(
-                                  _contState
-                                      .audioHandler.mediaItem.value!.artUri
-                                      .toString(),
-                                )
-                              : null,
                         ),
                       ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.only(top: 4.0),
-                      width: MediaQuery.of(context).size.width * 0.75,
-                      child: Text(
-                        _contState.audioHandler.mediaItem.value != null
-                            ? _contState.audioHandler.mediaItem.value!.title
-                            : " -- ",
-                        textAlign: TextAlign.center,
-                        maxLines: 2,
-                        style: TextStyle(
-                            fontSize: 16.0,
-                            color: Theme.of(context).colorScheme.secondary,
-                            fontWeight: FontWeight.w500,
-                            fontFamily: 'Segoe'),
+                      Container(
+                        padding: EdgeInsets.only(top: 4.0),
+                        width: MediaQuery.of(context).size.width * 0.75,
+                        child: Text(
+                          _contState.audioHandler.mediaItem.value != null
+                              ? _contState.audioHandler.mediaItem.value!.title
+                              : " -- ",
+                          textAlign: TextAlign.center,
+                          maxLines: 2,
+                          style: TextStyle(
+                              fontSize: 16.0,
+                              color: Theme.of(context).colorScheme.secondary,
+                              fontWeight: FontWeight.w500,
+                              fontFamily: 'Segoe'),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
               IconButton(

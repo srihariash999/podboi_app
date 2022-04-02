@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podboi/Services/database/db_service.dart';
 import 'package:podcast_search/podcast_search.dart';
@@ -9,6 +10,9 @@ final podcastPageViewController = StateNotifierProvider.family<
 
 class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
   final Item podcast;
+
+  List<Episode> _filteredEpisodes = [];
+  List<Episode> _episodes = [];
   PodcastPageViewNotifier(this.podcast) : super(PodcastPageState.initial()) {
     loadPodcastEpisodes(podcast.feedUrl ?? '');
   }
@@ -17,7 +21,6 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
     state = state.copyWith(isLoading: true);
     bool _isSubbed = await isPodcastSubbed(podcast);
     Podcast _podcast;
-    List<Episode> _episodes = [];
     try {
       print(" feed url : $feedUrl");
       _podcast = await Podcast.loadFeed(url: feedUrl);
@@ -26,9 +29,10 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
         for (var i in _podcast.episodes!) {
           _episodes.add(i);
         }
+        _filteredEpisodes = _episodes;
       }
       state = state.copyWith(
-        podcastEpisodes: _episodes,
+        podcastEpisodes: _filteredEpisodes,
         description: _podcast.description,
         isLoading: false,
         isSubscribed: _isSubbed,
@@ -36,11 +40,25 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
     } on PodcastFailedException catch (e) {
       print(" error in getting pod eps: ${e.toString()}");
       state = state.copyWith(
-        podcastEpisodes: _episodes,
+        podcastEpisodes: _filteredEpisodes,
         isLoading: false,
         isSubscribed: _isSubbed,
       );
     }
+  }
+
+  void filterEpisodesWithQuery(String query) {
+    if (query.isEmpty) {
+      _filteredEpisodes = _episodes;
+    } else {
+      _filteredEpisodes = _episodes
+          .where((episode) =>
+              episode.title.toLowerCase().contains(query.toLowerCase().trim()))
+          .toList();
+    }
+    state = state.copyWith(
+      podcastEpisodes: _filteredEpisodes,
+    );
   }
 
   saveToSubscriptionsAction(Item podcast) async {
@@ -84,6 +102,7 @@ class PodcastPageState {
   final bool isLoading;
   final bool isSubscribed;
   final String? icon;
+
   PodcastPageState({
     required this.isLoading,
     required this.podcastEpisodes,
@@ -106,6 +125,7 @@ class PodcastPageState {
     bool? isSubscribed,
     String? icon,
     String? description,
+    final TextEditingController? episodeSearchController,
   }) {
     return PodcastPageState(
       isLoading: isLoading ?? this.isLoading,

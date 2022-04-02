@@ -26,7 +26,8 @@ class HomeScreenStateNotifier extends StateNotifier<HomeScreenState> {
     try {
       state = state.copyWith(topPodcasts: [], isLoading: true);
       SearchResult charts = await _search.charts(
-        limit: 18,
+        limit: 24,
+        country: Country.INDIA,
       );
       print(" top pods called : ${charts.items.length}");
       List<Item> _topPodcasts = [];
@@ -35,7 +36,7 @@ class HomeScreenStateNotifier extends StateNotifier<HomeScreenState> {
       }
       state = state.copyWith(topPodcasts: _topPodcasts, isLoading: false);
     } catch (e) {
-      print(" error in top pods: $e ");
+      print(" error in getting top pods: $e ");
     }
   }
 }

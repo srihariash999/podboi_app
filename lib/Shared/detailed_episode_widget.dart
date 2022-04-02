@@ -101,15 +101,7 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                             artist: "${_episode.author}",
                             album: "${_podcast.collectionName}"),
                       );
-                  // _ref.read(audioController.notifier).playAction(
-                  //       Song(
-                  //           url: _episode.contentUrl!,
-                  //           icon: _podcast.bestArtworkUrl!,
-                  //           name: _episode.title,
-                  //           duration: _episode.duration,
-                  //           artist: "${_episode.author}",
-                  //           album: "${_podcast.collectionName}"),
-                  //     );
+                  
 
                   _ref.read(historyController.notifier).saveToHistoryAction(
                       url: _episode.contentUrl!.toString(),
