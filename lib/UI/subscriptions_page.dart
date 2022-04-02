@@ -54,94 +54,100 @@ class SubscriptionsPage extends StatelessWidget {
                         ),
                       )
                     : Expanded(
-                        child: RefreshIndicator(
-                          onRefresh: refresh,
-                          child: GridView.builder(
-                            gridDelegate:
-                                SliverGridDelegateWithMaxCrossAxisExtent(
-                              // crossAxisCount: 3,
-                              // childAspectRatio: 1.25,
-                              crossAxisSpacing: 8.0,
-                              mainAxisSpacing: 8.0,
-                              maxCrossAxisExtent: 130.0,
-                              mainAxisExtent: 130.0,
-                            ),
-                            itemCount: _viewController.subscriptionsList.length,
-                            itemBuilder: (context, index) {
-                              Subscription _subscription =
-                                  _viewController.subscriptionsList[index];
-                              Item _podcast =
-                                  itemFromMap(_subscription.podcast);
-                              return GestureDetector(
-                                onTap: () {
-                                  Navigator.of(context).push(
-                                    PageRouteBuilder(
-                                      transitionDuration:
-                                          Duration(milliseconds: 500),
-                                      transitionsBuilder: (context, animation,
-                                          secondaryAnimation, child) {
-                                        const begin = Offset(1.0, 0.0);
-                                        const end = Offset.zero;
-                                        const curve = Curves.ease;
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                          child: RefreshIndicator(
+                            onRefresh: refresh,
+                            child: GridView.builder(
+                              gridDelegate:
+                                  SliverGridDelegateWithMaxCrossAxisExtent(
+                                // crossAxisCount: 3,
+                                // childAspectRatio: 1.5,
+                                crossAxisSpacing: 4.0,
+                                mainAxisSpacing: 4.0,
+                                maxCrossAxisExtent: 130.0,
+                                mainAxisExtent: 130.0,
+                              ),
+                              itemCount:
+                                  _viewController.subscriptionsList.length,
+                              itemBuilder: (context, index) {
+                                Subscription _subscription =
+                                    _viewController.subscriptionsList[index];
+                                Item _podcast =
+                                    itemFromMap(_subscription.podcast);
+                                return GestureDetector(
+                                  onTap: () {
+                                    Navigator.of(context).push(
+                                      PageRouteBuilder(
+                                        transitionDuration:
+                                            Duration(milliseconds: 500),
+                                        transitionsBuilder: (context, animation,
+                                            secondaryAnimation, child) {
+                                          const begin = Offset(1.0, 0.0);
+                                          const end = Offset.zero;
+                                          const curve = Curves.ease;
 
-                                        final tween =
-                                            Tween(begin: begin, end: end);
-                                        final curvedAnimation = CurvedAnimation(
-                                          parent: animation,
-                                          curve: curve,
-                                        );
+                                          final tween =
+                                              Tween(begin: begin, end: end);
+                                          final curvedAnimation =
+                                              CurvedAnimation(
+                                            parent: animation,
+                                            curve: curve,
+                                          );
 
-                                        return SlideTransition(
-                                          position:
-                                              tween.animate(curvedAnimation),
-                                          child: child,
-                                        );
-                                      },
-                                      pageBuilder: (_, __, ___) => PodcastPage(
-                                        podcast: _podcast,
-                                      ),
-                                    ),
-                                  );
-                                },
-                                child: Stack(
-                                  children: [
-                                    Container(
-                                      height: 100.0,
-                                      width: 100.0,
-                                      // margin: EdgeInsets.all(4.0),
-                                      decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(12.0),
-                                      ),
-                                      clipBehavior: Clip.antiAlias,
-                                      child: Center(
-                                        child: Text(
-                                          '${_podcast.collectionName}',
-                                          textAlign: TextAlign.center,
+                                          return SlideTransition(
+                                            position:
+                                                tween.animate(curvedAnimation),
+                                            child: child,
+                                          );
+                                        },
+                                        pageBuilder: (_, __, ___) =>
+                                            PodcastPage(
+                                          podcast: _podcast,
                                         ),
                                       ),
-                                    ),
-                                    Hero(
-                                      tag: 'logo${_podcast.collectionId}',
-                                      child: Container(
-                                        height: 100.0,
-                                        width: 100.0,
-                                        // margin: EdgeInsets.all(4.0),
+                                    );
+                                  },
+                                  child: Stack(
+                                    children: [
+                                      Container(
+                                        height: 120.0,
+                                        width: 120.0,
+                                        margin: EdgeInsets.all(4.0),
                                         decoration: BoxDecoration(
                                           borderRadius:
                                               BorderRadius.circular(12.0),
                                         ),
                                         clipBehavior: Clip.antiAlias,
-                                        child: Image.network(
-                                          _podcast.bestArtworkUrl ?? '',
-                                          fit: BoxFit.cover,
+                                        child: Center(
+                                          child: Text(
+                                            '${_podcast.collectionName}',
+                                            textAlign: TextAlign.center,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
+                                      Hero(
+                                        tag: 'logo${_podcast.collectionId}',
+                                        child: Container(
+                                          height: 120.0,
+                                          width: 120.0,
+                                          // margin: EdgeInsets.all(4.0),
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(12.0),
+                                          ),
+                                          clipBehavior: Clip.antiAlias,
+                                          child: Image.network(
+                                            _podcast.bestArtworkUrl ?? '',
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
                           ),
                         ),
                       );
