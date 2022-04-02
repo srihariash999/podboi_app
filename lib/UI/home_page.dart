@@ -116,7 +116,7 @@ class HomePage extends StatelessWidget {
             ),
           ),
           Text(
-            "Top podcasts today on Podboi in India",
+            "Top podcasts today on Podboi today",
             style: TextStyle(
               fontFamily: 'Segoe',
               fontSize: 14.0,

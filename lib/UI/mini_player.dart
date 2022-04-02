@@ -5,6 +5,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podboi/Controllers/audio_controller.dart';
 import 'package:flutter/material.dart';
 
+const double _smallPlayerSize = 80.0;
+const double _largePlayerSize = 380.0;
+
+// Mini Player widget.  ( Having two states, one for small, one for large players);
+
 class MiniPlayer extends StatefulWidget {
   const MiniPlayer({Key? key}) : super(key: key);
 
@@ -13,16 +18,19 @@ class MiniPlayer extends StatefulWidget {
 }
 
 class _MiniPlayerState extends State<MiniPlayer> {
-  double _height = 80.0;
+  // _height variable sets the height of the player.
+  double _height = _smallPlayerSize;
+
   @override
   Widget build(BuildContext context) {
     return Align(
       alignment: Alignment.bottomCenter,
       child: Consumer(
         builder: (context, ref, child) {
+          // Ref to the controller.
           var _contState = ref.watch(audioController);
+
           if (_contState.audioHandler.mediaItem.value != null) {
-            print(" this is init");
             return _contState.isPlayerShow == false
                 ? Container(
                     height: 0,
@@ -40,7 +48,7 @@ class _MiniPlayerState extends State<MiniPlayer> {
                     ),
                     height: _height,
                     duration: Duration(milliseconds: 200),
-                    child: _height == 80.0
+                    child: _height == _smallPlayerSize
                         ? Material(
                             color: Theme.of(context)
                                 .highlightColor
@@ -77,10 +85,10 @@ class _MiniPlayerState extends State<MiniPlayer> {
               IconButton(
                 onPressed: () {
                   setState(() {
-                    if (_height == 380.0) {
-                      _height = 80.0;
+                    if (_height == _largePlayerSize) {
+                      _height = _smallPlayerSize;
                     } else {
-                      _height = 380.0;
+                      _height = _largePlayerSize;
                     }
                   });
                 },
@@ -93,10 +101,10 @@ class _MiniPlayerState extends State<MiniPlayer> {
               GestureDetector(
                 onTap: () {
                   setState(() {
-                    if (_height == 380.0) {
-                      _height = 80.0;
+                    if (_height == _largePlayerSize) {
+                      _height = _smallPlayerSize;
                     } else {
-                      _height = 380.0;
+                      _height = _largePlayerSize;
                     }
                   });
                 },
@@ -104,10 +112,10 @@ class _MiniPlayerState extends State<MiniPlayer> {
                   int sensitivity = 8;
                   if (details.delta.dy > sensitivity) {
                     setState(() {
-                      if (_height == 380.0) {
-                        _height = 80.0;
+                      if (_height == _largePlayerSize) {
+                        _height = _smallPlayerSize;
                       } else {
-                        _height = 380.0;
+                        _height = _largePlayerSize;
                       }
                     });
                   }
@@ -180,8 +188,7 @@ class _MiniPlayerState extends State<MiniPlayer> {
                           size: 50.0,
                         ),
                         onPressed: () {
-                          // ref.read(audioController.notifier).rewind();
-                          // AudioService.pause();
+                          ref.read(audioController.notifier).rewind();
                         },
                       ),
                       SizedBox(
@@ -195,7 +202,6 @@ class _MiniPlayerState extends State<MiniPlayer> {
                         ),
                         onPressed: () {
                           ref.read(audioController.notifier).pause();
-                          // AudioService.pause();
                         },
                       ),
                       SizedBox(
@@ -208,8 +214,7 @@ class _MiniPlayerState extends State<MiniPlayer> {
                           size: 50.0,
                         ),
                         onPressed: () {
-                          // ref.read(audioController.notifier).fastForward();
-                          // AudioService.pause();
+                          ref.read(audioController.notifier).fastForward();
                         },
                       ),
                     ],
@@ -288,7 +293,9 @@ class _MiniPlayerState extends State<MiniPlayer> {
                         inactiveColor: Colors.black.withOpacity(0.1),
                         activeColor: Colors.red[400],
                         onChanged: (double d) {
-                          // ref.read(audioController.notifier).seekTo(d);
+                          ref
+                              .read(audioController.notifier)
+                              .seekTo(Duration(seconds: d.toInt()));
                         },
                       ),
                     ],
@@ -312,10 +319,10 @@ class _MiniPlayerState extends State<MiniPlayer> {
               child: GestureDetector(
                 onTap: () {
                   setState(() {
-                    if (_height == 380.0) {
-                      _height = 80.0;
+                    if (_height == _largePlayerSize) {
+                      _height = _smallPlayerSize;
                     } else {
-                      _height = 380.0;
+                      _height = _largePlayerSize;
                     }
                   });
                 },
@@ -323,10 +330,10 @@ class _MiniPlayerState extends State<MiniPlayer> {
                   int sensitivity = 8;
                   if (details.delta.dy < -sensitivity) {
                     setState(() {
-                      if (_height == 380.0) {
-                        _height = 80.0;
+                      if (_height == _largePlayerSize) {
+                        _height = _smallPlayerSize;
                       } else {
-                        _height = 380.0;
+                        _height = _largePlayerSize;
                       }
                     });
                   }
@@ -393,8 +400,7 @@ class _MiniPlayerState extends State<MiniPlayer> {
                                 size: 32.0,
                               ),
                               onPressed: () {
-                                // ref.read(audioController.notifier).rewind();
-                                // AudioService.pause();
+                                ref.read(audioController.notifier).rewind();
                               }),
                           IconButton(
                               icon: Icon(
@@ -413,10 +419,9 @@ class _MiniPlayerState extends State<MiniPlayer> {
                                 size: 32.0,
                               ),
                               onPressed: () {
-                                // ref
-                                //     .read(audioController.notifier)
-                                //     .fastForward();
-                                // AudioService.pause();
+                                ref
+                                    .read(audioController.notifier)
+                                    .fastForward();
                               }),
                         ],
                       ),
@@ -433,7 +438,6 @@ class _MiniPlayerState extends State<MiniPlayer> {
                               ),
                               onPressed: () {
                                 ref.read(audioController.notifier).resume();
-                                // AudioService.pause();
                               }),
                           IconButton(
                               icon: Icon(
@@ -443,7 +447,6 @@ class _MiniPlayerState extends State<MiniPlayer> {
                               ),
                               onPressed: () {
                                 ref.read(audioController.notifier).stop();
-                                // AudioService.pause();
                               }),
                         ],
                       ),

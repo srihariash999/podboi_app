@@ -11,7 +11,7 @@ final audioController =
   return AudioStateNotifier(ref);
 });
 
-Future<AudioHandler> initAudioService() async {
+Future<MyAudioHandler> initAudioService() async {
   var s = await AudioService.init(
     builder: () => MyAudioHandler(),
     config: AudioServiceConfig(
@@ -31,7 +31,7 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
     initAudioService().then((value) => _audioHandler = value);
   }
 
-  late final _audioHandler;
+  late final MyAudioHandler _audioHandler;
 
   requestPlayingSong(Song song) async {
     await _loadSong(song);
@@ -56,8 +56,13 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
     );
   }
 
+  // Function to call from UI to resume playing.
   void resume() => _audioHandler.play();
+
+  //Function to cal from UI to pause playing.
   void pause() => _audioHandler.pause();
+
+  //Function to call from UI to stop playing.
   void stop() {
     _audioHandler.stop();
     state = state.copyWith(
@@ -65,6 +70,15 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
       isPlaying: false,
     );
   }
+
+  //Function to call from UI to fast forward 10 seconds .
+  void fastForward() => _audioHandler.fastForward();
+
+  //Function to call from UI to reqind 10 seconds .
+  void rewind() => _audioHandler.rewind();
+
+  // Function to call from UI to seek to a position.
+  void seekTo(Duration position) => _audioHandler.seek(position);
 }
 
 class AudioState {
@@ -181,6 +195,40 @@ class MyAudioHandler extends BaseAudioHandler {
 
   @override
   Future<void> stop() => _player.stop();
+
+  @override
+  Future<void> seek(Duration d) => _player.seek(d);
+
+  @override
+  Future<void> rewind() async {
+    print(" this is called <- seek backward");
+
+    Duration curr = _player.position;
+    print(" curr is : ${curr.inSeconds}");
+    Duration newDur = curr.inSeconds > 10
+        ? Duration(seconds: curr.inSeconds - 10)
+        : Duration(seconds: 0);
+    _player.seek(newDur);
+
+    return super.rewind();
+  }
+
+  @override
+  Future<void> fastForward() async {
+    print(" this is called -> seek forward");
+
+    if (mediaItem.value != null && mediaItem.value!.duration != null) {
+      Duration curr = _player.position;
+      print(" curr is : ${curr.inSeconds}");
+      Duration newDur =
+          curr.inSeconds < mediaItem.value!.duration!.inSeconds - 10
+              ? Duration(seconds: curr.inSeconds + 10)
+              : Duration(seconds: mediaItem.value!.duration!.inSeconds);
+      _player.seek(newDur);
+    }
+
+    return super.fastForward();
+  }
 
   PlaybackState _transformEvent(PlaybackEvent event) {
     return PlaybackState(
