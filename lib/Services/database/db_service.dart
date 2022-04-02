@@ -76,9 +76,14 @@ Future<bool> removePodcastFromSubs(Item podcast) async {
 
 Future<List<ListeningHistoryItem>> getLhiList() async {
   List<ListeningHistoryItem> _lhis = [];
-  for (var i in _historyBox.values) {
-    _lhis.add(lhiFromMap(i));
+  List _l = _historyBox.values.toList();
+  for (int i = 0; i < _l.length; i++) {
+    int key = _historyBox.keyAt(i);
+    ListeningHistoryItem _lhi = lhiFromMap(_l[i]);
+    _lhi.id = key;
+    _lhis.add(_lhi);
   }
+  _lhis = _lhis.reversed.toList();
   return _lhis;
 }
 
@@ -86,4 +91,14 @@ Future<bool> saveLhi(ListeningHistoryItem lhi) async {
   print(" here to save to history yo ${lhi.name} ");
   _historyBox.add(lhiToMap(lhi));
   return true;
+}
+
+Future<bool> removeLhiItem(int key) async {
+  try {
+    _historyBox.delete(key);
+    return true;
+  } catch (e) {
+    print("error removing item: $e");
+    return false;
+  }
 }

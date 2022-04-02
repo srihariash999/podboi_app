@@ -1,4 +1,5 @@
 class ListeningHistoryItem {
+  int? id;
   final String url;
   final String name;
   final String artist;
@@ -11,6 +12,7 @@ class ListeningHistoryItem {
   final String listenedOn;
 
   ListeningHistoryItem({
+    this.id,
     required this.url,
     required this.name,
     required this.artist,
@@ -22,5 +24,3 @@ class ListeningHistoryItem {
     required this.podcastName,
   });
 }
-
-

@@ -31,21 +31,52 @@ class HistoryStateNotifier extends StateNotifier<HistoryState> {
     required String podcastArtWork,
     required String podcastName,
   }) async {
-    bool s = await saveLhi(
-      ListeningHistoryItem(
-        url: url,
-        name: name,
-        artist: artist,
-        icon: icon,
-        album: album,
-        duration: duration,
-        listenedOn: listenedOn,
-        podcastArtWork: podcastArtWork,
-        podcastName: podcastName,
-      ),
-    );
-    if (s) {
-      getHistory();
+    List<ListeningHistoryItem> _list = await getLhiList();
+    bool _flagged = false;
+    ListeningHistoryItem? _lhi;
+    for (var i in _list) {
+      if (i.name == name && i.podcastName == podcastName) {
+        _flagged = true;
+        _lhi = i;
+        break;
+      }
+    }
+    if (_flagged == false) {
+      bool s = await saveLhi(
+        ListeningHistoryItem(
+          url: url,
+          name: name,
+          artist: artist,
+          icon: icon,
+          album: album,
+          duration: duration,
+          listenedOn: listenedOn,
+          podcastArtWork: podcastArtWork,
+          podcastName: podcastName,
+        ),
+      );
+      if (s) {
+        getHistory();
+      }
+    } else {
+      print("podcast already in history");
+      await removeLhiItem(_lhi!.id!);
+      bool s = await saveLhi(
+        ListeningHistoryItem(
+          url: url,
+          name: name,
+          artist: artist,
+          icon: icon,
+          album: album,
+          duration: duration,
+          listenedOn: listenedOn,
+          podcastArtWork: podcastArtWork,
+          podcastName: podcastName,
+        ),
+      );
+      if (s) {
+        getHistory();
+      }
     }
   }
 }

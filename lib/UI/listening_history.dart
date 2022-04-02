@@ -98,29 +98,51 @@ class ListeningHistoryView extends StatelessWidget {
                                             _list[index];
                                         return GestureDetector(
                                           onTap: () async {
-                                            // await ref
-                                            //     .read(audioController.notifier)
-                                            //     .playAction(
-                                            //       Song(
-                                            //         url: _lhi.url,
-                                            //         icon: _lhi.icon,
-                                            //         name: _lhi.name,
-                                            //         duration: Duration(
-                                            //           seconds: int.parse(
-                                            //               _lhi.duration),
-                                            //         ),
-                                            //         artist: _lhi.artist,
-                                            //         album: _lhi.album,
-                                            //       ),
-                                            //     );
+                                            ref
+                                                .read(audioController.notifier)
+                                                .requestPlayingSong(
+                                                  Song(
+                                                    url: _lhi.url,
+                                                    icon: _lhi.icon,
+                                                    name: _lhi.name,
+                                                    duration: Duration(
+                                                      seconds: int.parse(
+                                                          _lhi.duration),
+                                                    ),
+                                                    artist: _lhi.artist,
+                                                    album: _lhi.album,
+                                                  ),
+                                                );
+                                            ref
+                                                .read(
+                                                    historyController.notifier)
+                                                .saveToHistoryAction(
+                                                  url: _lhi.url,
+                                                  name: _lhi.name,
+                                                  artist: _lhi.artist,
+                                                  icon: _lhi.icon,
+                                                  album: _lhi.album,
+                                                  duration: _lhi.duration,
+                                                  listenedOn:
+                                                      DateTime.now().toString(),
+                                                  podcastArtWork:
+                                                      _lhi.podcastArtWork,
+                                                  podcastName: _lhi.podcastName,
+                                                );
                                           },
                                           child: EpisodeDisplayWidget(
                                             context: context,
                                             posterUrl: _lhi.podcastArtWork,
                                             episodeUploadDate:
                                                 DateFormat('yMMMd').format(
-                                                    DateTime.parse(
-                                                        _lhi.listenedOn)),
+                                                      DateTime.parse(
+                                                          _lhi.listenedOn),
+                                                    ) +
+                                                    ', ' +
+                                                    DateFormat('hh:mm').format(
+                                                      DateTime.parse(
+                                                          _lhi.listenedOn),
+                                                    ),
                                             episodeTitle: _lhi.name,
                                             episodeDuration: Duration(
                                                   seconds:
