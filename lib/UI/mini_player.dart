@@ -1,6 +1,7 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:just_audio/just_audio.dart';
 // import 'package:intl/intl.dart';
 import 'package:podboi/Controllers/audio_controller.dart';
 import 'package:flutter/material.dart';
@@ -194,22 +195,39 @@ class _MiniPlayerState extends State<MiniPlayer> {
                           ref.read(audioController.notifier).rewind();
                         },
                       ),
-                      SizedBox(
-                        width: 10.0,
-                      ),
-                      IconButton(
-                        icon: Icon(
-                          FeatherIcons.pauseCircle,
-                          color: Theme.of(context).colorScheme.secondary,
-                          size: 50.0,
-                        ),
-                        onPressed: () {
-                          ref.read(audioController.notifier).pause();
-                        },
-                      ),
-                      SizedBox(
-                        width: 10.0,
-                      ),
+                      _contState.playerState
+                          ? SizedBox(
+                              width: 10.0,
+                            )
+                          : SizedBox(
+                              width: 18.0,
+                            ),
+                      _contState.playerState == false
+                          ? Container(
+                              height: 50.0,
+                              width: 50.0,
+                              margin: EdgeInsets.only(top: 12.0),
+                              alignment: Alignment.center,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 4.0,
+                                color: Theme.of(context).colorScheme.secondary,
+                              ),
+                            )
+                          : IconButton(
+                              icon: Icon(
+                                FeatherIcons.pauseCircle,
+                                color: Theme.of(context).colorScheme.secondary,
+                                size: 50.0,
+                              ),
+                              onPressed: () {
+                                ref.read(audioController.notifier).pause();
+                              },
+                            ),
+                      _contState.playerState
+                          ? SizedBox(
+                              width: 10.0,
+                            )
+                          : Container(),
                       IconButton(
                         icon: Icon(
                           Icons.forward_10,
@@ -405,16 +423,47 @@ class _MiniPlayerState extends State<MiniPlayer> {
                               onPressed: () {
                                 ref.read(audioController.notifier).rewind();
                               }),
-                          IconButton(
-                              icon: Icon(
-                                FeatherIcons.pauseCircle,
-                                color: Theme.of(context).colorScheme.secondary,
-                                size: 32.0,
-                              ),
-                              onPressed: () {
-                                ref.read(audioController.notifier).pause();
-                                // AudioService.pause();
-                              }),
+                          _contState.playerState == false
+                              ? Container(
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        height: 24.0,
+                                        width: 24.0,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 3.0,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .secondary,
+                                        ),
+                                      ),
+                                      IconButton(
+                                          icon: Icon(
+                                            FeatherIcons.stopCircle,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .secondary,
+                                            size: 32.0,
+                                          ),
+                                          onPressed: () {
+                                            ref
+                                                .read(audioController.notifier)
+                                                .stop();
+                                          }),
+                                    ],
+                                  ),
+                                )
+                              : IconButton(
+                                  icon: Icon(
+                                    FeatherIcons.pauseCircle,
+                                    color:
+                                        Theme.of(context).colorScheme.secondary,
+                                    size: 32.0,
+                                  ),
+                                  onPressed: () {
+                                    ref.read(audioController.notifier).pause();
+                                    // AudioService.pause();
+                                  }),
                           IconButton(
                               icon: Icon(
                                 Icons.forward_10,
