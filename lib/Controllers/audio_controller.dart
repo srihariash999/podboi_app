@@ -11,9 +11,9 @@ final audioController =
   return AudioStateNotifier(ref);
 });
 
-Future<MyAudioHandler> initAudioService() async {
+Future<MyAudioHandler> initAudioService(var ref) async {
   var s = await AudioService.init(
-    builder: () => MyAudioHandler(),
+    builder: () => MyAudioHandler(ref),
     config: AudioServiceConfig(
       androidNotificationChannelId: 'com.mycompany.myapp.audio',
       androidNotificationChannelName: 'Audio Service Demo',
@@ -28,7 +28,7 @@ Future<MyAudioHandler> initAudioService() async {
 class AudioStateNotifier extends StateNotifier<AudioState> {
   final ref;
   AudioStateNotifier(this.ref) : super(AudioState.initial()) {
-    initAudioService().then((value) => _audioHandler = value);
+    initAudioService(this.ref).then((value) => _audioHandler = value);
   }
 
   late final MyAudioHandler _audioHandler;
@@ -57,8 +57,16 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
         state = state.copyWith(playerState: true);
       }
     });
+    state = state.copyWith(
+      isPlaying: true,
+      isPlayerShow: true,
+      positionStream: AudioService.position,
+      audioHandler: _audioHandler,
+    );
 
-    _audioHandler.play();
+    await _audioHandler.play();
+    await _audioHandler.pause();
+    await _audioHandler.play();
     state = state.copyWith(
       isPlaying: true,
       isPlayerShow: true,
@@ -68,14 +76,26 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
   }
 
   // Function to call from UI to resume playing.
-  void resume() => _audioHandler.play();
+  void resume() async {
+    await _audioHandler.play();
+  }
 
   //Function to cal from UI to pause playing.
-  void pause() => _audioHandler.pause();
+  void pause() async {
+    await _audioHandler.pause();
+  }
 
   //Function to call from UI to stop playing.
-  void stop() {
-    _audioHandler.stop();
+  void stop() async {
+    await _audioHandler.stop();
+    state = state.copyWith(
+      isPlayerShow: false,
+      isPlaying: false,
+    );
+  }
+
+  void callBackToStopFromNotification() {
+    print(" inside the callbalc");
     state = state.copyWith(
       isPlayerShow: false,
       isPlaying: false,
@@ -109,7 +129,7 @@ class AudioState {
   factory AudioState.initial() {
     return AudioState(
         isPlaying: false,
-        audioHandler: MyAudioHandler(),
+        audioHandler: MyAudioHandler(null),
         isPlayerShow: false,
         positionStream: AudioService.position,
         playerState: false);
@@ -133,7 +153,9 @@ class AudioState {
 class MyAudioHandler extends BaseAudioHandler {
   final _player = AudioPlayer();
 
-  MyAudioHandler() {
+  final StateNotifierProviderRef? ref;
+
+  MyAudioHandler(this.ref) {
     // So that our clients (the Flutter UI and the system notification) know
     // what state to display, here we set up our audio handler to broadcast all
     // playback state changes as they happen via playbackState...
@@ -168,7 +190,11 @@ class MyAudioHandler extends BaseAudioHandler {
   Future<void> pause() => _player.pause();
 
   @override
-  Future<void> stop() => _player.stop();
+  Future<void> stop() {
+    print(" here to call the callback");
+    ref?.read(audioController.notifier).callBackToStopFromNotification();
+    return _player.stop();
+  }
 
   @override
   Future<void> seek(Duration d) => _player.seek(d);

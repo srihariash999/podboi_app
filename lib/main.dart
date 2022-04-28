@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,17 +9,22 @@ import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:podboi/Controllers/theme_controller.dart';
 import 'package:podboi/Services/database/subscriptions.dart';
+import 'package:podboi/Services/network/api.dart';
 import 'package:podboi/UI/base_screen.dart';
+import 'package:podboi/UI/login_register/login.dart';
 import 'package:podboi/UI/welcome_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  var dir = await getApplicationDocumentsDirectory();
+  final appDocumentDirectory = await getApplicationDocumentsDirectory();
+  final database = Directory('${appDocumentDirectory.path}/database');
 
-  Hive
-    ..init(dir.path)
-    ..registerAdapter(SubscriptionAdapter());
+  //database.delete(recursive: true);
+
+  Hive.init(database.path);
+
+  Hive.registerAdapter(SubscriptionAdapter());
 
   await Hive.openBox('subscriptionsBox');
   await Hive.openBox('generalBox');
@@ -31,8 +38,6 @@ void main() async {
     ),
   );
 }
-
-
 
 class MyApp extends StatefulWidget {
   // This widget is the root of your application.
@@ -58,6 +63,7 @@ class _MyAppState extends State<MyApp> {
         debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
         theme: _currTheme,
+        // home: LoginScreen(),
         home: _name == null ? WelcomePage() : BaseScreen(),
       );
     });
