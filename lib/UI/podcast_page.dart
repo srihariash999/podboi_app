@@ -23,168 +23,184 @@ class PodcastPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 12.0, horizontal: 18.0),
-                    child: Icon(
-                      Icons.arrow_back,
-                      color: Theme.of(context).colorScheme.secondary,
-                    ),
+        child: NestedScrollView(
+          headerSliverBuilder: (context, b) {
+            return [
+              SliverAppBar(
+                leading: Container(),
+                expandedHeight: 42.0,
+                backgroundColor: Theme.of(context).backgroundColor,
+                elevation: 0.0,
+                floating: true,
+                snap: true,
+                flexibleSpace: FlexibleSpaceBar(
+                  title: Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 12.0, horizontal: 18.0),
+                          child: Icon(
+                            Icons.arrow_back_ios_new,
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
+                        ),
+                      ),
+                      Consumer(
+                        builder: (context, ref, child) {
+                          var _viewController = ref.watch(
+                            podcastPageViewController(podcast),
+                          );
+                          if (_viewController.isLoading) {
+                            return Container();
+                          }
+                          return Expanded(
+                            child: TextField(
+                              controller: episodeSearchController,
+                              onChanged: (String s) {
+                                ref
+                                    .read(podcastPageViewController(podcast)
+                                        .notifier)
+                                    .filterEpisodesWithQuery(s);
+                              },
+                              decoration: InputDecoration(
+                                prefixIcon: Icon(
+                                  LineIcons.search,
+                                  size: 20.0,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .secondary
+                                      .withOpacity(0.7),
+                                ),
+                                suffix: Padding(
+                                  padding: const EdgeInsets.only(
+                                      right: 12.0, top: 8.0),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      episodeSearchController.clear();
+                                      ref
+                                          .read(
+                                              podcastPageViewController(podcast)
+                                                  .notifier)
+                                          .filterEpisodesWithQuery('');
+                                    },
+                                    child: Icon(
+                                      LineIcons.timesCircle,
+                                      size: 20.0,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondary
+                                          .withOpacity(0.7),
+                                    ),
+                                  ),
+                                ),
+                                contentPadding:
+                                    const EdgeInsets.symmetric(vertical: 16.0),
+                                hintText: "  Search Episodes",
+                                alignLabelWithHint: true,
+                                hintStyle: TextStyle(
+                                  fontSize: 16.0,
+                                  fontWeight: FontWeight.w400,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .secondary
+                                      .withOpacity(0.7),
+                                ),
+                                fillColor: Theme.of(context)
+                                    .highlightColor
+                                    .withOpacity(0.5),
+                                filled: true,
+                                focusColor: Colors.black.withOpacity(0.30),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide.none,
+                                  borderRadius: BorderRadius.circular(20.0),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide.none,
+                                  borderRadius: BorderRadius.circular(20.0),
+                                ),
+                                border: OutlineInputBorder(
+                                  borderSide: BorderSide.none,
+                                  borderRadius: BorderRadius.circular(20.0),
+                                ),
+                              ),
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.secondary,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
                   ),
                 ),
-                Consumer(
+              ),
+            ];
+          },
+          body: Column(
+            children: [
+              Expanded(
+                child: Consumer(
                   builder: (context, ref, child) {
                     var _viewController = ref.watch(
                       podcastPageViewController(podcast),
                     );
-                    if (_viewController.isLoading) {
-                      return Container();
+                    Future<void> refresh() async {
+                      ref
+                          .read(podcastPageViewController(podcast).notifier)
+                          .loadPodcastEpisodes(podcast.feedUrl!);
                     }
-                    return Expanded(
-                      child: TextField(
-                        controller: episodeSearchController,
-                        onChanged: (String s) {
-                          ref
-                              .read(podcastPageViewController(podcast).notifier)
-                              .filterEpisodesWithQuery(s);
-                        },
-                        decoration: InputDecoration(
-                          prefixIcon: Icon(
-                            LineIcons.search,
-                            size: 20.0,
-                            color: Theme.of(context)
-                                .colorScheme
-                                .secondary
-                                .withOpacity(0.7),
-                          ),
-                          suffix: Padding(
-                            padding:
-                                const EdgeInsets.only(right: 12.0, top: 2.0),
-                            child: GestureDetector(
-                              onTap: () {
-                                episodeSearchController.clear();
-                                ref
-                                    .read(podcastPageViewController(podcast)
-                                        .notifier)
-                                    .filterEpisodesWithQuery('');
-                              },
-                              child: Icon(
-                                LineIcons.timesCircle,
-                                size: 20.0,
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .secondary
-                                    .withOpacity(0.7),
-                              ),
+
+                    return _viewController.isLoading
+                        ? Container(
+                            alignment: Alignment.center,
+                            child: CircularProgressIndicator(
+                              color: Theme.of(context).colorScheme.secondary,
+                              strokeWidth: 1,
                             ),
-                          ),
-                          contentPadding:
-                              const EdgeInsets.symmetric(vertical: 16.0),
-                          hintText: "  Search Episodes",
-                          alignLabelWithHint: true,
-                          hintStyle: TextStyle(
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.w400,
-                            color: Theme.of(context)
-                                .colorScheme
-                                .secondary
-                                .withOpacity(0.7),
-                          ),
-                          fillColor:
-                              Theme.of(context).highlightColor.withOpacity(0.5),
-                          filled: true,
-                          focusColor: Colors.black.withOpacity(0.30),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide.none,
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide.none,
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide.none,
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                        ),
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.secondary,
-                        ),
-                      ),
-                    );
+                          )
+                        : RefreshIndicator(
+                            onRefresh: refresh,
+                            child: ListView.separated(
+                              physics: BouncingScrollPhysics(),
+                              separatorBuilder: (context, index) {
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20.0),
+                                  child: Divider(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .secondary
+                                        .withOpacity(0.2),
+                                  ),
+                                );
+                              },
+                              itemCount:
+                                  _viewController.podcastEpisodes.length + 1,
+                              itemBuilder: (context, index) {
+                                if (index == 0) {
+                                  // return Container();
+                                  return buildTopUI(context);
+                                }
+                                Episode _episode =
+                                    _viewController.podcastEpisodes[index - 1];
+                                return DetailedEpsiodeViewWidget(
+                                  episode: _episode,
+                                  ref: ref,
+                                  podcast: podcast,
+                                );
+                              },
+                            ),
+                          );
                   },
                 ),
-              ],
-            ),
-            SizedBox(
-              height: 4.0,
-            ),
-            Expanded(
-              child: Consumer(
-                builder: (context, ref, child) {
-                  var _viewController = ref.watch(
-                    podcastPageViewController(podcast),
-                  );
-                  Future<void> refresh() async {
-                    ref
-                        .read(podcastPageViewController(podcast).notifier)
-                        .loadPodcastEpisodes(podcast.feedUrl!);
-                  }
-
-                  return _viewController.isLoading
-                      ? Container(
-                          alignment: Alignment.center,
-                          child: CircularProgressIndicator(
-                            color: Theme.of(context).colorScheme.secondary,
-                            strokeWidth: 1,
-                          ),
-                        )
-                      : RefreshIndicator(
-                          onRefresh: refresh,
-                          child: ListView.separated(
-                            physics: BouncingScrollPhysics(),
-                            separatorBuilder: (context, index) {
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 20.0),
-                                child: Divider(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .secondary
-                                      .withOpacity(0.2),
-                                ),
-                              );
-                            },
-                            itemCount:
-                                _viewController.podcastEpisodes.length + 1,
-                            itemBuilder: (context, index) {
-                              if (index == 0) {
-                                return buildTopUI(context);
-                              }
-                              Episode _episode =
-                                  _viewController.podcastEpisodes[index - 1];
-                              return DetailedEpsiodeViewWidget(
-                                episode: _episode,
-                                ref: ref,
-                                podcast: podcast,
-                              );
-                            },
-                          ),
-                        );
-                },
               ),
-            ),
-            Align(alignment: Alignment.bottomCenter, child: MiniPlayer()),
-          ],
+              Align(alignment: Alignment.bottomCenter, child: MiniPlayer()),
+            ],
+          ),
         ),
       ),
     );
@@ -502,12 +518,8 @@ class PodcastPage extends StatelessWidget {
               ),
             ),
           ),
-          Container(
-            padding: EdgeInsets.only(top: 16.0, bottom: 12.0),
-            child: Divider(
-              color: Theme.of(context).colorScheme.secondary,
-              height: 4.0,
-            ),
+          SizedBox(
+            height: 12.0,
           ),
         ],
       ),

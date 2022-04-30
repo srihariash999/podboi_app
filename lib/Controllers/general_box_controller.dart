@@ -14,6 +14,20 @@ Future<bool> saveNameRequest(
   }
 }
 
+Future<bool> saveTokenRequest({required String token}) async {
+  try {
+    await _box.put('token', token);
+    return true;
+  } catch (e) {
+    print(" error saving token to the box : $e");
+    return false;
+  }
+}
+
+String getSavedToken() {
+  return _box.get('token') ?? "";
+}
+
 String getSavedUserName() {
   return _box.get('userName') ?? 'User';
 }

@@ -11,9 +11,9 @@ final audioController =
   return AudioStateNotifier(ref);
 });
 
-Future<MyAudioHandler> initAudioService() async {
+Future<MyAudioHandler> initAudioService(var ref) async {
   var s = await AudioService.init(
-    builder: () => MyAudioHandler(),
+    builder: () => MyAudioHandler(ref),
     config: AudioServiceConfig(
       androidNotificationChannelId: 'com.mycompany.myapp.audio',
       androidNotificationChannelName: 'Audio Service Demo',
@@ -28,7 +28,7 @@ Future<MyAudioHandler> initAudioService() async {
 class AudioStateNotifier extends StateNotifier<AudioState> {
   final ref;
   AudioStateNotifier(this.ref) : super(AudioState.initial()) {
-    initAudioService().then((value) => _audioHandler = value);
+    initAudioService(this.ref).then((value) => _audioHandler = value);
   }
 
   late final MyAudioHandler _audioHandler;
@@ -45,9 +45,28 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
     //   artUri: Uri.parse(song.icon),
     //   extras: {'url': song.url},
     // );
-    await _audioHandler.prepareForPlaying(song);
+    var _stream = await _audioHandler.prepareForPlaying(song);
 
-    _audioHandler.play();
+    _stream.listen((playerState) {
+      // print(" player state : $playerState");
+      final processingState = playerState.processingState;
+      if (processingState == ProcessingState.loading ||
+          processingState == ProcessingState.buffering) {
+        state = state.copyWith(playerState: false);
+      } else {
+        state = state.copyWith(playerState: true);
+      }
+    });
+    state = state.copyWith(
+      isPlaying: true,
+      isPlayerShow: true,
+      positionStream: AudioService.position,
+      audioHandler: _audioHandler,
+    );
+
+    await _audioHandler.play();
+    await _audioHandler.pause();
+    await _audioHandler.play();
     state = state.copyWith(
       isPlaying: true,
       isPlayerShow: true,
@@ -57,14 +76,26 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
   }
 
   // Function to call from UI to resume playing.
-  void resume() => _audioHandler.play();
+  void resume() async {
+    await _audioHandler.play();
+  }
 
   //Function to cal from UI to pause playing.
-  void pause() => _audioHandler.pause();
+  void pause() async {
+    await _audioHandler.pause();
+  }
 
   //Function to call from UI to stop playing.
-  void stop() {
-    _audioHandler.stop();
+  void stop() async {
+    await _audioHandler.stop();
+    state = state.copyWith(
+      isPlayerShow: false,
+      isPlaying: false,
+    );
+  }
+
+  void callBackToStopFromNotification() {
+    print(" inside the callbalc");
     state = state.copyWith(
       isPlayerShow: false,
       isPlaying: false,
@@ -88,50 +119,56 @@ class AudioState {
   final bool isPlayerShow;
   final AudioHandler audioHandler;
   final Stream<Duration> positionStream;
-  AudioState({
-    // required this.positionStream,
-    // required this.playerStateStream,
-    required this.audioHandler,
-    required this.isPlaying,
-    required this.isPlayerShow,
-    required this.positionStream,
-  });
+  final bool playerState;
+  AudioState(
+      {required this.audioHandler,
+      required this.isPlaying,
+      required this.isPlayerShow,
+      required this.positionStream,
+      required this.playerState});
   factory AudioState.initial() {
     return AudioState(
-      // positionStream: _audioPlayer.positionStream,
-      // playerStateStream: _audioPlayer.playerStateStream,
-      isPlaying: false,
-      audioHandler: MyAudioHandler(),
-      isPlayerShow: false,
-      positionStream: AudioService.position,
-    );
+        isPlaying: false,
+        audioHandler: MyAudioHandler(null),
+        isPlayerShow: false,
+        positionStream: AudioService.position,
+        playerState: false);
   }
   AudioState copyWith({
     bool? isPlayerShow,
     bool? isPlaying,
     AudioHandler? audioHandler,
     Stream<Duration>? positionStream,
+    bool? playerState,
   }) {
     return AudioState(
-      audioHandler: audioHandler ?? this.audioHandler,
-      isPlayerShow: isPlayerShow ?? this.isPlayerShow,
-      isPlaying: isPlaying ?? this.isPlaying,
-      positionStream: positionStream ?? this.positionStream,
-    );
+        audioHandler: audioHandler ?? this.audioHandler,
+        isPlayerShow: isPlayerShow ?? this.isPlayerShow,
+        isPlaying: isPlaying ?? this.isPlaying,
+        positionStream: positionStream ?? this.positionStream,
+        playerState: playerState ?? this.playerState);
   }
 }
 
 class MyAudioHandler extends BaseAudioHandler {
   final _player = AudioPlayer();
 
-  MyAudioHandler() {
+  final StateNotifierProviderRef? ref;
+
+  MyAudioHandler(this.ref) {
     // So that our clients (the Flutter UI and the system notification) know
     // what state to display, here we set up our audio handler to broadcast all
     // playback state changes as they happen via playbackState...
     _player.playbackEventStream.map(_transformEvent).pipe(playbackState);
+
+    _player.playerStateStream.listen((state) {
+      if (state.processingState == ProcessingState.completed) {
+        _player.stop();
+      }
+    });
   }
 
-  Future<void> prepareForPlaying(Song song) async {
+  Future<Stream<PlayerState>> prepareForPlaying(Song song) async {
     final _m = MediaItem(
       id: '',
       album: song.album,
@@ -142,49 +179,8 @@ class MyAudioHandler extends BaseAudioHandler {
     );
     mediaItem.add(_m);
     _player.setAudioSource(AudioSource.uri(Uri.parse(song.url)));
-    // ... and also the current media item via mediaItem.
-  }
 
-  void notifyAudioHandlerAboutPlaybackEvents() {
-    print(" in here to set playback events");
-    _player.playbackEventStream.listen((PlaybackEvent event) {
-      final playing = _player.playing;
-      playbackState.add(
-        playbackState.value.copyWith(
-          controls: [
-            MediaControl.skipToPrevious,
-            if (playing) MediaControl.pause else MediaControl.play,
-            MediaControl.stop,
-            MediaControl.skipToNext,
-          ],
-          systemActions: const {
-            MediaAction.seek,
-          },
-          // androidCompactActionIndices: const [0, 1, 3],
-          processingState: const {
-            ProcessingState.idle: AudioProcessingState.idle,
-            ProcessingState.loading: AudioProcessingState.loading,
-            ProcessingState.buffering: AudioProcessingState.buffering,
-            ProcessingState.ready: AudioProcessingState.ready,
-            ProcessingState.completed: AudioProcessingState.completed,
-          }[_player.processingState]!,
-          repeatMode: const {
-            LoopMode.off: AudioServiceRepeatMode.none,
-            LoopMode.one: AudioServiceRepeatMode.one,
-            LoopMode.all: AudioServiceRepeatMode.all,
-          }[_player.loopMode]!,
-          shuffleMode: (_player.shuffleModeEnabled)
-              ? AudioServiceShuffleMode.all
-              : AudioServiceShuffleMode.none,
-          playing: playing,
-          updatePosition: _player.position,
-          bufferedPosition: _player.bufferedPosition,
-          speed: _player.speed,
-          queueIndex: event.currentIndex,
-        ),
-      );
-    });
-    print(" done setting up playback events");
+    return _player.playerStateStream.asBroadcastStream();
   }
 
   @override
@@ -194,7 +190,11 @@ class MyAudioHandler extends BaseAudioHandler {
   Future<void> pause() => _player.pause();
 
   @override
-  Future<void> stop() => _player.stop();
+  Future<void> stop() {
+    print(" here to call the callback");
+    ref?.read(audioController.notifier).callBackToStopFromNotification();
+    return _player.stop();
+  }
 
   @override
   Future<void> seek(Duration d) => _player.seek(d);
@@ -220,11 +220,12 @@ class MyAudioHandler extends BaseAudioHandler {
     if (mediaItem.value != null && mediaItem.value!.duration != null) {
       Duration curr = _player.position;
       print(" curr is : ${curr.inSeconds}");
-      Duration newDur =
-          curr.inSeconds < mediaItem.value!.duration!.inSeconds - 10
-              ? Duration(seconds: curr.inSeconds + 10)
-              : Duration(seconds: mediaItem.value!.duration!.inSeconds);
-      _player.seek(newDur);
+      if (curr.inSeconds < mediaItem.value!.duration!.inSeconds - 10) {
+        Duration newDur = Duration(seconds: curr.inSeconds + 10);
+        _player.seek(newDur);
+      } else {
+        _player.stop();
+      }
     }
 
     return super.fastForward();

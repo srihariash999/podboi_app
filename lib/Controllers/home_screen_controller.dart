@@ -27,7 +27,7 @@ class HomeScreenStateNotifier extends StateNotifier<HomeScreenState> {
       state = state.copyWith(topPodcasts: [], isLoading: true);
       SearchResult charts = await _search.charts(
         limit: 24,
-        country: Country.INDIA,
+        country: Country.UNITED_KINGDOM,
       );
       print(" top pods called : ${charts.items.length}");
       List<Item> _topPodcasts = [];

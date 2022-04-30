@@ -59,21 +59,18 @@ class _BaseScreenState extends State<BaseScreen> {
         },
         backgroundColor: Theme.of(context).backgroundColor,
         showUnselectedLabels: false,
+        fixedColor: Theme.of(context).colorScheme.secondary,
+        unselectedLabelStyle: TextStyle(
+            fontSize: 20.0, fontWeight: FontWeight.w500, fontFamily: 'Segoe'),
+        selectedLabelStyle: TextStyle(
+            fontSize: 12.0, fontWeight: FontWeight.w500, fontFamily: 'Segoe'),
         items: [
           BottomNavigationBarItem(
             activeIcon: Icon(
               Icons.home,
               color: Theme.of(context).colorScheme.secondary,
             ),
-            // ignore: deprecated_member_use
-            title: Text(
-              'Home',
-              style: TextStyle(
-                  fontSize: 12.0,
-                  fontWeight: FontWeight.w500,
-                  color: Theme.of(context).colorScheme.secondary,
-                  fontFamily: 'Segoe'),
-            ),
+            label: "Home",
             icon: Icon(Icons.home, color: Colors.grey.withOpacity(0.5)),
           ),
           BottomNavigationBarItem(
@@ -81,15 +78,7 @@ class _BaseScreenState extends State<BaseScreen> {
               Icons.book,
               color: Theme.of(context).colorScheme.secondary,
             ),
-            // ignore: deprecated_member_use
-            title: Text(
-              'Subscriptions',
-              style: TextStyle(
-                  fontSize: 12.0,
-                  fontWeight: FontWeight.w500,
-                  color: Theme.of(context).colorScheme.secondary,
-                  fontFamily: 'Segoe'),
-            ),
+            label: 'Subscriptions',
             icon: Icon(
               Icons.book,
               color: Colors.grey.withOpacity(0.5),
