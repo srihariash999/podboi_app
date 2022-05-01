@@ -94,6 +94,26 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
       );
     }
   }
+
+  void toggleEpisodesSort() async {
+    try {
+      state = state.copyWith(isLoading: true);
+      _episodes
+          .sort((a, b) => a.publicationDate!.compareTo(b.publicationDate!));
+      _filteredEpisodes = _episodes;
+      state = state.copyWith(
+        podcastEpisodes: _filteredEpisodes,
+        isLoading: false,
+        epSortingIncr: !state.epSortingIncr,
+      );
+    } catch (e) {
+      debugPrint(" cannot sort episodes  : $e");
+    } finally {
+      state = state.copyWith(
+        isLoading: false,
+      );
+    }
+  }
 }
 
 class PodcastPageState {
@@ -102,14 +122,15 @@ class PodcastPageState {
   final bool isLoading;
   final bool isSubscribed;
   final String? icon;
+  final bool epSortingIncr;
 
-  PodcastPageState({
-    required this.isLoading,
-    required this.podcastEpisodes,
-    required this.isSubscribed,
-    required this.icon,
-    required this.description,
-  });
+  PodcastPageState(
+      {required this.isLoading,
+      required this.podcastEpisodes,
+      required this.isSubscribed,
+      required this.icon,
+      required this.description,
+      required this.epSortingIncr});
   factory PodcastPageState.initial() {
     return PodcastPageState(
       isLoading: true,
@@ -117,6 +138,7 @@ class PodcastPageState {
       podcastEpisodes: [],
       isSubscribed: false,
       icon: null,
+      epSortingIncr: true,
     );
   }
   PodcastPageState copyWith({
@@ -125,6 +147,7 @@ class PodcastPageState {
     bool? isSubscribed,
     String? icon,
     String? description,
+    bool? epSortingIncr,
     final TextEditingController? episodeSearchController,
   }) {
     return PodcastPageState(
@@ -133,6 +156,7 @@ class PodcastPageState {
       isSubscribed: isSubscribed ?? this.isSubscribed,
       icon: icon ?? this.icon,
       description: description ?? this.description,
+      epSortingIncr: epSortingIncr ?? this.epSortingIncr,
     );
   }
 }
