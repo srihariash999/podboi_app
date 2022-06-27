@@ -139,7 +139,8 @@ class ListeningHistoryView extends StatelessWidget {
                                                           _lhi.listenedOn),
                                                     ) +
                                                     ', ' +
-                                                    DateFormat('hh:mm').format(
+                                                    DateFormat('hh:mm aa')
+                                                        .format(
                                                       DateTime.parse(
                                                           _lhi.listenedOn),
                                                     ),
