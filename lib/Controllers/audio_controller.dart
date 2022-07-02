@@ -45,6 +45,11 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
     //   artUri: Uri.parse(song.icon),
     //   extras: {'url': song.url},
     // );
+    state = state.copyWith(
+      playerState: false,
+      isPlayerShow: true,
+      isPlaying: true,
+    );
     var _stream = await _audioHandler.prepareForPlaying(song);
 
     _stream.listen((playerState) {
@@ -64,9 +69,12 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
       audioHandler: _audioHandler,
     );
 
-    await _audioHandler.play();
-    await _audioHandler.pause();
-    await _audioHandler.play();
+    try {
+      await _audioHandler.play();
+    } catch (e) {
+      print(" cannot play this file !");
+    }
+
     state = state.copyWith(
       isPlaying: true,
       isPlayerShow: true,
@@ -178,7 +186,13 @@ class MyAudioHandler extends BaseAudioHandler {
       extras: {'url': song.url},
     );
     mediaItem.add(_m);
-    _player.setAudioSource(AudioSource.uri(Uri.parse(song.url)));
+    try {
+      _player
+          .setAudioSource(AudioSource.uri(Uri.parse(song.url)))
+          .then((value) => mediaItem.add(_m));
+    } catch (e) {
+      print(" error y'aaaaallll  ");
+    }
 
     return _player.playerStateStream.asBroadcastStream();
   }

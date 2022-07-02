@@ -25,16 +25,16 @@ dependencies:
     sdk: flutter
 
   # For state management.
-  flutter_riverpod: ^1.0.0-dev.6
+  flutter_riverpod: ^1.0.3
 
   # For podcast search and audio playing
   podcast_search:
     git:
       url: https://github.com/amugofjava/podcast_search/
       ref: feature/null-safety
-  just_audio: ^0.9.5
-  audio_session: ^0.1.5
-  audio_service: ^0.18.4
+  just_audio: ^0.9.26
+  audio_session: ^0.1.8
+  audio_service: ^0.18.6
 
   # For UI uses
   cupertino_icons: ^1.0.2
