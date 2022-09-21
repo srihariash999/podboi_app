@@ -28,10 +28,10 @@ dependencies:
   flutter_riverpod: ^1.0.3
 
   # For podcast search and audio playing
-  podcast_search:
-    git:
-      url: https://github.com/amugofjava/podcast_search/
-      ref: feature/null-safety
+  podcast_search: ^0.5.1
+    # git:
+    #   url: https://github.com/amugofjava/podcast_search/
+    #   ref: feature/null-safety
   just_audio: ^0.9.26
   audio_session: ^0.1.8
   audio_service: ^0.18.6
