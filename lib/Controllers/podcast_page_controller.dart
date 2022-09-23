@@ -97,9 +97,15 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
 
   void toggleEpisodesSort() async {
     try {
-      state = state.copyWith(isLoading: true);
-      _episodes
-          .sort((a, b) => a.publicationDate!.compareTo(b.publicationDate!));
+      state = state.copyWith(
+        isLoading: true,
+      );
+      bool _incr = !state.epSortingIncr;
+      _incr
+          ? _episodes
+              .sort((a, b) => b.publicationDate!.compareTo(a.publicationDate!))
+          : _episodes
+              .sort((a, b) => a.publicationDate!.compareTo(b.publicationDate!));
       _filteredEpisodes = _episodes;
       state = state.copyWith(
         podcastEpisodes: _filteredEpisodes,

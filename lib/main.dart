@@ -9,9 +9,9 @@ import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:podboi/Controllers/theme_controller.dart';
 import 'package:podboi/Services/database/subscriptions.dart';
-import 'package:podboi/Services/network/api.dart';
+// import 'package:podboi/Services/network/api.dart';
 import 'package:podboi/UI/base_screen.dart';
-import 'package:podboi/UI/login_register/login.dart';
+// import 'package:podboi/UI/login_register/login.dart';
 import 'package:podboi/UI/welcome_page.dart';
 
 void main() async {

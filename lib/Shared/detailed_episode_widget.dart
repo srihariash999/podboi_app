@@ -1,4 +1,3 @@
-import 'package:expandable/expandable.dart';
 import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -26,169 +25,228 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(12.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  _episode.season != null
-                      ? "Season ${_episode.season}" +
-                          "  Episode ${_episode.episode ?? ''}"
-                      : '' + "Episode ${_episode.episode ?? ''}",
-                  style: TextStyle(
-                    fontSize: 12.0,
-                    color: Theme.of(context)
-                        .colorScheme
-                        .secondary
-                        .withOpacity(0.40),
-                    fontFamily: 'Segoe',
-                    fontWeight: FontWeight.w800,
-                  ),
+    return InkWell(
+      onTap: () {
+        showModalBottomSheet(
+            enableDrag: true,
+            isScrollControlled: true,
+            context: context,
+            builder: (context) {
+              return Container(
+                height: MediaQuery.of(context).size.height * .7,
+                child: Column(
+                  children: [
+                    SizedBox(height: 16.0),
+                    Container(
+                      height: 5.0,
+                      width: 64.0,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.secondary,
+                        borderRadius: BorderRadius.circular(18.0),
+                      ),
+                    ),
+                    SizedBox(height: 16.0),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 8.0, bottom: 12.0, top: 12.0),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    "Description ",
+                                    style: TextStyle(
+                                      fontSize: 24.0,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondary
+                                          .withOpacity(0.8),
+                                      fontFamily: 'Segoe',
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Html(
+                                data: _episode.description,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                Text(
-                  DateFormat('yMMMd').format(_episode.publicationDate!),
-                  style: TextStyle(
-                    fontSize: 12.0,
-                    color: Theme.of(context)
-                        .colorScheme
-                        .secondary
-                        .withOpacity(0.40),
-                    fontFamily: 'Segoe',
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(
-            height: 10.0,
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                  child: Text(
-                    _episode.title,
+              );
+            });
+      },
+      child: Container(
+        padding: EdgeInsets.all(12.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    _episode.season != null
+                        ? "Season ${_episode.season}" +
+                            "  Episode ${_episode.episode ?? ''}"
+                        : '' + "Episode ${_episode.episode ?? ''}",
                     style: TextStyle(
-                      fontSize: 16.0,
+                      fontSize: 12.0,
                       color: Theme.of(context)
                           .colorScheme
                           .secondary
-                          .withOpacity(0.8),
+                          .withOpacity(0.40),
                       fontFamily: 'Segoe',
-                      fontWeight: FontWeight.w400,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  Text(
+                    DateFormat('yMMMd').format(_episode.publicationDate!),
+                    style: TextStyle(
+                      fontSize: 12.0,
+                      color: Theme.of(context)
+                          .colorScheme
+                          .secondary
+                          .withOpacity(0.40),
+                      fontFamily: 'Segoe',
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(
+              height: 10.0,
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                    child: Text(
+                      _episode.title,
+                      style: TextStyle(
+                        fontSize: 16.0,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .secondary
+                            .withOpacity(0.8),
+                        fontFamily: 'Segoe',
+                        fontWeight: FontWeight.w400,
+                      ),
                     ),
                   ),
                 ),
-              ),
-              IconButton(
-                onPressed: () async {
-                  print("episode link: ${_episode.contentUrl}");
-                  _ref.read(audioController.notifier).requestPlayingSong(
-                        Song(
-                            url: _episode.contentUrl!,
-                            icon: _podcast.bestArtworkUrl!,
-                            name: _episode.title,
-                            duration: _episode.duration,
-                            artist: "${_episode.author}",
-                            album: "${_podcast.collectionName}"),
-                      );
-                  
+                IconButton(
+                  onPressed: () async {
+                    print("episode link: ${_episode.contentUrl}");
+                    _ref.read(audioController.notifier).requestPlayingSong(
+                          Song(
+                              url: _episode.contentUrl!,
+                              icon: _podcast.bestArtworkUrl!,
+                              name: _episode.title,
+                              duration: _episode.duration,
+                              artist: "${_episode.author}",
+                              album: "${_podcast.collectionName}"),
+                        );
 
-                  _ref.read(historyController.notifier).saveToHistoryAction(
-                      url: _episode.contentUrl!.toString(),
-                      name: _episode.title,
-                      artist: "${_episode.author}",
-                      icon: _podcast.bestArtworkUrl!,
-                      album: "${_podcast.collectionName}",
-                      duration: _episode.duration!.inSeconds.toString(),
-                      listenedOn: DateTime.now().toString(),
-                      podcastArtWork: _podcast.bestArtworkUrl!,
-                      podcastName: "${_podcast.collectionName}");
-                },
-                icon: Icon(
-                  FeatherIcons.play,
-                  color: Theme.of(context).colorScheme.secondary,
-                ),
-              )
-            ],
-          ),
-          SizedBox(height: 8.0),
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 12.0),
-            padding: const EdgeInsets.all(8.0),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16.0),
-              color: Colors.white38,
-            ),
-            alignment: Alignment.center,
-            child: ExpandablePanel(
-              theme: ExpandableThemeData(
-                  iconColor: Theme.of(context).colorScheme.secondary),
-              header: Text(
-                " Episode ${_episode.episode ?? ''} Description ",
-                style: TextStyle(
-                  fontSize: 14.0,
-                  color:
-                      Theme.of(context).colorScheme.secondary.withOpacity(0.8),
-                  fontFamily: 'Segoe',
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-              collapsed: Container(),
-              expanded: Html(
-                data: _episode.description,
-              ),
-            ),
-          ),
-          SizedBox(
-            height: 10.0,
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "${_episode.duration?.inMinutes} minutes",
-                  style: TextStyle(
-                    fontSize: 10.0,
-                    color: Theme.of(context)
-                        .colorScheme
-                        .secondary
-                        .withOpacity(0.40),
-                    fontFamily: 'Segoe',
-                    fontWeight: FontWeight.w800,
+                    _ref.read(historyController.notifier).saveToHistoryAction(
+                        url: _episode.contentUrl!.toString(),
+                        name: _episode.title,
+                        artist: "${_episode.author}",
+                        icon: _podcast.bestArtworkUrl!,
+                        album: "${_podcast.collectionName}",
+                        duration: _episode.duration!.inSeconds.toString(),
+                        listenedOn: DateTime.now().toString(),
+                        podcastArtWork: _podcast.bestArtworkUrl!,
+                        podcastName: "${_podcast.collectionName}");
+                  },
+                  icon: Icon(
+                    FeatherIcons.play,
+                    color: Theme.of(context).colorScheme.secondary,
                   ),
-                ),
-                Text(
-                  _episode.author != null
-                      ? _episode.author!.length > 35
-                          ? _episode.author!.substring(0, 32) + '....'
-                          : _episode.author!
-                      : ' -- ',
-                  style: TextStyle(
-                    fontSize: 10.0,
-                    color: Theme.of(context)
-                        .colorScheme
-                        .secondary
-                        .withOpacity(0.40),
-                    fontFamily: 'Segoe',
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
+                )
               ],
             ),
-          ),
-        ],
+            // SizedBox(height: 8.0),
+            // Container(
+            //   margin: const EdgeInsets.symmetric(horizontal: 12.0),
+            //   padding: const EdgeInsets.all(8.0),
+            //   decoration: BoxDecoration(
+            //     borderRadius: BorderRadius.circular(16.0),
+            //     color: Colors.white38,
+            //   ),
+            //   alignment: Alignment.center,
+            //   child: ExpandablePanel(
+            //     theme: ExpandableThemeData(
+            //         iconColor: Theme.of(context).colorScheme.secondary),
+            //     header: Text(
+            //       " Episode ${_episode.episode ?? ''} Description ",
+            //       style: TextStyle(
+            //         fontSize: 14.0,
+            //         color:
+            //             Theme.of(context).colorScheme.secondary.withOpacity(0.8),
+            //         fontFamily: 'Segoe',
+            //         fontWeight: FontWeight.w400,
+            //       ),
+            //     ),
+            //     collapsed: Container(),
+            //     expanded: Html(
+            //       data: _episode.description,
+            //     ),
+            //   ),
+            // ),
+            SizedBox(
+              height: 12.0,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "${_episode.duration?.inMinutes} minutes",
+                    style: TextStyle(
+                      fontSize: 10.0,
+                      color: Theme.of(context)
+                          .colorScheme
+                          .secondary
+                          .withOpacity(0.40),
+                      fontFamily: 'Segoe',
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  Text(
+                    _episode.author != null
+                        ? _episode.author!.length > 35
+                            ? _episode.author!.substring(0, 32) + '....'
+                            : _episode.author!
+                        : ' -- ',
+                    style: TextStyle(
+                      fontSize: 10.0,
+                      color: Theme.of(context)
+                          .colorScheme
+                          .secondary
+                          .withOpacity(0.40),
+                      fontFamily: 'Segoe',
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -42,7 +42,7 @@ dependencies:
   feather_icons: ^1.1.0-nullsafety.0
   intl: ^0.17.0
   flutter_html: ^2.1.1
-  expandable: ^5.0.1
+  # expandable: ^5.0.1
 
   # For database use.
   hive: ^2.0.4
