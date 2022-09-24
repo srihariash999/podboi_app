@@ -6,9 +6,13 @@ import 'package:podboi/Controllers/audio_controller.dart';
 import 'package:flutter/material.dart';
 
 const double _smallPlayerSize = 80.0;
-// const double _largePlayerSize = 380.0;
 
-// Mini Player widget.  ( Having two states, one for small, one for large players);
+/// Mini Player widget.
+///
+/// In `Small Player` state, Ui is a height restricted (to `_smallPlayerHeight`) container with controls and details.
+///
+/// In `Large/Expanded Player` state, a bottom sheet filling entire screen is opened with details and controls.
+///
 
 class MiniPlayer extends StatefulWidget {
   const MiniPlayer({Key? key}) : super(key: key);
@@ -18,11 +22,6 @@ class MiniPlayer extends StatefulWidget {
 }
 
 class _MiniPlayerState extends State<MiniPlayer> {
-  // _height variable sets the height of the player.
-  double _height = _smallPlayerSize;
-
-  // bool _isLargePlayerOpen = false;
-
   @override
   Widget build(BuildContext context) {
     return Align(
@@ -39,8 +38,7 @@ class _MiniPlayerState extends State<MiniPlayer> {
                     width: MediaQuery.of(context).size.width,
                     color: Colors.red.withOpacity(0.2),
                   )
-                : AnimatedContainer(
-                    // height: _height,
+                : Container(
                     clipBehavior: Clip.antiAlias,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.only(
@@ -48,21 +46,12 @@ class _MiniPlayerState extends State<MiniPlayer> {
                         topLeft: Radius.circular(16.0),
                       ),
                     ),
-                    height: _height,
-                    duration: Duration(milliseconds: 200),
-                    child:
-                        // _height == _smallPlayerSize ?
-                        Material(
+                    height: _smallPlayerSize,
+                    child: Material(
                       color: Theme.of(context).highlightColor.withOpacity(0.3),
                       child: buildSmallPlayer(_contState, ref),
-                    )
-                    // : Material(
-                    //     color: Theme.of(context)
-                    //         .highlightColor
-                    //         .withOpacity(0.3),
-                    //     child: buildLargePlayer(_contState, ref),
-                    //   ),
-                    );
+                    ),
+                  );
           } else {
             return Container();
           }
@@ -71,9 +60,10 @@ class _MiniPlayerState extends State<MiniPlayer> {
     );
   }
 
+  /// Method to call when the user wants the small player UI to expand.
+  /// This method opens a Bottom Sheet which fills the entire screen.
   Future<void> showLargePlayer(
       AudioState _contState, WidgetRef ref, BuildContext context) async {
-    print(MediaQuery.of(context).viewPadding.top);
     showModalBottomSheet(
       isScrollControlled: true,
       enableDrag: true,
@@ -340,6 +330,7 @@ class _MiniPlayerState extends State<MiniPlayer> {
     );
   }
 
+  /// SmallPlayer Widget. Height is restricted to `_smallPlayerHeight`
   Widget buildSmallPlayer(AudioState _contState, WidgetRef ref) {
     return GestureDetector(
       onTap: () => showLargePlayer(_contState, ref, context),
@@ -353,10 +344,12 @@ class _MiniPlayerState extends State<MiniPlayer> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(
+            // Used a card to have the empty area of the widget to be tappable.
+            // Basically increases the tap target size. Useful if the title of
+            // Podcast episode is very small.
             child: Card(
               color: Colors.transparent,
               shadowColor: Colors.transparent,
-              // elevation: 0.0,
               child: Row(
                 children: [
                   Expanded(
@@ -367,24 +360,25 @@ class _MiniPlayerState extends State<MiniPlayer> {
                           color: Theme.of(context).colorScheme.secondary,
                         ),
                         Flexible(
-                            child: Hero(
-                          tag: 'albumArt',
-                          child: Container(
-                            height: 60,
-                            width: 60,
-                            clipBehavior: Clip.antiAlias,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(14.0)),
-                            child:
-                                _contState.audioHandler.mediaItem.value != null
-                                    ? Image.network(
-                                        _contState.audioHandler.mediaItem.value!
-                                            .artUri
-                                            .toString(),
-                                      )
-                                    : null,
+                          child: Hero(
+                            tag: 'albumArt',
+                            child: Container(
+                              height: 60,
+                              width: 60,
+                              clipBehavior: Clip.antiAlias,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(14.0)),
+                              child: _contState.audioHandler.mediaItem.value !=
+                                      null
+                                  ? Image.network(
+                                      _contState
+                                          .audioHandler.mediaItem.value!.artUri
+                                          .toString(),
+                                    )
+                                  : null,
+                            ),
                           ),
-                        )),
+                        ),
                         Flexible(
                           flex: 3,
                           child: Padding(
@@ -443,19 +437,20 @@ class _MiniPlayerState extends State<MiniPlayer> {
                                             ),
                                           ),
                                           IconButton(
-                                              icon: Icon(
-                                                FeatherIcons.stopCircle,
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .secondary,
-                                                size: 32.0,
-                                              ),
-                                              onPressed: () {
-                                                ref
-                                                    .read(audioController
-                                                        .notifier)
-                                                    .stop();
-                                              }),
+                                            icon: Icon(
+                                              FeatherIcons.stopCircle,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .secondary,
+                                              size: 32.0,
+                                            ),
+                                            onPressed: () {
+                                              ref
+                                                  .read(
+                                                      audioController.notifier)
+                                                  .stop();
+                                            },
+                                          ),
                                         ],
                                       ),
                                     )
@@ -472,19 +467,21 @@ class _MiniPlayerState extends State<MiniPlayer> {
                                             .read(audioController.notifier)
                                             .pause();
                                         // AudioService.pause();
-                                      }),
+                                      },
+                                    ),
                               IconButton(
-                                  icon: Icon(
-                                    Icons.forward_10,
-                                    color:
-                                        Theme.of(context).colorScheme.secondary,
-                                    size: 32.0,
-                                  ),
-                                  onPressed: () {
-                                    ref
-                                        .read(audioController.notifier)
-                                        .fastForward();
-                                  }),
+                                icon: Icon(
+                                  Icons.forward_10,
+                                  color:
+                                      Theme.of(context).colorScheme.secondary,
+                                  size: 32.0,
+                                ),
+                                onPressed: () {
+                                  ref
+                                      .read(audioController.notifier)
+                                      .fastForward();
+                                },
+                              ),
                             ],
                           ),
                         );
@@ -493,25 +490,27 @@ class _MiniPlayerState extends State<MiniPlayer> {
                           child: Row(
                             children: [
                               IconButton(
-                                  icon: Icon(
-                                    FeatherIcons.playCircle,
-                                    color:
-                                        Theme.of(context).colorScheme.secondary,
-                                    size: 32.0,
-                                  ),
-                                  onPressed: () {
-                                    ref.read(audioController.notifier).resume();
-                                  }),
+                                icon: Icon(
+                                  FeatherIcons.playCircle,
+                                  color:
+                                      Theme.of(context).colorScheme.secondary,
+                                  size: 32.0,
+                                ),
+                                onPressed: () {
+                                  ref.read(audioController.notifier).resume();
+                                },
+                              ),
                               IconButton(
-                                  icon: Icon(
-                                    FeatherIcons.stopCircle,
-                                    color:
-                                        Theme.of(context).colorScheme.secondary,
-                                    size: 32.0,
-                                  ),
-                                  onPressed: () {
-                                    ref.read(audioController.notifier).stop();
-                                  }),
+                                icon: Icon(
+                                  FeatherIcons.stopCircle,
+                                  color:
+                                      Theme.of(context).colorScheme.secondary,
+                                  size: 32.0,
+                                ),
+                                onPressed: () {
+                                  ref.read(audioController.notifier).stop();
+                                },
+                              ),
                             ],
                           ),
                         );
