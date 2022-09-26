@@ -4,8 +4,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:line_icons/line_icons.dart';
+import 'package:podboi/Controllers/profile_screen_controller.dart';
 import 'package:podboi/Services/conversion_helpers.dart';
 import 'package:podboi/UI/podcast_page.dart';
+import 'package:podboi/UI/profile_screen.dart';
 import 'package:podcast_search/podcast_search.dart';
 
 import 'package:podboi/Controllers/subscription_controller.dart';
@@ -22,27 +25,71 @@ class SubscriptionsPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding:
-                  const EdgeInsets.only(left: 8.0, top: 20.0, bottom: 20.0),
-              child: Text(
-                "Your Subscriptions",
-                style: TextStyle(
-                  fontFamily: 'Segoe',
-                  fontSize: 22.0,
-                  color: Theme.of(context).colorScheme.secondary,
-                  fontWeight: FontWeight.w700,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0, top: 20.0, bottom: 20.0),
+                  child: Text(
+                    "Your Subscriptions",
+                    style: TextStyle(
+                      fontFamily: 'Segoe',
+                      fontSize: 22.0,
+                      color: Theme.of(context).colorScheme.secondary,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
                 ),
-              ),
+                Consumer(builder: (context, ref, child) {
+                  String _avatar =
+                      ref.watch(profileController.select((value) => value.userAvatar));
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        PageRouteBuilder(
+                            transitionDuration: Duration(milliseconds: 500),
+                            transitionsBuilder:
+                                (context, animation, secondaryAnimation, child) {
+                              const begin = Offset(1.0, 0.0);
+                              const end = Offset.zero;
+                              const curve = Curves.ease;
+
+                              final tween = Tween(begin: begin, end: end);
+                              final curvedAnimation = CurvedAnimation(
+                                parent: animation,
+                                curve: curve,
+                              );
+
+                              return SlideTransition(
+                                position: tween.animate(curvedAnimation),
+                                child: child,
+                              );
+                            },
+                            pageBuilder: (_, __, ___) => ProfileScreen()),
+                      );
+                    },
+                    child: Container(
+                      height: 60.0,
+                      width: 55.0,
+                      child: Icon(
+                        _avatar == 'user'
+                            ? LineIcons.user
+                            : _avatar == 'userNinja'
+                                ? LineIcons.userNinja
+                                : LineIcons.userAstronaut,
+                        size: 32.0,
+                        color: Theme.of(context).colorScheme.secondary,
+                      ),
+                    ),
+                  );
+                }),
+              ],
             ),
             Consumer(
               builder: (context, ref, child) {
-                var _viewController =
-                    ref.watch(subscriptionsPageViewController);
+                var _viewController = ref.watch(subscriptionsPageViewController);
                 Future<void> refresh() async {
-                  ref
-                      .read(subscriptionsPageViewController.notifier)
-                      .loadSubscriptions();
+                  ref.read(subscriptionsPageViewController.notifier).loadSubscriptions();
                 }
 
                 return _viewController.isLoading
@@ -59,8 +106,7 @@ class SubscriptionsPage extends StatelessWidget {
                           child: RefreshIndicator(
                             onRefresh: refresh,
                             child: GridView.builder(
-                              gridDelegate:
-                                  SliverGridDelegateWithMaxCrossAxisExtent(
+                              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
                                 // crossAxisCount: 3,
                                 // childAspectRatio: 1.5,
                                 crossAxisSpacing: 4.0,
@@ -68,41 +114,34 @@ class SubscriptionsPage extends StatelessWidget {
                                 maxCrossAxisExtent: 130.0,
                                 mainAxisExtent: 130.0,
                               ),
-                              itemCount:
-                                  _viewController.subscriptionsList.length,
+                              itemCount: _viewController.subscriptionsList.length,
                               itemBuilder: (context, index) {
                                 Subscription _subscription =
                                     _viewController.subscriptionsList[index];
-                                Item _podcast =
-                                    itemFromMap(_subscription.podcast);
+                                Item _podcast = itemFromMap(_subscription.podcast);
                                 return GestureDetector(
                                   onTap: () {
                                     Navigator.of(context).push(
                                       PageRouteBuilder(
-                                        transitionDuration:
-                                            Duration(milliseconds: 500),
-                                        transitionsBuilder: (context, animation,
-                                            secondaryAnimation, child) {
+                                        transitionDuration: Duration(milliseconds: 500),
+                                        transitionsBuilder:
+                                            (context, animation, secondaryAnimation, child) {
                                           const begin = Offset(1.0, 0.0);
                                           const end = Offset.zero;
                                           const curve = Curves.ease;
 
-                                          final tween =
-                                              Tween(begin: begin, end: end);
-                                          final curvedAnimation =
-                                              CurvedAnimation(
+                                          final tween = Tween(begin: begin, end: end);
+                                          final curvedAnimation = CurvedAnimation(
                                             parent: animation,
                                             curve: curve,
                                           );
 
                                           return SlideTransition(
-                                            position:
-                                                tween.animate(curvedAnimation),
+                                            position: tween.animate(curvedAnimation),
                                             child: child,
                                           );
                                         },
-                                        pageBuilder: (_, __, ___) =>
-                                            PodcastPage(
+                                        pageBuilder: (_, __, ___) => PodcastPage(
                                           podcast: _podcast,
                                         ),
                                       ),
@@ -115,8 +154,7 @@ class SubscriptionsPage extends StatelessWidget {
                                         width: 120.0,
                                         margin: EdgeInsets.all(4.0),
                                         decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(12.0),
+                                          borderRadius: BorderRadius.circular(12.0),
                                         ),
                                         clipBehavior: Clip.antiAlias,
                                         child: Center(
@@ -133,8 +171,7 @@ class SubscriptionsPage extends StatelessWidget {
                                           width: 120.0,
                                           // margin: EdgeInsets.all(4.0),
                                           decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(12.0),
+                                            borderRadius: BorderRadius.circular(12.0),
                                           ),
                                           clipBehavior: Clip.antiAlias,
                                           child: Image.network(

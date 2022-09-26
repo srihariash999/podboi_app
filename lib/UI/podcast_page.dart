@@ -41,18 +41,13 @@ class PodcastPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Icon(
-                      episodesSort
-                          ? Icons.check_box
-                          : Icons.check_box_outline_blank,
+                      episodesSort ? Icons.check_box : Icons.check_box_outline_blank,
                     ),
                     Text(
                       " Sort Episodes Newest to Oldest",
                       style: TextStyle(
                         fontSize: 17.0,
-                        color: Theme.of(context)
-                            .colorScheme
-                            .secondary
-                            .withOpacity(0.70),
+                        color: Theme.of(context).colorScheme.secondary.withOpacity(0.70),
                         fontFamily: 'Segoe',
                         fontWeight: FontWeight.w800,
                       ),
@@ -74,18 +69,13 @@ class PodcastPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Icon(
-                      episodesSort
-                          ? Icons.check_box_outline_blank
-                          : Icons.check_box,
+                      episodesSort ? Icons.check_box_outline_blank : Icons.check_box,
                     ),
                     Text(
                       "Sort Episodes Oldest to Newest",
                       style: TextStyle(
                         fontSize: 17.0,
-                        color: Theme.of(context)
-                            .colorScheme
-                            .secondary
-                            .withOpacity(0.70),
+                        color: Theme.of(context).colorScheme.secondary.withOpacity(0.70),
                         fontFamily: 'Segoe',
                         fontWeight: FontWeight.w800,
                       ),
@@ -128,18 +118,15 @@ class PodcastPage extends StatelessWidget {
                       child: Column(
                         children: [
                           Padding(
-                            padding: const EdgeInsets.only(
-                                left: 8.0, bottom: 12.0, top: 12.0),
+                            padding: const EdgeInsets.only(left: 8.0, bottom: 12.0, top: 12.0),
                             child: Align(
                               alignment: Alignment.centerLeft,
                               child: Text(
                                 "About Podcast",
                                 style: TextStyle(
                                   fontSize: 24.0,
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .secondary
-                                      .withOpacity(0.8),
+                                  color:
+                                      Theme.of(context).colorScheme.secondary.withOpacity(0.8),
                                   fontFamily: 'Segoe',
                                   fontWeight: FontWeight.w700,
                                 ),
@@ -148,9 +135,8 @@ class PodcastPage extends StatelessWidget {
                           ),
                           Consumer(
                             builder: (context, ref, child) {
-                              String _description = ref.watch(
-                                  podcastPageViewController(podcast)
-                                      .select((value) => value.description));
+                              String _description = ref.watch(podcastPageViewController(podcast)
+                                  .select((value) => value.description));
                               bool _isLoading = ref.watch(
                                 podcastPageViewController(podcast)
                                     .select((value) => value.isLoading),
@@ -160,11 +146,8 @@ class PodcastPage extends StatelessWidget {
                                       width: 200.0,
                                       height: 1.0,
                                       child: LinearProgressIndicator(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .secondary,
-                                        backgroundColor:
-                                            Theme.of(context).highlightColor,
+                                        color: Theme.of(context).colorScheme.secondary,
+                                        backgroundColor: Theme.of(context).highlightColor,
                                         minHeight: 1,
                                       ),
                                     )
@@ -246,8 +229,7 @@ class PodcastPage extends StatelessWidget {
                                   controller: episodeSearchController,
                                   onChanged: (String s) {
                                     ref
-                                        .read(podcastPageViewController(podcast)
-                                            .notifier)
+                                        .read(podcastPageViewController(podcast).notifier)
                                         .filterEpisodesWithQuery(s);
                                   },
                                   decoration: InputDecoration(
@@ -259,17 +241,14 @@ class PodcastPage extends StatelessWidget {
                                           .secondary
                                           .withOpacity(0.7),
                                     ),
-                                    suffixIcon: episodeSearchController
-                                            .text.isEmpty
+                                    suffixIcon: episodeSearchController.text.isEmpty
                                         ? null
                                         : InkWell(
                                             onTap: () {
                                               episodeSearchController.clear();
                                               ref
-                                                  .read(
-                                                      podcastPageViewController(
-                                                              podcast)
-                                                          .notifier)
+                                                  .read(podcastPageViewController(podcast)
+                                                      .notifier)
                                                   .filterEpisodesWithQuery('');
                                             },
                                             child: Icon(
@@ -281,8 +260,7 @@ class PodcastPage extends StatelessWidget {
                                                   .withOpacity(0.7),
                                             ),
                                           ),
-                                    contentPadding:
-                                        const EdgeInsets.only(top: 16.0),
+                                    contentPadding: const EdgeInsets.only(top: 16.0),
                                     hintText: "Search Episodes",
                                     alignLabelWithHint: true,
                                     hintStyle: TextStyle(
@@ -293,9 +271,8 @@ class PodcastPage extends StatelessWidget {
                                           .secondary
                                           .withOpacity(0.7),
                                     ),
-                                    fillColor: Theme.of(context)
-                                        .highlightColor
-                                        .withOpacity(0.5),
+                                    fillColor:
+                                        Theme.of(context).highlightColor.withOpacity(0.5),
                                     filled: true,
                                     focusColor: Colors.black.withOpacity(0.30),
                                     enabledBorder: OutlineInputBorder(
@@ -312,8 +289,7 @@ class PodcastPage extends StatelessWidget {
                                     ),
                                   ),
                                   style: TextStyle(
-                                    color:
-                                        Theme.of(context).colorScheme.secondary,
+                                    color: Theme.of(context).colorScheme.secondary,
                                   ),
                                 ),
                               ),
@@ -326,8 +302,7 @@ class PodcastPage extends StatelessWidget {
                                       horizontal: 6.0, vertical: 6.0),
                                   child: Icon(
                                     Icons.more_vert,
-                                    color:
-                                        Theme.of(context).colorScheme.secondary,
+                                    color: Theme.of(context).colorScheme.secondary,
                                   ),
                                 ),
                               ),
@@ -357,8 +332,7 @@ class PodcastPage extends StatelessWidget {
                             ? Container(
                                 alignment: Alignment.center,
                                 child: CircularProgressIndicator(
-                                  color:
-                                      Theme.of(context).colorScheme.secondary,
+                                  color: Theme.of(context).colorScheme.secondary,
                                   strokeWidth: 1,
                                 ),
                               )
@@ -368,8 +342,7 @@ class PodcastPage extends StatelessWidget {
                                   physics: BouncingScrollPhysics(),
                                   separatorBuilder: (context, index) {
                                     return Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 20.0),
+                                      padding: const EdgeInsets.symmetric(horizontal: 12.0),
                                       child: Divider(
                                         color: Theme.of(context)
                                             .colorScheme
@@ -378,16 +351,14 @@ class PodcastPage extends StatelessWidget {
                                       ),
                                     );
                                   },
-                                  itemCount:
-                                      _viewController.podcastEpisodes.length +
-                                          1,
+                                  itemCount: _viewController.podcastEpisodes.length + 1,
                                   itemBuilder: (context, index) {
                                     if (index == 0) {
                                       // return Container();
                                       return buildTopUI(context);
                                     }
-                                    Episode _episode = _viewController
-                                        .podcastEpisodes[index - 1];
+                                    Episode _episode =
+                                        _viewController.podcastEpisodes[index - 1];
                                     return DetailedEpsiodeViewWidget(
                                       episode: _episode,
                                       ref: ref,
@@ -458,10 +429,7 @@ class PodcastPage extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontSize: 17.0,
-                        color: Theme.of(context)
-                            .colorScheme
-                            .secondary
-                            .withOpacity(0.70),
+                        color: Theme.of(context).colorScheme.secondary.withOpacity(0.70),
                         fontFamily: 'Segoe',
                         fontWeight: FontWeight.w800,
                       ),
@@ -481,10 +449,7 @@ class PodcastPage extends StatelessWidget {
                             DateFormat('yMMMd').format(podcast.releaseDate!),
                             style: TextStyle(
                               fontSize: 14.0,
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .secondary
-                                  .withOpacity(0.50),
+                              color: Theme.of(context).colorScheme.secondary.withOpacity(0.50),
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -495,10 +460,7 @@ class PodcastPage extends StatelessWidget {
                             podcast.country ?? '',
                             style: TextStyle(
                               fontSize: 14.0,
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .secondary
-                                  .withOpacity(0.50),
+                              color: Theme.of(context).colorScheme.secondary.withOpacity(0.50),
                               // fontFamily: 'Segoe',
                               fontWeight: FontWeight.w600,
                             ),
@@ -521,10 +483,8 @@ class PodcastPage extends StatelessWidget {
                                 gName,
                                 style: TextStyle(
                                   fontSize: 12.0,
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .secondary
-                                      .withOpacity(0.70),
+                                  color:
+                                      Theme.of(context).colorScheme.secondary.withOpacity(0.70),
                                   fontFamily: 'Segoe',
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -546,12 +506,10 @@ class PodcastPage extends StatelessWidget {
               Consumer(
                 builder: (context, ref, child) {
                   bool _isSubbed = ref.watch(
-                    podcastPageViewController(podcast)
-                        .select((value) => value.isSubscribed),
+                    podcastPageViewController(podcast).select((value) => value.isSubscribed),
                   );
                   bool _isLoading = ref.watch(
-                    podcastPageViewController(podcast)
-                        .select((value) => value.isLoading),
+                    podcastPageViewController(podcast).select((value) => value.isLoading),
                   );
                   return _isLoading
                       ? Container(
@@ -567,8 +525,7 @@ class PodcastPage extends StatelessWidget {
                           ? GestureDetector(
                               onTap: () {
                                 ref
-                                    .read(podcastPageViewController(podcast)
-                                        .notifier)
+                                    .read(podcastPageViewController(podcast).notifier)
                                     .removeFromSubscriptionsAction(podcast);
                               },
                               child: Container(
@@ -603,8 +560,7 @@ class PodcastPage extends StatelessWidget {
                           : GestureDetector(
                               onTap: () {
                                 ref
-                                    .read(podcastPageViewController(podcast)
-                                        .notifier)
+                                    .read(podcastPageViewController(podcast).notifier)
                                     .saveToSubscriptionsAction(podcast);
                               },
                               child: Container(
@@ -628,8 +584,7 @@ class PodcastPage extends StatelessWidget {
                                     SizedBox(
                                       width: 12.0,
                                     ),
-                                    Icon(FeatherIcons.plusCircle,
-                                        color: Colors.orange),
+                                    Icon(FeatherIcons.plusCircle, color: Colors.orange),
                                   ],
                                 ),
                               ),
@@ -644,22 +599,16 @@ class PodcastPage extends StatelessWidget {
                       "Content Advisory: ",
                       style: TextStyle(
                         fontSize: 12.0,
-                        color: Theme.of(context)
-                            .colorScheme
-                            .secondary
-                            .withOpacity(0.50),
+                        color: Theme.of(context).colorScheme.secondary.withOpacity(0.50),
                         fontFamily: 'Segoe',
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     Text(
-                      "${podcast.contentAdvisoryRating}",
+                      "${podcast.contentAdvisoryRating ?? ' N.A '}",
                       style: TextStyle(
                         fontSize: 12.0,
-                        color: Theme.of(context)
-                            .colorScheme
-                            .secondary
-                            .withOpacity(0.80),
+                        color: Theme.of(context).colorScheme.secondary.withOpacity(0.80),
                         fontFamily: 'Segoe',
                         fontWeight: FontWeight.w600,
                       ),
@@ -675,11 +624,11 @@ class PodcastPage extends StatelessWidget {
           InkWell(
             onTap: () => onTapAboutPodcast(context),
             child: Container(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12.0),
                 // color: Colors.white38,
-                color: Theme.of(context).colorScheme.secondary.withOpacity(0.1),
+                color: Theme.of(context).colorScheme.secondary.withOpacity(0.05),
               ),
               child: Row(
                 children: [
@@ -688,10 +637,7 @@ class PodcastPage extends StatelessWidget {
                       "About Podcast",
                       style: TextStyle(
                         fontSize: 18.0,
-                        color: Theme.of(context)
-                            .colorScheme
-                            .secondary
-                            .withOpacity(0.6),
+                        color: Theme.of(context).colorScheme.secondary.withOpacity(0.6),
                         fontFamily: 'Segoe',
                         fontWeight: FontWeight.w600,
                       ),
