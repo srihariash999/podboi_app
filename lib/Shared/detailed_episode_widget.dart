@@ -9,20 +9,20 @@ import 'package:podboi/Controllers/history_controller.dart';
 // import 'package:podboi/Controllers/history_controller.dart';
 import 'package:podboi/DataModels/song.dart';
 import 'package:podboi/Services/database/database.dart';
-import 'package:podcast_search/podcast_search.dart';
+// import 'package:podcast_search/podcast_search.dart';
 
 class DetailedEpsiodeViewWidget extends StatelessWidget {
   const DetailedEpsiodeViewWidget({
     Key? key,
-    required Episode episode,
+    required EpisodeData episodeData,
     required SubscriptionData podcast,
     required WidgetRef ref,
-  })  : _episode = episode,
+  })  : _episodeData = episodeData,
         _podcast = podcast,
         _ref = ref,
         super(key: key);
 
-  final Episode _episode;
+  final EpisodeData _episodeData;
   final SubscriptionData _podcast;
   final WidgetRef _ref;
 
@@ -75,7 +75,7 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                                 ),
                               ),
                               Html(
-                                data: _episode.description,
+                                data: _episodeData.description,
                               ),
                             ],
                           ),
@@ -109,7 +109,7 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        DateFormat('yMMMd').format(_episode.publicationDate!),
+                        DateFormat('yMMMd').format(_episodeData.publicationDate!),
                         style: TextStyle(
                           fontSize: 11.0,
                           color: Theme.of(context).colorScheme.secondary.withOpacity(0.40),
@@ -119,8 +119,10 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                       ),
                       SizedBox(width: 12.0),
                       Text(
-                        (_episode.season != null ? "S-${_episode.season}" : "") +
-                            (_episode.episode != null ? "  E-${_episode.episode}" : ""),
+                        (_episodeData.season != null ? "S-${_episodeData.season}" : "") +
+                            (_episodeData.episodeNumber != null
+                                ? "  E-${_episodeData.episodeNumber}"
+                                : ""),
                         style: TextStyle(
                           fontSize: 11.0,
                           color: Theme.of(context).colorScheme.secondary.withOpacity(0.40),
@@ -143,7 +145,7 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        "${_episode.duration?.inMinutes} minutes",
+                        "${Duration(seconds: _episodeData.duration ?? 0).inMinutes} minutes",
                         style: TextStyle(
                           fontSize: 11.0,
                           color: Theme.of(context).colorScheme.secondary.withOpacity(0.40),
@@ -152,10 +154,10 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                         ),
                       ),
                       // Text(
-                      //   _episode.author != null
-                      //       ? _episode.author!.length > 35
-                      //           ? _episode.author!.substring(0, 32) + '....'
-                      //           : _episode.author!
+                      //   _episodeData.author != null
+                      //       ? _episodeData.author!.length > 35
+                      //           ? _episodeData.author!.substring(0, 32) + '....'
+                      //           : _episodeData.author!
                       //       : ' -- ',
                       //   style: TextStyle(
                       //     fontSize: 10.0,
@@ -175,7 +177,7 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.only(left: 12.0, right: 12.0, top: 8.0),
                     child: Text(
-                      _episode.title,
+                      _episodeData.title,
                       style: TextStyle(
                         fontSize: 16.0,
                         color: Theme.of(context).colorScheme.secondary,
@@ -187,25 +189,27 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                 ),
                 IconButton(
                   onPressed: () async {
-                    print("episode link: ${_episode.contentUrl}");
+                    print("episodeData link: ${_episodeData.contentUrl}");
                     _ref.read(audioController.notifier).requestPlayingSong(
                           Song(
-                            url: _episode.contentUrl!,
+                            url: _episodeData.contentUrl!,
                             icon: _podcast.artworkUrl,
-                            name: _episode.title,
-                            duration: _episode.duration,
-                            artist: "${_episode.author}",
+                            name: _episodeData.title,
+                            duration: Duration(seconds: _episodeData.duration ?? 0),
+                            artist: "${_episodeData.author}",
                             album: _podcast.podcastName,
                           ),
                         );
 
                     _ref.read(historyController.notifier).saveToHistoryAction(
-                          url: _episode.contentUrl!.toString(),
-                          name: _episode.title,
-                          artist: "${_episode.author}",
+                          url: _episodeData.contentUrl!.toString(),
+                          name: _episodeData.title,
+                          artist: "${_episodeData.author}",
                           icon: _podcast.artworkUrl,
                           album: "${_podcast.podcastName}",
-                          duration: _episode.duration!.inSeconds.toString(),
+                          duration: Duration(seconds: _episodeData.duration ?? 0)
+                              .inSeconds
+                              .toString(),
                           listenedOn: DateTime.now().toString(),
                           podcastArtWork: _podcast.artworkUrl,
                           podcastName: "${_podcast.podcastName}",

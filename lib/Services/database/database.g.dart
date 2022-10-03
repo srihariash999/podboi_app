@@ -1089,8 +1089,671 @@ class Subscription extends Table
   }
 
   @override
-  List<String> get customConstraints =>
-      const ['CONSTRAINT "pod_id" UNIQUE ("podcast_id" ASC) ON CONFLICT FAIL'];
+  bool get dontWriteConstraints => true;
+}
+
+class EpisodeData extends DataClass implements Insertable<EpisodeData> {
+  final int id;
+  final String guid;
+  final String title;
+  final String description;
+  final String? link;
+  final DateTime? publicationDate;
+  final String? contentUrl;
+  final String? imageUrl;
+  final String? author;
+  final int? season;
+  final int? episodeNumber;
+  final int? duration;
+  final int? podcastId;
+  final String? podcastName;
+  const EpisodeData(
+      {required this.id,
+      required this.guid,
+      required this.title,
+      required this.description,
+      this.link,
+      this.publicationDate,
+      this.contentUrl,
+      this.imageUrl,
+      this.author,
+      this.season,
+      this.episodeNumber,
+      this.duration,
+      this.podcastId,
+      this.podcastName});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['guid'] = Variable<String>(guid);
+    map['title'] = Variable<String>(title);
+    map['description'] = Variable<String>(description);
+    if (!nullToAbsent || link != null) {
+      map['link'] = Variable<String>(link);
+    }
+    if (!nullToAbsent || publicationDate != null) {
+      map['publication_date'] = Variable<DateTime>(publicationDate);
+    }
+    if (!nullToAbsent || contentUrl != null) {
+      map['content_url'] = Variable<String>(contentUrl);
+    }
+    if (!nullToAbsent || imageUrl != null) {
+      map['image_url'] = Variable<String>(imageUrl);
+    }
+    if (!nullToAbsent || author != null) {
+      map['author'] = Variable<String>(author);
+    }
+    if (!nullToAbsent || season != null) {
+      map['season'] = Variable<int>(season);
+    }
+    if (!nullToAbsent || episodeNumber != null) {
+      map['episode_number'] = Variable<int>(episodeNumber);
+    }
+    if (!nullToAbsent || duration != null) {
+      map['duration'] = Variable<int>(duration);
+    }
+    if (!nullToAbsent || podcastId != null) {
+      map['podcast_id'] = Variable<int>(podcastId);
+    }
+    if (!nullToAbsent || podcastName != null) {
+      map['podcast_name'] = Variable<String>(podcastName);
+    }
+    return map;
+  }
+
+  EpisodeCompanion toCompanion(bool nullToAbsent) {
+    return EpisodeCompanion(
+      id: Value(id),
+      guid: Value(guid),
+      title: Value(title),
+      description: Value(description),
+      link: link == null && nullToAbsent ? const Value.absent() : Value(link),
+      publicationDate: publicationDate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(publicationDate),
+      contentUrl: contentUrl == null && nullToAbsent
+          ? const Value.absent()
+          : Value(contentUrl),
+      imageUrl: imageUrl == null && nullToAbsent
+          ? const Value.absent()
+          : Value(imageUrl),
+      author:
+          author == null && nullToAbsent ? const Value.absent() : Value(author),
+      season:
+          season == null && nullToAbsent ? const Value.absent() : Value(season),
+      episodeNumber: episodeNumber == null && nullToAbsent
+          ? const Value.absent()
+          : Value(episodeNumber),
+      duration: duration == null && nullToAbsent
+          ? const Value.absent()
+          : Value(duration),
+      podcastId: podcastId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(podcastId),
+      podcastName: podcastName == null && nullToAbsent
+          ? const Value.absent()
+          : Value(podcastName),
+    );
+  }
+
+  factory EpisodeData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return EpisodeData(
+      id: serializer.fromJson<int>(json['id']),
+      guid: serializer.fromJson<String>(json['guid']),
+      title: serializer.fromJson<String>(json['title']),
+      description: serializer.fromJson<String>(json['description']),
+      link: serializer.fromJson<String?>(json['link']),
+      publicationDate: serializer.fromJson<DateTime?>(json['publication_date']),
+      contentUrl: serializer.fromJson<String?>(json['content_url']),
+      imageUrl: serializer.fromJson<String?>(json['image_url']),
+      author: serializer.fromJson<String?>(json['author']),
+      season: serializer.fromJson<int?>(json['season']),
+      episodeNumber: serializer.fromJson<int?>(json['episode_number']),
+      duration: serializer.fromJson<int?>(json['duration']),
+      podcastId: serializer.fromJson<int?>(json['podcast_id']),
+      podcastName: serializer.fromJson<String?>(json['podcast_name']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'guid': serializer.toJson<String>(guid),
+      'title': serializer.toJson<String>(title),
+      'description': serializer.toJson<String>(description),
+      'link': serializer.toJson<String?>(link),
+      'publication_date': serializer.toJson<DateTime?>(publicationDate),
+      'content_url': serializer.toJson<String?>(contentUrl),
+      'image_url': serializer.toJson<String?>(imageUrl),
+      'author': serializer.toJson<String?>(author),
+      'season': serializer.toJson<int?>(season),
+      'episode_number': serializer.toJson<int?>(episodeNumber),
+      'duration': serializer.toJson<int?>(duration),
+      'podcast_id': serializer.toJson<int?>(podcastId),
+      'podcast_name': serializer.toJson<String?>(podcastName),
+    };
+  }
+
+  EpisodeData copyWith(
+          {int? id,
+          String? guid,
+          String? title,
+          String? description,
+          Value<String?> link = const Value.absent(),
+          Value<DateTime?> publicationDate = const Value.absent(),
+          Value<String?> contentUrl = const Value.absent(),
+          Value<String?> imageUrl = const Value.absent(),
+          Value<String?> author = const Value.absent(),
+          Value<int?> season = const Value.absent(),
+          Value<int?> episodeNumber = const Value.absent(),
+          Value<int?> duration = const Value.absent(),
+          Value<int?> podcastId = const Value.absent(),
+          Value<String?> podcastName = const Value.absent()}) =>
+      EpisodeData(
+        id: id ?? this.id,
+        guid: guid ?? this.guid,
+        title: title ?? this.title,
+        description: description ?? this.description,
+        link: link.present ? link.value : this.link,
+        publicationDate: publicationDate.present
+            ? publicationDate.value
+            : this.publicationDate,
+        contentUrl: contentUrl.present ? contentUrl.value : this.contentUrl,
+        imageUrl: imageUrl.present ? imageUrl.value : this.imageUrl,
+        author: author.present ? author.value : this.author,
+        season: season.present ? season.value : this.season,
+        episodeNumber:
+            episodeNumber.present ? episodeNumber.value : this.episodeNumber,
+        duration: duration.present ? duration.value : this.duration,
+        podcastId: podcastId.present ? podcastId.value : this.podcastId,
+        podcastName: podcastName.present ? podcastName.value : this.podcastName,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('EpisodeData(')
+          ..write('id: $id, ')
+          ..write('guid: $guid, ')
+          ..write('title: $title, ')
+          ..write('description: $description, ')
+          ..write('link: $link, ')
+          ..write('publicationDate: $publicationDate, ')
+          ..write('contentUrl: $contentUrl, ')
+          ..write('imageUrl: $imageUrl, ')
+          ..write('author: $author, ')
+          ..write('season: $season, ')
+          ..write('episodeNumber: $episodeNumber, ')
+          ..write('duration: $duration, ')
+          ..write('podcastId: $podcastId, ')
+          ..write('podcastName: $podcastName')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      id,
+      guid,
+      title,
+      description,
+      link,
+      publicationDate,
+      contentUrl,
+      imageUrl,
+      author,
+      season,
+      episodeNumber,
+      duration,
+      podcastId,
+      podcastName);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is EpisodeData &&
+          other.id == this.id &&
+          other.guid == this.guid &&
+          other.title == this.title &&
+          other.description == this.description &&
+          other.link == this.link &&
+          other.publicationDate == this.publicationDate &&
+          other.contentUrl == this.contentUrl &&
+          other.imageUrl == this.imageUrl &&
+          other.author == this.author &&
+          other.season == this.season &&
+          other.episodeNumber == this.episodeNumber &&
+          other.duration == this.duration &&
+          other.podcastId == this.podcastId &&
+          other.podcastName == this.podcastName);
+}
+
+class EpisodeCompanion extends UpdateCompanion<EpisodeData> {
+  final Value<int> id;
+  final Value<String> guid;
+  final Value<String> title;
+  final Value<String> description;
+  final Value<String?> link;
+  final Value<DateTime?> publicationDate;
+  final Value<String?> contentUrl;
+  final Value<String?> imageUrl;
+  final Value<String?> author;
+  final Value<int?> season;
+  final Value<int?> episodeNumber;
+  final Value<int?> duration;
+  final Value<int?> podcastId;
+  final Value<String?> podcastName;
+  const EpisodeCompanion({
+    this.id = const Value.absent(),
+    this.guid = const Value.absent(),
+    this.title = const Value.absent(),
+    this.description = const Value.absent(),
+    this.link = const Value.absent(),
+    this.publicationDate = const Value.absent(),
+    this.contentUrl = const Value.absent(),
+    this.imageUrl = const Value.absent(),
+    this.author = const Value.absent(),
+    this.season = const Value.absent(),
+    this.episodeNumber = const Value.absent(),
+    this.duration = const Value.absent(),
+    this.podcastId = const Value.absent(),
+    this.podcastName = const Value.absent(),
+  });
+  EpisodeCompanion.insert({
+    this.id = const Value.absent(),
+    required String guid,
+    required String title,
+    required String description,
+    this.link = const Value.absent(),
+    this.publicationDate = const Value.absent(),
+    this.contentUrl = const Value.absent(),
+    this.imageUrl = const Value.absent(),
+    this.author = const Value.absent(),
+    this.season = const Value.absent(),
+    this.episodeNumber = const Value.absent(),
+    this.duration = const Value.absent(),
+    this.podcastId = const Value.absent(),
+    this.podcastName = const Value.absent(),
+  })  : guid = Value(guid),
+        title = Value(title),
+        description = Value(description);
+  static Insertable<EpisodeData> custom({
+    Expression<int>? id,
+    Expression<String>? guid,
+    Expression<String>? title,
+    Expression<String>? description,
+    Expression<String>? link,
+    Expression<DateTime>? publicationDate,
+    Expression<String>? contentUrl,
+    Expression<String>? imageUrl,
+    Expression<String>? author,
+    Expression<int>? season,
+    Expression<int>? episodeNumber,
+    Expression<int>? duration,
+    Expression<int>? podcastId,
+    Expression<String>? podcastName,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (guid != null) 'guid': guid,
+      if (title != null) 'title': title,
+      if (description != null) 'description': description,
+      if (link != null) 'link': link,
+      if (publicationDate != null) 'publication_date': publicationDate,
+      if (contentUrl != null) 'content_url': contentUrl,
+      if (imageUrl != null) 'image_url': imageUrl,
+      if (author != null) 'author': author,
+      if (season != null) 'season': season,
+      if (episodeNumber != null) 'episode_number': episodeNumber,
+      if (duration != null) 'duration': duration,
+      if (podcastId != null) 'podcast_id': podcastId,
+      if (podcastName != null) 'podcast_name': podcastName,
+    });
+  }
+
+  EpisodeCompanion copyWith(
+      {Value<int>? id,
+      Value<String>? guid,
+      Value<String>? title,
+      Value<String>? description,
+      Value<String?>? link,
+      Value<DateTime?>? publicationDate,
+      Value<String?>? contentUrl,
+      Value<String?>? imageUrl,
+      Value<String?>? author,
+      Value<int?>? season,
+      Value<int?>? episodeNumber,
+      Value<int?>? duration,
+      Value<int?>? podcastId,
+      Value<String?>? podcastName}) {
+    return EpisodeCompanion(
+      id: id ?? this.id,
+      guid: guid ?? this.guid,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      link: link ?? this.link,
+      publicationDate: publicationDate ?? this.publicationDate,
+      contentUrl: contentUrl ?? this.contentUrl,
+      imageUrl: imageUrl ?? this.imageUrl,
+      author: author ?? this.author,
+      season: season ?? this.season,
+      episodeNumber: episodeNumber ?? this.episodeNumber,
+      duration: duration ?? this.duration,
+      podcastId: podcastId ?? this.podcastId,
+      podcastName: podcastName ?? this.podcastName,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (guid.present) {
+      map['guid'] = Variable<String>(guid.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (description.present) {
+      map['description'] = Variable<String>(description.value);
+    }
+    if (link.present) {
+      map['link'] = Variable<String>(link.value);
+    }
+    if (publicationDate.present) {
+      map['publication_date'] = Variable<DateTime>(publicationDate.value);
+    }
+    if (contentUrl.present) {
+      map['content_url'] = Variable<String>(contentUrl.value);
+    }
+    if (imageUrl.present) {
+      map['image_url'] = Variable<String>(imageUrl.value);
+    }
+    if (author.present) {
+      map['author'] = Variable<String>(author.value);
+    }
+    if (season.present) {
+      map['season'] = Variable<int>(season.value);
+    }
+    if (episodeNumber.present) {
+      map['episode_number'] = Variable<int>(episodeNumber.value);
+    }
+    if (duration.present) {
+      map['duration'] = Variable<int>(duration.value);
+    }
+    if (podcastId.present) {
+      map['podcast_id'] = Variable<int>(podcastId.value);
+    }
+    if (podcastName.present) {
+      map['podcast_name'] = Variable<String>(podcastName.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('EpisodeCompanion(')
+          ..write('id: $id, ')
+          ..write('guid: $guid, ')
+          ..write('title: $title, ')
+          ..write('description: $description, ')
+          ..write('link: $link, ')
+          ..write('publicationDate: $publicationDate, ')
+          ..write('contentUrl: $contentUrl, ')
+          ..write('imageUrl: $imageUrl, ')
+          ..write('author: $author, ')
+          ..write('season: $season, ')
+          ..write('episodeNumber: $episodeNumber, ')
+          ..write('duration: $duration, ')
+          ..write('podcastId: $podcastId, ')
+          ..write('podcastName: $podcastName')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class Episode extends Table with TableInfo<Episode, EpisodeData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  Episode(this.attachedDatabase, [this._alias]);
+  final VerificationMeta _idMeta = const VerificationMeta('id');
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      $customConstraints: 'NOT NULL PRIMARY KEY AUTOINCREMENT');
+  final VerificationMeta _guidMeta = const VerificationMeta('guid');
+  late final GeneratedColumn<String> guid = GeneratedColumn<String>(
+      'guid', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL');
+  final VerificationMeta _titleMeta = const VerificationMeta('title');
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+      'title', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL');
+  final VerificationMeta _descriptionMeta =
+      const VerificationMeta('description');
+  late final GeneratedColumn<String> description = GeneratedColumn<String>(
+      'description', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL');
+  final VerificationMeta _linkMeta = const VerificationMeta('link');
+  late final GeneratedColumn<String> link = GeneratedColumn<String>(
+      'link', aliasedName, true,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      $customConstraints: '');
+  final VerificationMeta _publicationDateMeta =
+      const VerificationMeta('publicationDate');
+  late final GeneratedColumn<DateTime> publicationDate =
+      GeneratedColumn<DateTime>('publication_date', aliasedName, true,
+          type: DriftSqlType.dateTime,
+          requiredDuringInsert: false,
+          $customConstraints: '');
+  final VerificationMeta _contentUrlMeta = const VerificationMeta('contentUrl');
+  late final GeneratedColumn<String> contentUrl = GeneratedColumn<String>(
+      'content_url', aliasedName, true,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      $customConstraints: '');
+  final VerificationMeta _imageUrlMeta = const VerificationMeta('imageUrl');
+  late final GeneratedColumn<String> imageUrl = GeneratedColumn<String>(
+      'image_url', aliasedName, true,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      $customConstraints: '');
+  final VerificationMeta _authorMeta = const VerificationMeta('author');
+  late final GeneratedColumn<String> author = GeneratedColumn<String>(
+      'author', aliasedName, true,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      $customConstraints: '');
+  final VerificationMeta _seasonMeta = const VerificationMeta('season');
+  late final GeneratedColumn<int> season = GeneratedColumn<int>(
+      'season', aliasedName, true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      $customConstraints: '');
+  final VerificationMeta _episodeNumberMeta =
+      const VerificationMeta('episodeNumber');
+  late final GeneratedColumn<int> episodeNumber = GeneratedColumn<int>(
+      'episode_number', aliasedName, true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      $customConstraints: '');
+  final VerificationMeta _durationMeta = const VerificationMeta('duration');
+  late final GeneratedColumn<int> duration = GeneratedColumn<int>(
+      'duration', aliasedName, true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      $customConstraints: '');
+  final VerificationMeta _podcastIdMeta = const VerificationMeta('podcastId');
+  late final GeneratedColumn<int> podcastId = GeneratedColumn<int>(
+      'podcast_id', aliasedName, true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      $customConstraints: '');
+  final VerificationMeta _podcastNameMeta =
+      const VerificationMeta('podcastName');
+  late final GeneratedColumn<String> podcastName = GeneratedColumn<String>(
+      'podcast_name', aliasedName, true,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      $customConstraints: '');
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        guid,
+        title,
+        description,
+        link,
+        publicationDate,
+        contentUrl,
+        imageUrl,
+        author,
+        season,
+        episodeNumber,
+        duration,
+        podcastId,
+        podcastName
+      ];
+  @override
+  String get aliasedName => _alias ?? 'episode';
+  @override
+  String get actualTableName => 'episode';
+  @override
+  VerificationContext validateIntegrity(Insertable<EpisodeData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('guid')) {
+      context.handle(
+          _guidMeta, guid.isAcceptableOrUnknown(data['guid']!, _guidMeta));
+    } else if (isInserting) {
+      context.missing(_guidMeta);
+    }
+    if (data.containsKey('title')) {
+      context.handle(
+          _titleMeta, title.isAcceptableOrUnknown(data['title']!, _titleMeta));
+    } else if (isInserting) {
+      context.missing(_titleMeta);
+    }
+    if (data.containsKey('description')) {
+      context.handle(
+          _descriptionMeta,
+          description.isAcceptableOrUnknown(
+              data['description']!, _descriptionMeta));
+    } else if (isInserting) {
+      context.missing(_descriptionMeta);
+    }
+    if (data.containsKey('link')) {
+      context.handle(
+          _linkMeta, link.isAcceptableOrUnknown(data['link']!, _linkMeta));
+    }
+    if (data.containsKey('publication_date')) {
+      context.handle(
+          _publicationDateMeta,
+          publicationDate.isAcceptableOrUnknown(
+              data['publication_date']!, _publicationDateMeta));
+    }
+    if (data.containsKey('content_url')) {
+      context.handle(
+          _contentUrlMeta,
+          contentUrl.isAcceptableOrUnknown(
+              data['content_url']!, _contentUrlMeta));
+    }
+    if (data.containsKey('image_url')) {
+      context.handle(_imageUrlMeta,
+          imageUrl.isAcceptableOrUnknown(data['image_url']!, _imageUrlMeta));
+    }
+    if (data.containsKey('author')) {
+      context.handle(_authorMeta,
+          author.isAcceptableOrUnknown(data['author']!, _authorMeta));
+    }
+    if (data.containsKey('season')) {
+      context.handle(_seasonMeta,
+          season.isAcceptableOrUnknown(data['season']!, _seasonMeta));
+    }
+    if (data.containsKey('episode_number')) {
+      context.handle(
+          _episodeNumberMeta,
+          episodeNumber.isAcceptableOrUnknown(
+              data['episode_number']!, _episodeNumberMeta));
+    }
+    if (data.containsKey('duration')) {
+      context.handle(_durationMeta,
+          duration.isAcceptableOrUnknown(data['duration']!, _durationMeta));
+    }
+    if (data.containsKey('podcast_id')) {
+      context.handle(_podcastIdMeta,
+          podcastId.isAcceptableOrUnknown(data['podcast_id']!, _podcastIdMeta));
+    }
+    if (data.containsKey('podcast_name')) {
+      context.handle(
+          _podcastNameMeta,
+          podcastName.isAcceptableOrUnknown(
+              data['podcast_name']!, _podcastNameMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  EpisodeData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return EpisodeData(
+      id: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      guid: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}guid'])!,
+      title: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
+      description: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}description'])!,
+      link: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}link']),
+      publicationDate: attachedDatabase.options.types.read(
+          DriftSqlType.dateTime, data['${effectivePrefix}publication_date']),
+      contentUrl: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}content_url']),
+      imageUrl: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}image_url']),
+      author: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}author']),
+      season: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}season']),
+      episodeNumber: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}episode_number']),
+      duration: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}duration']),
+      podcastId: attachedDatabase.options.types
+          .read(DriftSqlType.int, data['${effectivePrefix}podcast_id']),
+      podcastName: attachedDatabase.options.types
+          .read(DriftSqlType.string, data['${effectivePrefix}podcast_name']),
+    );
+  }
+
+  @override
+  Episode createAlias(String alias) {
+    return Episode(attachedDatabase, alias);
+  }
+
+  @override
+  List<String> get customConstraints => const [
+        'FOREIGN KEY (podcast_id) REFERENCES subscription(id) ON DELETE NO ACTION ON UPDATE NO ACTION'
+      ];
   @override
   bool get dontWriteConstraints => true;
 }
@@ -1099,6 +1762,7 @@ abstract class _$MyDb extends GeneratedDatabase {
   _$MyDb(QueryExecutor e) : super(e);
   late final ListeningHistory listeningHistory = ListeningHistory(this);
   late final Subscription subscription = Subscription(this);
+  late final Episode episode = Episode(this);
   Future<int> insertLHI(
       String url,
       String artist,
@@ -1205,11 +1869,65 @@ abstract class _$MyDb extends GeneratedDatabase {
         }).asyncMap(subscription.mapFromRow);
   }
 
-  Future<int> deleteSubscriptionUsingId(int? podcastId) {
+  Future<int> deleteSubscriptionUsingId(int id) {
     return customUpdate(
-      'DELETE FROM subscription WHERE podcast_id = ?1',
-      variables: [Variable<int>(podcastId)],
+      'DELETE FROM subscription WHERE id = ?1',
+      variables: [Variable<int>(id)],
       updates: {subscription},
+      updateKind: UpdateKind.delete,
+    );
+  }
+
+  Future<int> insertEpisode(
+      String guid,
+      String title,
+      String description,
+      String? link,
+      DateTime? publicationDate,
+      String? contentUrl,
+      String? imageUrl,
+      String? author,
+      int? season,
+      int? episodeNumber,
+      int? duration,
+      int? podcastId,
+      String? podcastName) {
+    return customInsert(
+      'INSERT INTO episode (guid, title, description, link, publication_date, content_url, image_url, author, season, episode_number, duration, podcast_id, podcast_name) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13)',
+      variables: [
+        Variable<String>(guid),
+        Variable<String>(title),
+        Variable<String>(description),
+        Variable<String>(link),
+        Variable<DateTime>(publicationDate),
+        Variable<String>(contentUrl),
+        Variable<String>(imageUrl),
+        Variable<String>(author),
+        Variable<int>(season),
+        Variable<int>(episodeNumber),
+        Variable<int>(duration),
+        Variable<int>(podcastId),
+        Variable<String>(podcastName)
+      ],
+      updates: {episode},
+    );
+  }
+
+  Selectable<EpisodeData> selectEpisodesUsingPodcastId(int? podcastId) {
+    return customSelect('SELECT * FROM episode WHERE podcast_id = ?1',
+        variables: [
+          Variable<int>(podcastId)
+        ],
+        readsFrom: {
+          episode,
+        }).asyncMap(episode.mapFromRow);
+  }
+
+  Future<int> deleteEpisodeUsingId(int? podcastId) {
+    return customUpdate(
+      'DELETE FROM episode WHERE podcast_id = ?1',
+      variables: [Variable<int>(podcastId)],
+      updates: {episode},
       updateKind: UpdateKind.delete,
     );
   }
@@ -1219,5 +1937,5 @@ abstract class _$MyDb extends GeneratedDatabase {
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities =>
-      [listeningHistory, subscription];
+      [listeningHistory, subscription, episode];
 }

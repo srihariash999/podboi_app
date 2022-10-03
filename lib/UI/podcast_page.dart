@@ -11,7 +11,7 @@ import 'package:podboi/Services/database/database.dart';
 import 'package:podboi/Shared/detailed_episode_widget.dart';
 import 'package:podboi/UI/mini_player.dart';
 // import 'package:podboi/misc/database.dart';
-import 'package:podcast_search/podcast_search.dart';
+// import 'package:podcast_search/podcast_search.dart';
 
 class PodcastPage extends StatelessWidget {
   final SubscriptionData subscription;
@@ -327,7 +327,7 @@ class PodcastPage extends StatelessWidget {
                         Future<void> refresh() async {
                           ref
                               .read(podcastPageViewController(subscription).notifier)
-                              .loadPodcastEpisodes(subscription.feedUrl);
+                              .loadPodcastEpisodes(subscription.feedUrl, subscription.id);
                         }
 
                         return _viewController.isLoading
@@ -359,10 +359,10 @@ class PodcastPage extends StatelessWidget {
                                       // return Container();
                                       return buildTopUI(context);
                                     }
-                                    Episode _episode =
+                                    EpisodeData _episode =
                                         _viewController.podcastEpisodes[index - 1];
                                     return DetailedEpsiodeViewWidget(
-                                      episode: _episode,
+                                      episodeData: _episode,
                                       ref: ref,
                                       podcast: subscription,
                                     );

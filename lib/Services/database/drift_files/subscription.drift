@@ -13,9 +13,31 @@ CREATE TABLE "subscription" (
   "release_date" DATE,
   "country" TEXT,
   "genre" TEXT,
-  "content_advisory" TEXT,
-  CONSTRAINT "pod_id" UNIQUE ("podcast_id" ASC) ON CONFLICT FAIL
+  "content_advisory" TEXT
 );
+
+
+-- ----------------------------
+-- Table structure for episode
+-- ----------------------------
+CREATE TABLE "episode" (
+  "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "guid" TEXT NOT NULL,
+  "title" TEXT NOT NULL,
+  "description" TEXT NOT NULL,
+  "link" TEXT,
+  "publication_date" DATE,
+  "content_url" TEXT,
+  "image_url" TEXT,
+  "author" TEXT,
+  "season" integer,
+  "episode_number" integer,
+  "duration" Integer,
+  "podcast_id" INTEGER,
+  "podcast_name" TEXT,
+  FOREIGN KEY (podcast_id) REFERENCES subscription(id) ON DELETE NO ACTION ON UPDATE NO ACTION
+);
+
 
 -- Insert schema statement to insert data into the table.
 insertSubscription: INSERT INTO subscription (
@@ -28,5 +50,17 @@ selectSubscriptionUsingId: SELECT * FROM subscription WHERE podcast_id = :podcas
 -- Getting all user's subscriptions
 selectAllSubscriptions: SELECT * FROM subscription;
 
--- Deleting a subscription using podcast_id
-deleteSubscriptionUsingId: DELETE FROM subscription WHERE podcast_id = :podcast_id;
+-- Deleting a subscription using id
+deleteSubscriptionUsingId: DELETE FROM subscription WHERE id = :id;
+
+
+-- Insert schema statement to insert data into the table.
+insertEpisode: INSERT INTO episode (
+   "guid", "title", "description", "link", "publication_date", "content_url", "image_url", "author", "season", "episode_number", "duration", "podcast_id", "podcast_name") 
+  VALUES (:guid, :title, :description, :link, :publication_date, :content_url, :image_url, :author, :season, :episode_number, :duration, :podcast_id, :podcast_name);
+
+-- Selecting episodes from list using podcast_id
+selectEpisodesUsingPodcastId: SELECT * FROM episode WHERE podcast_id = :podcast_id;	
+
+-- Deleting a Episode using id
+deleteEpisodeUsingId: DELETE FROM episode WHERE podcast_id = :podcast_id;

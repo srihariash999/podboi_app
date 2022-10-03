@@ -18,23 +18,78 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
 
   final StateNotifierProviderRef<PodcastPageViewNotifier, PodcastPageState> ref;
 
-  List<Episode> _filteredEpisodes = [];
-  List<Episode> _episodes = [];
+  List<EpisodeData> _filteredEpisodes = [];
+  List<EpisodeData> _episodes = [];
+
+  int realSubId = -1;
+
   PodcastPageViewNotifier(this.podcast, this.ref) : super(PodcastPageState.initial()) {
-    loadPodcastEpisodes(podcast.feedUrl);
+    loadPodcastEpisodes(podcast.feedUrl, podcast.id);
   }
 
-  Future<void> loadPodcastEpisodes(String feedUrl) async {
+  loadEpisodesFromCache() async {
+    var res = await ref.watch(databaseServiceProvider).getEpisodesFromCacheById(podcast.id);
+    if (res.isNotEmpty) {
+      print("Loading episodes from cache. Len : ${res.length}");
+      state = state.copyWith(podcastEpisodes: res);
+    }
+  }
+
+  Future<void> loadPodcastEpisodes(String feedUrl, int id) async {
     state = state.copyWith(isLoading: true);
-    bool _isSubbed = await ref.watch(databaseServiceProvider).isPodcastSubbed(podcast);
+    ref.watch(databaseServiceProvider).isPodcastSubbed(podcast).then((value) {
+      state = state.copyWith(
+        isSubscribed: value.value,
+      );
+      if (value.id != null) realSubId = value.id!;
+    });
+
     Podcast _podcast;
     try {
+      await loadEpisodesFromCache();
       print(" feed url : $feedUrl");
       _podcast = await Podcast.loadFeed(url: feedUrl);
 
       if (_podcast.episodes != null) {
+        await ref.watch(databaseServiceProvider).saveEpsiodesToCache(_podcast.episodes!
+            .map(
+              (i) => EpisodeData(
+                id: 0,
+                guid: i.guid,
+                title: i.title,
+                description: i.description,
+                link: i.link,
+                publicationDate: i.publicationDate,
+                contentUrl: i.contentUrl,
+                imageUrl: i.imageUrl,
+                author: i.author,
+                season: i.season,
+                episodeNumber: i.episode,
+                duration: i.duration?.inSeconds,
+                podcastId: id,
+                podcastName: _podcast.title,
+              ),
+            )
+            .toList());
         for (var i in _podcast.episodes!) {
-          _episodes.add(i);
+          _episodes.add(
+            EpisodeData(
+              id: 0,
+              guid: i.guid,
+              title: i.title,
+              description: i.description,
+              link: i.link,
+              publicationDate: i.publicationDate,
+              contentUrl: i.contentUrl,
+              imageUrl: i.imageUrl,
+              author: i.author,
+              season: i.season,
+              episodeNumber: i.episode,
+              duration: i.duration?.inSeconds,
+              podcastId: id,
+              podcastName: _podcast.title,
+            ),
+          );
         }
         _filteredEpisodes = _episodes;
       }
@@ -42,14 +97,12 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
         podcastEpisodes: _filteredEpisodes,
         description: _podcast.description,
         isLoading: false,
-        isSubscribed: _isSubbed,
       );
     } on PodcastFailedException catch (e) {
       print(" error in getting pod eps: ${e.toString()}");
       state = state.copyWith(
         podcastEpisodes: _filteredEpisodes,
         isLoading: false,
-        isSubscribed: _isSubbed,
       );
     }
   }
@@ -68,26 +121,55 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
   }
 
   saveToSubscriptionsAction(SubscriptionData podcast) async {
+    print(" trying to save sub");
     state = state.copyWith(isLoading: true);
-    bool _saved = await ref.watch(databaseServiceProvider).savePodcastToSubs(podcast);
-    if (_saved) {
+    var savedId = await ref.watch(databaseServiceProvider).savePodcastToSubs(podcast);
+    print(" saved id : $savedId");
+    if (savedId != null) {
       print(" podcast ${podcast.podcastName}  is saved to subs");
       state = state.copyWith(
         isLoading: false,
         isSubscribed: true,
       );
-      ref.watch(subscriptionsPageViewController.notifier).loadSubscriptions();
+      await ref.watch(subscriptionsPageViewController.notifier).loadSubscriptions();
+
+      List<EpisodeData> _newEpisodes = [];
+      for (var i in _episodes) {
+        _newEpisodes.add(
+          EpisodeData(
+            id: 0,
+            guid: i.guid,
+            title: i.title,
+            description: i.description,
+            link: i.link,
+            publicationDate: i.publicationDate,
+            contentUrl: i.contentUrl,
+            imageUrl: i.imageUrl,
+            author: i.author,
+            season: i.season,
+            episodeNumber: i.episodeNumber,
+            duration: i.duration,
+            podcastId: savedId,
+            podcastName: i.podcastName,
+          ),
+        );
+      }
+      _episodes = _newEpisodes;
+
+      await ref.watch(databaseServiceProvider).saveEpsiodesToCache(_episodes);
     } else {
       state = state.copyWith(
         isLoading: false,
-        isSubscribed: false,
+        isSubscribed: true,
       );
     }
   }
 
   removeFromSubscriptionsAction(SubscriptionData podcast) async {
     state = state.copyWith(isLoading: true);
-    bool _removed = await ref.watch(databaseServiceProvider).removePodcastFromSubs(podcast);
+    bool _removed = await ref
+        .watch(databaseServiceProvider)
+        .removePodcastFromSubs(podcast.id < 0 ? realSubId : podcast.id);
     if (_removed) {
       print(" podcast ${podcast.podcastName}  is removed from subs");
       state = state.copyWith(
@@ -129,7 +211,7 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
 }
 
 class PodcastPageState {
-  final List<Episode> podcastEpisodes;
+  final List<EpisodeData> podcastEpisodes;
   final String description;
   final bool isLoading;
   final bool isSubscribed;
@@ -154,7 +236,7 @@ class PodcastPageState {
     );
   }
   PodcastPageState copyWith({
-    List<Episode>? podcastEpisodes,
+    List<EpisodeData>? podcastEpisodes,
     bool? isLoading,
     bool? isSubscribed,
     String? icon,

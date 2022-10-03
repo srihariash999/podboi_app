@@ -10,7 +10,6 @@ part 'database.g.dart';
 
 // Opens connection to database based on current user
 LazyDatabase _openConnection() {
-  
   return LazyDatabase(() async {
     final path = await getDbFilePath();
     final file = File(path);
@@ -33,4 +32,9 @@ class MyDb extends _$MyDb {
 
   @override
   int get schemaVersion => 1;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(beforeOpen: (details) async {
+        await customStatement('PRAGMA foreign_keys = ON;');
+      });
 }

@@ -206,7 +206,7 @@ class HomePage extends StatelessWidget {
                         genreString = genreString.substring(0, genreString.length - 2);
                       }
                       SubscriptionData _podcast = SubscriptionData(
-                        id: 0,
+                        id: -1,
                         podcastId: _item.collectionId,
                         podcastName: _item.collectionName ?? "",
                         feedUrl: _item.feedUrl ?? "",
