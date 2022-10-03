@@ -5,15 +5,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 // import 'package:line_icons/line_icons.dart';
 import 'package:podboi/Controllers/audio_controller.dart';
-import 'package:podboi/Controllers/history_controller.dart';
+// import 'package:podboi/Controllers/history_controller.dart';
 import 'package:podboi/DataModels/song.dart';
+import 'package:podboi/Services/database/database.dart';
 import 'package:podcast_search/podcast_search.dart';
 
 class DetailedEpsiodeViewWidget extends StatelessWidget {
   const DetailedEpsiodeViewWidget({
     Key? key,
     required Episode episode,
-    required Item podcast,
+    required SubscriptionData podcast,
     required WidgetRef ref,
   })  : _episode = episode,
         _podcast = podcast,
@@ -21,7 +22,7 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
         super(key: key);
 
   final Episode _episode;
-  final Item _podcast;
+  final SubscriptionData _podcast;
   final WidgetRef _ref;
 
   @override
@@ -188,24 +189,26 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                     print("episode link: ${_episode.contentUrl}");
                     _ref.read(audioController.notifier).requestPlayingSong(
                           Song(
-                              url: _episode.contentUrl!,
-                              icon: _podcast.bestArtworkUrl!,
-                              name: _episode.title,
-                              duration: _episode.duration,
-                              artist: "${_episode.author}",
-                              album: "${_podcast.collectionName}"),
+                            url: _episode.contentUrl!,
+                            icon: _podcast.artworkUrl,
+                            name: _episode.title,
+                            duration: _episode.duration,
+                            artist: "${_episode.author}",
+                            album: _podcast.podcastName,
+                          ),
                         );
 
-                    _ref.read(historyController.notifier).saveToHistoryAction(
-                        url: _episode.contentUrl!.toString(),
-                        name: _episode.title,
-                        artist: "${_episode.author}",
-                        icon: _podcast.bestArtworkUrl!,
-                        album: "${_podcast.collectionName}",
-                        duration: _episode.duration!.inSeconds.toString(),
-                        listenedOn: DateTime.now().toString(),
-                        podcastArtWork: _podcast.bestArtworkUrl!,
-                        podcastName: "${_podcast.collectionName}");
+                    //TODO: handle this logic after new LHI feature is set.
+                    // _ref.read(historyController.notifier).saveToHistoryAction(
+                    //     url: _episode.contentUrl!.toString(),
+                    //     name: _episode.title,
+                    //     artist: "${_episode.author}",
+                    //     icon: _podcast.bestArtworkUrl!,
+                    //     album: "${_podcast.collectionName}",
+                    //     duration: _episode.duration!.inSeconds.toString(),
+                    //     listenedOn: DateTime.now().toString(),
+                    //     podcastArtWork: _podcast.bestArtworkUrl!,
+                    //     podcastName: "${_podcast.collectionName}");
                   },
                   icon: Icon(
                     FeatherIcons.play,

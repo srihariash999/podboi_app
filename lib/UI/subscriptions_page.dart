@@ -6,13 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:podboi/Controllers/profile_screen_controller.dart';
-import 'package:podboi/Services/conversion_helpers.dart';
+// import 'package:podboi/Services/conversion_helpers.dart';
 import 'package:podboi/UI/podcast_page.dart';
 import 'package:podboi/UI/profile_screen.dart';
-import 'package:podcast_search/podcast_search.dart';
+// import 'package:podcast_search/podcast_search.dart';
 
 import 'package:podboi/Controllers/subscription_controller.dart';
-import 'package:podboi/Services/database/subscriptions.dart';
+
+import '../Services/database/database.dart';
 
 class SubscriptionsPage extends StatelessWidget {
   const SubscriptionsPage({Key? key}) : super(key: key);
@@ -116,9 +117,9 @@ class SubscriptionsPage extends StatelessWidget {
                               ),
                               itemCount: _viewController.subscriptionsList.length,
                               itemBuilder: (context, index) {
-                                Subscription _subscription =
+                                SubscriptionData _subscription =
                                     _viewController.subscriptionsList[index];
-                                Item _podcast = itemFromMap(_subscription.podcast);
+                                print(" release: ${_subscription.releaseDate}");
                                 return GestureDetector(
                                   onTap: () {
                                     Navigator.of(context).push(
@@ -142,7 +143,7 @@ class SubscriptionsPage extends StatelessWidget {
                                           );
                                         },
                                         pageBuilder: (_, __, ___) => PodcastPage(
-                                          podcast: _podcast,
+                                          subscription: _subscription,
                                         ),
                                       ),
                                     );
@@ -159,13 +160,13 @@ class SubscriptionsPage extends StatelessWidget {
                                         clipBehavior: Clip.antiAlias,
                                         child: Center(
                                           child: Text(
-                                            '${_podcast.collectionName}',
+                                            '${_subscription.podcastName}',
                                             textAlign: TextAlign.center,
                                           ),
                                         ),
                                       ),
                                       Hero(
-                                        tag: 'logo${_podcast.collectionId}',
+                                        tag: 'logo${_subscription.podcastId}',
                                         child: Container(
                                           height: 120.0,
                                           width: 120.0,
@@ -175,7 +176,7 @@ class SubscriptionsPage extends StatelessWidget {
                                           ),
                                           clipBehavior: Clip.antiAlias,
                                           child: Image.network(
-                                            _podcast.bestArtworkUrl ?? '',
+                                            _subscription.artworkUrl,
                                             fit: BoxFit.cover,
                                           ),
                                         ),

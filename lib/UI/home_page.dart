@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:podboi/Controllers/home_screen_controller.dart';
 import 'package:podboi/Controllers/profile_screen_controller.dart';
+import 'package:podboi/Services/database/database.dart';
 // import 'package:podboi/Shared/episode_display_widget.dart';
 import 'package:podboi/Shared/podcast_display_widget.dart';
 import 'package:podboi/UI/podcast_page.dart';
@@ -58,10 +59,7 @@ class HomePage extends StatelessWidget {
                           fontFamily: 'Segoe',
                           fontSize: 14.0,
                           fontWeight: FontWeight.w200,
-                          color: Theme.of(context)
-                              .colorScheme
-                              .secondary
-                              .withOpacity(0.50),
+                          color: Theme.of(context).colorScheme.secondary.withOpacity(0.50),
                         ),
                       ),
                       SizedBox(
@@ -147,8 +145,7 @@ class HomePage extends StatelessWidget {
       List<Item> _topPodcasts = ref.watch(
         homeScreenController.select((value) => value.topPodcasts),
       );
-      bool _isLoading =
-          ref.watch(homeScreenController.select((value) => value.isLoading));
+      bool _isLoading = ref.watch(homeScreenController.select((value) => value.isLoading));
       return _isLoading
           ? SliverToBoxAdapter(
               child: Container(
@@ -171,10 +168,7 @@ class HomePage extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 16.0,
                           fontWeight: FontWeight.w500,
-                          color: Theme.of(context)
-                              .colorScheme
-                              .secondary
-                              .withOpacity(0.6),
+                          color: Theme.of(context).colorScheme.secondary.withOpacity(0.6),
                           fontFamily: 'Segoe',
                         ),
                       ),
@@ -190,13 +184,27 @@ class HomePage extends StatelessWidget {
                   delegate: SliverChildBuilderDelegate(
                     ((context, index) {
                       Item _item = _topPodcasts[index];
+                      SubscriptionData _podcast = SubscriptionData(
+                        id: 0,
+                        podcastId: _item.collectionId,
+                        podcastName: _item.collectionName ?? "",
+                        feedUrl: _item.feedUrl ?? "",
+                        artworkUrl: _item.bestArtworkUrl ?? "",
+                        dateAdded: DateTime.now(),
+                        releaseDate: _item.releaseDate,
+                        genre: _item.genre?.map((e) => "${e.name}, ").toList().toString(),
+                        country: _item.country,
+                        lastEpisodeDate: null,
+                        trackCount: _item.trackCount,
+                        contentAdvisory: _item.contentAdvisoryRating,
+                      );
                       return GestureDetector(
                         onTap: () {
                           Navigator.of(context).push(
                             PageRouteBuilder(
                               transitionDuration: Duration(milliseconds: 500),
-                              transitionsBuilder: (context, animation,
-                                  secondaryAnimation, child) {
+                              transitionsBuilder:
+                                  (context, animation, secondaryAnimation, child) {
                                 const begin = Offset(1.0, 0.0);
                                 const end = Offset.zero;
                                 const curve = Curves.ease;
@@ -213,7 +221,7 @@ class HomePage extends StatelessWidget {
                                 );
                               },
                               pageBuilder: (_, __, ___) => PodcastPage(
-                                podcast: _item,
+                                subscription: _podcast,
                               ),
                             ),
                           );
@@ -247,8 +255,7 @@ class HomePage extends StatelessWidget {
             String _name = ref.watch(
               profileController.select((value) => value.userName),
             );
-            String _avatar = ref
-                .watch(profileController.select((value) => value.userAvatar));
+            String _avatar = ref.watch(profileController.select((value) => value.userAvatar));
             return Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -267,8 +274,7 @@ class HomePage extends StatelessWidget {
                     Navigator.of(context).push(
                       PageRouteBuilder(
                           transitionDuration: Duration(milliseconds: 500),
-                          transitionsBuilder:
-                              (context, animation, secondaryAnimation, child) {
+                          transitionsBuilder: (context, animation, secondaryAnimation, child) {
                             const begin = Offset(1.0, 0.0);
                             const end = Offset.zero;
                             const curve = Curves.ease;
@@ -314,8 +320,7 @@ class HomePage extends StatelessWidget {
                 style: TextStyle(
                   fontFamily: 'Segoe',
                   fontSize: 16.0,
-                  color:
-                      Theme.of(context).colorScheme.secondary.withOpacity(0.50),
+                  color: Theme.of(context).colorScheme.secondary.withOpacity(0.50),
                   fontWeight: FontWeight.w300,
                 ),
               ),

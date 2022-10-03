@@ -1,25 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podboi/Services/database/db_service.dart';
+import 'package:podboi/Controllers/subscription_controller.dart';
+import 'package:podboi/Services/database/database_service.dart';
+// import 'package:podboi/Services/database/db_service.dart';
 import 'package:podcast_search/podcast_search.dart';
 
-final podcastPageViewController = StateNotifierProvider.family<
-    PodcastPageViewNotifier, PodcastPageState, Item>((ref, podcast) {
-  return PodcastPageViewNotifier(podcast);
+import '../Services/database/database.dart';
+
+final podcastPageViewController =
+    StateNotifierProvider.family<PodcastPageViewNotifier, PodcastPageState, SubscriptionData>(
+        (ref, podcast) {
+  return PodcastPageViewNotifier(podcast, ref);
 });
 
 class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
-  final Item podcast;
+  final SubscriptionData podcast;
+
+  final StateNotifierProviderRef<PodcastPageViewNotifier, PodcastPageState> ref;
 
   List<Episode> _filteredEpisodes = [];
   List<Episode> _episodes = [];
-  PodcastPageViewNotifier(this.podcast) : super(PodcastPageState.initial()) {
-    loadPodcastEpisodes(podcast.feedUrl ?? '');
+  PodcastPageViewNotifier(this.podcast, this.ref) : super(PodcastPageState.initial()) {
+    loadPodcastEpisodes(podcast.feedUrl);
   }
 
   Future<void> loadPodcastEpisodes(String feedUrl) async {
     state = state.copyWith(isLoading: true);
-    bool _isSubbed = await isPodcastSubbed(podcast);
+    bool _isSubbed = await ref.watch(databaseServiceProvider).isPodcastSubbed(podcast);
     Podcast _podcast;
     try {
       print(" feed url : $feedUrl");
@@ -52,8 +59,7 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
       _filteredEpisodes = _episodes;
     } else {
       _filteredEpisodes = _episodes
-          .where((episode) =>
-              episode.title.toLowerCase().contains(query.toLowerCase().trim()))
+          .where((episode) => episode.title.toLowerCase().contains(query.toLowerCase().trim()))
           .toList();
     }
     state = state.copyWith(
@@ -61,15 +67,16 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
     );
   }
 
-  saveToSubscriptionsAction(Item podcast) async {
+  saveToSubscriptionsAction(SubscriptionData podcast) async {
     state = state.copyWith(isLoading: true);
-    bool _saved = await savePodcastToSubs(podcast);
+    bool _saved = await ref.watch(databaseServiceProvider).savePodcastToSubs(podcast);
     if (_saved) {
-      print(" podcast ${podcast.collectionName}  is saved to subs");
+      print(" podcast ${podcast.podcastName}  is saved to subs");
       state = state.copyWith(
         isLoading: false,
         isSubscribed: true,
       );
+      ref.watch(subscriptionsPageViewController.notifier).loadSubscriptions();
     } else {
       state = state.copyWith(
         isLoading: false,
@@ -78,15 +85,16 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
     }
   }
 
-  removeFromSubscriptionsAction(Item podcast) async {
+  removeFromSubscriptionsAction(SubscriptionData podcast) async {
     state = state.copyWith(isLoading: true);
-    bool _removed = await removePodcastFromSubs(podcast);
+    bool _removed = await ref.watch(databaseServiceProvider).removePodcastFromSubs(podcast);
     if (_removed) {
-      print(" podcast ${podcast.collectionName}  is removed from subs");
+      print(" podcast ${podcast.podcastName}  is removed from subs");
       state = state.copyWith(
         isLoading: false,
         isSubscribed: false,
       );
+      ref.watch(subscriptionsPageViewController.notifier).loadSubscriptions();
     } else {
       state = state.copyWith(
         isLoading: false,
@@ -102,10 +110,8 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
       );
       bool _incr = !state.epSortingIncr;
       _incr
-          ? _episodes
-              .sort((a, b) => b.publicationDate!.compareTo(a.publicationDate!))
-          : _episodes
-              .sort((a, b) => a.publicationDate!.compareTo(b.publicationDate!));
+          ? _episodes.sort((a, b) => b.publicationDate!.compareTo(a.publicationDate!))
+          : _episodes.sort((a, b) => a.publicationDate!.compareTo(b.publicationDate!));
       _filteredEpisodes = _episodes;
       state = state.copyWith(
         podcastEpisodes: _filteredEpisodes,

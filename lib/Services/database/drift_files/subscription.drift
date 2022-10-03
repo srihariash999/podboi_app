@@ -1,0 +1,32 @@
+-- ----------------------------
+-- Table structure for subscription
+-- ----------------------------
+CREATE TABLE "subscription" (
+  "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "podcast_name" TEXT NOT NULL,
+  "podcast_id" INTEGER,
+  "feed_url" TEXT NOT NULL,
+  "artwork_url" TEXT NOT NULL,
+  "date_added" DATE NOT NULL,
+  "last_episode_date" DATE,
+  "track_count" INTEGER,
+  "release_date" DATE,
+  "country" TEXT,
+  "genre" TEXT,
+  "content_advisory" TEXT,
+  CONSTRAINT "pod_id" UNIQUE ("podcast_id" ASC) ON CONFLICT FAIL
+);
+
+-- Insert schema statement to insert data into the table.
+insertSubscription: INSERT INTO subscription (
+   "podcast_name", "podcast_id", "feed_url", "artwork_url", "date_added", "last_episode_date", "track_count" ) 
+  VALUES (:podcast_name, :podcast_id, :feed_url, :artwork_url, :date_added, :last_episode_date, :track_count);
+
+-- Selecting a subscription from list using podcast_id
+selectSubscriptionUsingId: SELECT * FROM subscription WHERE podcast_id = :podcast_id;	
+
+-- Getting all user's subscriptions
+selectAllSubscriptions: SELECT * FROM subscription;
+
+-- Deleting a subscription using podcast_id
+deleteSubscriptionUsingId: DELETE FROM subscription WHERE podcast_id = :podcast_id;
