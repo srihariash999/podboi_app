@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 // import 'package:line_icons/line_icons.dart';
 import 'package:podboi/Controllers/audio_controller.dart';
+import 'package:podboi/Controllers/history_controller.dart';
 // import 'package:podboi/Controllers/history_controller.dart';
 import 'package:podboi/DataModels/song.dart';
 import 'package:podboi/Services/database/database.dart';
@@ -198,17 +199,17 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                           ),
                         );
 
-                    //TODO: handle this logic after new LHI feature is set.
-                    // _ref.read(historyController.notifier).saveToHistoryAction(
-                    //     url: _episode.contentUrl!.toString(),
-                    //     name: _episode.title,
-                    //     artist: "${_episode.author}",
-                    //     icon: _podcast.bestArtworkUrl!,
-                    //     album: "${_podcast.collectionName}",
-                    //     duration: _episode.duration!.inSeconds.toString(),
-                    //     listenedOn: DateTime.now().toString(),
-                    //     podcastArtWork: _podcast.bestArtworkUrl!,
-                    //     podcastName: "${_podcast.collectionName}");
+                    _ref.read(historyController.notifier).saveToHistoryAction(
+                          url: _episode.contentUrl!.toString(),
+                          name: _episode.title,
+                          artist: "${_episode.author}",
+                          icon: _podcast.artworkUrl,
+                          album: "${_podcast.podcastName}",
+                          duration: _episode.duration!.inSeconds.toString(),
+                          listenedOn: DateTime.now().toString(),
+                          podcastArtWork: _podcast.artworkUrl,
+                          podcastName: "${_podcast.podcastName}",
+                        );
                   },
                   icon: Icon(
                     FeatherIcons.play,

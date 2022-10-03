@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:podboi/Controllers/profile_screen_controller.dart';
 import 'package:podboi/Controllers/theme_controller.dart';
+import 'package:podboi/UI/listening_history.dart';
 // import 'package:podboi/UI/listening_history.dart';
 import 'package:podboi/UI/mini_player.dart';
 
@@ -137,33 +138,29 @@ class ProfileScreen extends StatelessWidget {
                       builder: (context, ref, child) {
                         return GestureDetector(
                           onTap: () {
-                            //TODO: add this when LHI is set.
-                            // Navigator.of(context).push(
-                            //   PageRouteBuilder(
-                            //     transitionDuration: Duration(milliseconds: 500),
-                            //     transitionsBuilder: (context, animation,
-                            //         secondaryAnimation, child) {
-                            //       const begin = Offset(1.0, 0.0);
-                            //       const end = Offset.zero;
-                            //       const curve = Curves.ease;
+                            Navigator.of(context).push(
+                              PageRouteBuilder(
+                                transitionDuration: Duration(milliseconds: 500),
+                                transitionsBuilder:
+                                    (context, animation, secondaryAnimation, child) {
+                                  const begin = Offset(1.0, 0.0);
+                                  const end = Offset.zero;
+                                  const curve = Curves.ease;
 
-                            //       final tween = Tween(begin: begin, end: end);
-                            //       final curvedAnimation = CurvedAnimation(
-                            //         parent: animation,
-                            //         curve: curve,
-                            //       );
+                                  final tween = Tween(begin: begin, end: end);
+                                  final curvedAnimation = CurvedAnimation(
+                                    parent: animation,
+                                    curve: curve,
+                                  );
 
-                            //       return SlideTransition(
-                            //         position: tween.animate(curvedAnimation),
-                            //         child: child,
-                            //       );
-                            //     },
-                            //     pageBuilder: (_, __, ___) =>
-                            //         ListeningHistoryView(
-                            //       ref: ref,
-                            //     ),
-                            //   ),
-                            // );
+                                  return SlideTransition(
+                                    position: tween.animate(curvedAnimation),
+                                    child: child,
+                                  );
+                                },
+                                pageBuilder: (_, __, ___) => ListeningHistoryView(ref: ref),
+                              ),
+                            );
                           },
                           child: Padding(
                             padding: EdgeInsets.symmetric(horizontal: 20.0),

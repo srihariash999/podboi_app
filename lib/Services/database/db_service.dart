@@ -1,5 +1,5 @@
 // import 'package:hive/hive.dart';
-// import 'package:podboi/DataModels/ListeningHistoryItem.dart';
+// import 'package:podboi/DataModels/ListeningHistoryData.dart';
 // import 'package:podboi/Services/conversion_helpers.dart';
 // // import 'package:podboi/Services/conversion_helpers.dart';
 // import 'package:podboi/Services/database/subscriptions.dart';
@@ -74,12 +74,12 @@
 //   }
 // }
 
-// Future<List<ListeningHistoryItem>> getLhiList() async {
-//   List<ListeningHistoryItem> _lhis = [];
+// Future<List<ListeningHistoryData>> getLhiList() async {
+//   List<ListeningHistoryData> _lhis = [];
 //   List _l = _historyBox.values.toList();
 //   for (int i = 0; i < _l.length; i++) {
 //     int key = _historyBox.keyAt(i);
-//     ListeningHistoryItem _lhi = lhiFromMap(_l[i]);
+//     ListeningHistoryData _lhi = lhiFromMap(_l[i]);
 //     _lhi.id = key;
 //     _lhis.add(_lhi);
 //   }
@@ -87,7 +87,7 @@
 //   return _lhis;
 // }
 
-// Future<bool> saveLhi(ListeningHistoryItem lhi) async {
+// Future<bool> saveLhi(ListeningHistoryData lhi) async {
 //   print(" here to save to history yo ${lhi.name} ");
 //   _historyBox.add(lhiToMap(lhi));
 //   return true;

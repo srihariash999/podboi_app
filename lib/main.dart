@@ -24,7 +24,7 @@ void main() async {
 
   // await Hive.openBox('subscriptionsBox');
   await Hive.openBox('generalBox');
-  await Hive.openBox('historyBox');
+  // await Hive.openBox('historyBox');
 
   // await initAudioService();
 

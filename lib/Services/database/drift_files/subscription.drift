@@ -19,8 +19,8 @@ CREATE TABLE "subscription" (
 
 -- Insert schema statement to insert data into the table.
 insertSubscription: INSERT INTO subscription (
-   "podcast_name", "podcast_id", "feed_url", "artwork_url", "date_added", "last_episode_date", "track_count" ) 
-  VALUES (:podcast_name, :podcast_id, :feed_url, :artwork_url, :date_added, :last_episode_date, :track_count);
+   "podcast_name", "podcast_id", "feed_url", "artwork_url", "date_added", "last_episode_date", "track_count" , "release_date", "country", "genre", "content_advisory") 
+  VALUES (:podcast_name, :podcast_id, :feed_url, :artwork_url, :date_added, :last_episode_date, :track_count, :release_date, :country, :genre, :content_advisory);
 
 -- Selecting a subscription from list using podcast_id
 selectSubscriptionUsingId: SELECT * FROM subscription WHERE podcast_id = :podcast_id;	

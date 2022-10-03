@@ -21,6 +21,10 @@ class DatabaseService {
         DateTime.now(),
         null,
         podcast.trackCount,
+        podcast.releaseDate,
+        podcast.country,
+        podcast.genre,
+        podcast.contentAdvisory,
       );
 
       // If the saving was a success, return true.
@@ -65,6 +69,42 @@ class DatabaseService {
       return false;
     }
   }
+
+  Future<List<ListeningHistoryData>> getLhiList() async {
+    List<ListeningHistoryData> _lhis = await _db.selectAllLHIs().get();
+    return _lhis;
+  }
+
+  Future<bool> saveLhi(ListeningHistoryData lhi) async {
+    print(" here to save to history yo ${lhi.name} ");
+    try {
+      await _db.insertLHI(
+        lhi.url,
+        lhi.artist,
+        lhi.icon,
+        lhi.album,
+        lhi.duration,
+        lhi.podcastName,
+        lhi.podcastArtwork,
+        lhi.listenedOn,
+        lhi.name,
+      );
+      return true;
+    } catch (e) {
+      print(" error saving lhi: $e");
+      return false;
+    }
+  }
+
+  Future<bool> removeLhiItem(int id) async {
+    try {
+      await _db.deleteLHIUsingId(id);
+      return true;
+    } catch (e) {
+      print("error removing item: $e");
+      return false;
+    }
+  }
 }
 
 
@@ -94,12 +134,12 @@ class DatabaseService {
 //   }
 // }
 
-// Future<List<ListeningHistoryItem>> getLhiList() async {
-//   List<ListeningHistoryItem> _lhis = [];
+// Future<List<ListeningHistoryData>> getLhiList() async {
+//   List<ListeningHistoryData> _lhis = [];
 //   List _l = _historyBox.values.toList();
 //   for (int i = 0; i < _l.length; i++) {
 //     int key = _historyBox.keyAt(i);
-//     ListeningHistoryItem _lhi = lhiFromMap(_l[i]);
+//     ListeningHistoryData _lhi = lhiFromMap(_l[i]);
 //     _lhi.id = key;
 //     _lhis.add(_lhi);
 //   }
@@ -107,7 +147,7 @@ class DatabaseService {
 //   return _lhis;
 // }
 
-// Future<bool> saveLhi(ListeningHistoryItem lhi) async {
+// Future<bool> saveLhi(ListeningHistoryData lhi) async {
 //   print(" here to save to history yo ${lhi.name} ");
 //   _historyBox.add(lhiToMap(lhi));
 //   return true;

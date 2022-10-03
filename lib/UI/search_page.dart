@@ -134,25 +134,34 @@ class CustomSearchDelegate extends SearchDelegate<String> {
                                       child: child,
                                     );
                                   },
-                                  pageBuilder: (_, __, ___) => PodcastPage(
-                                    subscription: SubscriptionData(
-                                      id: 0,
-                                      podcastName: result.collectionName ?? "N/A",
-                                      feedUrl: result.feedUrl ?? "",
-                                      artworkUrl: result.bestArtworkUrl ?? "",
-                                      dateAdded: DateTime.now(),
-                                      podcastId: result.collectionId,
-                                      lastEpisodeDate: null,
-                                      trackCount: result.trackCount,
-                                      releaseDate: result.releaseDate,
-                                      country: result.country,
-                                      genre: result.genre
-                                          ?.map((e) => "${e.name}, ")
-                                          .toList()
-                                          .toString(),
-                                      contentAdvisory: result.contentAdvisoryRating,
-                                    ),
-                                  ),
+                                  pageBuilder: (_, __, ___) {
+                                    String genreString = "";
+                                    if (result.genre != null) {
+                                      for (var e in result.genre!) {
+                                        genreString += "${e.name}, ";
+                                      }
+                                    }
+                                    if (genreString.length > 2) {
+                                      genreString =
+                                          genreString.substring(0, genreString.length - 2);
+                                    }
+                                    return PodcastPage(
+                                      subscription: SubscriptionData(
+                                        id: 0,
+                                        podcastName: result.collectionName ?? "N/A",
+                                        feedUrl: result.feedUrl ?? "",
+                                        artworkUrl: result.bestArtworkUrl ?? "",
+                                        dateAdded: DateTime.now(),
+                                        podcastId: result.collectionId,
+                                        lastEpisodeDate: null,
+                                        trackCount: result.trackCount,
+                                        releaseDate: result.releaseDate,
+                                        country: result.country,
+                                        genre: genreString,
+                                        contentAdvisory: result.contentAdvisoryRating,
+                                      ),
+                                    );
+                                  },
                                 ),
                               );
                             },
