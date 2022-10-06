@@ -6,8 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:podboi/DataModels/song.dart';
 
-final audioController =
-    StateNotifierProvider<AudioStateNotifier, AudioState>((ref) {
+final audioController = StateNotifierProvider<AudioStateNotifier, AudioState>((ref) {
   return AudioStateNotifier(ref);
 });
 
@@ -52,9 +51,9 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
     );
     var _stream = await _audioHandler.prepareForPlaying(song);
 
-    _stream.listen((playerState) {
-      // print(" player state : $playerState");
-      final processingState = playerState.processingState;
+    _stream.listen((pst) {
+      print(" player state : $pst");
+      final processingState = pst.processingState;
       if (processingState == ProcessingState.loading ||
           processingState == ProcessingState.buffering) {
         state = state.copyWith(playerState: false);
@@ -172,6 +171,7 @@ class MyAudioHandler extends BaseAudioHandler {
     _player.playerStateStream.listen((state) {
       if (state.processingState == ProcessingState.completed) {
         _player.stop();
+        ref?.read(audioController.notifier).stop();
       }
     });
   }
@@ -219,9 +219,8 @@ class MyAudioHandler extends BaseAudioHandler {
 
     Duration curr = _player.position;
     print(" curr is : ${curr.inSeconds}");
-    Duration newDur = curr.inSeconds > 10
-        ? Duration(seconds: curr.inSeconds - 10)
-        : Duration(seconds: 0);
+    Duration newDur =
+        curr.inSeconds > 10 ? Duration(seconds: curr.inSeconds - 10) : Duration(seconds: 0);
     _player.seek(newDur);
 
     return super.rewind();

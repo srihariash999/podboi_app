@@ -51,11 +51,16 @@ dependencies:
   # For api requests.
   dio: ^4.0.6
 
+  drift: ^2.1.0
+  sqlite3_flutter_libs: ^0.5.10
+  path: ^1.8.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
   hive_generator: any
-  build_runner: any
+  build_runner: ^2.2.1
+  drift_dev: ^2.1.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
