@@ -60,13 +60,13 @@ See the [contributor's guide!](contributing.md)
 
 
 ## Screenshots
- <img src="./Screenshots/home.jpeg" width="250"> | <img src="./Screenshots/home_playing.jpeg" width="250"> |  <img src="./Screenshots/subs.jpeg" width="250">
+ <img src="./Screenshots/home.jpg" width="250"> | <img src="./Screenshots/home_playing.jpg" width="250"> |  <img src="./Screenshots/subs.jpg" width="250">
 
 
-  <img src="./Screenshots/search.jpeg" width="250"> | <img src="./Screenshots/profile.jpeg" width="250"> |  <img src="./Screenshots/listening_history.jpeg" width="250">  
+  <img src="./Screenshots/search.jpg" width="250"> | <img src="./Screenshots/profile.jpg" width="250"> |  <img src="./Screenshots/listening_history.jpg" width="250">  
 
 
-  <img src="./Screenshots/home_dark.jpeg" width="250"> | <img src="./Screenshots/subs_dark.jpeg" width="250"> |  <img src="./Screenshots/profile_dark.jpeg" width="250">  
+  <img src="./Screenshots/home_dark.jpg" width="250"> | <img src="./Screenshots/subs_dark.jpg" width="250"> |  <img src="./Screenshots/profile_dark.jpg" width="250">  
 
 
 
