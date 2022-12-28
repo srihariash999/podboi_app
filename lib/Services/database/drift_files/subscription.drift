@@ -1,0 +1,71 @@
+-- ----------------------------
+-- Table structure for subscription
+-- ----------------------------
+CREATE TABLE "subscription" (
+  "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "podcast_name" TEXT NOT NULL,
+  "podcast_id" INTEGER,
+  "feed_url" TEXT NOT NULL,
+  "artwork_url" TEXT NOT NULL,
+  "date_added" DATE NOT NULL,
+  "last_episode_date" DATE,
+  "track_count" INTEGER,
+  "release_date" DATE,
+  "country" TEXT,
+  "genre" TEXT,
+  "content_advisory" TEXT,
+  CONSTRAINT "pod_id" UNIQUE ("podcast_id") ON CONFLICT ABORT
+);
+
+
+-- ----------------------------
+-- Table structure for episode
+-- ----------------------------
+CREATE TABLE "episode" (
+  "id" INTEGER NOT NULL,
+  "guid" TEXT NOT NULL,
+  "title" TEXT NOT NULL,
+  "description" TEXT NOT NULL,
+  "link" TEXT,
+  "publication_date" DATE,
+  "content_url" TEXT,
+  "image_url" TEXT,
+  "author" TEXT,
+  "season" integer,
+  "episode_number" integer,
+  "duration" Integer,
+  "podcast_id" INTEGER,
+  "podcast_name" TEXT,
+  PRIMARY KEY ("id"),
+  FOREIGN KEY (podcast_id) REFERENCES subscription(podcast_id) ON DELETE CASCADE ON UPDATE NO ACTION
+);
+
+
+-- Insert schema statement to insert data into the table.
+insertSubscription: INSERT INTO subscription (
+   "podcast_name", "podcast_id", "feed_url", "artwork_url", "date_added", "last_episode_date", "track_count" , "release_date", "country", "genre", "content_advisory") 
+  VALUES (:podcast_name, :podcast_id, :feed_url, :artwork_url, :date_added, :last_episode_date, :track_count, :release_date, :country, :genre, :content_advisory);
+
+-- Selecting a subscription from list using podcast_id
+selectSubscriptionUsingId: SELECT * FROM subscription WHERE podcast_id = :podcast_id;	
+
+-- Getting all user's subscriptions
+selectAllSubscriptions: SELECT * FROM subscription;
+
+-- Deleting a subscription using id
+deleteSubscriptionUsingId: DELETE FROM subscription WHERE id = :id;
+
+
+-- Insert schema statement to insert data into the table.
+insertEpisode: INSERT INTO episode (
+   "guid", "title", "description", "link", "publication_date", "content_url", "image_url", "author", "season", "episode_number", "duration", "podcast_id", "podcast_name") 
+  VALUES (:guid, :title, :description, :link, :publication_date, :content_url, :image_url, :author, :season, :episode_number, :duration, :podcast_id, :podcast_name);
+
+-- Selecting episodes from list using podcast_id
+selectEpisodesUsingPodcastId: SELECT * FROM episode WHERE podcast_id = :podcast_id;	
+
+-- Deleting a Episode using id
+-- deleteEpisodeUsingId: DELETE FROM episode WHERE podcast_id = :podcast_id;
+
+-- Deleting a Episode using id
+deleteEpisodeOfPodcast: DELETE FROM episode WHERE podcast_id = :podcast_id;

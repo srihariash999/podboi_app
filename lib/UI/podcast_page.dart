@@ -7,14 +7,15 @@ import 'package:intl/intl.dart';
 import 'package:line_icons/line_icons.dart';
 // import 'package:podboi/Controllers/audio_controller.dart';
 import 'package:podboi/Controllers/podcast_page_controller.dart';
+import 'package:podboi/Services/database/database.dart';
 import 'package:podboi/Shared/detailed_episode_widget.dart';
 import 'package:podboi/UI/mini_player.dart';
 // import 'package:podboi/misc/database.dart';
-import 'package:podcast_search/podcast_search.dart';
+// import 'package:podcast_search/podcast_search.dart';
 
 class PodcastPage extends StatelessWidget {
-  final Item podcast;
-  PodcastPage({Key? key, required this.podcast}) : super(key: key);
+  final SubscriptionData subscription;
+  PodcastPage({Key? key, required this.subscription}) : super(key: key);
 
   final TextEditingController episodeSearchController = TextEditingController();
 
@@ -32,7 +33,7 @@ class PodcastPage extends StatelessWidget {
                 onTap: () {
                   ref
                       .read(podcastPageViewController(
-                        podcast,
+                        subscription,
                       ).notifier)
                       .toggleEpisodesSort();
                   Navigator.pop(context);
@@ -65,7 +66,7 @@ class PodcastPage extends StatelessWidget {
                 onTap: () {
                   ref
                       .read(podcastPageViewController(
-                        podcast,
+                        subscription,
                       ).notifier)
                       .toggleEpisodesSort();
                   Navigator.pop(context);
@@ -149,10 +150,10 @@ class PodcastPage extends StatelessWidget {
                           Consumer(
                             builder: (context, ref, child) {
                               String _description = ref.watch(
-                                  podcastPageViewController(podcast)
+                                  podcastPageViewController(subscription)
                                       .select((value) => value.description));
                               bool _isLoading = ref.watch(
-                                podcastPageViewController(podcast)
+                                podcastPageViewController(subscription)
                                     .select((value) => value.isLoading),
                               );
                               return _isLoading
@@ -218,28 +219,35 @@ class PodcastPage extends StatelessWidget {
                       ),
                     ),
                     actions: [
-                      Consumer(builder: (context, ref, child) {
-                        // True --> new to old
-                        // False --> old to new
-                        bool _episodesSort = ref
-                            .watch(
-                              podcastPageViewController(podcast),
-                            )
-                            .epSortingIncr;
-                        return InkWell(
-                          onTap: () {
-                            onTapThreeDot(context, ref, _episodesSort);
-                          },
-                          child: Padding(
+                      Consumer(
+                        builder: (context, ref, child) {
+                          // True --> new to old
+                          // False --> old to new
+                          bool _episodesSort = ref
+                              .watch(
+                                podcastPageViewController(subscription),
+                              )
+                              .epSortingIncr;
+                          return Padding(
                             padding:
-                                const EdgeInsets.only(bottom: 16.0, right: 8.0),
-                            child: Icon(
-                              Icons.more_vert,
-                              color: Theme.of(context).colorScheme.secondary,
+                                const EdgeInsets.only(bottom: 16.0, right: 6.0),
+                            child: InkWell(
+                              onTap: () {
+                                onTapThreeDot(context, ref, _episodesSort);
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 6.0, vertical: 6.0),
+                                child: Icon(
+                                  Icons.more_vert,
+                                  color:
+                                      Theme.of(context).colorScheme.secondary,
+                                ),
+                              ),
                             ),
-                          ),
-                        );
-                      }),
+                          );
+                        },
+                      ),
                     ],
                     centerTitle: false,
                     expandedHeight: 32.0,
@@ -251,7 +259,7 @@ class PodcastPage extends StatelessWidget {
                       title: Consumer(
                         builder: (context, ref, child) {
                           var _viewController = ref.watch(
-                            podcastPageViewController(podcast),
+                            podcastPageViewController(subscription),
                           );
 
                           if (_viewController.isLoading) {
@@ -259,7 +267,7 @@ class PodcastPage extends StatelessWidget {
                           }
                           return Padding(
                             padding:
-                                const EdgeInsets.symmetric(horizontal: 48.0),
+                                const EdgeInsets.symmetric(horizontal: 42.0),
                             child: Row(
                               children: [
                                 Expanded(
@@ -267,9 +275,9 @@ class PodcastPage extends StatelessWidget {
                                     controller: episodeSearchController,
                                     onChanged: (String s) {
                                       ref
-                                          .read(
-                                              podcastPageViewController(podcast)
-                                                  .notifier)
+                                          .read(podcastPageViewController(
+                                                  subscription)
+                                              .notifier)
                                           .filterEpisodesWithQuery(s);
                                     },
                                     decoration: InputDecoration(
@@ -290,7 +298,7 @@ class PodcastPage extends StatelessWidget {
                                                 ref
                                                     .read(
                                                         podcastPageViewController(
-                                                                podcast)
+                                                                subscription)
                                                             .notifier)
                                                     .filterEpisodesWithQuery(
                                                         '');
@@ -313,8 +321,7 @@ class PodcastPage extends StatelessWidget {
                                         fontWeight: FontWeight.w400,
                                         color: Theme.of(context)
                                             .colorScheme
-                                            .secondary
-                                            .withOpacity(0.7),
+                                            .secondary,
                                       ),
                                       fillColor: Theme.of(context)
                                           .highlightColor
@@ -360,12 +367,14 @@ class PodcastPage extends StatelessWidget {
                     child: Consumer(
                       builder: (context, ref, child) {
                         var _viewController = ref.watch(
-                          podcastPageViewController(podcast),
+                          podcastPageViewController(subscription),
                         );
                         Future<void> refresh() async {
                           ref
-                              .read(podcastPageViewController(podcast).notifier)
-                              .loadPodcastEpisodes(podcast.feedUrl!);
+                              .read(podcastPageViewController(subscription)
+                                  .notifier)
+                              .loadPodcastEpisodes(subscription.feedUrl,
+                                  subscription.podcastId ?? subscription.id);
                         }
 
                         return _viewController.isLoading
@@ -384,7 +393,7 @@ class PodcastPage extends StatelessWidget {
                                   separatorBuilder: (context, index) {
                                     return Padding(
                                       padding: const EdgeInsets.symmetric(
-                                          horizontal: 20.0),
+                                          horizontal: 12.0),
                                       child: Divider(
                                         color: Theme.of(context)
                                             .colorScheme
@@ -401,12 +410,12 @@ class PodcastPage extends StatelessWidget {
                                       // return Container();
                                       return buildTopUI(context);
                                     }
-                                    Episode _episode = _viewController
+                                    EpisodeData _episode = _viewController
                                         .podcastEpisodes[index - 1];
                                     return DetailedEpsiodeViewWidget(
-                                      episode: _episode,
+                                      episodeData: _episode,
                                       ref: ref,
-                                      podcast: podcast,
+                                      podcast: subscription,
                                     );
                                   },
                                 ),
@@ -450,7 +459,7 @@ class PodcastPage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12.0),
                   ),
                   child: Image.network(
-                    podcast.bestArtworkUrl ?? '',
+                    subscription.artworkUrl,
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -468,7 +477,7 @@ class PodcastPage extends StatelessWidget {
                     width: MediaQuery.of(context).size.width * 0.60,
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      podcast.collectionName ?? 'N/A',
+                      subscription.podcastName,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
@@ -492,22 +501,25 @@ class PodcastPage extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          Text(
-                            DateFormat('yMMMd').format(podcast.releaseDate!),
-                            style: TextStyle(
-                              fontSize: 14.0,
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .secondary
-                                  .withOpacity(0.50),
-                              fontWeight: FontWeight.w600,
+                          if (subscription.releaseDate != null)
+                            Text(
+                              DateFormat('yMMMd')
+                                  .format(subscription.releaseDate!),
+                              style: TextStyle(
+                                fontSize: 14.0,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .secondary
+                                    .withOpacity(0.50),
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
-                          ),
-                          SizedBox(
-                            width: 18.0,
-                          ),
+                          if (subscription.releaseDate != null)
+                            SizedBox(
+                              width: 18.0,
+                            ),
                           Text(
-                            podcast.country ?? '',
+                            subscription.country ?? '',
                             style: TextStyle(
                               fontSize: 14.0,
                               color: Theme.of(context)
@@ -523,31 +535,41 @@ class PodcastPage extends StatelessWidget {
                       SizedBox(
                         height: 4.0,
                       ),
-                      Container(
-                        width: MediaQuery.of(context).size.width * 0.60,
-                        child: Wrap(
-                          children: podcast.genre!.map(
-                            (i) {
-                              int x = podcast.genre!.indexOf(i);
-                              int l = podcast.genre!.length;
-                              String gName = i.name;
-                              if (x < l - 1) gName += " , ";
-                              return Text(
-                                gName,
-                                style: TextStyle(
-                                  fontSize: 12.0,
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .secondary
-                                      .withOpacity(0.70),
-                                  fontFamily: 'Segoe',
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              );
-                            },
-                          ).toList(),
+                      Text(
+                        subscription.genre ?? "",
+                        style: TextStyle(
+                          fontSize: 12.0,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .secondary
+                              .withOpacity(0.70),
+                          fontFamily: 'Segoe',
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
+                      // Container(
+                      //   width: MediaQuery.of(context).size.width * 0.60,
+                      //   child: Wrap(
+                      //     children: subscription.genre!.map(
+                      //       (i) {
+                      //         int x = subscription.genre!.indexOf(i);
+                      //         int l = subscription.genre!.length;
+                      //         String gName = i.name;
+                      //         if (x < l - 1) gName += " , ";
+                      //         return Text(
+                      //           gName,
+                      //           style: TextStyle(
+                      //             fontSize: 12.0,
+                      //             color:
+                      //                 Theme.of(context).colorScheme.secondary.withOpacity(0.70),
+                      //             fontFamily: 'Segoe',
+                      //             fontWeight: FontWeight.w500,
+                      //           ),
+                      //         );
+                      //       },
+                      //     ).toList(),
+                      //   ),
+                      // ),
                     ],
                   )
                 ],
@@ -561,11 +583,11 @@ class PodcastPage extends StatelessWidget {
               Consumer(
                 builder: (context, ref, child) {
                   bool _isSubbed = ref.watch(
-                    podcastPageViewController(podcast)
+                    podcastPageViewController(subscription)
                         .select((value) => value.isSubscribed),
                   );
                   bool _isLoading = ref.watch(
-                    podcastPageViewController(podcast)
+                    podcastPageViewController(subscription)
                         .select((value) => value.isLoading),
                   );
                   return _isLoading
@@ -582,9 +604,11 @@ class PodcastPage extends StatelessWidget {
                           ? GestureDetector(
                               onTap: () {
                                 ref
-                                    .read(podcastPageViewController(podcast)
-                                        .notifier)
-                                    .removeFromSubscriptionsAction(podcast);
+                                    .read(
+                                        podcastPageViewController(subscription)
+                                            .notifier)
+                                    .removeFromSubscriptionsAction(
+                                        subscription);
                               },
                               child: Container(
                                 decoration: BoxDecoration(
@@ -618,9 +642,10 @@ class PodcastPage extends StatelessWidget {
                           : GestureDetector(
                               onTap: () {
                                 ref
-                                    .read(podcastPageViewController(podcast)
-                                        .notifier)
-                                    .saveToSubscriptionsAction(podcast);
+                                    .read(
+                                        podcastPageViewController(subscription)
+                                            .notifier)
+                                    .saveToSubscriptionsAction(subscription);
                               },
                               child: Container(
                                 decoration: BoxDecoration(
@@ -668,7 +693,7 @@ class PodcastPage extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      "${podcast.contentAdvisoryRating}",
+                      "${subscription.contentAdvisory ?? ' N.A '}",
                       style: TextStyle(
                         fontSize: 12.0,
                         color: Theme.of(context)
@@ -690,11 +715,13 @@ class PodcastPage extends StatelessWidget {
           InkWell(
             onTap: () => onTapAboutPodcast(context),
             child: Container(
-              padding: const EdgeInsets.all(8.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12.0),
                 // color: Colors.white38,
-                color: Theme.of(context).colorScheme.secondary.withOpacity(0.1),
+                color:
+                    Theme.of(context).colorScheme.secondary.withOpacity(0.05),
               ),
               child: Row(
                 children: [

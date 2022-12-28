@@ -69,6 +69,9 @@ class _MiniPlayerState extends State<MiniPlayer> {
       enableDrag: true,
       context: context,
       builder: (context) {
+        if (!ref.watch(audioController).isPlayerShow) {
+          Navigator.pop(context);
+        }
         return SizedBox(
           height: MediaQuery.of(context).size.height -
               MediaQuery.of(context).viewPadding.top -
@@ -112,8 +115,7 @@ class _MiniPlayerState extends State<MiniPlayer> {
                     tag: 'albumArt',
                     child: _contState.audioHandler.mediaItem.value != null
                         ? Image.network(
-                            _contState.audioHandler.mediaItem.value!.artUri
-                                .toString(),
+                            _contState.audioHandler.mediaItem.value!.artUri.toString(),
                           )
                         : Container(),
                   ),
@@ -158,41 +160,37 @@ class _MiniPlayerState extends State<MiniPlayer> {
                             ref.read(audioController.notifier).rewind();
                           },
                         ),
-                        _contState.playerState
-                            ? SizedBox(
-                                width: 10.0,
-                              )
-                            : SizedBox(
-                                width: 18.0,
-                              ),
-                        _contState.playerState == false
-                            ? Container(
-                                height: 50.0,
-                                width: 50.0,
-                                margin: EdgeInsets.only(top: 12.0),
-                                alignment: Alignment.center,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 4.0,
-                                  color:
-                                      Theme.of(context).colorScheme.secondary,
-                                ),
-                              )
-                            : IconButton(
-                                icon: Icon(
-                                  FeatherIcons.pauseCircle,
-                                  color:
-                                      Theme.of(context).colorScheme.secondary,
-                                  size: 50.0,
-                                ),
-                                onPressed: () {
-                                  ref.read(audioController.notifier).pause();
-                                },
-                              ),
-                        _contState.playerState
-                            ? SizedBox(
-                                width: 10.0,
-                              )
-                            : Container(),
+                        SizedBox(
+                          width: 18.0,
+                        ),
+                        Consumer(
+                          builder: (context, ref, child) {
+                            return ref.read(audioController).playerState == false
+                                ? Container(
+                                    height: 50.0,
+                                    width: 50.0,
+                                    margin: EdgeInsets.only(top: 12.0, left: 12.0),
+                                    alignment: Alignment.center,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 4.0,
+                                      color: Theme.of(context).colorScheme.secondary,
+                                    ),
+                                  )
+                                : IconButton(
+                                    icon: Icon(
+                                      FeatherIcons.pauseCircle,
+                                      color: Theme.of(context).colorScheme.secondary,
+                                      size: 50.0,
+                                    ),
+                                    onPressed: () {
+                                      ref.read(audioController.notifier).pause();
+                                    },
+                                  );
+                          },
+                        ),
+                        SizedBox(
+                          width: 18.0,
+                        ),
                         IconButton(
                           icon: Icon(
                             Icons.forward_10,
@@ -261,39 +259,31 @@ class _MiniPlayerState extends State<MiniPlayer> {
                 builder: (context, snap) {
                   if (snap.hasData &&
                       _contState.audioHandler.mediaItem.value != null &&
-                      _contState.audioHandler.mediaItem.value!.duration !=
-                          null) {
+                      _contState.audioHandler.mediaItem.value!.duration != null) {
                     return Container(
                       child: Column(
                         children: [
                           Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 20.0),
+                            padding: const EdgeInsets.symmetric(horizontal: 20.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
                                   _formatDuration(snap.data!),
                                   style: TextStyle(
-                                    color:
-                                        Theme.of(context).colorScheme.secondary,
+                                    color: Theme.of(context).colorScheme.secondary,
                                   ),
                                 ),
                                 Text(
                                   '- ' +
                                       _formatDuration(
                                         Duration(
-                                            seconds: _contState
-                                                    .audioHandler
-                                                    .mediaItem
-                                                    .value!
-                                                    .duration!
-                                                    .inSeconds -
+                                            seconds: _contState.audioHandler.mediaItem.value!
+                                                    .duration!.inSeconds -
                                                 snap.data!.inSeconds),
                                       ),
                                   style: TextStyle(
-                                    color:
-                                        Theme.of(context).colorScheme.secondary,
+                                    color: Theme.of(context).colorScheme.secondary,
                                   ),
                                 ),
                               ],
@@ -301,8 +291,7 @@ class _MiniPlayerState extends State<MiniPlayer> {
                           ),
                           Slider(
                             min: 0.0,
-                            max: _contState.audioHandler.mediaItem.value!
-                                .duration!.inSeconds
+                            max: _contState.audioHandler.mediaItem.value!.duration!.inSeconds
                                 .toDouble(),
                             value: snap.data!.inSeconds.toDouble(),
                             inactiveColor: Colors.black.withOpacity(0.1),
@@ -366,13 +355,11 @@ class _MiniPlayerState extends State<MiniPlayer> {
                               height: 60,
                               width: 60,
                               clipBehavior: Clip.antiAlias,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(14.0)),
-                              child: _contState.audioHandler.mediaItem.value !=
-                                      null
+                              decoration:
+                                  BoxDecoration(borderRadius: BorderRadius.circular(14.0)),
+                              child: _contState.audioHandler.mediaItem.value != null
                                   ? Image.network(
-                                      _contState
-                                          .audioHandler.mediaItem.value!.artUri
+                                      _contState.audioHandler.mediaItem.value!.artUri
                                           .toString(),
                                     )
                                   : null,
@@ -382,12 +369,10 @@ class _MiniPlayerState extends State<MiniPlayer> {
                         Flexible(
                           flex: 3,
                           child: Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 10.0),
+                            padding: const EdgeInsets.symmetric(horizontal: 10.0),
                             child: Text(
                               _contState.audioHandler.mediaItem.value != null
-                                  ? _contState
-                                      .audioHandler.mediaItem.value!.title
+                                  ? _contState.audioHandler.mediaItem.value!.title
                                   : "  ",
                               maxLines: 3,
                               overflow: TextOverflow.ellipsis,
@@ -415,8 +400,7 @@ class _MiniPlayerState extends State<MiniPlayer> {
                               IconButton(
                                   icon: Icon(
                                     Icons.replay_10,
-                                    color:
-                                        Theme.of(context).colorScheme.secondary,
+                                    color: Theme.of(context).colorScheme.secondary,
                                     size: 32.0,
                                   ),
                                   onPressed: () {
@@ -431,24 +415,17 @@ class _MiniPlayerState extends State<MiniPlayer> {
                                             width: 24.0,
                                             child: CircularProgressIndicator(
                                               strokeWidth: 3.0,
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .secondary,
+                                              color: Theme.of(context).colorScheme.secondary,
                                             ),
                                           ),
                                           IconButton(
                                             icon: Icon(
                                               FeatherIcons.stopCircle,
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .secondary,
+                                              color: Theme.of(context).colorScheme.secondary,
                                               size: 32.0,
                                             ),
                                             onPressed: () {
-                                              ref
-                                                  .read(
-                                                      audioController.notifier)
-                                                  .stop();
+                                              ref.read(audioController.notifier).stop();
                                             },
                                           ),
                                         ],
@@ -457,29 +434,22 @@ class _MiniPlayerState extends State<MiniPlayer> {
                                   : IconButton(
                                       icon: Icon(
                                         FeatherIcons.pauseCircle,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .secondary,
+                                        color: Theme.of(context).colorScheme.secondary,
                                         size: 32.0,
                                       ),
                                       onPressed: () {
-                                        ref
-                                            .read(audioController.notifier)
-                                            .pause();
+                                        ref.read(audioController.notifier).pause();
                                         // AudioService.pause();
                                       },
                                     ),
                               IconButton(
                                 icon: Icon(
                                   Icons.forward_10,
-                                  color:
-                                      Theme.of(context).colorScheme.secondary,
+                                  color: Theme.of(context).colorScheme.secondary,
                                   size: 32.0,
                                 ),
                                 onPressed: () {
-                                  ref
-                                      .read(audioController.notifier)
-                                      .fastForward();
+                                  ref.read(audioController.notifier).fastForward();
                                 },
                               ),
                             ],
@@ -492,8 +462,7 @@ class _MiniPlayerState extends State<MiniPlayer> {
                               IconButton(
                                 icon: Icon(
                                   FeatherIcons.playCircle,
-                                  color:
-                                      Theme.of(context).colorScheme.secondary,
+                                  color: Theme.of(context).colorScheme.secondary,
                                   size: 32.0,
                                 ),
                                 onPressed: () {
@@ -503,8 +472,7 @@ class _MiniPlayerState extends State<MiniPlayer> {
                               IconButton(
                                 icon: Icon(
                                   FeatherIcons.stopCircle,
-                                  color:
-                                      Theme.of(context).colorScheme.secondary,
+                                  color: Theme.of(context).colorScheme.secondary,
                                   size: 32.0,
                                 ),
                                 onPressed: () {
@@ -542,8 +510,7 @@ class _MiniPlayerState extends State<MiniPlayer> {
                         width: MediaQuery.of(context).size.width *
                             0.9 *
                             (snap.data!.inSeconds.toDouble() /
-                                _contState.audioHandler.mediaItem.value!
-                                    .duration!.inSeconds
+                                _contState.audioHandler.mediaItem.value!.duration!.inSeconds
                                     .toDouble()),
                         color: Colors.red[400],
                       ),
@@ -553,8 +520,7 @@ class _MiniPlayerState extends State<MiniPlayer> {
                             (MediaQuery.of(context).size.width *
                                 0.9 *
                                 (snap.data!.inSeconds.toDouble() /
-                                    _contState.audioHandler.mediaItem.value!
-                                        .duration!.inSeconds
+                                    _contState.audioHandler.mediaItem.value!.duration!.inSeconds
                                         .toDouble())),
                         color: Colors.black.withOpacity(0.2),
                       ),

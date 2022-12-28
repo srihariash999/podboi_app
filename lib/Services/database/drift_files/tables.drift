@@ -1,0 +1,7 @@
+-- File to barrel import all drift files.
+
+-- To Import SQL statements for subscription table.
+import 'subscription.drift';
+
+-- To Import SQL statements for listening_history table.
+import 'listening_history.drift';

@@ -1,0 +1,30 @@
+-- ----------------------------
+-- Table structure for listening_history
+-- ----------------------------
+CREATE TABLE "listening_history" (
+  "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "url" TEXT NOT NULL,
+  "artist" TEXT NOT NULL,
+  "icon" TEXT NOT NULL,
+  "album" TEXT NOT NULL,
+  "duration" TEXT NOT NULL,
+  "podcast_name" TEXT NOT NULL,
+  "podcast_artwork" TEXT NOT NULL,
+  "listened_on" TEXT NOT NULL,
+  "name" TEXT NOT NULL,
+  CONSTRAINT "names" UNIQUE ("name", "podcast_name") ON CONFLICT REPLACE
+);
+
+-- Insert schema statement to insert data into the table.
+insertLHI: INSERT INTO listening_history (
+   "url", "artist", "icon", "album", "duration", "podcast_name", "podcast_artwork", "listened_on", "name") 
+  VALUES (:url, :artist, :icon, :album, :duration, :podcast_name, :podcast_artwork, :listened_on, :name);
+
+-- Selecting a LHI from list using name and podcast_name
+selectLHIUsingId: SELECT * FROM listening_history WHERE name = :name AND podcast_name = :podcast_name;	
+
+-- Getting all LHI
+selectAllLHIs: SELECT * FROM listening_history ORDER BY listened_on DESC;
+
+-- Deleting a LHI using id
+deleteLHIUsingId: DELETE FROM listening_history WHERE id = :id;

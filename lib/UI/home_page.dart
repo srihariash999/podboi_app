@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:podboi/Controllers/home_screen_controller.dart';
 import 'package:podboi/Controllers/profile_screen_controller.dart';
+import 'package:podboi/Services/database/database.dart';
 // import 'package:podboi/Shared/episode_display_widget.dart';
 import 'package:podboi/Shared/podcast_display_widget.dart';
 import 'package:podboi/UI/podcast_page.dart';
@@ -20,59 +22,70 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).backgroundColor,
-      body: SafeArea(
-        child: RefreshIndicator(
-          onRefresh: _refresh,
-          child: CustomScrollView(
-            slivers: [
-              SliverToBoxAdapter(
-                child: buildTopUi(context),
-              ),
-              SliverToBoxAdapter(
-                child: buildSearchRow(context),
-              ),
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                    left: 18.0,
-                    bottom: 8.0,
-                    top: 8.0,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Discover",
-                        style: TextStyle(
-                          fontFamily: 'Segoe',
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.w600,
-                          color: Theme.of(context).colorScheme.secondary,
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
+        statusBarColor: Theme.of(context).backgroundColor,
+        statusBarIconBrightness: Theme.of(context).brightness == Brightness.dark
+            ? Brightness.light
+            : Brightness.dark,
+        statusBarBrightness: Theme.of(context).brightness == Brightness.dark
+            ? Brightness.light
+            : Brightness.dark,
+      ),
+      child: Scaffold(
+        backgroundColor: Theme.of(context).backgroundColor,
+        body: SafeArea(
+          child: RefreshIndicator(
+            onRefresh: _refresh,
+            child: CustomScrollView(
+              slivers: [
+                SliverToBoxAdapter(
+                  child: buildTopUi(context),
+                ),
+                SliverToBoxAdapter(
+                  child: buildSearchRow(context),
+                ),
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                      left: 18.0,
+                      bottom: 8.0,
+                      top: 8.0,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Discover",
+                          style: TextStyle(
+                            fontFamily: 'Segoe',
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.w600,
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
                         ),
-                      ),
-                      Text(
-                        "Top podcasts today on Podboi today",
-                        style: TextStyle(
-                          fontFamily: 'Segoe',
-                          fontSize: 14.0,
-                          fontWeight: FontWeight.w200,
-                          color: Theme.of(context)
-                              .colorScheme
-                              .secondary
-                              .withOpacity(0.50),
+                        Text(
+                          "Top podcasts today on Podboi today",
+                          style: TextStyle(
+                            fontFamily: 'Segoe',
+                            fontSize: 14.0,
+                            fontWeight: FontWeight.w200,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .secondary
+                                .withOpacity(0.50),
+                          ),
                         ),
-                      ),
-                      SizedBox(
-                        height: 16.0,
-                      ),
-                    ],
+                        SizedBox(
+                          height: 16.0,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              buildDiscoverPodcastsRow(context),
-            ],
+                buildDiscoverPodcastsRow(context),
+              ],
+            ),
           ),
         ),
       ),
@@ -161,25 +174,27 @@ class HomePage extends StatelessWidget {
               ),
             )
           : _topPodcasts.length == 0
-              ? Column(
-                  children: [
-                    Container(
-                      height: MediaQuery.of(context).size.height * 0.50,
-                      alignment: Alignment.center,
-                      child: Text(
-                        " No Podcasts to show",
-                        style: TextStyle(
-                          fontSize: 16.0,
-                          fontWeight: FontWeight.w500,
-                          color: Theme.of(context)
-                              .colorScheme
-                              .secondary
-                              .withOpacity(0.6),
-                          fontFamily: 'Segoe',
+              ? SliverToBoxAdapter(
+                  child: Column(
+                    children: [
+                      Container(
+                        height: MediaQuery.of(context).size.height * 0.50,
+                        alignment: Alignment.center,
+                        child: Text(
+                          " No Podcasts to show",
+                          style: TextStyle(
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.w500,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .secondary
+                                .withOpacity(0.6),
+                            fontFamily: 'Segoe',
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 )
               : SliverGrid(
                   gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
@@ -190,6 +205,30 @@ class HomePage extends StatelessWidget {
                   delegate: SliverChildBuilderDelegate(
                     ((context, index) {
                       Item _item = _topPodcasts[index];
+                      String genreString = "";
+                      if (_item.genre != null) {
+                        for (var e in _item.genre!) {
+                          genreString += "${e.name}, ";
+                        }
+                      }
+                      if (genreString.length > 2) {
+                        genreString =
+                            genreString.substring(0, genreString.length - 2);
+                      }
+                      SubscriptionData _podcast = SubscriptionData(
+                        id: -1,
+                        podcastId: _item.collectionId,
+                        podcastName: _item.collectionName ?? "",
+                        feedUrl: _item.feedUrl ?? "",
+                        artworkUrl: _item.bestArtworkUrl ?? "",
+                        dateAdded: DateTime.now(),
+                        releaseDate: _item.releaseDate,
+                        genre: genreString,
+                        country: _item.country,
+                        lastEpisodeDate: null,
+                        trackCount: _item.trackCount,
+                        contentAdvisory: _item.contentAdvisoryRating,
+                      );
                       return GestureDetector(
                         onTap: () {
                           Navigator.of(context).push(
@@ -213,7 +252,7 @@ class HomePage extends StatelessWidget {
                                 );
                               },
                               pageBuilder: (_, __, ___) => PodcastPage(
-                                podcast: _item,
+                                subscription: _podcast,
                               ),
                             ),
                           );
