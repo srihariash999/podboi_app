@@ -62,7 +62,7 @@ class DatabaseService {
     if (res.isEmpty) return IsSubbed(value: false);
 
     // If not empty, podcast is subbed.
-    return IsSubbed(value: true, id: res.first.id);
+    return IsSubbed(value: true, id: res.first.podcastId);
   }
 
   Future<List<SubscriptionData>> getAllSubscriptions() async {
@@ -74,10 +74,10 @@ class DatabaseService {
     }
   }
 
-  Future<bool> removePodcastFromSubs(int id) async {
+  Future<bool> removePodcastFromSubs({required int podcastId}) async {
     try {
-      await deleteEpisodesFromCacheById(id);
-      await _db.deleteSubscriptionUsingId(id);
+      await deleteEpisodesFromCacheOfPodcast(podcastId: podcastId);
+      await _db.deleteSubscriptionUsingId(podcastId);
       return true;
     } catch (e) {
       print(" error deleting podcast: $e");
@@ -121,9 +121,15 @@ class DatabaseService {
     }
   }
 
-  Future<bool> saveEpsiodesToCache(List<EpisodeData> episodes) async {
+  Future<bool> saveEpsiodesToCache(List<EpisodeData> episodes,
+      {required int podcastId}) async {
     try {
+      await _db.deleteEpisodeOfPodcast(podcastId);
+
       for (var i in episodes) {
+        // print(
+        //     " printing values in sql   guid : ${i.guid} \n title : ${i.title}, \n desc,  \n link: ${i.link} \n pub date:  ${i.publicationDate} \n content url : ${i.contentUrl} \n img url:  ${i.imageUrl} \n author: ${i.author} \n season: ${i.season} \n ep num : ${i.episodeNumber} \n duration: ${i.duration} \n pod id:  ${i.podcastId} \n pod name:  ${i.podcastName}");
+        // print(" pod id: ${i.podcastId}");
         await _db.insertEpisode(
           i.guid,
           i.title,
@@ -143,25 +149,26 @@ class DatabaseService {
       print(" ${episodes.length} episodes saved to cache");
       return true;
     } catch (e) {
-      print(" error saving episode:  $e");
-
+      print(" error saving episodes to cache with pod id: $podcastId:  $e");
       //if saving failed, return false.
       return false;
     }
   }
 
-  Future<List<EpisodeData>> getEpisodesFromCacheById(int id) async {
+  Future<List<EpisodeData>> getEpisodesFromCacheById(
+      {required int podcastId}) async {
     try {
-      return await _db.selectEpisodesUsingPodcastId(id).get();
+      return await _db.selectEpisodesUsingPodcastId(podcastId).get();
     } catch (e) {
       print(" error in getting episodes from cache: $e");
       return [];
     }
   }
 
-  Future<bool> deleteEpisodesFromCacheById(int id) async {
+  Future<bool> deleteEpisodesFromCacheOfPodcast(
+      {required int podcastId}) async {
     try {
-      await _db.deleteEpisodeUsingId(id);
+      await _db.deleteEpisodeOfPodcast(podcastId);
       return true;
     } catch (e) {
       print(" error in deleting episodes from cache: $e");

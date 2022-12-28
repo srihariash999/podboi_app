@@ -70,7 +70,10 @@ class HomePage extends StatelessWidget {
                             fontFamily: 'Segoe',
                             fontSize: 14.0,
                             fontWeight: FontWeight.w200,
-                            color: Theme.of(context).colorScheme.secondary.withOpacity(0.50),
+                            color: Theme.of(context)
+                                .colorScheme
+                                .secondary
+                                .withOpacity(0.50),
                           ),
                         ),
                         SizedBox(
@@ -157,7 +160,8 @@ class HomePage extends StatelessWidget {
       List<Item> _topPodcasts = ref.watch(
         homeScreenController.select((value) => value.topPodcasts),
       );
-      bool _isLoading = ref.watch(homeScreenController.select((value) => value.isLoading));
+      bool _isLoading =
+          ref.watch(homeScreenController.select((value) => value.isLoading));
       return _isLoading
           ? SliverToBoxAdapter(
               child: Container(
@@ -170,22 +174,27 @@ class HomePage extends StatelessWidget {
               ),
             )
           : _topPodcasts.length == 0
-              ? Column(
-                  children: [
-                    Container(
-                      height: MediaQuery.of(context).size.height * 0.50,
-                      alignment: Alignment.center,
-                      child: Text(
-                        " No Podcasts to show",
-                        style: TextStyle(
-                          fontSize: 16.0,
-                          fontWeight: FontWeight.w500,
-                          color: Theme.of(context).colorScheme.secondary.withOpacity(0.6),
-                          fontFamily: 'Segoe',
+              ? SliverToBoxAdapter(
+                  child: Column(
+                    children: [
+                      Container(
+                        height: MediaQuery.of(context).size.height * 0.50,
+                        alignment: Alignment.center,
+                        child: Text(
+                          " No Podcasts to show",
+                          style: TextStyle(
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.w500,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .secondary
+                                .withOpacity(0.6),
+                            fontFamily: 'Segoe',
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 )
               : SliverGrid(
                   gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
@@ -203,7 +212,8 @@ class HomePage extends StatelessWidget {
                         }
                       }
                       if (genreString.length > 2) {
-                        genreString = genreString.substring(0, genreString.length - 2);
+                        genreString =
+                            genreString.substring(0, genreString.length - 2);
                       }
                       SubscriptionData _podcast = SubscriptionData(
                         id: -1,
@@ -224,8 +234,8 @@ class HomePage extends StatelessWidget {
                           Navigator.of(context).push(
                             PageRouteBuilder(
                               transitionDuration: Duration(milliseconds: 500),
-                              transitionsBuilder:
-                                  (context, animation, secondaryAnimation, child) {
+                              transitionsBuilder: (context, animation,
+                                  secondaryAnimation, child) {
                                 const begin = Offset(1.0, 0.0);
                                 const end = Offset.zero;
                                 const curve = Curves.ease;
@@ -276,7 +286,8 @@ class HomePage extends StatelessWidget {
             String _name = ref.watch(
               profileController.select((value) => value.userName),
             );
-            String _avatar = ref.watch(profileController.select((value) => value.userAvatar));
+            String _avatar = ref
+                .watch(profileController.select((value) => value.userAvatar));
             return Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -295,7 +306,8 @@ class HomePage extends StatelessWidget {
                     Navigator.of(context).push(
                       PageRouteBuilder(
                           transitionDuration: Duration(milliseconds: 500),
-                          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                          transitionsBuilder:
+                              (context, animation, secondaryAnimation, child) {
                             const begin = Offset(1.0, 0.0);
                             const end = Offset.zero;
                             const curve = Curves.ease;
@@ -341,7 +353,8 @@ class HomePage extends StatelessWidget {
                 style: TextStyle(
                   fontFamily: 'Segoe',
                   fontSize: 16.0,
-                  color: Theme.of(context).colorScheme.secondary.withOpacity(0.50),
+                  color:
+                      Theme.of(context).colorScheme.secondary.withOpacity(0.50),
                   fontWeight: FontWeight.w300,
                 ),
               ),

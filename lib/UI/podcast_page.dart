@@ -42,13 +42,18 @@ class PodcastPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Icon(
-                      episodesSort ? Icons.check_box : Icons.check_box_outline_blank,
+                      episodesSort
+                          ? Icons.check_box
+                          : Icons.check_box_outline_blank,
                     ),
                     Text(
                       " Sort Episodes Newest to Oldest",
                       style: TextStyle(
                         fontSize: 17.0,
-                        color: Theme.of(context).colorScheme.secondary.withOpacity(0.70),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .secondary
+                            .withOpacity(0.70),
                         fontFamily: 'Segoe',
                         fontWeight: FontWeight.w800,
                       ),
@@ -70,13 +75,18 @@ class PodcastPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Icon(
-                      episodesSort ? Icons.check_box_outline_blank : Icons.check_box,
+                      episodesSort
+                          ? Icons.check_box_outline_blank
+                          : Icons.check_box,
                     ),
                     Text(
                       "Sort Episodes Oldest to Newest",
                       style: TextStyle(
                         fontSize: 17.0,
-                        color: Theme.of(context).colorScheme.secondary.withOpacity(0.70),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .secondary
+                            .withOpacity(0.70),
                         fontFamily: 'Segoe',
                         fontWeight: FontWeight.w800,
                       ),
@@ -119,15 +129,18 @@ class PodcastPage extends StatelessWidget {
                       child: Column(
                         children: [
                           Padding(
-                            padding: const EdgeInsets.only(left: 8.0, bottom: 12.0, top: 12.0),
+                            padding: const EdgeInsets.only(
+                                left: 8.0, bottom: 12.0, top: 12.0),
                             child: Align(
                               alignment: Alignment.centerLeft,
                               child: Text(
                                 "About Podcast",
                                 style: TextStyle(
                                   fontSize: 24.0,
-                                  color:
-                                      Theme.of(context).colorScheme.secondary.withOpacity(0.8),
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .secondary
+                                      .withOpacity(0.8),
                                   fontFamily: 'Segoe',
                                   fontWeight: FontWeight.w700,
                                 ),
@@ -148,8 +161,11 @@ class PodcastPage extends StatelessWidget {
                                       width: 200.0,
                                       height: 1.0,
                                       child: LinearProgressIndicator(
-                                        color: Theme.of(context).colorScheme.secondary,
-                                        backgroundColor: Theme.of(context).highlightColor,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .secondary,
+                                        backgroundColor:
+                                            Theme.of(context).highlightColor,
                                         minHeight: 1,
                                       ),
                                     )
@@ -202,7 +218,38 @@ class PodcastPage extends StatelessWidget {
                         ),
                       ),
                     ),
-                    centerTitle: true,
+                    actions: [
+                      Consumer(
+                        builder: (context, ref, child) {
+                          // True --> new to old
+                          // False --> old to new
+                          bool _episodesSort = ref
+                              .watch(
+                                podcastPageViewController(subscription),
+                              )
+                              .epSortingIncr;
+                          return Padding(
+                            padding:
+                                const EdgeInsets.only(bottom: 16.0, right: 6.0),
+                            child: InkWell(
+                              onTap: () {
+                                onTapThreeDot(context, ref, _episodesSort);
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 6.0, vertical: 6.0),
+                                child: Icon(
+                                  Icons.more_vert,
+                                  color:
+                                      Theme.of(context).colorScheme.secondary,
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                    centerTitle: false,
                     expandedHeight: 32.0,
                     backgroundColor: Theme.of(context).backgroundColor,
                     elevation: 0.0,
@@ -214,101 +261,99 @@ class PodcastPage extends StatelessWidget {
                           var _viewController = ref.watch(
                             podcastPageViewController(subscription),
                           );
-                          // True --> new to old
-                          // False --> old to new
-                          bool _episodesSort = ref
-                              .watch(
-                                podcastPageViewController(subscription),
-                              )
-                              .epSortingIncr;
+
                           if (_viewController.isLoading) {
                             return Container();
                           }
-                          return Row(
-                            children: [
-                              Expanded(
-                                child: TextField(
-                                  controller: episodeSearchController,
-                                  onChanged: (String s) {
-                                    ref
-                                        .read(podcastPageViewController(subscription).notifier)
-                                        .filterEpisodesWithQuery(s);
-                                  },
-                                  decoration: InputDecoration(
-                                    prefixIcon: Icon(
-                                      LineIcons.search,
-                                      size: 20.0,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .secondary
-                                          .withOpacity(0.7),
-                                    ),
-                                    suffixIcon: episodeSearchController.text.isEmpty
-                                        ? null
-                                        : InkWell(
-                                            onTap: () {
-                                              episodeSearchController.clear();
-                                              ref
-                                                  .read(podcastPageViewController(subscription)
-                                                      .notifier)
-                                                  .filterEpisodesWithQuery('');
-                                            },
-                                            child: Icon(
-                                              LineIcons.timesCircle,
-                                              size: 20.0,
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .secondary
-                                                  .withOpacity(0.7),
+                          return Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 42.0),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: TextField(
+                                    controller: episodeSearchController,
+                                    onChanged: (String s) {
+                                      ref
+                                          .read(podcastPageViewController(
+                                                  subscription)
+                                              .notifier)
+                                          .filterEpisodesWithQuery(s);
+                                    },
+                                    decoration: InputDecoration(
+                                      prefixIcon: Icon(
+                                        LineIcons.search,
+                                        size: 20.0,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .secondary
+                                            .withOpacity(0.7),
+                                      ),
+                                      suffixIcon: episodeSearchController
+                                              .text.isEmpty
+                                          ? null
+                                          : InkWell(
+                                              onTap: () {
+                                                episodeSearchController.clear();
+                                                ref
+                                                    .read(
+                                                        podcastPageViewController(
+                                                                subscription)
+                                                            .notifier)
+                                                    .filterEpisodesWithQuery(
+                                                        '');
+                                              },
+                                              child: Icon(
+                                                LineIcons.timesCircle,
+                                                size: 20.0,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .secondary
+                                                    .withOpacity(0.7),
+                                              ),
                                             ),
-                                          ),
-                                    contentPadding: const EdgeInsets.only(top: 16.0),
-                                    hintText: "Search Episodes",
-                                    alignLabelWithHint: true,
-                                    hintStyle: TextStyle(
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.w400,
+                                      contentPadding:
+                                          const EdgeInsets.only(top: 16.0),
+                                      hintText: "Search Episodes",
+                                      alignLabelWithHint: true,
+                                      hintStyle: TextStyle(
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.w400,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .secondary,
+                                      ),
+                                      fillColor: Theme.of(context)
+                                          .highlightColor
+                                          .withOpacity(0.5),
+                                      filled: true,
+                                      focusColor:
+                                          Colors.black.withOpacity(0.30),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide.none,
+                                        borderRadius:
+                                            BorderRadius.circular(20.0),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide.none,
+                                        borderRadius:
+                                            BorderRadius.circular(20.0),
+                                      ),
+                                      border: OutlineInputBorder(
+                                        borderSide: BorderSide.none,
+                                        borderRadius:
+                                            BorderRadius.circular(20.0),
+                                      ),
+                                    ),
+                                    style: TextStyle(
                                       color: Theme.of(context)
                                           .colorScheme
-                                          .secondary
-                                          .withOpacity(0.7),
+                                          .secondary,
                                     ),
-                                    fillColor:
-                                        Theme.of(context).highlightColor.withOpacity(0.5),
-                                    filled: true,
-                                    focusColor: Colors.black.withOpacity(0.30),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide.none,
-                                      borderRadius: BorderRadius.circular(20.0),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide.none,
-                                      borderRadius: BorderRadius.circular(20.0),
-                                    ),
-                                    border: OutlineInputBorder(
-                                      borderSide: BorderSide.none,
-                                      borderRadius: BorderRadius.circular(20.0),
-                                    ),
-                                  ),
-                                  style: TextStyle(
-                                    color: Theme.of(context).colorScheme.secondary,
                                   ),
                                 ),
-                              ),
-                              InkWell(
-                                onTap: () {
-                                  onTapThreeDot(context, ref, _episodesSort);
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 6.0, vertical: 6.0),
-                                  child: Icon(
-                                    Icons.more_vert,
-                                    color: Theme.of(context).colorScheme.secondary,
-                                  ),
-                                ),
-                              ),
-                            ],
+                              ],
+                            ),
                           );
                         },
                       ),
@@ -326,15 +371,18 @@ class PodcastPage extends StatelessWidget {
                         );
                         Future<void> refresh() async {
                           ref
-                              .read(podcastPageViewController(subscription).notifier)
-                              .loadPodcastEpisodes(subscription.feedUrl, subscription.id);
+                              .read(podcastPageViewController(subscription)
+                                  .notifier)
+                              .loadPodcastEpisodes(subscription.feedUrl,
+                                  subscription.podcastId ?? subscription.id);
                         }
 
                         return _viewController.isLoading
                             ? Container(
                                 alignment: Alignment.center,
                                 child: CircularProgressIndicator(
-                                  color: Theme.of(context).colorScheme.secondary,
+                                  color:
+                                      Theme.of(context).colorScheme.secondary,
                                   strokeWidth: 1,
                                 ),
                               )
@@ -344,7 +392,8 @@ class PodcastPage extends StatelessWidget {
                                   physics: BouncingScrollPhysics(),
                                   separatorBuilder: (context, index) {
                                     return Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 12.0),
                                       child: Divider(
                                         color: Theme.of(context)
                                             .colorScheme
@@ -353,14 +402,16 @@ class PodcastPage extends StatelessWidget {
                                       ),
                                     );
                                   },
-                                  itemCount: _viewController.podcastEpisodes.length + 1,
+                                  itemCount:
+                                      _viewController.podcastEpisodes.length +
+                                          1,
                                   itemBuilder: (context, index) {
                                     if (index == 0) {
                                       // return Container();
                                       return buildTopUI(context);
                                     }
-                                    EpisodeData _episode =
-                                        _viewController.podcastEpisodes[index - 1];
+                                    EpisodeData _episode = _viewController
+                                        .podcastEpisodes[index - 1];
                                     return DetailedEpsiodeViewWidget(
                                       episodeData: _episode,
                                       ref: ref,
@@ -431,7 +482,10 @@ class PodcastPage extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontSize: 17.0,
-                        color: Theme.of(context).colorScheme.secondary.withOpacity(0.70),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .secondary
+                            .withOpacity(0.70),
                         fontFamily: 'Segoe',
                         fontWeight: FontWeight.w800,
                       ),
@@ -449,11 +503,14 @@ class PodcastPage extends StatelessWidget {
                         children: [
                           if (subscription.releaseDate != null)
                             Text(
-                              DateFormat('yMMMd').format(subscription.releaseDate!),
+                              DateFormat('yMMMd')
+                                  .format(subscription.releaseDate!),
                               style: TextStyle(
                                 fontSize: 14.0,
-                                color:
-                                    Theme.of(context).colorScheme.secondary.withOpacity(0.50),
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .secondary
+                                    .withOpacity(0.50),
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -465,7 +522,10 @@ class PodcastPage extends StatelessWidget {
                             subscription.country ?? '',
                             style: TextStyle(
                               fontSize: 14.0,
-                              color: Theme.of(context).colorScheme.secondary.withOpacity(0.50),
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .secondary
+                                  .withOpacity(0.50),
                               // fontFamily: 'Segoe',
                               fontWeight: FontWeight.w600,
                             ),
@@ -479,7 +539,10 @@ class PodcastPage extends StatelessWidget {
                         subscription.genre ?? "",
                         style: TextStyle(
                           fontSize: 12.0,
-                          color: Theme.of(context).colorScheme.secondary.withOpacity(0.70),
+                          color: Theme.of(context)
+                              .colorScheme
+                              .secondary
+                              .withOpacity(0.70),
                           fontFamily: 'Segoe',
                           fontWeight: FontWeight.w500,
                         ),
@@ -524,7 +587,8 @@ class PodcastPage extends StatelessWidget {
                         .select((value) => value.isSubscribed),
                   );
                   bool _isLoading = ref.watch(
-                    podcastPageViewController(subscription).select((value) => value.isLoading),
+                    podcastPageViewController(subscription)
+                        .select((value) => value.isLoading),
                   );
                   return _isLoading
                       ? Container(
@@ -540,8 +604,11 @@ class PodcastPage extends StatelessWidget {
                           ? GestureDetector(
                               onTap: () {
                                 ref
-                                    .read(podcastPageViewController(subscription).notifier)
-                                    .removeFromSubscriptionsAction(subscription);
+                                    .read(
+                                        podcastPageViewController(subscription)
+                                            .notifier)
+                                    .removeFromSubscriptionsAction(
+                                        subscription);
                               },
                               child: Container(
                                 decoration: BoxDecoration(
@@ -575,7 +642,9 @@ class PodcastPage extends StatelessWidget {
                           : GestureDetector(
                               onTap: () {
                                 ref
-                                    .read(podcastPageViewController(subscription).notifier)
+                                    .read(
+                                        podcastPageViewController(subscription)
+                                            .notifier)
                                     .saveToSubscriptionsAction(subscription);
                               },
                               child: Container(
@@ -599,7 +668,8 @@ class PodcastPage extends StatelessWidget {
                                     SizedBox(
                                       width: 12.0,
                                     ),
-                                    Icon(FeatherIcons.plusCircle, color: Colors.orange),
+                                    Icon(FeatherIcons.plusCircle,
+                                        color: Colors.orange),
                                   ],
                                 ),
                               ),
@@ -614,7 +684,10 @@ class PodcastPage extends StatelessWidget {
                       "Content Advisory: ",
                       style: TextStyle(
                         fontSize: 12.0,
-                        color: Theme.of(context).colorScheme.secondary.withOpacity(0.50),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .secondary
+                            .withOpacity(0.50),
                         fontFamily: 'Segoe',
                         fontWeight: FontWeight.w600,
                       ),
@@ -623,7 +696,10 @@ class PodcastPage extends StatelessWidget {
                       "${subscription.contentAdvisory ?? ' N.A '}",
                       style: TextStyle(
                         fontSize: 12.0,
-                        color: Theme.of(context).colorScheme.secondary.withOpacity(0.80),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .secondary
+                            .withOpacity(0.80),
                         fontFamily: 'Segoe',
                         fontWeight: FontWeight.w600,
                       ),
@@ -639,11 +715,13 @@ class PodcastPage extends StatelessWidget {
           InkWell(
             onTap: () => onTapAboutPodcast(context),
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12.0),
                 // color: Colors.white38,
-                color: Theme.of(context).colorScheme.secondary.withOpacity(0.05),
+                color:
+                    Theme.of(context).colorScheme.secondary.withOpacity(0.05),
               ),
               child: Row(
                 children: [
@@ -652,7 +730,10 @@ class PodcastPage extends StatelessWidget {
                       "About Podcast",
                       style: TextStyle(
                         fontSize: 18.0,
-                        color: Theme.of(context).colorScheme.secondary.withOpacity(0.6),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .secondary
+                            .withOpacity(0.6),
                         fontFamily: 'Segoe',
                         fontWeight: FontWeight.w600,
                       ),

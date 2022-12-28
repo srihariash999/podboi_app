@@ -13,7 +13,8 @@ CREATE TABLE "subscription" (
   "release_date" DATE,
   "country" TEXT,
   "genre" TEXT,
-  "content_advisory" TEXT
+  "content_advisory" TEXT,
+  CONSTRAINT "pod_id" UNIQUE ("podcast_id") ON CONFLICT ABORT
 );
 
 
@@ -21,7 +22,7 @@ CREATE TABLE "subscription" (
 -- Table structure for episode
 -- ----------------------------
 CREATE TABLE "episode" (
-  "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "id" INTEGER NOT NULL,
   "guid" TEXT NOT NULL,
   "title" TEXT NOT NULL,
   "description" TEXT NOT NULL,
@@ -35,7 +36,8 @@ CREATE TABLE "episode" (
   "duration" Integer,
   "podcast_id" INTEGER,
   "podcast_name" TEXT,
-  FOREIGN KEY (podcast_id) REFERENCES subscription(id) ON DELETE NO ACTION ON UPDATE NO ACTION
+  PRIMARY KEY ("id"),
+  FOREIGN KEY (podcast_id) REFERENCES subscription(podcast_id) ON DELETE CASCADE ON UPDATE NO ACTION
 );
 
 
@@ -63,4 +65,7 @@ insertEpisode: INSERT INTO episode (
 selectEpisodesUsingPodcastId: SELECT * FROM episode WHERE podcast_id = :podcast_id;	
 
 -- Deleting a Episode using id
-deleteEpisodeUsingId: DELETE FROM episode WHERE podcast_id = :podcast_id;
+-- deleteEpisodeUsingId: DELETE FROM episode WHERE podcast_id = :podcast_id;
+
+-- Deleting a Episode using id
+deleteEpisodeOfPodcast: DELETE FROM episode WHERE podcast_id = :podcast_id;

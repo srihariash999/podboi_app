@@ -24,7 +24,7 @@ insertLHI: INSERT INTO listening_history (
 selectLHIUsingId: SELECT * FROM listening_history WHERE name = :name AND podcast_name = :podcast_name;	
 
 -- Getting all LHI
-selectAllLHIs: SELECT * FROM listening_history;
+selectAllLHIs: SELECT * FROM listening_history ORDER BY listened_on DESC;
 
 -- Deleting a LHI using id
 deleteLHIUsingId: DELETE FROM listening_history WHERE id = :id;
