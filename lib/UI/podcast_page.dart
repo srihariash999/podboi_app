@@ -217,7 +217,31 @@ class PodcastPage extends StatelessWidget {
                         ),
                       ),
                     ),
-                    centerTitle: true,
+                    actions: [
+                      Consumer(builder: (context, ref, child) {
+                        // True --> new to old
+                        // False --> old to new
+                        bool _episodesSort = ref
+                            .watch(
+                              podcastPageViewController(podcast),
+                            )
+                            .epSortingIncr;
+                        return InkWell(
+                          onTap: () {
+                            onTapThreeDot(context, ref, _episodesSort);
+                          },
+                          child: Padding(
+                            padding:
+                                const EdgeInsets.only(bottom: 16.0, right: 8.0),
+                            child: Icon(
+                              Icons.more_vert,
+                              color: Theme.of(context).colorScheme.secondary,
+                            ),
+                          ),
+                        );
+                      }),
+                    ],
+                    centerTitle: false,
                     expandedHeight: 32.0,
                     backgroundColor: Theme.of(context).backgroundColor,
                     elevation: 0.0,
@@ -229,109 +253,100 @@ class PodcastPage extends StatelessWidget {
                           var _viewController = ref.watch(
                             podcastPageViewController(podcast),
                           );
-                          // True --> new to old
-                          // False --> old to new
-                          bool _episodesSort = ref
-                              .watch(
-                                podcastPageViewController(podcast),
-                              )
-                              .epSortingIncr;
+
                           if (_viewController.isLoading) {
                             return Container();
                           }
-                          return Row(
-                            children: [
-                              Expanded(
-                                child: TextField(
-                                  controller: episodeSearchController,
-                                  onChanged: (String s) {
-                                    ref
-                                        .read(podcastPageViewController(podcast)
-                                            .notifier)
-                                        .filterEpisodesWithQuery(s);
-                                  },
-                                  decoration: InputDecoration(
-                                    prefixIcon: Icon(
-                                      LineIcons.search,
-                                      size: 20.0,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .secondary
-                                          .withOpacity(0.7),
-                                    ),
-                                    suffixIcon: episodeSearchController
-                                            .text.isEmpty
-                                        ? null
-                                        : InkWell(
-                                            onTap: () {
-                                              episodeSearchController.clear();
-                                              ref
-                                                  .read(
-                                                      podcastPageViewController(
-                                                              podcast)
-                                                          .notifier)
-                                                  .filterEpisodesWithQuery('');
-                                            },
-                                            child: Icon(
-                                              LineIcons.timesCircle,
-                                              size: 20.0,
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .secondary
-                                                  .withOpacity(0.7),
+                          return Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 48.0),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: TextField(
+                                    controller: episodeSearchController,
+                                    onChanged: (String s) {
+                                      ref
+                                          .read(
+                                              podcastPageViewController(podcast)
+                                                  .notifier)
+                                          .filterEpisodesWithQuery(s);
+                                    },
+                                    decoration: InputDecoration(
+                                      prefixIcon: Icon(
+                                        LineIcons.search,
+                                        size: 20.0,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .secondary
+                                            .withOpacity(0.7),
+                                      ),
+                                      suffixIcon: episodeSearchController
+                                              .text.isEmpty
+                                          ? null
+                                          : InkWell(
+                                              onTap: () {
+                                                episodeSearchController.clear();
+                                                ref
+                                                    .read(
+                                                        podcastPageViewController(
+                                                                podcast)
+                                                            .notifier)
+                                                    .filterEpisodesWithQuery(
+                                                        '');
+                                              },
+                                              child: Icon(
+                                                LineIcons.timesCircle,
+                                                size: 20.0,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .secondary
+                                                    .withOpacity(0.7),
+                                              ),
                                             ),
-                                          ),
-                                    contentPadding:
-                                        const EdgeInsets.only(top: 16.0),
-                                    hintText: "Search Episodes",
-                                    alignLabelWithHint: true,
-                                    hintStyle: TextStyle(
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.w400,
+                                      contentPadding:
+                                          const EdgeInsets.only(top: 16.0),
+                                      hintText: "Search Episodes",
+                                      alignLabelWithHint: true,
+                                      hintStyle: TextStyle(
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.w400,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .secondary
+                                            .withOpacity(0.7),
+                                      ),
+                                      fillColor: Theme.of(context)
+                                          .highlightColor
+                                          .withOpacity(0.5),
+                                      filled: true,
+                                      focusColor:
+                                          Colors.black.withOpacity(0.30),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide.none,
+                                        borderRadius:
+                                            BorderRadius.circular(20.0),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide.none,
+                                        borderRadius:
+                                            BorderRadius.circular(20.0),
+                                      ),
+                                      border: OutlineInputBorder(
+                                        borderSide: BorderSide.none,
+                                        borderRadius:
+                                            BorderRadius.circular(20.0),
+                                      ),
+                                    ),
+                                    style: TextStyle(
                                       color: Theme.of(context)
                                           .colorScheme
-                                          .secondary
-                                          .withOpacity(0.7),
+                                          .secondary,
                                     ),
-                                    fillColor: Theme.of(context)
-                                        .highlightColor
-                                        .withOpacity(0.5),
-                                    filled: true,
-                                    focusColor: Colors.black.withOpacity(0.30),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide.none,
-                                      borderRadius: BorderRadius.circular(20.0),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide.none,
-                                      borderRadius: BorderRadius.circular(20.0),
-                                    ),
-                                    border: OutlineInputBorder(
-                                      borderSide: BorderSide.none,
-                                      borderRadius: BorderRadius.circular(20.0),
-                                    ),
-                                  ),
-                                  style: TextStyle(
-                                    color:
-                                        Theme.of(context).colorScheme.secondary,
                                   ),
                                 ),
-                              ),
-                              InkWell(
-                                onTap: () {
-                                  onTapThreeDot(context, ref, _episodesSort);
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 6.0, vertical: 6.0),
-                                  child: Icon(
-                                    Icons.more_vert,
-                                    color:
-                                        Theme.of(context).colorScheme.secondary,
-                                  ),
-                                ),
-                              ),
-                            ],
+                              ],
+                            ),
                           );
                         },
                       ),

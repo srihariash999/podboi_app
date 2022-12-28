@@ -1,20 +1,8 @@
 name: podboi
 description: A new Flutter project.
 
-# The following line prevents the package from being accidentally published to
-# pub.dev using `pub publish`. This is preferred for private packages.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
-# The following defines the version and build number for your application.
-# A version number is three numbers separated by dots, like 1.2.43
-# followed by an optional build number separated by a +.
-# Both the version and the builder number may be overridden in flutter
-# build by specifying --build-name and --build-number, respectively.
-# In Android, build-name is used as versionName while build-number used as versionCode.
-# Read more about Android versioning at https://developer.android.com/studio/publish/versioning
-# In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
-# Read more about iOS versioning at
-# https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 version: 1.0.0+1
 
 environment:
@@ -25,28 +13,28 @@ dependencies:
     sdk: flutter
 
   # For state management.
-  flutter_riverpod: ^1.0.3
+  flutter_riverpod: ^2.1.3
 
   # For podcast search and audio playing
-  podcast_search: ^0.5.1
+  podcast_search:
+    ^0.5.1
     # git:
     #   url: https://github.com/amugofjava/podcast_search/
     #   ref: feature/null-safety
-  just_audio: ^0.9.26
-  audio_session: ^0.1.8
-  audio_service: ^0.18.6
+  just_audio: ^0.9.30
+  audio_session: ^0.1.13
+  audio_service: ^0.18.8
 
   # For UI uses
-  cupertino_icons: ^1.0.2
+  cupertino_icons: ^1.0.5
   line_icons: ^2.0.1
-  feather_icons: ^1.1.0-nullsafety.0
+  feather_icons: ^1.2.0
   intl: ^0.17.0
-  flutter_html: ^2.1.1
-  # expandable: ^5.0.1
+  flutter_html: ^2.2.1
 
   # For database use.
-  hive: ^2.0.4
-  path_provider: ^2.0.2
+  hive: ^2.2.3
+  path_provider: ^2.0.11
 
   # For api requests.
   dio: ^4.0.6
@@ -57,26 +45,9 @@ dev_dependencies:
   hive_generator: any
   build_runner: any
 
-# For information on the generic Dart part of this file, see the
-# following page: https://dart.dev/tools/pub/pubspec
-
 # The following section is specific to Flutter.
 flutter:
-  # The following line ensures that the Material Icons font is
-  # included with your application, so that you can use the icons in
-  # the material Icons class.
   uses-material-design: true
-
-  # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
-
-  # An image asset can refer to one or more resolution-specific "variants", see
-  # https://flutter.dev/assets-and-images/#resolution-aware.
-
-  # For details regarding adding assets from package dependencies, see
-  # https://flutter.dev/assets-and-images/#from-packages
 
   fonts:
     - family: Segoe
