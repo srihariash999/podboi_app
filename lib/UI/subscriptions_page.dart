@@ -41,7 +41,8 @@ class SubscriptionsPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(left: 8.0, top: 20.0, bottom: 20.0),
+                    padding: const EdgeInsets.only(
+                        left: 8.0, top: 20.0, bottom: 20.0),
                     child: Text(
                       "Your Subscriptions",
                       style: TextStyle(
@@ -53,15 +54,15 @@ class SubscriptionsPage extends StatelessWidget {
                     ),
                   ),
                   Consumer(builder: (context, ref, child) {
-                    String _avatar =
-                        ref.watch(profileController.select((value) => value.userAvatar));
+                    String _avatar = ref.watch(
+                        profileController.select((value) => value.userAvatar));
                     return GestureDetector(
                       onTap: () {
                         Navigator.of(context).push(
                           PageRouteBuilder(
                             transitionDuration: Duration(milliseconds: 500),
-                            transitionsBuilder:
-                                (context, animation, secondaryAnimation, child) {
+                            transitionsBuilder: (context, animation,
+                                secondaryAnimation, child) {
                               const begin = Offset(1.0, 0.0);
                               const end = Offset.zero;
                               const curve = Curves.ease;
@@ -100,9 +101,12 @@ class SubscriptionsPage extends StatelessWidget {
               ),
               Consumer(
                 builder: (context, ref, child) {
-                  var _viewController = ref.watch(subscriptionsPageViewController);
+                  var _viewController =
+                      ref.watch(subscriptionsPageViewController);
                   Future<void> refresh() async {
-                    ref.read(subscriptionsPageViewController.notifier).loadSubscriptions();
+                    ref
+                        .read(subscriptionsPageViewController.notifier)
+                        .loadSubscriptions();
                   }
 
                   return _viewController.isLoading
@@ -115,11 +119,13 @@ class SubscriptionsPage extends StatelessWidget {
                         )
                       : Expanded(
                           child: Padding(
-                            padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                            padding:
+                                const EdgeInsets.only(left: 8.0, right: 8.0),
                             child: RefreshIndicator(
                               onRefresh: refresh,
                               child: GridView.builder(
-                                gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                                gridDelegate:
+                                    SliverGridDelegateWithMaxCrossAxisExtent(
                                   // crossAxisCount: 3,
                                   // childAspectRatio: 1.5,
                                   crossAxisSpacing: 4.0,
@@ -127,38 +133,45 @@ class SubscriptionsPage extends StatelessWidget {
                                   maxCrossAxisExtent: 130.0,
                                   mainAxisExtent: 130.0,
                                 ),
-                                itemCount: _viewController.subscriptionsList.length,
+                                itemCount:
+                                    _viewController.subscriptionsList.length,
                                 itemBuilder: (context, index) {
                                   SubscriptionData _subscription =
                                       _viewController.subscriptionsList[index];
-                                  print(" release: ${_subscription.releaseDate}");
+                                  print(
+                                      " release: ${_subscription.releaseDate}");
                                   return GestureDetector(
                                     onTap: () {
                                       Navigator.of(context).push(
-                                        PageRouteBuilder(
-                                          transitionDuration: Duration(milliseconds: 500),
-                                          transitionsBuilder:
-                                              (context, animation, secondaryAnimation, child) {
-                                            const begin = Offset(1.0, 0.0);
-                                            const end = Offset.zero;
-                                            const curve = Curves.ease;
-
-                                            final tween = Tween(begin: begin, end: end);
-                                            final curvedAnimation = CurvedAnimation(
-                                              parent: animation,
-                                              curve: curve,
-                                            );
-
-                                            return SlideTransition(
-                                              position: tween.animate(curvedAnimation),
-                                              child: child,
-                                            );
-                                          },
-                                          pageBuilder: (_, __, ___) => PodcastPage(
-                                            subscription: _subscription,
-                                          ),
+                                          MaterialPageRoute(
+                                        builder: (context) => PodcastPage(
+                                          subscription: _subscription,
                                         ),
-                                      );
+                                      )
+                                          // PageRouteBuilder(
+                                          //   transitionDuration: Duration(milliseconds: 500),
+                                          //   transitionsBuilder:
+                                          //       (context, animation, secondaryAnimation, child) {
+                                          //     const begin = Offset(1.0, 0.0);
+                                          //     const end = Offset.zero;
+                                          //     const curve = Curves.ease;
+
+                                          //     final tween = Tween(begin: begin, end: end);
+                                          //     final curvedAnimation = CurvedAnimation(
+                                          //       parent: animation,
+                                          //       curve: curve,
+                                          //     );
+
+                                          //     return SlideTransition(
+                                          //       position: tween.animate(curvedAnimation),
+                                          //       child: child,
+                                          //     );
+                                          //   },
+                                          //   pageBuilder: (_, __, ___) => PodcastPage(
+                                          //     subscription: _subscription,
+                                          //   ),
+                                          // ),
+                                          );
                                     },
                                     child: Stack(
                                       children: [
@@ -167,7 +180,8 @@ class SubscriptionsPage extends StatelessWidget {
                                           width: 120.0,
                                           margin: EdgeInsets.all(4.0),
                                           decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(12.0),
+                                            borderRadius:
+                                                BorderRadius.circular(12.0),
                                           ),
                                           clipBehavior: Clip.antiAlias,
                                           child: Center(
@@ -184,7 +198,8 @@ class SubscriptionsPage extends StatelessWidget {
                                             width: 120.0,
                                             // margin: EdgeInsets.all(4.0),
                                             decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.circular(12.0),
+                                              borderRadius:
+                                                  BorderRadius.circular(12.0),
                                             ),
                                             clipBehavior: Clip.antiAlias,
                                             child: Image.network(

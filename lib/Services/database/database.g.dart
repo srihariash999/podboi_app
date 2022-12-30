@@ -510,13 +510,13 @@ class SubscriptionData extends DataClass
   final String feedUrl;
   final String artworkUrl;
   final DateTime dateAdded;
-  final DateTime? lastEpisodeDate;
+  DateTime? lastEpisodeDate;
   final int? trackCount;
   final DateTime? releaseDate;
   final String? country;
   final String? genre;
   final String? contentAdvisory;
-  const SubscriptionData(
+  SubscriptionData(
       {required this.id,
       required this.podcastName,
       this.podcastId,
@@ -1891,10 +1891,10 @@ abstract class _$MyDb extends GeneratedDatabase {
         }).asyncMap(subscription.mapFromRow);
   }
 
-  Future<int> deleteSubscriptionUsingId(int id) {
+  Future<int> deleteSubscriptionUsingId(int? podcastId) {
     return customUpdate(
-      'DELETE FROM subscription WHERE id = ?1',
-      variables: [Variable<int>(id)],
+      'DELETE FROM subscription WHERE podcast_id = ?1',
+      variables: [Variable<int>(podcastId)],
       updates: {subscription},
       updateKind: UpdateKind.delete,
     );

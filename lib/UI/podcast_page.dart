@@ -5,13 +5,10 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:line_icons/line_icons.dart';
-// import 'package:podboi/Controllers/audio_controller.dart';
 import 'package:podboi/Controllers/podcast_page_controller.dart';
 import 'package:podboi/Services/database/database.dart';
 import 'package:podboi/Shared/detailed_episode_widget.dart';
 import 'package:podboi/UI/mini_player.dart';
-// import 'package:podboi/misc/database.dart';
-// import 'package:podcast_search/podcast_search.dart';
 
 class PodcastPage extends StatelessWidget {
   final SubscriptionData subscription;
@@ -45,6 +42,10 @@ class PodcastPage extends StatelessWidget {
                       episodesSort
                           ? Icons.check_box
                           : Icons.check_box_outline_blank,
+                      color: Theme.of(context)
+                          .colorScheme
+                          .secondary
+                          .withOpacity(0.70),
                     ),
                     Text(
                       " Sort Episodes Newest to Oldest",
@@ -78,6 +79,10 @@ class PodcastPage extends StatelessWidget {
                       episodesSort
                           ? Icons.check_box_outline_blank
                           : Icons.check_box,
+                      color: Theme.of(context)
+                          .colorScheme
+                          .secondary
+                          .withOpacity(0.70),
                     ),
                     Text(
                       "Sort Episodes Oldest to Newest",
@@ -206,18 +211,16 @@ class PodcastPage extends StatelessWidget {
               headerSliverBuilder: (context, b) {
                 return [
                   SliverAppBar(
-                    leading: GestureDetector(
+                    leading: InkWell(
                       onTap: () {
                         Navigator.pop(context);
                       },
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 16.0),
-                        child: Icon(
-                          Icons.arrow_back_ios_new,
-                          color: Theme.of(context).colorScheme.secondary,
-                        ),
+                      child: Icon(
+                        Icons.arrow_back_ios_new,
+                        color: Theme.of(context).colorScheme.secondary,
                       ),
                     ),
+                    titleSpacing: 0.0,
                     actions: [
                       Consumer(
                         builder: (context, ref, child) {
@@ -229,8 +232,7 @@ class PodcastPage extends StatelessWidget {
                               )
                               .epSortingIncr;
                           return Padding(
-                            padding:
-                                const EdgeInsets.only(bottom: 16.0, right: 6.0),
+                            padding: const EdgeInsets.only(right: 6.0),
                             child: InkWell(
                               onTap: () {
                                 onTapThreeDot(context, ref, _episodesSort);
@@ -255,109 +257,102 @@ class PodcastPage extends StatelessWidget {
                     elevation: 0.0,
                     floating: true,
                     snap: true,
-                    flexibleSpace: FlexibleSpaceBar(
-                      title: Consumer(
-                        builder: (context, ref, child) {
-                          var _viewController = ref.watch(
-                            podcastPageViewController(subscription),
-                          );
+                    stretch: true,
+                    title: Consumer(
+                      builder: (context, ref, child) {
+                        var _viewController = ref.watch(
+                          podcastPageViewController(subscription),
+                        );
 
-                          if (_viewController.isLoading) {
-                            return Container();
-                          }
-                          return Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 42.0),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: TextField(
-                                    controller: episodeSearchController,
-                                    onChanged: (String s) {
-                                      ref
-                                          .read(podcastPageViewController(
-                                                  subscription)
-                                              .notifier)
-                                          .filterEpisodesWithQuery(s);
-                                    },
-                                    decoration: InputDecoration(
-                                      prefixIcon: Icon(
-                                        LineIcons.search,
-                                        size: 20.0,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .secondary
-                                            .withOpacity(0.7),
-                                      ),
-                                      suffixIcon: episodeSearchController
-                                              .text.isEmpty
-                                          ? null
-                                          : InkWell(
-                                              onTap: () {
-                                                episodeSearchController.clear();
-                                                ref
-                                                    .read(
-                                                        podcastPageViewController(
-                                                                subscription)
-                                                            .notifier)
-                                                    .filterEpisodesWithQuery(
-                                                        '');
-                                              },
-                                              child: Icon(
-                                                LineIcons.timesCircle,
-                                                size: 20.0,
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .secondary
-                                                    .withOpacity(0.7),
-                                              ),
-                                            ),
-                                      contentPadding:
-                                          const EdgeInsets.only(top: 16.0),
-                                      hintText: "Search Episodes",
-                                      alignLabelWithHint: true,
-                                      hintStyle: TextStyle(
-                                        fontSize: 16.0,
-                                        fontWeight: FontWeight.w400,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .secondary,
-                                      ),
-                                      fillColor: Theme.of(context)
-                                          .highlightColor
-                                          .withOpacity(0.5),
-                                      filled: true,
-                                      focusColor:
-                                          Colors.black.withOpacity(0.30),
-                                      enabledBorder: OutlineInputBorder(
-                                        borderSide: BorderSide.none,
-                                        borderRadius:
-                                            BorderRadius.circular(20.0),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderSide: BorderSide.none,
-                                        borderRadius:
-                                            BorderRadius.circular(20.0),
-                                      ),
-                                      border: OutlineInputBorder(
-                                        borderSide: BorderSide.none,
-                                        borderRadius:
-                                            BorderRadius.circular(20.0),
-                                      ),
-                                    ),
-                                    style: TextStyle(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .secondary,
-                                    ),
+                        if (_viewController.isLoading) {
+                          return Container();
+                        }
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              height: 38.0,
+                              width: MediaQuery.of(context).size.width * 0.76,
+                              child: TextField(
+                                controller: episodeSearchController,
+                                onChanged: (String s) {
+                                  ref
+                                      .read(podcastPageViewController(
+                                              subscription)
+                                          .notifier)
+                                      .filterEpisodesWithQuery(s);
+                                },
+                                decoration: InputDecoration(
+                                  prefixIcon: Icon(
+                                    LineIcons.search,
+                                    size: 20.0,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .secondary
+                                        .withOpacity(0.7),
+                                  ),
+                                  suffixIcon: episodeSearchController
+                                          .text.isEmpty
+                                      ? null
+                                      : InkWell(
+                                          onTap: () {
+                                            episodeSearchController.clear();
+                                            ref
+                                                .read(podcastPageViewController(
+                                                        subscription)
+                                                    .notifier)
+                                                .filterEpisodesWithQuery('');
+                                          },
+                                          child: Icon(
+                                            LineIcons.timesCircle,
+                                            size: 20.0,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .secondary
+                                                .withOpacity(0.7),
+                                          ),
+                                        ),
+                                  contentPadding:
+                                      const EdgeInsets.only(top: 16.0),
+                                  hintText: "Search Episodes",
+                                  alignLabelWithHint: true,
+                                  hintStyle: TextStyle(
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.w400,
+                                    color:
+                                        Theme.of(context).colorScheme.secondary,
+                                  ),
+                                  fillColor: Theme.of(context)
+                                      .highlightColor
+                                      .withOpacity(0.5),
+                                  filled: true,
+                                  focusColor: Colors.black.withOpacity(0.30),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide.none,
+                                    borderRadius: BorderRadius.circular(20.0),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide.none,
+                                    borderRadius: BorderRadius.circular(20.0),
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderSide: BorderSide.none,
+                                    borderRadius: BorderRadius.circular(20.0),
                                   ),
                                 ),
-                              ],
+                                style: TextStyle(
+                                  color:
+                                      Theme.of(context).colorScheme.secondary,
+                                ),
+                              ),
                             ),
-                          );
-                        },
-                      ),
+                          ],
+                        );
+                      },
                     ),
+                    // flexibleSpace: FlexibleSpaceBar(
+                    //   title:
+                    // ),
                   ),
                 ];
               },

@@ -140,6 +140,10 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
   saveToSubscriptionsAction(SubscriptionData podcast) async {
     print(" trying to save sub with pod id : ${podcast.podcastId}");
     state = state.copyWith(isLoading: true);
+    bool _incr = !state.epSortingIncr;
+    podcast.lastEpisodeDate = _incr
+        ? _episodes.first.publicationDate
+        : _episodes.last.publicationDate;
     var savedId =
         await ref.watch(databaseServiceProvider).savePodcastToSubs(podcast);
     print(" saved id : $savedId");

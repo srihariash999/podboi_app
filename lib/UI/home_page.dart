@@ -231,31 +231,35 @@ class HomePage extends StatelessWidget {
                       );
                       return GestureDetector(
                         onTap: () {
-                          Navigator.of(context).push(
-                            PageRouteBuilder(
-                              transitionDuration: Duration(milliseconds: 500),
-                              transitionsBuilder: (context, animation,
-                                  secondaryAnimation, child) {
-                                const begin = Offset(1.0, 0.0);
-                                const end = Offset.zero;
-                                const curve = Curves.ease;
-
-                                final tween = Tween(begin: begin, end: end);
-                                final curvedAnimation = CurvedAnimation(
-                                  parent: animation,
-                                  curve: curve,
-                                );
-
-                                return SlideTransition(
-                                  position: tween.animate(curvedAnimation),
-                                  child: child,
-                                );
-                              },
-                              pageBuilder: (_, __, ___) => PodcastPage(
-                                subscription: _podcast,
-                              ),
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => PodcastPage(
+                              subscription: _podcast,
                             ),
-                          );
+                          )
+                              // PageRouteBuilder(
+                              //   transitionDuration: Duration(milliseconds: 500),
+                              //   transitionsBuilder: (context, animation,
+                              //       secondaryAnimation, child) {
+                              //     const begin = Offset(1.0, 0.0);
+                              //     const end = Offset.zero;
+                              //     const curve = Curves.ease;
+
+                              //     final tween = Tween(begin: begin, end: end);
+                              //     final curvedAnimation = CurvedAnimation(
+                              //       parent: animation,
+                              //       curve: curve,
+                              //     );
+
+                              //     return SlideTransition(
+                              //       position: tween.animate(curvedAnimation),
+                              //       child: child,
+                              //     );
+                              //   },
+                              //   pageBuilder: (_, __, ___) => PodcastPage(
+                              //     subscription: _podcast,
+                              //   ),
+                              // ),
+                              );
                         },
                         child: Hero(
                           tag: 'logo${_item.collectionId}',

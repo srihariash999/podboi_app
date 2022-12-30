@@ -52,8 +52,8 @@ selectSubscriptionUsingId: SELECT * FROM subscription WHERE podcast_id = :podcas
 -- Getting all user's subscriptions
 selectAllSubscriptions: SELECT * FROM subscription;
 
--- Deleting a subscription using id
-deleteSubscriptionUsingId: DELETE FROM subscription WHERE id = :id;
+-- Deleting a subscription using podcast_id
+deleteSubscriptionUsingId: DELETE FROM subscription WHERE podcast_id = :podcast_id;
 
 
 -- Insert schema statement to insert data into the table.
