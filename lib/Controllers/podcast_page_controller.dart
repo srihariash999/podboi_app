@@ -65,7 +65,6 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
       Podcast.loadFeed(url: feedUrl).then((Podcast _podcast) {
         if (_podcast.episodes != null &&
             _podcast.episodes!.length != _episodes.length) {
-          print(" unequal pod eps");
           if (state.isSubscribed) {
             ref.watch(databaseServiceProvider).saveEpsiodesToCache(
                   _podcast.episodes!
