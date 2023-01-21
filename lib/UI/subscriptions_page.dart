@@ -1,20 +1,12 @@
-// import 'dart:convert';yyyyyy
-
-// import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:podboi/Controllers/profile_screen_controller.dart';
-// import 'package:podboi/Services/conversion_helpers.dart';
+import 'package:podboi/Services/database/database.dart';
 import 'package:podboi/UI/podcast_page.dart';
-import 'package:podboi/UI/profile_screen.dart';
-// import 'package:podcast_search/podcast_search.dart';
-
+import 'package:podboi/UI/profile_page.dart';
 import 'package:podboi/Controllers/subscription_controller.dart';
-
-import '../Services/database/database.dart';
 
 class SubscriptionsPage extends StatelessWidget {
   const SubscriptionsPage({Key? key}) : super(key: key);
@@ -53,50 +45,52 @@ class SubscriptionsPage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Consumer(builder: (context, ref, child) {
-                    String _avatar = ref.watch(
-                        profileController.select((value) => value.userAvatar));
-                    return GestureDetector(
-                      onTap: () {
-                        Navigator.of(context).push(
-                          PageRouteBuilder(
-                            transitionDuration: Duration(milliseconds: 500),
-                            transitionsBuilder: (context, animation,
-                                secondaryAnimation, child) {
-                              const begin = Offset(1.0, 0.0);
-                              const end = Offset.zero;
-                              const curve = Curves.ease;
+                  Consumer(
+                    builder: (context, ref, child) {
+                      String _avatar = ref.watch(profileController
+                          .select((value) => value.userAvatar));
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            PageRouteBuilder(
+                              transitionDuration: Duration(milliseconds: 500),
+                              transitionsBuilder: (context, animation,
+                                  secondaryAnimation, child) {
+                                const begin = Offset(1.0, 0.0);
+                                const end = Offset.zero;
+                                const curve = Curves.ease;
 
-                              final tween = Tween(begin: begin, end: end);
-                              final curvedAnimation = CurvedAnimation(
-                                parent: animation,
-                                curve: curve,
-                              );
+                                final tween = Tween(begin: begin, end: end);
+                                final curvedAnimation = CurvedAnimation(
+                                  parent: animation,
+                                  curve: curve,
+                                );
 
-                              return SlideTransition(
-                                position: tween.animate(curvedAnimation),
-                                child: child,
-                              );
-                            },
-                            pageBuilder: (_, __, ___) => ProfileScreen(),
+                                return SlideTransition(
+                                  position: tween.animate(curvedAnimation),
+                                  child: child,
+                                );
+                              },
+                              pageBuilder: (_, __, ___) => ProfileScreen(),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          height: 60.0,
+                          width: 55.0,
+                          child: Icon(
+                            _avatar == 'user'
+                                ? LineIcons.user
+                                : _avatar == 'userNinja'
+                                    ? LineIcons.userNinja
+                                    : LineIcons.userAstronaut,
+                            size: 32.0,
+                            color: Theme.of(context).colorScheme.secondary,
                           ),
-                        );
-                      },
-                      child: Container(
-                        height: 60.0,
-                        width: 55.0,
-                        child: Icon(
-                          _avatar == 'user'
-                              ? LineIcons.user
-                              : _avatar == 'userNinja'
-                                  ? LineIcons.userNinja
-                                  : LineIcons.userAstronaut,
-                          size: 32.0,
-                          color: Theme.of(context).colorScheme.secondary,
                         ),
-                      ),
-                    );
-                  }),
+                      );
+                    },
+                  ),
                 ],
               ),
               Consumer(
@@ -126,8 +120,6 @@ class SubscriptionsPage extends StatelessWidget {
                               child: GridView.builder(
                                 gridDelegate:
                                     SliverGridDelegateWithMaxCrossAxisExtent(
-                                  // crossAxisCount: 3,
-                                  // childAspectRatio: 1.5,
                                   crossAxisSpacing: 4.0,
                                   mainAxisSpacing: 4.0,
                                   maxCrossAxisExtent: 130.0,
@@ -138,40 +130,15 @@ class SubscriptionsPage extends StatelessWidget {
                                 itemBuilder: (context, index) {
                                   SubscriptionData _subscription =
                                       _viewController.subscriptionsList[index];
-                                  print(
-                                      " release: ${_subscription.releaseDate}");
                                   return GestureDetector(
                                     onTap: () {
                                       Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                        builder: (context) => PodcastPage(
-                                          subscription: _subscription,
+                                        MaterialPageRoute(
+                                          builder: (context) => PodcastPage(
+                                            subscription: _subscription,
+                                          ),
                                         ),
-                                      )
-                                          // PageRouteBuilder(
-                                          //   transitionDuration: Duration(milliseconds: 500),
-                                          //   transitionsBuilder:
-                                          //       (context, animation, secondaryAnimation, child) {
-                                          //     const begin = Offset(1.0, 0.0);
-                                          //     const end = Offset.zero;
-                                          //     const curve = Curves.ease;
-
-                                          //     final tween = Tween(begin: begin, end: end);
-                                          //     final curvedAnimation = CurvedAnimation(
-                                          //       parent: animation,
-                                          //       curve: curve,
-                                          //     );
-
-                                          //     return SlideTransition(
-                                          //       position: tween.animate(curvedAnimation),
-                                          //       child: child,
-                                          //     );
-                                          //   },
-                                          //   pageBuilder: (_, __, ___) => PodcastPage(
-                                          //     subscription: _subscription,
-                                          //   ),
-                                          // ),
-                                          );
+                                      );
                                     },
                                     child: Stack(
                                       children: [

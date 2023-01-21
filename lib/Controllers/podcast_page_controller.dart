@@ -1,10 +1,10 @@
+import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podboi/Controllers/subscription_controller.dart';
+import 'package:podboi/Services/database/database.dart';
 import 'package:podboi/Services/database/database_service.dart';
 import 'package:podcast_search/podcast_search.dart';
-
-import '../Services/database/database.dart';
 
 final podcastPageViewController = StateNotifierProvider.family<
     PodcastPageViewNotifier,
@@ -25,7 +25,7 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
 
   PodcastPageViewNotifier(this.podcast, this.ref)
       : super(PodcastPageState.initial()) {
-    loadPodcastEpisodes(podcast.feedUrl, podcast.podcastId!);
+    loadPodcastEpisodes(podcast.feedUrl, podcast.podcastId!, initial: true);
     ref.watch(databaseServiceProvider).isPodcastSubbed(podcast).then((value) {
       state = state.copyWith(
         isSubscribed: value.value,
@@ -42,6 +42,8 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
       print(" Episodes from cache : ${res.length}");
       if (res.isNotEmpty) {
         print("Loading episodes from cache. Len : ${res.length}");
+        _episodes = res;
+        _filteredEpisodes = _episodes;
         state = state.copyWith(podcastEpisodes: res, isLoading: false);
       }
     } catch (e) {
@@ -49,71 +51,74 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
     }
   }
 
-  Future<void> loadPodcastEpisodes(String feedUrl, int id) async {
-    state = state.copyWith(isLoading: true);
+  Future<void> loadPodcastEpisodes(String feedUrl, int id,
+      {bool initial = false}) async {
+    if (initial) state = state.copyWith(isLoading: true);
 
-    Podcast _podcast;
+    // Podcast _podcast;
     _episodes.clear();
     try {
       print(
           " trying to load episodes from cache with pod id : ${podcast.podcastId}");
       await loadEpisodesFromCache();
       // print(" feed url : $feedUrl");
-      _podcast = await Podcast.loadFeed(url: feedUrl);
-
-      if (_podcast.episodes != null) {
-        if (state.isSubscribed) {
-          await ref.watch(databaseServiceProvider).saveEpsiodesToCache(
-                _podcast.episodes!
-                    .map(
-                      (i) => EpisodeData(
-                        id: 0,
-                        guid: i.guid,
-                        title: i.title,
-                        description: i.description,
-                        link: i.link,
-                        publicationDate: i.publicationDate,
-                        contentUrl: i.contentUrl,
-                        imageUrl: i.imageUrl,
-                        author: i.author,
-                        season: i.season,
-                        episodeNumber: i.episode,
-                        duration: i.duration?.inSeconds,
-                        podcastId: id,
-                        podcastName: _podcast.title,
-                      ),
-                    )
-                    .toList(),
+      Podcast.loadFeed(url: feedUrl).then((Podcast _podcast) {
+        if (_podcast.episodes != null &&
+            _podcast.episodes!.length != _episodes.length) {
+          print(" unequal pod eps");
+          if (state.isSubscribed) {
+            ref.watch(databaseServiceProvider).saveEpsiodesToCache(
+                  _podcast.episodes!
+                      .map(
+                        (i) => EpisodeData(
+                          id: 0,
+                          guid: i.guid,
+                          title: i.title,
+                          description: i.description,
+                          link: i.link,
+                          publicationDate: i.publicationDate,
+                          contentUrl: i.contentUrl,
+                          imageUrl: i.imageUrl,
+                          author: i.author,
+                          season: i.season,
+                          episodeNumber: i.episode,
+                          duration: i.duration?.inSeconds,
+                          podcastId: id,
+                          podcastName: _podcast.title,
+                        ),
+                      )
+                      .toList(),
+                  podcastId: id,
+                );
+          }
+          for (var i in _podcast.episodes!) {
+            _episodes.add(
+              EpisodeData(
+                id: 0,
+                guid: i.guid,
+                title: i.title,
+                description: i.description,
+                link: i.link,
+                publicationDate: i.publicationDate,
+                contentUrl: i.contentUrl,
+                imageUrl: i.imageUrl,
+                author: i.author,
+                season: i.season,
+                episodeNumber: i.episode,
+                duration: i.duration?.inSeconds,
                 podcastId: id,
-              );
-        }
-        for (var i in _podcast.episodes!) {
-          _episodes.add(
-            EpisodeData(
-              id: 0,
-              guid: i.guid,
-              title: i.title,
-              description: i.description,
-              link: i.link,
-              publicationDate: i.publicationDate,
-              contentUrl: i.contentUrl,
-              imageUrl: i.imageUrl,
-              author: i.author,
-              season: i.season,
-              episodeNumber: i.episode,
-              duration: i.duration?.inSeconds,
-              podcastId: id,
-              podcastName: _podcast.title,
-            ),
+                podcastName: _podcast.title,
+              ),
+            );
+          }
+          _filteredEpisodes = _episodes;
+          state = state.copyWith(
+            podcastEpisodes: _filteredEpisodes,
+            description: _podcast.description,
+            isLoading: false,
           );
         }
-        _filteredEpisodes = _episodes;
-      }
-      state = state.copyWith(
-        podcastEpisodes: _filteredEpisodes,
-        description: _podcast.description,
-        isLoading: false,
-      );
+      });
     } on PodcastFailedException catch (e) {
       print(" error in getting pod eps: ${e.toString()}");
       state = state.copyWith(
@@ -138,15 +143,19 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
   }
 
   saveToSubscriptionsAction(SubscriptionData podcast) async {
-    print(" trying to save sub with pod id : ${podcast.podcastId}");
+    // print(" trying to save sub with pod id : ${podcast.podcastId}");
     state = state.copyWith(isLoading: true);
     bool _incr = !state.epSortingIncr;
-    podcast.lastEpisodeDate = _incr
-        ? _episodes.first.publicationDate
-        : _episodes.last.publicationDate;
+    podcast = podcast.copyWith(
+      lastEpisodeDate: Value(
+        _incr
+            ? _episodes.first.publicationDate
+            : _episodes.last.publicationDate,
+      ),
+    );
     var savedId =
         await ref.watch(databaseServiceProvider).savePodcastToSubs(podcast);
-    print(" saved id : $savedId");
+    // print(" saved id : $savedId");
     if (savedId != null) {
       print(" podcast ${podcast.podcastName}  is saved to subs");
       state = state.copyWith(

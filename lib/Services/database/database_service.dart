@@ -1,8 +1,5 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:podboi/Services/database/database.dart';
-// import 'package:podcast_search/podcast_search.dart';
 
 final _db = MyDb();
 
@@ -86,8 +83,14 @@ class DatabaseService {
   }
 
   Future<List<ListeningHistoryData>> getLhiList() async {
-    List<ListeningHistoryData> _lhis = await _db.selectAllLHIs().get();
-    return _lhis;
+    return await _db.selectAllLHIs().get();
+  }
+
+  Future<List<ListeningHistoryData>> getLhiListPaginated(
+    int limit,
+    int offset,
+  ) async {
+    return await _db.selectAllLHIsPaginated(limit, offset).get();
   }
 
   Future<bool> saveLhi(ListeningHistoryData lhi) async {

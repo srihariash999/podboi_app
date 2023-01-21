@@ -47,8 +47,13 @@ This project is still in development stage. So, feature requests are welcome. Fe
 ```
 $ flutter pub get
 ```
+5. Run build runner to generate any files that aren't generated:
 
-5. Build the app using the following command:
+```
+$ flutter pub run build_runner build --delete-conflicting-outputs
+```
+
+6. Run the app using the following command:
 
 ```
 $ flutter run

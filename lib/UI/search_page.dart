@@ -116,85 +116,39 @@ class CustomSearchDelegate extends SearchDelegate<String> {
                           return InkWell(
                             onTap: () {
                               Navigator.of(context).push(
-                                  MaterialPageRoute(builder: (context) {
-                                String genreString = "";
-                                if (result.genre != null) {
-                                  for (var e in result.genre!) {
-                                    genreString += "${e.name}, ";
-                                  }
-                                }
-                                if (genreString.length > 2) {
-                                  genreString = genreString.substring(
-                                      0, genreString.length - 2);
-                                }
-                                return PodcastPage(
-                                  subscription: SubscriptionData(
-                                    id: 0,
-                                    podcastName: result.collectionName ?? "N/A",
-                                    feedUrl: result.feedUrl ?? "",
-                                    artworkUrl: result.bestArtworkUrl ?? "",
-                                    dateAdded: DateTime.now(),
-                                    podcastId: result.collectionId,
-                                    lastEpisodeDate: null,
-                                    trackCount: result.trackCount,
-                                    releaseDate: result.releaseDate,
-                                    country: result.country,
-                                    genre: genreString,
-                                    contentAdvisory:
-                                        result.contentAdvisoryRating,
-                                  ),
-                                );
-                              })
-                                  // PageRouteBuilder(
-                                  //   transitionDuration: Duration(milliseconds: 500),
-                                  //   transitionsBuilder:
-                                  //       (context, animation, secondaryAnimation, child) {
-                                  //     const begin = Offset(1.0, 0.0);
-                                  //     const end = Offset.zero;
-                                  //     const curve = Curves.ease;
-
-                                  //     final tween = Tween(begin: begin, end: end);
-                                  //     final curvedAnimation = CurvedAnimation(
-                                  //       parent: animation,
-                                  //       curve: curve,
-                                  //     );
-
-                                  //     return SlideTransition(
-                                  //       position: tween.animate(curvedAnimation),
-                                  //       child: child,
-                                  //     );
-                                  //   },
-                                  //   pageBuilder: (_, __, ___) {
-                                  //     String genreString = "";
-                                  //     if (result.genre != null) {
-                                  //       for (var e in result.genre!) {
-                                  //         genreString += "${e.name}, ";
-                                  //       }
-                                  //     }
-                                  //     if (genreString.length > 2) {
-                                  //       genreString =
-                                  //           genreString.substring(0, genreString.length - 2);
-                                  //     }
-                                  //     return PodcastPage(
-                                  //       subscription: SubscriptionData(
-                                  //         id: 0,
-                                  //         podcastName: result.collectionName ?? "N/A",
-                                  //         feedUrl: result.feedUrl ?? "",
-                                  //         artworkUrl: result.bestArtworkUrl ?? "",
-                                  //         dateAdded: DateTime.now(),
-                                  //         podcastId: result.collectionId,
-                                  //         lastEpisodeDate: null,
-                                  //         trackCount: result.trackCount,
-                                  //         releaseDate: result.releaseDate,
-                                  //         country: result.country,
-                                  //         genre: genreString,
-                                  //         contentAdvisory: result.contentAdvisoryRating,
-                                  //       ),
-                                  //     );
-                                  //   },
-                                  // ),
-
-                                  );
+                                MaterialPageRoute(
+                                  builder: (context) {
+                                    String genreString = "";
+                                    if (result.genre != null) {
+                                      for (var e in result.genre!) {
+                                        genreString += "${e.name}, ";
+                                      }
+                                    }
+                                    if (genreString.length > 2) {
+                                      genreString = genreString.substring(
+                                          0, genreString.length - 2);
+                                    }
+                                    return PodcastPage(
+                                      subscription: SubscriptionData(
+                                        id: 0,
+                                        podcastName:
+                                            result.collectionName ?? "N/A",
+                                        feedUrl: result.feedUrl ?? "",
+                                        artworkUrl: result.bestArtworkUrl ?? "",
+                                        dateAdded: DateTime.now(),
+                                        podcastId: result.collectionId,
+                                        lastEpisodeDate: null,
+                                        trackCount: result.trackCount,
+                                        releaseDate: result.releaseDate,
+                                        country: result.country,
+                                        genre: genreString,
+                                        contentAdvisory:
+                                            result.contentAdvisoryRating,
+                                      ),
+                                    );
+                                  },
+                                ),
+                              );
                             },
                             child: Hero(
                               tag: 'logo${result.collectionId}',

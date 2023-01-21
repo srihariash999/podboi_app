@@ -70,16 +70,23 @@ class ListeningHistoryView extends StatelessWidget {
                     Expanded(
                       child: Consumer(
                         builder: (context, ref, child) {
-                          bool _loading =
-                              ref.watch(historyController.select((v) => v.isLoading));
-                          List<ListeningHistoryData> _list =
-                              ref.watch(historyController.select((value) => value.historyList));
+                          bool _loading = ref.watch(
+                              historyController.select((v) => v.isLoading));
+                          bool _loadMoreLoading = ref.watch(historyController
+                              .select((v) => v.isLoadMoreLoading));
+                          bool _noNextPage = ref.watch(
+                              historyController.select((v) => v.noNextPage));
+                          List<ListeningHistoryData> _list = ref.watch(
+                            historyController
+                                .select((value) => value.historyList),
+                          );
                           return _loading
                               ? Container(
                                   alignment: Alignment.center,
                                   child: CircularProgressIndicator(
                                     strokeWidth: 1.0,
-                                    color: Theme.of(context).colorScheme.secondary,
+                                    color:
+                                        Theme.of(context).colorScheme.secondary,
                                   ),
                                 )
                               : _list.length == 0
@@ -101,27 +108,54 @@ class ListeningHistoryView extends StatelessWidget {
                                   : RefreshIndicator(
                                       onRefresh: _refresh,
                                       child: ListView.separated(
-                                        itemCount: _list.length,
+                                        itemCount: _list.length + 1,
                                         itemBuilder: (context, index) {
-                                          ListeningHistoryData _lhi = _list[index];
+                                          if (index == _list.length) {
+                                            if (_noNextPage) return Container();
+                                            return InkWell(
+                                              onTap: () => ref
+                                                  .read(historyController
+                                                      .notifier)
+                                                  .getNextPage(),
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                  horizontal: 12.0,
+                                                  vertical: 12.0,
+                                                ),
+                                                child: Center(
+                                                  child: Text(
+                                                    _loadMoreLoading
+                                                        ? "Loading more ..."
+                                                        : "Load More",
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                          ListeningHistoryData _lhi =
+                                              _list[index];
                                           return GestureDetector(
                                             onTap: () async {
                                               ref
-                                                  .read(audioController.notifier)
+                                                  .read(
+                                                      audioController.notifier)
                                                   .requestPlayingSong(
                                                     Song(
                                                       url: _lhi.url,
                                                       icon: _lhi.icon,
                                                       name: _lhi.name,
                                                       duration: Duration(
-                                                        seconds: int.parse(_lhi.duration),
+                                                        seconds: int.parse(
+                                                            _lhi.duration),
                                                       ),
                                                       artist: _lhi.artist,
                                                       album: _lhi.album,
                                                     ),
                                                   );
                                               ref
-                                                  .read(historyController.notifier)
+                                                  .read(historyController
+                                                      .notifier)
                                                   .saveToHistoryAction(
                                                     url: _lhi.url,
                                                     name: _lhi.name,
@@ -129,33 +163,46 @@ class ListeningHistoryView extends StatelessWidget {
                                                     icon: _lhi.icon,
                                                     album: _lhi.album,
                                                     duration: _lhi.duration,
-                                                    listenedOn: DateTime.now().toString(),
-                                                    podcastArtWork: _lhi.podcastArtwork,
-                                                    podcastName: _lhi.podcastName,
+                                                    listenedOn: DateTime.now()
+                                                        .toString(),
+                                                    podcastArtWork:
+                                                        _lhi.podcastArtwork,
+                                                    podcastName:
+                                                        _lhi.podcastName,
                                                   );
                                             },
-                                            child: EpisodeDisplayWidget(
-                                              context: context,
-                                              posterUrl: _lhi.podcastArtwork,
-                                              episodeUploadDate: DateFormat('yMMMd').format(
-                                                    DateTime.parse(_lhi.listenedOn),
-                                                  ) +
-                                                  ', ' +
-                                                  DateFormat('hh:mm aa').format(
-                                                    DateTime.parse(_lhi.listenedOn),
-                                                  ),
-                                              episodeTitle: _lhi.name,
-                                              episodeDuration: Duration(
-                                                    seconds: int.parse(_lhi.duration),
-                                                  ).inMinutes.toString() +
-                                                  " Mins",
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                left: 8.0,
+                                              ),
+                                              child: EpisodeDisplayWidget(
+                                                context: context,
+                                                posterUrl: _lhi.podcastArtwork,
+                                                episodeUploadDate:
+                                                    DateFormat('yMMMd').format(
+                                                          DateTime.parse(
+                                                              _lhi.listenedOn),
+                                                        ) +
+                                                        ', ' +
+                                                        DateFormat('hh:mm aa')
+                                                            .format(
+                                                          DateTime.parse(
+                                                              _lhi.listenedOn),
+                                                        ),
+                                                episodeTitle: _lhi.name,
+                                                episodeDuration: Duration(
+                                                      seconds: int.parse(
+                                                          _lhi.duration),
+                                                    ).inMinutes.toString() +
+                                                    " Mins",
+                                              ),
                                             ),
                                           );
                                         },
                                         separatorBuilder: (context, index) {
                                           return Padding(
-                                            padding:
-                                                const EdgeInsets.symmetric(horizontal: 22.0),
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 22.0),
                                             child: Divider(
                                               color: Theme.of(context)
                                                   .colorScheme

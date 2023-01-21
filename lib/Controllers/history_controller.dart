@@ -1,9 +1,12 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podboi/Services/database/database.dart';
 import 'package:podboi/Services/database/database_service.dart';
 
 //* Provider for accessing historystate.
-final historyController = StateNotifierProvider<HistoryStateNotifier, HistoryState>((ref) {
+final historyController =
+    StateNotifierProvider.autoDispose<HistoryStateNotifier, HistoryState>(
+        (ref) {
   return HistoryStateNotifier(ref);
 });
 
@@ -11,14 +14,64 @@ final historyController = StateNotifierProvider<HistoryStateNotifier, HistorySta
 class HistoryStateNotifier extends StateNotifier<HistoryState> {
   HistoryStateNotifier(this.ref) : super(HistoryState.initial()) {
     getHistory();
+    _scrollController.addListener(
+      () {
+        // nextPageTrigger will have a value equivalent to 80% of the list size.
+        var nextPageTrigger = 0.8 * _scrollController.position.maxScrollExtent;
+
+        // _scrollController fetches the next paginated data when the current postion of the user on the screen has surpassed
+        if (_scrollController.position.pixels > nextPageTrigger) {
+          print(" getting next page");
+          _page++;
+          getHistory();
+        }
+      },
+    );
   }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  ScrollController _scrollController = ScrollController();
 
   final StateNotifierProviderRef<HistoryStateNotifier, HistoryState> ref;
 
+  int _limit = 20;
+  int _page = 0;
+
   getHistory() async {
-    state = state.copyWith(isLoading: true);
-    List<ListeningHistoryData> _list = await ref.watch(databaseServiceProvider).getLhiList();
-    state = state.copyWith(historyList: _list, isLoading: false);
+    state = state.copyWith(
+      isLoading: true,
+    );
+    List<ListeningHistoryData> _list = await ref
+        .watch(databaseServiceProvider)
+        .getLhiListPaginated(_limit, _page);
+    state = state.copyWith(
+      historyList: _list,
+      isLoading: false,
+      isLoadMoreLoading: false,
+      scrollController: _scrollController,
+    );
+  }
+
+  getNextPage() async {
+    if (state.noNextPage) return;
+    _page++;
+    state = state.copyWith(
+      isLoadMoreLoading: true,
+    );
+    List<ListeningHistoryData> _list = await ref
+        .watch(databaseServiceProvider)
+        .getLhiListPaginated(_limit, _page);
+    state = state.copyWith(
+      historyList: [...state.historyList, ..._list],
+      isLoadMoreLoading: false,
+      scrollController: _scrollController,
+      noNextPage: _list.isEmpty,
+    );
   }
 
   saveToHistoryAction({
@@ -32,7 +85,8 @@ class HistoryStateNotifier extends StateNotifier<HistoryState> {
     required String podcastArtWork,
     required String podcastName,
   }) async {
-    List<ListeningHistoryData> _list = await ref.watch(databaseServiceProvider).getLhiList();
+    List<ListeningHistoryData> _list =
+        await ref.watch(databaseServiceProvider).getLhiList();
     bool _flagged = false;
     ListeningHistoryData? _lhi;
     for (var i in _list) {
@@ -61,7 +115,6 @@ class HistoryStateNotifier extends StateNotifier<HistoryState> {
         getHistory();
       }
     } else {
-      print("podcast already in history");
       await ref.watch(databaseServiceProvider).removeLhiItem(_lhi!.id);
       bool s = await ref.watch(databaseServiceProvider).saveLhi(
             ListeningHistoryData(
@@ -88,15 +141,38 @@ class HistoryStateNotifier extends StateNotifier<HistoryState> {
 class HistoryState {
   final List<ListeningHistoryData> historyList;
   final bool isLoading;
-  HistoryState({required this.historyList, required this.isLoading});
+  final bool isLoadMoreLoading;
+  final bool noNextPage;
+  HistoryState({
+    required this.historyList,
+    required this.isLoading,
+    required this.isLoadMoreLoading,
+    required this.noNextPage,
+    this.scrollController,
+  });
+  ScrollController? scrollController;
   factory HistoryState.initial() {
-    return HistoryState(historyList: [], isLoading: false);
+    return HistoryState(
+      historyList: [],
+      isLoading: false,
+      isLoadMoreLoading: false,
+      noNextPage: false,
+    );
   }
 
-  HistoryState copyWith({List<ListeningHistoryData>? historyList, bool? isLoading}) {
+  HistoryState copyWith({
+    List<ListeningHistoryData>? historyList,
+    bool? isLoading,
+    ScrollController? scrollController,
+    bool? isLoadMoreLoading,
+    bool? noNextPage,
+  }) {
     return HistoryState(
       historyList: historyList ?? this.historyList,
       isLoading: isLoading ?? this.isLoading,
+      scrollController: scrollController ?? this.scrollController,
+      isLoadMoreLoading: isLoadMoreLoading ?? this.isLoadMoreLoading,
+      noNextPage: noNextPage ?? this.noNextPage,
     );
   }
 }

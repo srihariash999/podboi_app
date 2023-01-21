@@ -510,13 +510,13 @@ class SubscriptionData extends DataClass
   final String feedUrl;
   final String artworkUrl;
   final DateTime dateAdded;
-  DateTime? lastEpisodeDate;
+  final DateTime? lastEpisodeDate;
   final int? trackCount;
   final DateTime? releaseDate;
   final String? country;
   final String? genre;
   final String? contentAdvisory;
-  SubscriptionData(
+  const SubscriptionData(
       {required this.id,
       required this.podcastName,
       this.podcastId,
@@ -1828,6 +1828,19 @@ abstract class _$MyDb extends GeneratedDatabase {
     return customSelect(
         'SELECT * FROM listening_history ORDER BY listened_on DESC',
         variables: [],
+        readsFrom: {
+          listeningHistory,
+        }).asyncMap(listeningHistory.mapFromRow);
+  }
+
+  Selectable<ListeningHistoryData> selectAllLHIsPaginated(
+      int limit, int offset) {
+    return customSelect(
+        'SELECT * FROM listening_history ORDER BY listened_on DESC LIMIT ?1 OFFSET ?2',
+        variables: [
+          Variable<int>(limit),
+          Variable<int>(offset)
+        ],
         readsFrom: {
           listeningHistory,
         }).asyncMap(listeningHistory.mapFromRow);
