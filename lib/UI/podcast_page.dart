@@ -194,7 +194,7 @@ class PodcastPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
-        statusBarColor: Theme.of(context).backgroundColor,
+        statusBarColor: Theme.of(context).colorScheme.background,
         statusBarIconBrightness: Theme.of(context).brightness == Brightness.dark
             ? Brightness.light
             : Brightness.dark,
@@ -203,7 +203,7 @@ class PodcastPage extends StatelessWidget {
             : Brightness.dark,
       ),
       child: Scaffold(
-        backgroundColor: Theme.of(context).backgroundColor,
+        backgroundColor: Theme.of(context).colorScheme.background,
         body: Padding(
           padding: const EdgeInsets.only(top: 8.0),
           child: SafeArea(
@@ -253,7 +253,7 @@ class PodcastPage extends StatelessWidget {
                     ],
                     centerTitle: false,
                     expandedHeight: 32.0,
-                    backgroundColor: Theme.of(context).backgroundColor,
+                    backgroundColor: Theme.of(context).colorScheme.background,
                     elevation: 0.0,
                     floating: true,
                     snap: true,

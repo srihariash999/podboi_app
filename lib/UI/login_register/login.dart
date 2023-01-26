@@ -15,7 +15,7 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
-        statusBarColor: Theme.of(context).backgroundColor,
+        statusBarColor: Theme.of(context).colorScheme.background,
         statusBarIconBrightness: Theme.of(context).brightness == Brightness.dark
             ? Brightness.light
             : Brightness.dark,
@@ -92,7 +92,8 @@ class LoginScreen extends StatelessWidget {
                         child: TextButton(
                           onPressed: () {},
                           style: TextButton.styleFrom(
-                              backgroundColor: Color(0xFF120D31).withOpacity(0.85),
+                              backgroundColor:
+                                  Color(0xFF120D31).withOpacity(0.85),
                               padding: EdgeInsets.symmetric(
                                 horizontal: 64.0,
                                 vertical: 16.0,

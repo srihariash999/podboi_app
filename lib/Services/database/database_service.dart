@@ -48,6 +48,19 @@ class DatabaseService {
     }
   }
 
+  /// Method that updates last episode release date to saved subscription item.
+  Future<int?> updateLastPodcastDate(
+      int podcastId, DateTime lastEpisodeDate) async {
+    try {
+      // Try and create subscription.
+      return await _db.updateSubscriptionUsingId(lastEpisodeDate, podcastId);
+    } catch (e) {
+      print(" error updating podcast: $e");
+      //if saving failed, return false.
+      return null;
+    }
+  }
+
   Future<IsSubbed> isPodcastSubbed(SubscriptionData podcast) async {
     // If the collection id being queried is null, return false.
     if (podcast.podcastId == null) return IsSubbed(value: false);

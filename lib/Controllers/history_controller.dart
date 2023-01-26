@@ -42,7 +42,11 @@ class HistoryStateNotifier extends StateNotifier<HistoryState> {
   int _limit = 20;
   int _page = 0;
 
-  getHistory() async {
+  getHistory({bool fullRefresh = false}) async {
+    if (fullRefresh) {
+      _page = 0;
+      state.historyList.clear();
+    }
     state = state.copyWith(
       isLoading: true,
     );

@@ -4,12 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podboi/Controllers/subscription_controller.dart';
 import 'package:podboi/Services/database/database.dart';
 import 'package:podboi/Services/database/database_service.dart';
-import 'package:podcast_search/podcast_search.dart';
+import 'package:podcast_search/podcast_search.dart' as ps;
 
-final podcastPageViewController = StateNotifierProvider.family<
-    PodcastPageViewNotifier,
-    PodcastPageState,
-    SubscriptionData>((ref, podcast) {
+final podcastPageViewController = StateNotifierProvider.autoDispose
+    .family<PodcastPageViewNotifier, PodcastPageState, SubscriptionData>(
+        (ref, podcast) {
   return PodcastPageViewNotifier(podcast, ref);
 });
 
@@ -61,12 +60,13 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
       print(
           " trying to load episodes from cache with pod id : ${podcast.podcastId}");
       await loadEpisodesFromCache();
+      updateLastEpisodeDate(podcast.podcastId!, state.podcastEpisodes);
       // print(" feed url : $feedUrl");
-      Podcast.loadFeed(url: feedUrl).then((Podcast _podcast) {
+      ps.Podcast.loadFeed(url: feedUrl).then((ps.Podcast _podcast) async {
         if (_podcast.episodes != null &&
             _podcast.episodes!.length != _episodes.length) {
           if (state.isSubscribed) {
-            ref.watch(databaseServiceProvider).saveEpsiodesToCache(
+            await ref.watch(databaseServiceProvider).saveEpsiodesToCache(
                   _podcast.episodes!
                       .map(
                         (i) => EpisodeData(
@@ -118,7 +118,7 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
           );
         }
       });
-    } on PodcastFailedException catch (e) {
+    } on ps.PodcastFailedException catch (e) {
       print(" error in getting pod eps: ${e.toString()}");
       state = state.copyWith(
         podcastEpisodes: _filteredEpisodes,
@@ -139,6 +139,25 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
     state = state.copyWith(
       podcastEpisodes: _filteredEpisodes,
     );
+  }
+
+  updateLastEpisodeDate(int podcastId, List<EpisodeData> episodes) async {
+    try {
+      if (state.isSubscribed) {
+        bool _incr = !state.epSortingIncr;
+        DateTime? dt = _incr
+            ? episodes.last.publicationDate
+            : episodes.first.publicationDate;
+        await ref
+            .watch(databaseServiceProvider)
+            .updateLastPodcastDate(podcastId, dt!);
+        await ref
+            .watch(subscriptionsPageViewController.notifier)
+            .loadSubscriptions();
+      }
+    } catch (e) {
+      print(" Error in updating sub: $e");
+    }
   }
 
   saveToSubscriptionsAction(SubscriptionData podcast) async {

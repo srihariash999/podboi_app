@@ -19,7 +19,7 @@ class _BaseScreenState extends State<BaseScreen> {
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
-        statusBarColor: Theme.of(context).backgroundColor,
+        statusBarColor: Theme.of(context).colorScheme.background,
         statusBarIconBrightness: Theme.of(context).brightness == Brightness.dark
             ? Brightness.light
             : Brightness.dark,
@@ -28,7 +28,7 @@ class _BaseScreenState extends State<BaseScreen> {
             : Brightness.dark,
       ),
       child: Scaffold(
-        backgroundColor: Theme.of(context).backgroundColor,
+        backgroundColor: Theme.of(context).colorScheme.background,
         body: Column(
           children: [
             Expanded(
@@ -68,7 +68,7 @@ class _BaseScreenState extends State<BaseScreen> {
                 ),
                 curve: Curves.ease);
           },
-          backgroundColor: Theme.of(context).backgroundColor,
+          backgroundColor: Theme.of(context).colorScheme.background,
           showUnselectedLabels: false,
           fixedColor: Theme.of(context).colorScheme.secondary,
           unselectedLabelStyle: TextStyle(

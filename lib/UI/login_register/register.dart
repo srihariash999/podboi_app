@@ -15,7 +15,7 @@ class RegisterScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
-        statusBarColor: Theme.of(context).backgroundColor,
+        statusBarColor: Theme.of(context).colorScheme.background,
         statusBarIconBrightness: Theme.of(context).brightness == Brightness.dark
             ? Brightness.light
             : Brightness.dark,
@@ -83,7 +83,8 @@ class RegisterScreen extends StatelessWidget {
                         horizontal: 64.0,
                         vertical: 16.0,
                       ),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0))),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16.0))),
                   child: Text(
                     " REGISTER ",
                     style: TextStyle(

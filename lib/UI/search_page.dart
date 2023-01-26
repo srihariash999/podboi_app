@@ -98,7 +98,7 @@ class CustomSearchDelegate extends SearchDelegate<String> {
             : _viewController.searchResults.length == 0
                 ? Container(
                     margin: const EdgeInsets.only(top: 10.0),
-                    color: Theme.of(context).backgroundColor,
+                    color: Theme.of(context).colorScheme.background,
                     alignment: Alignment.bottomCenter,
                     child: Text(" Search for a podcast",
                         style: TextStyle(
@@ -108,7 +108,7 @@ class CustomSearchDelegate extends SearchDelegate<String> {
                         )),
                   )
                 : Container(
-                    color: Theme.of(context).backgroundColor,
+                    color: Theme.of(context).colorScheme.background,
                     child: ListView.builder(
                         itemCount: _viewController.searchResults.length,
                         itemBuilder: (context, index) {
@@ -278,6 +278,6 @@ class CustomSearchDelegate extends SearchDelegate<String> {
 
   @override
   Widget buildSuggestions(BuildContext context) => Container(
-        color: Theme.of(context).backgroundColor,
+        color: Theme.of(context).colorScheme.background,
       );
 }

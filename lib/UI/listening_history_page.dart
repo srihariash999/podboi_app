@@ -14,14 +14,14 @@ class ListeningHistoryView extends StatelessWidget {
   ListeningHistoryView({Key? key, required this.ref}) : super(key: key);
   final WidgetRef ref;
   Future<void> _refresh() async {
-    ref.read(historyController.notifier).getHistory();
+    ref.read(historyController.notifier).getHistory(fullRefresh: true);
   }
 
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
-        statusBarColor: Theme.of(context).backgroundColor,
+        statusBarColor: Theme.of(context).colorScheme.background,
         statusBarIconBrightness: Theme.of(context).brightness == Brightness.dark
             ? Brightness.light
             : Brightness.dark,
@@ -30,7 +30,7 @@ class ListeningHistoryView extends StatelessWidget {
             : Brightness.dark,
       ),
       child: Scaffold(
-        backgroundColor: Theme.of(context).backgroundColor,
+        backgroundColor: Theme.of(context).colorScheme.background,
         body: SafeArea(
           child: Column(
             children: [

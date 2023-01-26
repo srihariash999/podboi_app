@@ -20,7 +20,7 @@ class _WelcomePageState extends State<WelcomePage> {
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
-        statusBarColor: Theme.of(context).backgroundColor,
+        statusBarColor: Theme.of(context).colorScheme.background,
         statusBarIconBrightness: Theme.of(context).brightness == Brightness.dark
             ? Brightness.light
             : Brightness.dark,
@@ -29,7 +29,7 @@ class _WelcomePageState extends State<WelcomePage> {
             : Brightness.dark,
       ),
       child: Scaffold(
-        backgroundColor: Theme.of(context).backgroundColor,
+        backgroundColor: Theme.of(context).colorScheme.background,
         body: SafeArea(
           child: Padding(
             padding: const EdgeInsets.only(left: 16.0),
@@ -110,7 +110,8 @@ class _WelcomePageState extends State<WelcomePage> {
                             color: Colors.black.withOpacity(0.40),
                           ),
                           isCollapsed: true,
-                          contentPadding: const EdgeInsets.symmetric(vertical: 16.0),
+                          contentPadding:
+                              const EdgeInsets.symmetric(vertical: 16.0),
                           hintText: " What do we call you ? ",
                           alignLabelWithHint: true,
                           hintStyle: TextStyle(

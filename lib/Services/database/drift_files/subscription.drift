@@ -50,11 +50,13 @@ insertSubscription: INSERT INTO subscription (
 selectSubscriptionUsingId: SELECT * FROM subscription WHERE podcast_id = :podcast_id;	
 
 -- Getting all user's subscriptions
-selectAllSubscriptions: SELECT * FROM subscription;
+selectAllSubscriptions: SELECT * FROM subscription ORDER BY last_episode_date DESC;
 
 -- Deleting a subscription using podcast_id
 deleteSubscriptionUsingId: DELETE FROM subscription WHERE podcast_id = :podcast_id;
 
+-- Update Subcription Query using podcast_id
+updateSubscriptionUsingId: UPDATE subscription SET last_episode_date = :last_episode_date WHERE podcast_id = :podcast_id ;
 
 -- Insert schema statement to insert data into the table.
 insertEpisode: INSERT INTO episode (

@@ -17,7 +17,7 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
-        statusBarColor: Theme.of(context).backgroundColor,
+        statusBarColor: Theme.of(context).colorScheme.background,
         statusBarIconBrightness: Theme.of(context).brightness == Brightness.dark
             ? Brightness.light
             : Brightness.dark,
@@ -26,7 +26,7 @@ class ProfileScreen extends StatelessWidget {
             : Brightness.dark,
       ),
       child: Scaffold(
-        backgroundColor: Theme.of(context).backgroundColor,
+        backgroundColor: Theme.of(context).colorScheme.background,
         body: SafeArea(
           child: Column(
             children: [
@@ -48,15 +48,16 @@ class ProfileScreen extends StatelessWidget {
                       height: 24.0,
                     ),
                     Consumer(builder: (context, ref, child) {
-                      String _name =
-                          ref.watch(profileController.select((value) => value.userName));
-                      String _avatar =
-                          ref.watch(profileController.select((value) => value.userAvatar));
+                      String _name = ref.watch(
+                          profileController.select((value) => value.userName));
+                      String _avatar = ref.watch(profileController
+                          .select((value) => value.userAvatar));
 
                       return Column(
                         children: [
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 20.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               crossAxisAlignment: CrossAxisAlignment.center,
@@ -69,7 +70,9 @@ class ProfileScreen extends StatelessWidget {
                                       style: TextStyle(
                                         // fontFamily: 'Segoe',
                                         fontSize: 28.0,
-                                        color: Theme.of(context).colorScheme.secondary,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .secondary,
                                         fontWeight: FontWeight.w700,
                                       ),
                                     ),
@@ -86,7 +89,9 @@ class ProfileScreen extends StatelessWidget {
                                               ? LineIcons.userNinja
                                               : LineIcons.userAstronaut,
                                       size: 38.0,
-                                      color: Theme.of(context).colorScheme.secondary,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondary,
                                     ),
                                   ),
                                 ),
@@ -141,8 +146,8 @@ class ProfileScreen extends StatelessWidget {
                             Navigator.of(context).push(
                               PageRouteBuilder(
                                 transitionDuration: Duration(milliseconds: 500),
-                                transitionsBuilder:
-                                    (context, animation, secondaryAnimation, child) {
+                                transitionsBuilder: (context, animation,
+                                    secondaryAnimation, child) {
                                   const begin = Offset(1.0, 0.0);
                                   const end = Offset.zero;
                                   const curve = Curves.ease;
@@ -158,7 +163,8 @@ class ProfileScreen extends StatelessWidget {
                                     child: child,
                                   );
                                 },
-                                pageBuilder: (_, __, ___) => ListeningHistoryView(ref: ref),
+                                pageBuilder: (_, __, ___) =>
+                                    ListeningHistoryView(ref: ref),
                               ),
                             );
                           },
@@ -173,7 +179,9 @@ class ProfileScreen extends StatelessWidget {
                                     style: TextStyle(
                                       // fontFamily: 'Segoe',
                                       fontSize: 20.0,
-                                      color: Theme.of(context).colorScheme.secondary,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondary,
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
@@ -195,7 +203,10 @@ class ProfileScreen extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20.0),
                       child: Divider(
-                        color: Theme.of(context).colorScheme.secondary.withOpacity(0.2),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .secondary
+                            .withOpacity(0.2),
                         height: 1.0,
                       ),
                     ),
@@ -219,22 +230,24 @@ class ProfileScreen extends StatelessWidget {
                             ),
                           ),
                           Consumer(builder: (context, ref, child) {
-                            String _currentTheme = ref.watch(themeController).currentTheme;
+                            String _currentTheme =
+                                ref.watch(themeController).currentTheme;
                             return Row(
                               children: [
                                 AnimatedSwitcher(
                                   duration: Duration(milliseconds: 500),
                                   switchInCurve: Curves.easeInSine,
                                   switchOutCurve: Curves.easeOutSine,
-                                  transitionBuilder:
-                                      (Widget child, Animation<double> animation) {
+                                  transitionBuilder: (Widget child,
+                                      Animation<double> animation) {
                                     // return ScaleTransition(
                                     //   scale: animation,
                                     //   child: child,
                                     // );
 
                                     final offsetAnimation = Tween<Offset>(
-                                            begin: Offset(0.0, 0.8), end: Offset(0.0, 0.0))
+                                            begin: Offset(0.0, 0.8),
+                                            end: Offset(0.0, 0.0))
                                         .animate(animation);
                                     return SlideTransition(
                                       position: offsetAnimation,
@@ -246,13 +259,15 @@ class ProfileScreen extends StatelessWidget {
                                           FeatherIcons.sun,
                                           key: UniqueKey(),
                                           size: 30.0,
-                                          color: Theme.of(context).primaryColorLight,
+                                          color: Theme.of(context)
+                                              .primaryColorLight,
                                         )
                                       : Icon(
                                           FeatherIcons.moon,
                                           key: UniqueKey(),
                                           size: 30.0,
-                                          color: Theme.of(context).primaryColorLight,
+                                          color: Theme.of(context)
+                                              .primaryColorLight,
                                         ),
                                 ),
                                 SizedBox(
@@ -264,9 +279,13 @@ class ProfileScreen extends StatelessWidget {
                                   activeColor: Theme.of(context).highlightColor,
                                   onChanged: (val) async {
                                     if (val) {
-                                      ref.read(themeController.notifier).changeTheme('light');
+                                      ref
+                                          .read(themeController.notifier)
+                                          .changeTheme('light');
                                     } else {
-                                      ref.read(themeController.notifier).changeTheme('dark');
+                                      ref
+                                          .read(themeController.notifier)
+                                          .changeTheme('dark');
                                     }
                                   },
                                 ),
@@ -282,7 +301,10 @@ class ProfileScreen extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20.0),
                       child: Divider(
-                        color: Theme.of(context).colorScheme.secondary.withOpacity(0.2),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .secondary
+                            .withOpacity(0.2),
                         height: 1.0,
                       ),
                     ),
@@ -328,7 +350,7 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Theme.of(context).backgroundColor.withOpacity(0.8),
+      color: Theme.of(context).colorScheme.background.withOpacity(0.8),
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -343,7 +365,8 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget> {
                 style: TextStyle(
                   fontSize: 16.0,
                   fontWeight: FontWeight.w700,
-                  color: Theme.of(context).colorScheme.secondary.withOpacity(0.9),
+                  color:
+                      Theme.of(context).colorScheme.secondary.withOpacity(0.9),
                   fontFamily: 'Segoe',
                 ),
               ),
@@ -355,7 +378,8 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget> {
               width: MediaQuery.of(context).size.width * 0.85,
               child: Theme(
                 data: ThemeData(
-                  primaryColor: Theme.of(context).primaryColor.withOpacity(0.30),
+                  primaryColor:
+                      Theme.of(context).primaryColor.withOpacity(0.30),
                 ),
                 child: TextField(
                   controller: _nameController,
@@ -377,9 +401,13 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget> {
                     hintStyle: TextStyle(
                       fontSize: 16.0,
                       fontWeight: FontWeight.w500,
-                      color: Theme.of(context).colorScheme.secondary.withOpacity(0.50),
+                      color: Theme.of(context)
+                          .colorScheme
+                          .secondary
+                          .withOpacity(0.50),
                     ),
-                    fillColor: Theme.of(context).highlightColor.withOpacity(0.4),
+                    fillColor:
+                        Theme.of(context).highlightColor.withOpacity(0.4),
                     filled: true,
                     focusColor: Colors.black.withOpacity(0.30),
                     enabledBorder: OutlineInputBorder(
@@ -410,7 +438,8 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget> {
                 style: TextStyle(
                   fontSize: 16.0,
                   fontWeight: FontWeight.w700,
-                  color: Theme.of(context).colorScheme.secondary.withOpacity(0.9),
+                  color:
+                      Theme.of(context).colorScheme.secondary.withOpacity(0.9),
                   fontFamily: 'Segoe',
                 ),
               ),
@@ -432,7 +461,10 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget> {
                     size: 52.0,
                     color: _selectedAvatar == 'user'
                         ? Theme.of(context).colorScheme.secondary
-                        : Theme.of(context).colorScheme.secondary.withOpacity(0.4),
+                        : Theme.of(context)
+                            .colorScheme
+                            .secondary
+                            .withOpacity(0.4),
                   ),
                 ),
                 GestureDetector(
@@ -446,7 +478,10 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget> {
                     size: 52.0,
                     color: _selectedAvatar == 'userNinja'
                         ? Theme.of(context).colorScheme.secondary
-                        : Theme.of(context).colorScheme.secondary.withOpacity(0.4),
+                        : Theme.of(context)
+                            .colorScheme
+                            .secondary
+                            .withOpacity(0.4),
                   ),
                 ),
                 GestureDetector(
@@ -460,7 +495,10 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget> {
                     size: 52.0,
                     color: _selectedAvatar == 'userAstronaut'
                         ? Theme.of(context).colorScheme.secondary
-                        : Theme.of(context).colorScheme.secondary.withOpacity(0.4),
+                        : Theme.of(context)
+                            .colorScheme
+                            .secondary
+                            .withOpacity(0.4),
                   ),
                 ),
               ],
