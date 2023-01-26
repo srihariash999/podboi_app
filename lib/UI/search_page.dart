@@ -34,7 +34,8 @@ class CustomSearchDelegate extends SearchDelegate<String> {
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
-        contentPadding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 20.0),
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 16.0, horizontal: 20.0),
         hintStyle: TextStyle(
           fontSize: 16.0,
           fontWeight: FontWeight.w400,
@@ -97,7 +98,7 @@ class CustomSearchDelegate extends SearchDelegate<String> {
             : _viewController.searchResults.length == 0
                 ? Container(
                     margin: const EdgeInsets.only(top: 10.0),
-                    color: Theme.of(context).backgroundColor,
+                    color: Theme.of(context).colorScheme.background,
                     alignment: Alignment.bottomCenter,
                     child: Text(" Search for a podcast",
                         style: TextStyle(
@@ -107,7 +108,7 @@ class CustomSearchDelegate extends SearchDelegate<String> {
                         )),
                   )
                 : Container(
-                    color: Theme.of(context).backgroundColor,
+                    color: Theme.of(context).colorScheme.background,
                     child: ListView.builder(
                         itemCount: _viewController.searchResults.length,
                         itemBuilder: (context, index) {
@@ -115,26 +116,8 @@ class CustomSearchDelegate extends SearchDelegate<String> {
                           return InkWell(
                             onTap: () {
                               Navigator.of(context).push(
-                                PageRouteBuilder(
-                                  transitionDuration: Duration(milliseconds: 500),
-                                  transitionsBuilder:
-                                      (context, animation, secondaryAnimation, child) {
-                                    const begin = Offset(1.0, 0.0);
-                                    const end = Offset.zero;
-                                    const curve = Curves.ease;
-
-                                    final tween = Tween(begin: begin, end: end);
-                                    final curvedAnimation = CurvedAnimation(
-                                      parent: animation,
-                                      curve: curve,
-                                    );
-
-                                    return SlideTransition(
-                                      position: tween.animate(curvedAnimation),
-                                      child: child,
-                                    );
-                                  },
-                                  pageBuilder: (_, __, ___) {
+                                MaterialPageRoute(
+                                  builder: (context) {
                                     String genreString = "";
                                     if (result.genre != null) {
                                       for (var e in result.genre!) {
@@ -142,13 +125,14 @@ class CustomSearchDelegate extends SearchDelegate<String> {
                                       }
                                     }
                                     if (genreString.length > 2) {
-                                      genreString =
-                                          genreString.substring(0, genreString.length - 2);
+                                      genreString = genreString.substring(
+                                          0, genreString.length - 2);
                                     }
                                     return PodcastPage(
                                       subscription: SubscriptionData(
                                         id: 0,
-                                        podcastName: result.collectionName ?? "N/A",
+                                        podcastName:
+                                            result.collectionName ?? "N/A",
                                         feedUrl: result.feedUrl ?? "",
                                         artworkUrl: result.bestArtworkUrl ?? "",
                                         dateAdded: DateTime.now(),
@@ -158,7 +142,8 @@ class CustomSearchDelegate extends SearchDelegate<String> {
                                         releaseDate: result.releaseDate,
                                         country: result.country,
                                         genre: genreString,
-                                        contentAdvisory: result.contentAdvisoryRating,
+                                        contentAdvisory:
+                                            result.contentAdvisoryRating,
                                       ),
                                     );
                                   },
@@ -178,7 +163,8 @@ class CustomSearchDelegate extends SearchDelegate<String> {
                                       height: 80.0,
                                       width: 80.0,
                                       decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(12.0),
+                                        borderRadius:
+                                            BorderRadius.circular(12.0),
                                       ),
                                       clipBehavior: Clip.antiAlias,
                                       child: Image.network(
@@ -188,20 +174,27 @@ class CustomSearchDelegate extends SearchDelegate<String> {
                                     ),
                                     Expanded(
                                       child: Padding(
-                                        padding: const EdgeInsets.only(left: 14.0),
+                                        padding:
+                                            const EdgeInsets.only(left: 14.0),
                                         child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
                                             Row(
-                                              mainAxisAlignment: MainAxisAlignment.start,
-                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               children: [
                                                 Expanded(
                                                   child: Text(
-                                                    result.collectionName == null
+                                                    result.collectionName ==
+                                                            null
                                                         ? ''
-                                                        : result.collectionName!,
+                                                        : result
+                                                            .collectionName!,
                                                     //         .length >
                                                     //     40
                                                     // ? result.collectionName!
@@ -213,7 +206,8 @@ class CustomSearchDelegate extends SearchDelegate<String> {
                                                     style: TextStyle(
                                                       fontFamily: 'Segoe',
                                                       fontSize: 14.0,
-                                                      fontWeight: FontWeight.w500,
+                                                      fontWeight:
+                                                          FontWeight.w500,
                                                       color: Theme.of(context)
                                                           .colorScheme
                                                           .secondary,
@@ -226,13 +220,16 @@ class CustomSearchDelegate extends SearchDelegate<String> {
                                               height: 6.0,
                                             ),
                                             Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                               children: [
                                                 Text(
                                                   result.releaseDate == null
                                                       ? ""
                                                       : DateFormat('yMMMd')
-                                                          .format(result.releaseDate!),
+                                                          .format(result
+                                                              .releaseDate!),
                                                   textAlign: TextAlign.center,
                                                   style: TextStyle(
                                                     fontFamily: 'Segoe',
@@ -245,14 +242,17 @@ class CustomSearchDelegate extends SearchDelegate<String> {
                                                   ),
                                                 ),
                                                 Padding(
-                                                  padding: const EdgeInsets.only(right: 16.0),
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          right: 16.0),
                                                   child: Text(
                                                     "${result.trackCount ?? 'N/A'} Episodes",
                                                     textAlign: TextAlign.center,
                                                     style: TextStyle(
                                                       fontFamily: 'Segoe',
                                                       fontSize: 12.0,
-                                                      fontWeight: FontWeight.w200,
+                                                      fontWeight:
+                                                          FontWeight.w200,
                                                       color: Theme.of(context)
                                                           .colorScheme
                                                           .secondary
@@ -278,6 +278,6 @@ class CustomSearchDelegate extends SearchDelegate<String> {
 
   @override
   Widget buildSuggestions(BuildContext context) => Container(
-        color: Theme.of(context).backgroundColor,
+        color: Theme.of(context).colorScheme.background,
       );
 }

@@ -3,6 +3,211 @@
 part of 'database.dart';
 
 // ignore_for_file: type=lint
+class ListeningHistory extends Table
+    with TableInfo<ListeningHistory, ListeningHistoryData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  ListeningHistory(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      $customConstraints: 'NOT NULL PRIMARY KEY AUTOINCREMENT');
+  static const VerificationMeta _urlMeta = const VerificationMeta('url');
+  late final GeneratedColumn<String> url = GeneratedColumn<String>(
+      'url', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL');
+  static const VerificationMeta _artistMeta = const VerificationMeta('artist');
+  late final GeneratedColumn<String> artist = GeneratedColumn<String>(
+      'artist', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL');
+  static const VerificationMeta _iconMeta = const VerificationMeta('icon');
+  late final GeneratedColumn<String> icon = GeneratedColumn<String>(
+      'icon', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL');
+  static const VerificationMeta _albumMeta = const VerificationMeta('album');
+  late final GeneratedColumn<String> album = GeneratedColumn<String>(
+      'album', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL');
+  static const VerificationMeta _durationMeta =
+      const VerificationMeta('duration');
+  late final GeneratedColumn<String> duration = GeneratedColumn<String>(
+      'duration', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL');
+  static const VerificationMeta _podcastNameMeta =
+      const VerificationMeta('podcastName');
+  late final GeneratedColumn<String> podcastName = GeneratedColumn<String>(
+      'podcast_name', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL');
+  static const VerificationMeta _podcastArtworkMeta =
+      const VerificationMeta('podcastArtwork');
+  late final GeneratedColumn<String> podcastArtwork = GeneratedColumn<String>(
+      'podcast_artwork', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL');
+  static const VerificationMeta _listenedOnMeta =
+      const VerificationMeta('listenedOn');
+  late final GeneratedColumn<String> listenedOn = GeneratedColumn<String>(
+      'listened_on', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL');
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+      'name', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL');
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        url,
+        artist,
+        icon,
+        album,
+        duration,
+        podcastName,
+        podcastArtwork,
+        listenedOn,
+        name
+      ];
+  @override
+  String get aliasedName => _alias ?? 'listening_history';
+  @override
+  String get actualTableName => 'listening_history';
+  @override
+  VerificationContext validateIntegrity(
+      Insertable<ListeningHistoryData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('url')) {
+      context.handle(
+          _urlMeta, url.isAcceptableOrUnknown(data['url']!, _urlMeta));
+    } else if (isInserting) {
+      context.missing(_urlMeta);
+    }
+    if (data.containsKey('artist')) {
+      context.handle(_artistMeta,
+          artist.isAcceptableOrUnknown(data['artist']!, _artistMeta));
+    } else if (isInserting) {
+      context.missing(_artistMeta);
+    }
+    if (data.containsKey('icon')) {
+      context.handle(
+          _iconMeta, icon.isAcceptableOrUnknown(data['icon']!, _iconMeta));
+    } else if (isInserting) {
+      context.missing(_iconMeta);
+    }
+    if (data.containsKey('album')) {
+      context.handle(
+          _albumMeta, album.isAcceptableOrUnknown(data['album']!, _albumMeta));
+    } else if (isInserting) {
+      context.missing(_albumMeta);
+    }
+    if (data.containsKey('duration')) {
+      context.handle(_durationMeta,
+          duration.isAcceptableOrUnknown(data['duration']!, _durationMeta));
+    } else if (isInserting) {
+      context.missing(_durationMeta);
+    }
+    if (data.containsKey('podcast_name')) {
+      context.handle(
+          _podcastNameMeta,
+          podcastName.isAcceptableOrUnknown(
+              data['podcast_name']!, _podcastNameMeta));
+    } else if (isInserting) {
+      context.missing(_podcastNameMeta);
+    }
+    if (data.containsKey('podcast_artwork')) {
+      context.handle(
+          _podcastArtworkMeta,
+          podcastArtwork.isAcceptableOrUnknown(
+              data['podcast_artwork']!, _podcastArtworkMeta));
+    } else if (isInserting) {
+      context.missing(_podcastArtworkMeta);
+    }
+    if (data.containsKey('listened_on')) {
+      context.handle(
+          _listenedOnMeta,
+          listenedOn.isAcceptableOrUnknown(
+              data['listened_on']!, _listenedOnMeta));
+    } else if (isInserting) {
+      context.missing(_listenedOnMeta);
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+          _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  List<Set<GeneratedColumn>> get uniqueKeys => [
+        {name, podcastName},
+      ];
+  @override
+  ListeningHistoryData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ListeningHistoryData(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      url: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}url'])!,
+      artist: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}artist'])!,
+      icon: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}icon'])!,
+      album: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}album'])!,
+      duration: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}duration'])!,
+      podcastName: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}podcast_name'])!,
+      podcastArtwork: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}podcast_artwork'])!,
+      listenedOn: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}listened_on'])!,
+      name: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
+    );
+  }
+
+  @override
+  ListeningHistory createAlias(String alias) {
+    return ListeningHistory(attachedDatabase, alias);
+  }
+
+  @override
+  List<String> get customConstraints =>
+      const ['CONSTRAINT names UNIQUE(name, podcast_name)ON CONFLICT REPLACE'];
+  @override
+  bool get dontWriteConstraints => true;
+}
+
 class ListeningHistoryData extends DataClass
     implements Insertable<ListeningHistoryData> {
   final int id;
@@ -297,12 +502,12 @@ class ListeningHistoryCompanion extends UpdateCompanion<ListeningHistoryData> {
   }
 }
 
-class ListeningHistory extends Table
-    with TableInfo<ListeningHistory, ListeningHistoryData> {
+class Subscription extends Table
+    with TableInfo<Subscription, SubscriptionData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  ListeningHistory(this.attachedDatabase, [this._alias]);
+  Subscription(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
       'id', aliasedName, false,
@@ -310,37 +515,6 @@ class ListeningHistory extends Table
       type: DriftSqlType.int,
       requiredDuringInsert: false,
       $customConstraints: 'NOT NULL PRIMARY KEY AUTOINCREMENT');
-  static const VerificationMeta _urlMeta = const VerificationMeta('url');
-  late final GeneratedColumn<String> url = GeneratedColumn<String>(
-      'url', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      $customConstraints: 'NOT NULL');
-  static const VerificationMeta _artistMeta = const VerificationMeta('artist');
-  late final GeneratedColumn<String> artist = GeneratedColumn<String>(
-      'artist', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      $customConstraints: 'NOT NULL');
-  static const VerificationMeta _iconMeta = const VerificationMeta('icon');
-  late final GeneratedColumn<String> icon = GeneratedColumn<String>(
-      'icon', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      $customConstraints: 'NOT NULL');
-  static const VerificationMeta _albumMeta = const VerificationMeta('album');
-  late final GeneratedColumn<String> album = GeneratedColumn<String>(
-      'album', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      $customConstraints: 'NOT NULL');
-  static const VerificationMeta _durationMeta =
-      const VerificationMeta('duration');
-  late final GeneratedColumn<String> duration = GeneratedColumn<String>(
-      'duration', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      $customConstraints: 'NOT NULL');
   static const VerificationMeta _podcastNameMeta =
       const VerificationMeta('podcastName');
   late final GeneratedColumn<String> podcastName = GeneratedColumn<String>(
@@ -348,81 +522,101 @@ class ListeningHistory extends Table
       type: DriftSqlType.string,
       requiredDuringInsert: true,
       $customConstraints: 'NOT NULL');
-  static const VerificationMeta _podcastArtworkMeta =
-      const VerificationMeta('podcastArtwork');
-  late final GeneratedColumn<String> podcastArtwork = GeneratedColumn<String>(
-      'podcast_artwork', aliasedName, false,
+  static const VerificationMeta _podcastIdMeta =
+      const VerificationMeta('podcastId');
+  late final GeneratedColumn<int> podcastId = GeneratedColumn<int>(
+      'podcast_id', aliasedName, true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      $customConstraints: '');
+  static const VerificationMeta _feedUrlMeta =
+      const VerificationMeta('feedUrl');
+  late final GeneratedColumn<String> feedUrl = GeneratedColumn<String>(
+      'feed_url', aliasedName, false,
       type: DriftSqlType.string,
       requiredDuringInsert: true,
       $customConstraints: 'NOT NULL');
-  static const VerificationMeta _listenedOnMeta =
-      const VerificationMeta('listenedOn');
-  late final GeneratedColumn<String> listenedOn = GeneratedColumn<String>(
-      'listened_on', aliasedName, false,
+  static const VerificationMeta _artworkUrlMeta =
+      const VerificationMeta('artworkUrl');
+  late final GeneratedColumn<String> artworkUrl = GeneratedColumn<String>(
+      'artwork_url', aliasedName, false,
       type: DriftSqlType.string,
       requiredDuringInsert: true,
       $customConstraints: 'NOT NULL');
-  static const VerificationMeta _nameMeta = const VerificationMeta('name');
-  late final GeneratedColumn<String> name = GeneratedColumn<String>(
-      'name', aliasedName, false,
-      type: DriftSqlType.string,
+  static const VerificationMeta _dateAddedMeta =
+      const VerificationMeta('dateAdded');
+  late final GeneratedColumn<DateTime> dateAdded = GeneratedColumn<DateTime>(
+      'date_added', aliasedName, false,
+      type: DriftSqlType.dateTime,
       requiredDuringInsert: true,
       $customConstraints: 'NOT NULL');
+  static const VerificationMeta _lastEpisodeDateMeta =
+      const VerificationMeta('lastEpisodeDate');
+  late final GeneratedColumn<DateTime> lastEpisodeDate =
+      GeneratedColumn<DateTime>('last_episode_date', aliasedName, true,
+          type: DriftSqlType.dateTime,
+          requiredDuringInsert: false,
+          $customConstraints: '');
+  static const VerificationMeta _trackCountMeta =
+      const VerificationMeta('trackCount');
+  late final GeneratedColumn<int> trackCount = GeneratedColumn<int>(
+      'track_count', aliasedName, true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      $customConstraints: '');
+  static const VerificationMeta _releaseDateMeta =
+      const VerificationMeta('releaseDate');
+  late final GeneratedColumn<DateTime> releaseDate = GeneratedColumn<DateTime>(
+      'release_date', aliasedName, true,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      $customConstraints: '');
+  static const VerificationMeta _countryMeta =
+      const VerificationMeta('country');
+  late final GeneratedColumn<String> country = GeneratedColumn<String>(
+      'country', aliasedName, true,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      $customConstraints: '');
+  static const VerificationMeta _genreMeta = const VerificationMeta('genre');
+  late final GeneratedColumn<String> genre = GeneratedColumn<String>(
+      'genre', aliasedName, true,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      $customConstraints: '');
+  static const VerificationMeta _contentAdvisoryMeta =
+      const VerificationMeta('contentAdvisory');
+  late final GeneratedColumn<String> contentAdvisory = GeneratedColumn<String>(
+      'content_advisory', aliasedName, true,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      $customConstraints: '');
   @override
   List<GeneratedColumn> get $columns => [
         id,
-        url,
-        artist,
-        icon,
-        album,
-        duration,
         podcastName,
-        podcastArtwork,
-        listenedOn,
-        name
+        podcastId,
+        feedUrl,
+        artworkUrl,
+        dateAdded,
+        lastEpisodeDate,
+        trackCount,
+        releaseDate,
+        country,
+        genre,
+        contentAdvisory
       ];
   @override
-  String get aliasedName => _alias ?? 'listening_history';
+  String get aliasedName => _alias ?? 'subscription';
   @override
-  String get actualTableName => 'listening_history';
+  String get actualTableName => 'subscription';
   @override
-  VerificationContext validateIntegrity(
-      Insertable<ListeningHistoryData> instance,
+  VerificationContext validateIntegrity(Insertable<SubscriptionData> instance,
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    }
-    if (data.containsKey('url')) {
-      context.handle(
-          _urlMeta, url.isAcceptableOrUnknown(data['url']!, _urlMeta));
-    } else if (isInserting) {
-      context.missing(_urlMeta);
-    }
-    if (data.containsKey('artist')) {
-      context.handle(_artistMeta,
-          artist.isAcceptableOrUnknown(data['artist']!, _artistMeta));
-    } else if (isInserting) {
-      context.missing(_artistMeta);
-    }
-    if (data.containsKey('icon')) {
-      context.handle(
-          _iconMeta, icon.isAcceptableOrUnknown(data['icon']!, _iconMeta));
-    } else if (isInserting) {
-      context.missing(_iconMeta);
-    }
-    if (data.containsKey('album')) {
-      context.handle(
-          _albumMeta, album.isAcceptableOrUnknown(data['album']!, _albumMeta));
-    } else if (isInserting) {
-      context.missing(_albumMeta);
-    }
-    if (data.containsKey('duration')) {
-      context.handle(_durationMeta,
-          duration.isAcceptableOrUnknown(data['duration']!, _durationMeta));
-    } else if (isInserting) {
-      context.missing(_durationMeta);
     }
     if (data.containsKey('podcast_name')) {
       context.handle(
@@ -432,27 +626,61 @@ class ListeningHistory extends Table
     } else if (isInserting) {
       context.missing(_podcastNameMeta);
     }
-    if (data.containsKey('podcast_artwork')) {
-      context.handle(
-          _podcastArtworkMeta,
-          podcastArtwork.isAcceptableOrUnknown(
-              data['podcast_artwork']!, _podcastArtworkMeta));
-    } else if (isInserting) {
-      context.missing(_podcastArtworkMeta);
+    if (data.containsKey('podcast_id')) {
+      context.handle(_podcastIdMeta,
+          podcastId.isAcceptableOrUnknown(data['podcast_id']!, _podcastIdMeta));
     }
-    if (data.containsKey('listened_on')) {
-      context.handle(
-          _listenedOnMeta,
-          listenedOn.isAcceptableOrUnknown(
-              data['listened_on']!, _listenedOnMeta));
+    if (data.containsKey('feed_url')) {
+      context.handle(_feedUrlMeta,
+          feedUrl.isAcceptableOrUnknown(data['feed_url']!, _feedUrlMeta));
     } else if (isInserting) {
-      context.missing(_listenedOnMeta);
+      context.missing(_feedUrlMeta);
     }
-    if (data.containsKey('name')) {
+    if (data.containsKey('artwork_url')) {
       context.handle(
-          _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
+          _artworkUrlMeta,
+          artworkUrl.isAcceptableOrUnknown(
+              data['artwork_url']!, _artworkUrlMeta));
     } else if (isInserting) {
-      context.missing(_nameMeta);
+      context.missing(_artworkUrlMeta);
+    }
+    if (data.containsKey('date_added')) {
+      context.handle(_dateAddedMeta,
+          dateAdded.isAcceptableOrUnknown(data['date_added']!, _dateAddedMeta));
+    } else if (isInserting) {
+      context.missing(_dateAddedMeta);
+    }
+    if (data.containsKey('last_episode_date')) {
+      context.handle(
+          _lastEpisodeDateMeta,
+          lastEpisodeDate.isAcceptableOrUnknown(
+              data['last_episode_date']!, _lastEpisodeDateMeta));
+    }
+    if (data.containsKey('track_count')) {
+      context.handle(
+          _trackCountMeta,
+          trackCount.isAcceptableOrUnknown(
+              data['track_count']!, _trackCountMeta));
+    }
+    if (data.containsKey('release_date')) {
+      context.handle(
+          _releaseDateMeta,
+          releaseDate.isAcceptableOrUnknown(
+              data['release_date']!, _releaseDateMeta));
+    }
+    if (data.containsKey('country')) {
+      context.handle(_countryMeta,
+          country.isAcceptableOrUnknown(data['country']!, _countryMeta));
+    }
+    if (data.containsKey('genre')) {
+      context.handle(
+          _genreMeta, genre.isAcceptableOrUnknown(data['genre']!, _genreMeta));
+    }
+    if (data.containsKey('content_advisory')) {
+      context.handle(
+          _contentAdvisoryMeta,
+          contentAdvisory.isAcceptableOrUnknown(
+              data['content_advisory']!, _contentAdvisoryMeta));
     }
     return context;
   }
@@ -461,43 +689,47 @@ class ListeningHistory extends Table
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
   List<Set<GeneratedColumn>> get uniqueKeys => [
-        {name, podcastName},
+        {podcastId},
       ];
   @override
-  ListeningHistoryData map(Map<String, dynamic> data, {String? tablePrefix}) {
+  SubscriptionData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return ListeningHistoryData(
+    return SubscriptionData(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
-      url: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}url'])!,
-      artist: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}artist'])!,
-      icon: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}icon'])!,
-      album: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}album'])!,
-      duration: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}duration'])!,
       podcastName: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}podcast_name'])!,
-      podcastArtwork: attachedDatabase.typeMapping.read(
-          DriftSqlType.string, data['${effectivePrefix}podcast_artwork'])!,
-      listenedOn: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}listened_on'])!,
-      name: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
+      podcastId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}podcast_id']),
+      feedUrl: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}feed_url'])!,
+      artworkUrl: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}artwork_url'])!,
+      dateAdded: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}date_added'])!,
+      lastEpisodeDate: attachedDatabase.typeMapping.read(
+          DriftSqlType.dateTime, data['${effectivePrefix}last_episode_date']),
+      trackCount: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}track_count']),
+      releaseDate: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}release_date']),
+      country: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}country']),
+      genre: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}genre']),
+      contentAdvisory: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}content_advisory']),
     );
   }
 
   @override
-  ListeningHistory createAlias(String alias) {
-    return ListeningHistory(attachedDatabase, alias);
+  Subscription createAlias(String alias) {
+    return Subscription(attachedDatabase, alias);
   }
 
   @override
   List<String> get customConstraints =>
-      const ['CONSTRAINT names UNIQUE(name, podcast_name)ON CONFLICT REPLACE'];
+      const ['CONSTRAINT pod_id UNIQUE(podcast_id)ON CONFLICT ABORT'];
   @override
   bool get dontWriteConstraints => true;
 }
@@ -876,26 +1108,89 @@ class SubscriptionCompanion extends UpdateCompanion<SubscriptionData> {
   }
 }
 
-class Subscription extends Table
-    with TableInfo<Subscription, SubscriptionData> {
+class Episode extends Table with TableInfo<Episode, EpisodeData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  Subscription(this.attachedDatabase, [this._alias]);
+  Episode(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
       'id', aliasedName, false,
-      hasAutoIncrement: true,
       type: DriftSqlType.int,
       requiredDuringInsert: false,
-      $customConstraints: 'NOT NULL PRIMARY KEY AUTOINCREMENT');
-  static const VerificationMeta _podcastNameMeta =
-      const VerificationMeta('podcastName');
-  late final GeneratedColumn<String> podcastName = GeneratedColumn<String>(
-      'podcast_name', aliasedName, false,
+      $customConstraints: 'NOT NULL');
+  static const VerificationMeta _guidMeta = const VerificationMeta('guid');
+  late final GeneratedColumn<String> guid = GeneratedColumn<String>(
+      'guid', aliasedName, false,
       type: DriftSqlType.string,
       requiredDuringInsert: true,
       $customConstraints: 'NOT NULL');
+  static const VerificationMeta _titleMeta = const VerificationMeta('title');
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+      'title', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL');
+  static const VerificationMeta _descriptionMeta =
+      const VerificationMeta('description');
+  late final GeneratedColumn<String> description = GeneratedColumn<String>(
+      'description', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL');
+  static const VerificationMeta _linkMeta = const VerificationMeta('link');
+  late final GeneratedColumn<String> link = GeneratedColumn<String>(
+      'link', aliasedName, true,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      $customConstraints: '');
+  static const VerificationMeta _publicationDateMeta =
+      const VerificationMeta('publicationDate');
+  late final GeneratedColumn<DateTime> publicationDate =
+      GeneratedColumn<DateTime>('publication_date', aliasedName, true,
+          type: DriftSqlType.dateTime,
+          requiredDuringInsert: false,
+          $customConstraints: '');
+  static const VerificationMeta _contentUrlMeta =
+      const VerificationMeta('contentUrl');
+  late final GeneratedColumn<String> contentUrl = GeneratedColumn<String>(
+      'content_url', aliasedName, true,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      $customConstraints: '');
+  static const VerificationMeta _imageUrlMeta =
+      const VerificationMeta('imageUrl');
+  late final GeneratedColumn<String> imageUrl = GeneratedColumn<String>(
+      'image_url', aliasedName, true,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      $customConstraints: '');
+  static const VerificationMeta _authorMeta = const VerificationMeta('author');
+  late final GeneratedColumn<String> author = GeneratedColumn<String>(
+      'author', aliasedName, true,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      $customConstraints: '');
+  static const VerificationMeta _seasonMeta = const VerificationMeta('season');
+  late final GeneratedColumn<int> season = GeneratedColumn<int>(
+      'season', aliasedName, true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      $customConstraints: '');
+  static const VerificationMeta _episodeNumberMeta =
+      const VerificationMeta('episodeNumber');
+  late final GeneratedColumn<int> episodeNumber = GeneratedColumn<int>(
+      'episode_number', aliasedName, true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      $customConstraints: '');
+  static const VerificationMeta _durationMeta =
+      const VerificationMeta('duration');
+  late final GeneratedColumn<int> duration = GeneratedColumn<int>(
+      'duration', aliasedName, true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      $customConstraints: '');
   static const VerificationMeta _podcastIdMeta =
       const VerificationMeta('podcastId');
   late final GeneratedColumn<int> podcastId = GeneratedColumn<int>(
@@ -903,158 +1198,109 @@ class Subscription extends Table
       type: DriftSqlType.int,
       requiredDuringInsert: false,
       $customConstraints: '');
-  static const VerificationMeta _feedUrlMeta =
-      const VerificationMeta('feedUrl');
-  late final GeneratedColumn<String> feedUrl = GeneratedColumn<String>(
-      'feed_url', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      $customConstraints: 'NOT NULL');
-  static const VerificationMeta _artworkUrlMeta =
-      const VerificationMeta('artworkUrl');
-  late final GeneratedColumn<String> artworkUrl = GeneratedColumn<String>(
-      'artwork_url', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      $customConstraints: 'NOT NULL');
-  static const VerificationMeta _dateAddedMeta =
-      const VerificationMeta('dateAdded');
-  late final GeneratedColumn<DateTime> dateAdded = GeneratedColumn<DateTime>(
-      'date_added', aliasedName, false,
-      type: DriftSqlType.dateTime,
-      requiredDuringInsert: true,
-      $customConstraints: 'NOT NULL');
-  static const VerificationMeta _lastEpisodeDateMeta =
-      const VerificationMeta('lastEpisodeDate');
-  late final GeneratedColumn<DateTime> lastEpisodeDate =
-      GeneratedColumn<DateTime>('last_episode_date', aliasedName, true,
-          type: DriftSqlType.dateTime,
-          requiredDuringInsert: false,
-          $customConstraints: '');
-  static const VerificationMeta _trackCountMeta =
-      const VerificationMeta('trackCount');
-  late final GeneratedColumn<int> trackCount = GeneratedColumn<int>(
-      'track_count', aliasedName, true,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      $customConstraints: '');
-  static const VerificationMeta _releaseDateMeta =
-      const VerificationMeta('releaseDate');
-  late final GeneratedColumn<DateTime> releaseDate = GeneratedColumn<DateTime>(
-      'release_date', aliasedName, true,
-      type: DriftSqlType.dateTime,
-      requiredDuringInsert: false,
-      $customConstraints: '');
-  static const VerificationMeta _countryMeta =
-      const VerificationMeta('country');
-  late final GeneratedColumn<String> country = GeneratedColumn<String>(
-      'country', aliasedName, true,
-      type: DriftSqlType.string,
-      requiredDuringInsert: false,
-      $customConstraints: '');
-  static const VerificationMeta _genreMeta = const VerificationMeta('genre');
-  late final GeneratedColumn<String> genre = GeneratedColumn<String>(
-      'genre', aliasedName, true,
-      type: DriftSqlType.string,
-      requiredDuringInsert: false,
-      $customConstraints: '');
-  static const VerificationMeta _contentAdvisoryMeta =
-      const VerificationMeta('contentAdvisory');
-  late final GeneratedColumn<String> contentAdvisory = GeneratedColumn<String>(
-      'content_advisory', aliasedName, true,
+  static const VerificationMeta _podcastNameMeta =
+      const VerificationMeta('podcastName');
+  late final GeneratedColumn<String> podcastName = GeneratedColumn<String>(
+      'podcast_name', aliasedName, true,
       type: DriftSqlType.string,
       requiredDuringInsert: false,
       $customConstraints: '');
   @override
   List<GeneratedColumn> get $columns => [
         id,
-        podcastName,
+        guid,
+        title,
+        description,
+        link,
+        publicationDate,
+        contentUrl,
+        imageUrl,
+        author,
+        season,
+        episodeNumber,
+        duration,
         podcastId,
-        feedUrl,
-        artworkUrl,
-        dateAdded,
-        lastEpisodeDate,
-        trackCount,
-        releaseDate,
-        country,
-        genre,
-        contentAdvisory
+        podcastName
       ];
   @override
-  String get aliasedName => _alias ?? 'subscription';
+  String get aliasedName => _alias ?? 'episode';
   @override
-  String get actualTableName => 'subscription';
+  String get actualTableName => 'episode';
   @override
-  VerificationContext validateIntegrity(Insertable<SubscriptionData> instance,
+  VerificationContext validateIntegrity(Insertable<EpisodeData> instance,
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     }
-    if (data.containsKey('podcast_name')) {
+    if (data.containsKey('guid')) {
       context.handle(
-          _podcastNameMeta,
-          podcastName.isAcceptableOrUnknown(
-              data['podcast_name']!, _podcastNameMeta));
+          _guidMeta, guid.isAcceptableOrUnknown(data['guid']!, _guidMeta));
     } else if (isInserting) {
-      context.missing(_podcastNameMeta);
+      context.missing(_guidMeta);
+    }
+    if (data.containsKey('title')) {
+      context.handle(
+          _titleMeta, title.isAcceptableOrUnknown(data['title']!, _titleMeta));
+    } else if (isInserting) {
+      context.missing(_titleMeta);
+    }
+    if (data.containsKey('description')) {
+      context.handle(
+          _descriptionMeta,
+          description.isAcceptableOrUnknown(
+              data['description']!, _descriptionMeta));
+    } else if (isInserting) {
+      context.missing(_descriptionMeta);
+    }
+    if (data.containsKey('link')) {
+      context.handle(
+          _linkMeta, link.isAcceptableOrUnknown(data['link']!, _linkMeta));
+    }
+    if (data.containsKey('publication_date')) {
+      context.handle(
+          _publicationDateMeta,
+          publicationDate.isAcceptableOrUnknown(
+              data['publication_date']!, _publicationDateMeta));
+    }
+    if (data.containsKey('content_url')) {
+      context.handle(
+          _contentUrlMeta,
+          contentUrl.isAcceptableOrUnknown(
+              data['content_url']!, _contentUrlMeta));
+    }
+    if (data.containsKey('image_url')) {
+      context.handle(_imageUrlMeta,
+          imageUrl.isAcceptableOrUnknown(data['image_url']!, _imageUrlMeta));
+    }
+    if (data.containsKey('author')) {
+      context.handle(_authorMeta,
+          author.isAcceptableOrUnknown(data['author']!, _authorMeta));
+    }
+    if (data.containsKey('season')) {
+      context.handle(_seasonMeta,
+          season.isAcceptableOrUnknown(data['season']!, _seasonMeta));
+    }
+    if (data.containsKey('episode_number')) {
+      context.handle(
+          _episodeNumberMeta,
+          episodeNumber.isAcceptableOrUnknown(
+              data['episode_number']!, _episodeNumberMeta));
+    }
+    if (data.containsKey('duration')) {
+      context.handle(_durationMeta,
+          duration.isAcceptableOrUnknown(data['duration']!, _durationMeta));
     }
     if (data.containsKey('podcast_id')) {
       context.handle(_podcastIdMeta,
           podcastId.isAcceptableOrUnknown(data['podcast_id']!, _podcastIdMeta));
     }
-    if (data.containsKey('feed_url')) {
-      context.handle(_feedUrlMeta,
-          feedUrl.isAcceptableOrUnknown(data['feed_url']!, _feedUrlMeta));
-    } else if (isInserting) {
-      context.missing(_feedUrlMeta);
-    }
-    if (data.containsKey('artwork_url')) {
+    if (data.containsKey('podcast_name')) {
       context.handle(
-          _artworkUrlMeta,
-          artworkUrl.isAcceptableOrUnknown(
-              data['artwork_url']!, _artworkUrlMeta));
-    } else if (isInserting) {
-      context.missing(_artworkUrlMeta);
-    }
-    if (data.containsKey('date_added')) {
-      context.handle(_dateAddedMeta,
-          dateAdded.isAcceptableOrUnknown(data['date_added']!, _dateAddedMeta));
-    } else if (isInserting) {
-      context.missing(_dateAddedMeta);
-    }
-    if (data.containsKey('last_episode_date')) {
-      context.handle(
-          _lastEpisodeDateMeta,
-          lastEpisodeDate.isAcceptableOrUnknown(
-              data['last_episode_date']!, _lastEpisodeDateMeta));
-    }
-    if (data.containsKey('track_count')) {
-      context.handle(
-          _trackCountMeta,
-          trackCount.isAcceptableOrUnknown(
-              data['track_count']!, _trackCountMeta));
-    }
-    if (data.containsKey('release_date')) {
-      context.handle(
-          _releaseDateMeta,
-          releaseDate.isAcceptableOrUnknown(
-              data['release_date']!, _releaseDateMeta));
-    }
-    if (data.containsKey('country')) {
-      context.handle(_countryMeta,
-          country.isAcceptableOrUnknown(data['country']!, _countryMeta));
-    }
-    if (data.containsKey('genre')) {
-      context.handle(
-          _genreMeta, genre.isAcceptableOrUnknown(data['genre']!, _genreMeta));
-    }
-    if (data.containsKey('content_advisory')) {
-      context.handle(
-          _contentAdvisoryMeta,
-          contentAdvisory.isAcceptableOrUnknown(
-              data['content_advisory']!, _contentAdvisoryMeta));
+          _podcastNameMeta,
+          podcastName.isAcceptableOrUnknown(
+              data['podcast_name']!, _podcastNameMeta));
     }
     return context;
   }
@@ -1062,48 +1308,50 @@ class Subscription extends Table
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  List<Set<GeneratedColumn>> get uniqueKeys => [
-        {podcastId},
-      ];
-  @override
-  SubscriptionData map(Map<String, dynamic> data, {String? tablePrefix}) {
+  EpisodeData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return SubscriptionData(
+    return EpisodeData(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
-      podcastName: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}podcast_name'])!,
+      guid: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}guid'])!,
+      title: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
+      description: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}description'])!,
+      link: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}link']),
+      publicationDate: attachedDatabase.typeMapping.read(
+          DriftSqlType.dateTime, data['${effectivePrefix}publication_date']),
+      contentUrl: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}content_url']),
+      imageUrl: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}image_url']),
+      author: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}author']),
+      season: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}season']),
+      episodeNumber: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}episode_number']),
+      duration: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}duration']),
       podcastId: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}podcast_id']),
-      feedUrl: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}feed_url'])!,
-      artworkUrl: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}artwork_url'])!,
-      dateAdded: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}date_added'])!,
-      lastEpisodeDate: attachedDatabase.typeMapping.read(
-          DriftSqlType.dateTime, data['${effectivePrefix}last_episode_date']),
-      trackCount: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}track_count']),
-      releaseDate: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}release_date']),
-      country: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}country']),
-      genre: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}genre']),
-      contentAdvisory: attachedDatabase.typeMapping.read(
-          DriftSqlType.string, data['${effectivePrefix}content_advisory']),
+      podcastName: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}podcast_name']),
     );
   }
 
   @override
-  Subscription createAlias(String alias) {
-    return Subscription(attachedDatabase, alias);
+  Episode createAlias(String alias) {
+    return Episode(attachedDatabase, alias);
   }
 
   @override
-  List<String> get customConstraints =>
-      const ['CONSTRAINT pod_id UNIQUE(podcast_id)ON CONFLICT ABORT'];
+  List<String> get customConstraints => const [
+        'PRIMARY KEY(id)',
+        'FOREIGN KEY(podcast_id)REFERENCES subscription(podcast_id)ON UPDATE NO ACTION ON DELETE CASCADE'
+      ];
   @override
   bool get dontWriteConstraints => true;
 }
@@ -1531,254 +1779,6 @@ class EpisodeCompanion extends UpdateCompanion<EpisodeData> {
   }
 }
 
-class Episode extends Table with TableInfo<Episode, EpisodeData> {
-  @override
-  final GeneratedDatabase attachedDatabase;
-  final String? _alias;
-  Episode(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _idMeta = const VerificationMeta('id');
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
-      'id', aliasedName, false,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      $customConstraints: 'NOT NULL');
-  static const VerificationMeta _guidMeta = const VerificationMeta('guid');
-  late final GeneratedColumn<String> guid = GeneratedColumn<String>(
-      'guid', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      $customConstraints: 'NOT NULL');
-  static const VerificationMeta _titleMeta = const VerificationMeta('title');
-  late final GeneratedColumn<String> title = GeneratedColumn<String>(
-      'title', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      $customConstraints: 'NOT NULL');
-  static const VerificationMeta _descriptionMeta =
-      const VerificationMeta('description');
-  late final GeneratedColumn<String> description = GeneratedColumn<String>(
-      'description', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      $customConstraints: 'NOT NULL');
-  static const VerificationMeta _linkMeta = const VerificationMeta('link');
-  late final GeneratedColumn<String> link = GeneratedColumn<String>(
-      'link', aliasedName, true,
-      type: DriftSqlType.string,
-      requiredDuringInsert: false,
-      $customConstraints: '');
-  static const VerificationMeta _publicationDateMeta =
-      const VerificationMeta('publicationDate');
-  late final GeneratedColumn<DateTime> publicationDate =
-      GeneratedColumn<DateTime>('publication_date', aliasedName, true,
-          type: DriftSqlType.dateTime,
-          requiredDuringInsert: false,
-          $customConstraints: '');
-  static const VerificationMeta _contentUrlMeta =
-      const VerificationMeta('contentUrl');
-  late final GeneratedColumn<String> contentUrl = GeneratedColumn<String>(
-      'content_url', aliasedName, true,
-      type: DriftSqlType.string,
-      requiredDuringInsert: false,
-      $customConstraints: '');
-  static const VerificationMeta _imageUrlMeta =
-      const VerificationMeta('imageUrl');
-  late final GeneratedColumn<String> imageUrl = GeneratedColumn<String>(
-      'image_url', aliasedName, true,
-      type: DriftSqlType.string,
-      requiredDuringInsert: false,
-      $customConstraints: '');
-  static const VerificationMeta _authorMeta = const VerificationMeta('author');
-  late final GeneratedColumn<String> author = GeneratedColumn<String>(
-      'author', aliasedName, true,
-      type: DriftSqlType.string,
-      requiredDuringInsert: false,
-      $customConstraints: '');
-  static const VerificationMeta _seasonMeta = const VerificationMeta('season');
-  late final GeneratedColumn<int> season = GeneratedColumn<int>(
-      'season', aliasedName, true,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      $customConstraints: '');
-  static const VerificationMeta _episodeNumberMeta =
-      const VerificationMeta('episodeNumber');
-  late final GeneratedColumn<int> episodeNumber = GeneratedColumn<int>(
-      'episode_number', aliasedName, true,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      $customConstraints: '');
-  static const VerificationMeta _durationMeta =
-      const VerificationMeta('duration');
-  late final GeneratedColumn<int> duration = GeneratedColumn<int>(
-      'duration', aliasedName, true,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      $customConstraints: '');
-  static const VerificationMeta _podcastIdMeta =
-      const VerificationMeta('podcastId');
-  late final GeneratedColumn<int> podcastId = GeneratedColumn<int>(
-      'podcast_id', aliasedName, true,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      $customConstraints: '');
-  static const VerificationMeta _podcastNameMeta =
-      const VerificationMeta('podcastName');
-  late final GeneratedColumn<String> podcastName = GeneratedColumn<String>(
-      'podcast_name', aliasedName, true,
-      type: DriftSqlType.string,
-      requiredDuringInsert: false,
-      $customConstraints: '');
-  @override
-  List<GeneratedColumn> get $columns => [
-        id,
-        guid,
-        title,
-        description,
-        link,
-        publicationDate,
-        contentUrl,
-        imageUrl,
-        author,
-        season,
-        episodeNumber,
-        duration,
-        podcastId,
-        podcastName
-      ];
-  @override
-  String get aliasedName => _alias ?? 'episode';
-  @override
-  String get actualTableName => 'episode';
-  @override
-  VerificationContext validateIntegrity(Insertable<EpisodeData> instance,
-      {bool isInserting = false}) {
-    final context = VerificationContext();
-    final data = instance.toColumns(true);
-    if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    }
-    if (data.containsKey('guid')) {
-      context.handle(
-          _guidMeta, guid.isAcceptableOrUnknown(data['guid']!, _guidMeta));
-    } else if (isInserting) {
-      context.missing(_guidMeta);
-    }
-    if (data.containsKey('title')) {
-      context.handle(
-          _titleMeta, title.isAcceptableOrUnknown(data['title']!, _titleMeta));
-    } else if (isInserting) {
-      context.missing(_titleMeta);
-    }
-    if (data.containsKey('description')) {
-      context.handle(
-          _descriptionMeta,
-          description.isAcceptableOrUnknown(
-              data['description']!, _descriptionMeta));
-    } else if (isInserting) {
-      context.missing(_descriptionMeta);
-    }
-    if (data.containsKey('link')) {
-      context.handle(
-          _linkMeta, link.isAcceptableOrUnknown(data['link']!, _linkMeta));
-    }
-    if (data.containsKey('publication_date')) {
-      context.handle(
-          _publicationDateMeta,
-          publicationDate.isAcceptableOrUnknown(
-              data['publication_date']!, _publicationDateMeta));
-    }
-    if (data.containsKey('content_url')) {
-      context.handle(
-          _contentUrlMeta,
-          contentUrl.isAcceptableOrUnknown(
-              data['content_url']!, _contentUrlMeta));
-    }
-    if (data.containsKey('image_url')) {
-      context.handle(_imageUrlMeta,
-          imageUrl.isAcceptableOrUnknown(data['image_url']!, _imageUrlMeta));
-    }
-    if (data.containsKey('author')) {
-      context.handle(_authorMeta,
-          author.isAcceptableOrUnknown(data['author']!, _authorMeta));
-    }
-    if (data.containsKey('season')) {
-      context.handle(_seasonMeta,
-          season.isAcceptableOrUnknown(data['season']!, _seasonMeta));
-    }
-    if (data.containsKey('episode_number')) {
-      context.handle(
-          _episodeNumberMeta,
-          episodeNumber.isAcceptableOrUnknown(
-              data['episode_number']!, _episodeNumberMeta));
-    }
-    if (data.containsKey('duration')) {
-      context.handle(_durationMeta,
-          duration.isAcceptableOrUnknown(data['duration']!, _durationMeta));
-    }
-    if (data.containsKey('podcast_id')) {
-      context.handle(_podcastIdMeta,
-          podcastId.isAcceptableOrUnknown(data['podcast_id']!, _podcastIdMeta));
-    }
-    if (data.containsKey('podcast_name')) {
-      context.handle(
-          _podcastNameMeta,
-          podcastName.isAcceptableOrUnknown(
-              data['podcast_name']!, _podcastNameMeta));
-    }
-    return context;
-  }
-
-  @override
-  Set<GeneratedColumn> get $primaryKey => {id};
-  @override
-  EpisodeData map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return EpisodeData(
-      id: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
-      guid: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}guid'])!,
-      title: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
-      description: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}description'])!,
-      link: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}link']),
-      publicationDate: attachedDatabase.typeMapping.read(
-          DriftSqlType.dateTime, data['${effectivePrefix}publication_date']),
-      contentUrl: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}content_url']),
-      imageUrl: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}image_url']),
-      author: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}author']),
-      season: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}season']),
-      episodeNumber: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}episode_number']),
-      duration: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}duration']),
-      podcastId: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}podcast_id']),
-      podcastName: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}podcast_name']),
-    );
-  }
-
-  @override
-  Episode createAlias(String alias) {
-    return Episode(attachedDatabase, alias);
-  }
-
-  @override
-  List<String> get customConstraints => const [
-        'PRIMARY KEY(id)',
-        'FOREIGN KEY(podcast_id)REFERENCES subscription(podcast_id)ON UPDATE NO ACTION ON DELETE CASCADE'
-      ];
-  @override
-  bool get dontWriteConstraints => true;
-}
-
 abstract class _$MyDb extends GeneratedDatabase {
   _$MyDb(QueryExecutor e) : super(e);
   late final ListeningHistory listeningHistory = ListeningHistory(this);
@@ -1828,6 +1828,19 @@ abstract class _$MyDb extends GeneratedDatabase {
     return customSelect(
         'SELECT * FROM listening_history ORDER BY listened_on DESC',
         variables: [],
+        readsFrom: {
+          listeningHistory,
+        }).asyncMap(listeningHistory.mapFromRow);
+  }
+
+  Selectable<ListeningHistoryData> selectAllLHIsPaginated(
+      int limit, int offset) {
+    return customSelect(
+        'SELECT * FROM listening_history ORDER BY listened_on DESC LIMIT ?1 OFFSET ?2',
+        variables: [
+          Variable<int>(limit),
+          Variable<int>(offset)
+        ],
         readsFrom: {
           listeningHistory,
         }).asyncMap(listeningHistory.mapFromRow);
@@ -1884,19 +1897,33 @@ abstract class _$MyDb extends GeneratedDatabase {
   }
 
   Selectable<SubscriptionData> selectAllSubscriptions() {
-    return customSelect('SELECT * FROM subscription',
+    return customSelect(
+        'SELECT * FROM subscription ORDER BY last_episode_date DESC',
         variables: [],
         readsFrom: {
           subscription,
         }).asyncMap(subscription.mapFromRow);
   }
 
-  Future<int> deleteSubscriptionUsingId(int id) {
+  Future<int> deleteSubscriptionUsingId(int? podcastId) {
     return customUpdate(
-      'DELETE FROM subscription WHERE id = ?1',
-      variables: [Variable<int>(id)],
+      'DELETE FROM subscription WHERE podcast_id = ?1',
+      variables: [Variable<int>(podcastId)],
       updates: {subscription},
       updateKind: UpdateKind.delete,
+    );
+  }
+
+  Future<int> updateSubscriptionUsingId(
+      DateTime? lastEpisodeDate, int? podcastId) {
+    return customUpdate(
+      'UPDATE subscription SET last_episode_date = ?1 WHERE podcast_id = ?2',
+      variables: [
+        Variable<DateTime>(lastEpisodeDate),
+        Variable<int>(podcastId)
+      ],
+      updates: {subscription},
+      updateKind: UpdateKind.update,
     );
   }
 

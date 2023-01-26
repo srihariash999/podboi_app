@@ -1,12 +1,11 @@
 import 'dart:async';
-
 import 'package:audio_service/audio_service.dart';
-// import 'package:audio_session/audio_session.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:podboi/DataModels/song.dart';
 
-final audioController = StateNotifierProvider<AudioStateNotifier, AudioState>((ref) {
+final audioController =
+    StateNotifierProvider<AudioStateNotifier, AudioState>((ref) {
   return AudioStateNotifier(ref);
 });
 
@@ -219,8 +218,9 @@ class MyAudioHandler extends BaseAudioHandler {
 
     Duration curr = _player.position;
     print(" curr is : ${curr.inSeconds}");
-    Duration newDur =
-        curr.inSeconds > 10 ? Duration(seconds: curr.inSeconds - 10) : Duration(seconds: 0);
+    Duration newDur = curr.inSeconds > 10
+        ? Duration(seconds: curr.inSeconds - 10)
+        : Duration(seconds: 0);
     _player.seek(newDur);
 
     return super.rewind();

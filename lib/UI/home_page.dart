@@ -5,10 +5,9 @@ import 'package:line_icons/line_icons.dart';
 import 'package:podboi/Controllers/home_screen_controller.dart';
 import 'package:podboi/Controllers/profile_screen_controller.dart';
 import 'package:podboi/Services/database/database.dart';
-// import 'package:podboi/Shared/episode_display_widget.dart';
 import 'package:podboi/Shared/podcast_display_widget.dart';
 import 'package:podboi/UI/podcast_page.dart';
-import 'package:podboi/UI/profile_screen.dart';
+import 'package:podboi/UI/profile_page.dart';
 import 'package:podboi/UI/search_page.dart';
 import 'package:podcast_search/podcast_search.dart';
 
@@ -24,7 +23,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
-        statusBarColor: Theme.of(context).backgroundColor,
+        statusBarColor: Theme.of(context).colorScheme.background,
         statusBarIconBrightness: Theme.of(context).brightness == Brightness.dark
             ? Brightness.light
             : Brightness.dark,
@@ -33,7 +32,7 @@ class HomePage extends StatelessWidget {
             : Brightness.dark,
       ),
       child: Scaffold(
-        backgroundColor: Theme.of(context).backgroundColor,
+        backgroundColor: Theme.of(context).colorScheme.background,
         body: SafeArea(
           child: RefreshIndicator(
             onRefresh: _refresh,
@@ -232,26 +231,8 @@ class HomePage extends StatelessWidget {
                       return GestureDetector(
                         onTap: () {
                           Navigator.of(context).push(
-                            PageRouteBuilder(
-                              transitionDuration: Duration(milliseconds: 500),
-                              transitionsBuilder: (context, animation,
-                                  secondaryAnimation, child) {
-                                const begin = Offset(1.0, 0.0);
-                                const end = Offset.zero;
-                                const curve = Curves.ease;
-
-                                final tween = Tween(begin: begin, end: end);
-                                final curvedAnimation = CurvedAnimation(
-                                  parent: animation,
-                                  curve: curve,
-                                );
-
-                                return SlideTransition(
-                                  position: tween.animate(curvedAnimation),
-                                  child: child,
-                                );
-                              },
-                              pageBuilder: (_, __, ___) => PodcastPage(
+                            MaterialPageRoute(
+                              builder: (context) => PodcastPage(
                                 subscription: _podcast,
                               ),
                             ),

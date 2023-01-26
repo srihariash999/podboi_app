@@ -26,5 +26,10 @@ selectLHIUsingId: SELECT * FROM listening_history WHERE name = :name AND podcast
 -- Getting all LHI
 selectAllLHIs: SELECT * FROM listening_history ORDER BY listened_on DESC;
 
+-- Getting all LHI Pagniated
+selectAllLHIsPaginated: SELECT * FROM listening_history ORDER BY listened_on DESC LIMIT :limit OFFSET :offset;
+
+
+
 -- Deleting a LHI using id
 deleteLHIUsingId: DELETE FROM listening_history WHERE id = :id;

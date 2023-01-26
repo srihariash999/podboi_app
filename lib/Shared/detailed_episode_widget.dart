@@ -56,8 +56,8 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                           child: Column(
                             children: [
                               Padding(
-                                padding:
-                                    const EdgeInsets.only(left: 8.0, bottom: 12.0, top: 12.0),
+                                padding: const EdgeInsets.only(
+                                    left: 8.0, bottom: 12.0, top: 12.0),
                                 child: Align(
                                   alignment: Alignment.centerLeft,
                                   child: Text(
@@ -105,27 +105,40 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                         child: Icon(
                           Icons.calendar_month,
                           size: 13.0,
-                          color: Theme.of(context).colorScheme.secondary.withOpacity(0.50),
+                          color: Theme.of(context)
+                              .colorScheme
+                              .secondary
+                              .withOpacity(0.50),
                         ),
                       ),
                       Text(
-                        DateFormat('yMMMd').format(_episodeData.publicationDate!),
+                        DateFormat('yMMMd').format(
+                          _episodeData.publicationDate!.toLocal(),
+                        ),
                         style: TextStyle(
                           fontSize: 11.0,
-                          color: Theme.of(context).colorScheme.secondary.withOpacity(0.40),
+                          color: Theme.of(context)
+                              .colorScheme
+                              .secondary
+                              .withOpacity(0.40),
                           fontFamily: 'Segoe',
                           fontWeight: FontWeight.w800,
                         ),
                       ),
                       SizedBox(width: 12.0),
                       Text(
-                        (_episodeData.season != null ? "S-${_episodeData.season}" : "") +
+                        (_episodeData.season != null
+                                ? "S-${_episodeData.season}"
+                                : "") +
                             (_episodeData.episodeNumber != null
                                 ? "  E-${_episodeData.episodeNumber}"
                                 : ""),
                         style: TextStyle(
                           fontSize: 11.0,
-                          color: Theme.of(context).colorScheme.secondary.withOpacity(0.40),
+                          color: Theme.of(context)
+                              .colorScheme
+                              .secondary
+                              .withOpacity(0.40),
                           fontFamily: 'Segoe',
                           fontWeight: FontWeight.w800,
                         ),
@@ -141,14 +154,20 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                         child: Icon(
                           Icons.watch_later_outlined,
                           size: 13.0,
-                          color: Theme.of(context).colorScheme.secondary.withOpacity(0.50),
+                          color: Theme.of(context)
+                              .colorScheme
+                              .secondary
+                              .withOpacity(0.50),
                         ),
                       ),
                       Text(
                         "${Duration(seconds: _episodeData.duration ?? 0).inMinutes} minutes",
                         style: TextStyle(
                           fontSize: 11.0,
-                          color: Theme.of(context).colorScheme.secondary.withOpacity(0.40),
+                          color: Theme.of(context)
+                              .colorScheme
+                              .secondary
+                              .withOpacity(0.40),
                           fontFamily: 'Segoe',
                           fontWeight: FontWeight.w800,
                         ),
@@ -175,7 +194,8 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
               children: [
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.only(left: 12.0, right: 12.0, top: 8.0),
+                    padding: const EdgeInsets.only(
+                        left: 12.0, right: 12.0, top: 8.0),
                     child: Text(
                       _episodeData.title,
                       style: TextStyle(
@@ -195,7 +215,8 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                             url: _episodeData.contentUrl!,
                             icon: _podcast.artworkUrl,
                             name: _episodeData.title,
-                            duration: Duration(seconds: _episodeData.duration ?? 0),
+                            duration:
+                                Duration(seconds: _episodeData.duration ?? 0),
                             artist: "${_episodeData.author}",
                             album: _podcast.podcastName,
                           ),
@@ -207,9 +228,10 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                           artist: "${_episodeData.author}",
                           icon: _podcast.artworkUrl,
                           album: "${_podcast.podcastName}",
-                          duration: Duration(seconds: _episodeData.duration ?? 0)
-                              .inSeconds
-                              .toString(),
+                          duration:
+                              Duration(seconds: _episodeData.duration ?? 0)
+                                  .inSeconds
+                                  .toString(),
                           listenedOn: DateTime.now().toString(),
                           podcastArtWork: _podcast.artworkUrl,
                           podcastName: "${_podcast.podcastName}",
