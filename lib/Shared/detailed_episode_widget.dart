@@ -210,6 +210,44 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                 IconButton(
                   onPressed: () async {
                     print("episodeData link: ${_episodeData.contentUrl}");
+                    _ref
+                        .read(audioController.notifier)
+                        .requestAddSongToEndOfPlaylist(
+                          Song(
+                            url: _episodeData.contentUrl!,
+                            icon: _podcast.artworkUrl,
+                            name: _episodeData.title,
+                            duration:
+                                Duration(seconds: _episodeData.duration ?? 0),
+                            artist: "${_episodeData.author}",
+                            album: _podcast.podcastName,
+                          ),
+                        );
+
+                    // _ref.read(historyController.notifier).saveToHistoryAction(
+                    //       url: _episodeData.contentUrl!.toString(),
+                    //       name: _episodeData.title,
+                    //       artist: "${_episodeData.author}",
+                    //       icon: _podcast.artworkUrl,
+                    //       album: "${_podcast.podcastName}",
+                    //       duration:
+                    //           Duration(seconds: _episodeData.duration ?? 0)
+                    //               .inSeconds
+                    //               .toString(),
+                    //       listenedOn: DateTime.now().toString(),
+                    //       podcastArtWork: _podcast.artworkUrl,
+                    //       podcastName: "${_podcast.podcastName}",
+                    //     );
+                  },
+                  icon: Icon(
+                    Icons.playlist_add,
+                    color: Theme.of(context).colorScheme.secondary,
+                    size: 24.0,
+                  ),
+                ),
+                IconButton(
+                  onPressed: () async {
+                    print("episodeData link: ${_episodeData.contentUrl}");
                     _ref.read(audioController.notifier).requestPlayingSong(
                           Song(
                             url: _episodeData.contentUrl!,

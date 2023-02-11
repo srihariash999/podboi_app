@@ -13,8 +13,8 @@ Future<MyAudioHandler> initAudioService(var ref) async {
   var s = await AudioService.init(
     builder: () => MyAudioHandler(ref),
     config: AudioServiceConfig(
-      androidNotificationChannelId: 'com.mycompany.myapp.audio',
-      androidNotificationChannelName: 'Audio Service Demo',
+      androidNotificationChannelId: 'com.zepplaud.podboi.audio',
+      androidNotificationChannelName: 'Podboi Audio Service',
       androidNotificationOngoing: true,
       androidStopForegroundOnPause: true,
     ),
@@ -35,7 +35,19 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
     await _loadSong(song);
   }
 
-  Future<void> _loadSong(Song song) async {
+  requestAddSongToEndOfPlaylist(Song song) async {
+    // Add the requested song to end of playlist.
+    state = state.copyWith(trackList: [...state.trackList, song]);
+
+    if (state.trackList.length == 1 && state.isPlaying == false) {
+      maybePlayNext();
+    }
+    // print(
+    //     " added track to playlist. Length of playlist ${state.trackList.length}");
+    // print(" name of the track added: ${song.name}");
+  }
+
+  Future _loadSong(Song song) async {
     // final mediaItem = MediaItem(
     //   id: '',
     //   album: song.album,
@@ -69,16 +81,34 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
 
     try {
       await _audioHandler.play();
+      state = state.copyWith(
+        isPlaying: true,
+        isPlayerShow: true,
+        positionStream: AudioService.position,
+        audioHandler: _audioHandler,
+      );
     } catch (e) {
       print(" cannot play this file !");
+      state = state.copyWith(isPlayerShow: false, isPlaying: false);
+      return " cannot play this file !";
     }
+  }
 
-    state = state.copyWith(
-      isPlaying: true,
-      isPlayerShow: true,
-      positionStream: AudioService.position,
-      audioHandler: _audioHandler,
-    );
+  void maybePlayNext() async {
+    if (state.trackList.isNotEmpty) {
+      // print(" track list length : ${state.trackList.length}");
+      await stop();
+      Song _song = state.trackList[0];
+      _loadSong(_song);
+      var l = [];
+      for (var i = 1; i < state.trackList.length; i++) {
+        l.add(i);
+      }
+      state = state.copyWith(trackList: [...l]);
+      // print(" updated track list length : ${state.trackList.length}");
+    } else {
+      await stop();
+    }
   }
 
   // Function to call from UI to resume playing.
@@ -92,7 +122,7 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
   }
 
   //Function to call from UI to stop playing.
-  void stop() async {
+  Future<void> stop() async {
     await _audioHandler.stop();
     state = state.copyWith(
       isPlayerShow: false,
@@ -126,19 +156,23 @@ class AudioState {
   final AudioHandler audioHandler;
   final Stream<Duration> positionStream;
   final bool playerState;
-  AudioState(
-      {required this.audioHandler,
-      required this.isPlaying,
-      required this.isPlayerShow,
-      required this.positionStream,
-      required this.playerState});
+  final List<Song> trackList;
+  AudioState({
+    required this.audioHandler,
+    required this.isPlaying,
+    required this.isPlayerShow,
+    required this.positionStream,
+    required this.playerState,
+    required this.trackList,
+  });
   factory AudioState.initial() {
     return AudioState(
         isPlaying: false,
         audioHandler: MyAudioHandler(null),
         isPlayerShow: false,
         positionStream: AudioService.position,
-        playerState: false);
+        playerState: false,
+        trackList: []);
   }
   AudioState copyWith({
     bool? isPlayerShow,
@@ -146,13 +180,16 @@ class AudioState {
     AudioHandler? audioHandler,
     Stream<Duration>? positionStream,
     bool? playerState,
+    List<Song>? trackList,
   }) {
     return AudioState(
-        audioHandler: audioHandler ?? this.audioHandler,
-        isPlayerShow: isPlayerShow ?? this.isPlayerShow,
-        isPlaying: isPlaying ?? this.isPlaying,
-        positionStream: positionStream ?? this.positionStream,
-        playerState: playerState ?? this.playerState);
+      audioHandler: audioHandler ?? this.audioHandler,
+      isPlayerShow: isPlayerShow ?? this.isPlayerShow,
+      isPlaying: isPlaying ?? this.isPlaying,
+      positionStream: positionStream ?? this.positionStream,
+      playerState: playerState ?? this.playerState,
+      trackList: trackList ?? this.trackList,
+    );
   }
 }
 
@@ -169,8 +206,12 @@ class MyAudioHandler extends BaseAudioHandler {
 
     _player.playerStateStream.listen((state) {
       if (state.processingState == ProcessingState.completed) {
-        _player.stop();
-        ref?.read(audioController.notifier).stop();
+        if (ref == null) {
+          _player.stop();
+          return;
+        }
+        ref!.read(audioController.notifier).maybePlayNext();
+        // ref?.read(audioController.notifier).stop();
       }
     });
   }
@@ -186,11 +227,11 @@ class MyAudioHandler extends BaseAudioHandler {
     );
     mediaItem.add(_m);
     try {
-      _player
+      await _player
           .setAudioSource(AudioSource.uri(Uri.parse(song.url)))
           .then((value) => mediaItem.add(_m));
     } catch (e) {
-      print(" error y'aaaaallll  ");
+      print(" error y'aaaaallll  : $e");
     }
 
     return _player.playerStateStream.asBroadcastStream();
@@ -204,7 +245,7 @@ class MyAudioHandler extends BaseAudioHandler {
 
   @override
   Future<void> stop() {
-    print(" here to call the callback");
+    // print(" here to call the callback");
     ref?.read(audioController.notifier).callBackToStopFromNotification();
     return _player.stop();
   }
