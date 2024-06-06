@@ -23,7 +23,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
-        statusBarColor: Theme.of(context).colorScheme.background,
+        statusBarColor: Theme.of(context).colorScheme.primary,
         statusBarIconBrightness: Theme.of(context).brightness == Brightness.dark
             ? Brightness.light
             : Brightness.dark,
@@ -32,7 +32,7 @@ class HomePage extends StatelessWidget {
             : Brightness.dark,
       ),
       child: Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.background,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         body: SafeArea(
           child: RefreshIndicator(
             onRefresh: _refresh,
@@ -82,7 +82,7 @@ class HomePage extends StatelessWidget {
                     ),
                   ),
                 ),
-                buildDiscoverPodcastsRow(context),
+                SliverToBoxAdapter(child: buildDiscoverPodcastsRow(context)),
               ],
             ),
           ),
@@ -162,96 +162,95 @@ class HomePage extends StatelessWidget {
       bool _isLoading =
           ref.watch(homeScreenController.select((value) => value.isLoading));
       return _isLoading
-          ? SliverToBoxAdapter(
-              child: Container(
-                height: MediaQuery.of(context).size.height * 0.6,
-                alignment: Alignment.center,
-                child: CircularProgressIndicator(
-                  color: Theme.of(context).colorScheme.secondary,
-                  strokeWidth: 1.0,
-                ),
-              ),
-            )
+          ? Container(
+            height: MediaQuery.of(context).size.height * 0.6,
+            alignment: Alignment.center,
+            child: CircularProgressIndicator(
+              color: Theme.of(context).colorScheme.secondary,
+              strokeWidth: 1.0,
+            ),
+          )
           : _topPodcasts.length == 0
-              ? SliverToBoxAdapter(
-                  child: Column(
-                    children: [
-                      Container(
-                        height: MediaQuery.of(context).size.height * 0.50,
-                        alignment: Alignment.center,
-                        child: Text(
-                          " No Podcasts to show",
-                          style: TextStyle(
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.w500,
-                            color: Theme.of(context)
-                                .colorScheme
-                                .secondary
-                                .withOpacity(0.6),
-                            fontFamily: 'Segoe',
-                          ),
-                        ),
+              ? Column(
+                children: [
+                  Container(
+                    height: MediaQuery.of(context).size.height * 0.50,
+                    alignment: Alignment.center,
+                    child: Text(
+                      " No Podcasts to show",
+                      style: TextStyle(
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.w500,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .secondary
+                            .withOpacity(0.6),
+                        fontFamily: 'Segoe',
                       ),
-                    ],
+                    ),
                   ),
-                )
-              : SliverGrid(
-                  gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 150.0,
-                    mainAxisExtent: 160.0,
-                  ),
-
-                  delegate: SliverChildBuilderDelegate(
-                    ((context, index) {
-                      Item _item = _topPodcasts[index];
-                      String genreString = "";
-                      if (_item.genre != null) {
-                        for (var e in _item.genre!) {
-                          genreString += "${e.name}, ";
+                ],
+              )
+              : Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: SliverGrid(
+                    gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                      maxCrossAxisExtent: 128.0,
+                      mainAxisSpacing: 10.0,
+                      crossAxisSpacing: 10.0,
+                    ),
+                    delegate: SliverChildBuilderDelegate(
+                      ((context, index) {
+                        Item _item = _topPodcasts[index];
+                        String genreString = "";
+                        if (_item.genre != null) {
+                          for (var e in _item.genre!) {
+                            genreString += "${e.name}, ";
+                          }
                         }
-                      }
-                      if (genreString.length > 2) {
-                        genreString =
-                            genreString.substring(0, genreString.length - 2);
-                      }
-                      SubscriptionData _podcast = SubscriptionData(
-                        id: -1,
-                        podcastId: _item.collectionId,
-                        podcastName: _item.collectionName ?? "",
-                        feedUrl: _item.feedUrl ?? "",
-                        artworkUrl: _item.bestArtworkUrl ?? "",
-                        dateAdded: DateTime.now(),
-                        releaseDate: _item.releaseDate,
-                        genre: genreString,
-                        country: _item.country,
-                        lastEpisodeDate: null,
-                        trackCount: _item.trackCount,
-                        contentAdvisory: _item.contentAdvisoryRating,
-                      );
-                      return GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => PodcastPage(
-                                subscription: _podcast,
+                        if (genreString.length > 2) {
+                          genreString =
+                              genreString.substring(0, genreString.length - 2);
+                        }
+                        SubscriptionData _podcast = SubscriptionData(
+                          id: -1,
+                          podcastId: _item.collectionId,
+                          podcastName: _item.collectionName ?? "",
+                          feedUrl: _item.feedUrl ?? "",
+                          artworkUrl: _item.bestArtworkUrl ?? "",
+                          dateAdded: DateTime.now(),
+                          releaseDate: _item.releaseDate,
+                          genre: genreString,
+                          country: _item.country,
+                          lastEpisodeDate: null,
+                          trackCount: _item.trackCount,
+                          contentAdvisory: _item.contentAdvisoryRating,
+                        );
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => PodcastPage(
+                                  subscription: _podcast,
+                                ),
                               ),
+                            );
+                          },
+                          child: Hero(
+                            tag: 'logo${_item.collectionId}',
+                            child: PodcastDisplayWidget(
+                              name: _item.collectionName ?? 'N/A',
+                              posterUrl: _item.bestArtworkUrl ?? '',
+                              context: context,
                             ),
-                          );
-                        },
-                        child: Hero(
-                          tag: 'logo${_item.collectionId}',
-                          child: PodcastDisplayWidget(
-                            name: _item.collectionName ?? 'N/A',
-                            posterUrl: _item.bestArtworkUrl ?? '',
-                            context: context,
                           ),
-                        ),
-                      );
-                    }),
-                    childCount: _topPodcasts.length,
+                        );
+                      }),
+                      childCount: _topPodcasts.length,
+                    ),
+                    // physics: BouncingScrollPhysics(),
                   ),
-                  // physics: BouncingScrollPhysics(),
-                );
+              );
     });
   }
 

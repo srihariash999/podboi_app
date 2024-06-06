@@ -15,7 +15,7 @@ class SubscriptionsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
-        statusBarColor: Theme.of(context).colorScheme.background,
+        statusBarColor: Theme.of(context).colorScheme.primary,
         statusBarIconBrightness: Theme.of(context).brightness == Brightness.dark
             ? Brightness.light
             : Brightness.dark,
@@ -24,7 +24,7 @@ class SubscriptionsPage extends StatelessWidget {
             : Brightness.dark,
       ),
       child: Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.background,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         body: SafeArea(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

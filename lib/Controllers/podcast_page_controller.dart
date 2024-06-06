@@ -63,11 +63,10 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
       updateLastEpisodeDate(podcast.podcastId!, state.podcastEpisodes);
       // print(" feed url : $feedUrl");
       ps.Podcast.loadFeed(url: feedUrl).then((ps.Podcast _podcast) async {
-        if (_podcast.episodes != null &&
-            _podcast.episodes!.length != _episodes.length) {
+        if (_podcast.episodes.length != _episodes.length) {
           if (state.isSubscribed) {
             await ref.watch(databaseServiceProvider).saveEpsiodesToCache(
-                  _podcast.episodes!
+                  _podcast.episodes
                       .map(
                         (i) => EpisodeData(
                           id: 0,
@@ -90,7 +89,7 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
                   podcastId: id,
                 );
           }
-          for (var i in _podcast.episodes!) {
+          for (var i in _podcast.episodes) {
             _episodes.add(
               EpisodeData(
                 id: 0,

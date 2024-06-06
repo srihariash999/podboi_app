@@ -25,7 +25,7 @@ class CustomSearchDelegate extends SearchDelegate<String> {
         ),
       ),
       textTheme: TextTheme(
-        headline6: TextStyle(
+        titleLarge: TextStyle(
           fontSize: 16.0,
           decoration: TextDecoration.none,
           fontWeight: FontWeight.w400,
@@ -87,8 +87,7 @@ class CustomSearchDelegate extends SearchDelegate<String> {
         return _viewController.isLoading
             ? Container(
                 margin: const EdgeInsets.only(top: 10.0),
-                // ignore: deprecated_member_use
-                color: Theme.of(context).buttonColor,
+                color:  Theme.of(context).colorScheme.primary,
                 alignment: Alignment.center,
                 child: CircularProgressIndicator(
                   strokeWidth: 1.0,
@@ -98,7 +97,7 @@ class CustomSearchDelegate extends SearchDelegate<String> {
             : _viewController.searchResults.length == 0
                 ? Container(
                     margin: const EdgeInsets.only(top: 10.0),
-                    color: Theme.of(context).colorScheme.background,
+                    color: Theme.of(context).colorScheme.primary,
                     alignment: Alignment.bottomCenter,
                     child: Text(" Search for a podcast",
                         style: TextStyle(
@@ -108,7 +107,7 @@ class CustomSearchDelegate extends SearchDelegate<String> {
                         )),
                   )
                 : Container(
-                    color: Theme.of(context).colorScheme.background,
+                    color: Theme.of(context).colorScheme.primary,
                     child: ListView.builder(
                         itemCount: _viewController.searchResults.length,
                         itemBuilder: (context, index) {
@@ -278,6 +277,6 @@ class CustomSearchDelegate extends SearchDelegate<String> {
 
   @override
   Widget buildSuggestions(BuildContext context) => Container(
-        color: Theme.of(context).colorScheme.background,
+        color: Theme.of(context).colorScheme.primary,
       );
 }

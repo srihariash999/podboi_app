@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class PodcastDisplayWidget extends StatelessWidget {
@@ -14,27 +15,16 @@ class PodcastDisplayWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 160.0,
-      width: 100.0,
-      margin: EdgeInsets.only(left: 6.0, right: 6.0),
-      child: Column(
-        children: [
-          Container(
-            height: 100.0,
-            width: 100.0,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12.0),
-            ),
-            clipBehavior: Clip.antiAlias,
-            child: Image.network(
-              posterUrl,
-              fit: BoxFit.cover,
-            ),
-          ),
-          SizedBox(
-            height: 4.0,
-          ),
-          Expanded(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(6.0),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: CachedNetworkImage(
+          imageUrl: posterUrl,
+          fadeInDuration: Duration(seconds: 1),
+          fadeOutDuration: Duration(seconds: 1),
+          errorWidget: (context, url, error) => Icon(Icons.error),
+          placeholder: (context, url) => Center(
             child: Text(
               name,
               textAlign: TextAlign.center,
@@ -46,8 +36,6 @@ class PodcastDisplayWidget extends StatelessWidget {
               ),
             ),
           ),
-        ],
-      ),
-    );
+        ));
   }
 }
