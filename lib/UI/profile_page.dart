@@ -17,7 +17,7 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
-        statusBarColor: Theme.of(context).colorScheme.background,
+        statusBarColor: Theme.of(context).colorScheme.primary,
         statusBarIconBrightness: Theme.of(context).brightness == Brightness.dark
             ? Brightness.light
             : Brightness.dark,
@@ -26,7 +26,7 @@ class ProfileScreen extends StatelessWidget {
             : Brightness.dark,
       ),
       child: Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.background,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         body: SafeArea(
           child: Column(
             children: [
@@ -119,8 +119,8 @@ class ProfileScreen extends StatelessWidget {
                                 padding: EdgeInsets.symmetric(vertical: 12.0),
                                 alignment: Alignment.center,
                                 decoration: BoxDecoration(
-                                    // ignore: deprecated_member_use
-                                    color: Theme.of(context).buttonColor,
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
                                     borderRadius: BorderRadius.circular(18.0)),
                                 child: Text(
                                   'EDIT',
@@ -350,7 +350,7 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Theme.of(context).colorScheme.background.withOpacity(0.8),
+      color: Theme.of(context).colorScheme.primary.withOpacity(0.8),
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -538,8 +538,7 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget> {
                       padding: EdgeInsets.symmetric(vertical: 12.0),
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                          // ignore: deprecated_member_use
-                          color: Theme.of(context).buttonColor,
+                          color: Theme.of(context).colorScheme.primary,
                           borderRadius: BorderRadius.circular(18.0)),
                       child: Text(
                         _loading ? 'Saving...' : 'Save',

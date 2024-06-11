@@ -107,94 +107,21 @@ class PodcastPage extends StatelessWidget {
     );
   }
 
-  void onTapAboutPodcast(BuildContext context) {
-    showModalBottomSheet(
-        enableDrag: true,
-        isScrollControlled: true,
-        context: context,
-        builder: (context) {
-          return Container(
-            height: MediaQuery.of(context).size.height * .7,
-            child: Column(
-              children: [
-                SizedBox(height: 16.0),
-                Container(
-                  height: 5.0,
-                  width: 64.0,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.secondary,
-                    borderRadius: BorderRadius.circular(18.0),
-                  ),
-                ),
-                SizedBox(height: 16.0),
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                left: 8.0, bottom: 12.0, top: 12.0),
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                "About Podcast",
-                                style: TextStyle(
-                                  fontSize: 24.0,
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .secondary
-                                      .withOpacity(0.8),
-                                  fontFamily: 'Segoe',
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                            ),
-                          ),
-                          Consumer(
-                            builder: (context, ref, child) {
-                              String _description = ref.watch(
-                                  podcastPageViewController(subscription)
-                                      .select((value) => value.description));
-                              bool _isLoading = ref.watch(
-                                podcastPageViewController(subscription)
-                                    .select((value) => value.isLoading),
-                              );
-                              return _isLoading
-                                  ? Container(
-                                      width: 200.0,
-                                      height: 1.0,
-                                      child: LinearProgressIndicator(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .secondary,
-                                        backgroundColor:
-                                            Theme.of(context).highlightColor,
-                                        minHeight: 1,
-                                      ),
-                                    )
-                                  : Html(
-                                      data: _description,
-                                    );
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          );
-        });
-  }
+  // void onTapAboutPodcast(BuildContext context) {
+  //   showModalBottomSheet(
+  //       enableDrag: true,
+  //       isScrollControlled: true,
+  //       context: context,
+  //       builder: (context) {
+  //         return
+  //       });
+  // }
 
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
-        statusBarColor: Theme.of(context).colorScheme.background,
+        statusBarColor: Theme.of(context).colorScheme.primary,
         statusBarIconBrightness: Theme.of(context).brightness == Brightness.dark
             ? Brightness.light
             : Brightness.dark,
@@ -203,13 +130,18 @@ class PodcastPage extends StatelessWidget {
             : Brightness.dark,
       ),
       child: Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.background,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         body: Padding(
           padding: const EdgeInsets.only(top: 8.0),
           child: SafeArea(
             child: NestedScrollView(
               headerSliverBuilder: (context, b) {
                 return [
+                  // Container(
+                  //   color: Colors.yellowAccent,
+                  //   height: 200,
+                  //   width: double.infinity,
+                  // ),
                   SliverAppBar(
                     leading: InkWell(
                       onTap: () {
@@ -253,7 +185,7 @@ class PodcastPage extends StatelessWidget {
                     ],
                     centerTitle: false,
                     expandedHeight: 32.0,
-                    backgroundColor: Theme.of(context).colorScheme.background,
+                    backgroundColor: Theme.of(context).colorScheme.primary,
                     elevation: 0.0,
                     floating: true,
                     snap: true,
@@ -403,7 +335,9 @@ class PodcastPage extends StatelessWidget {
                                   itemBuilder: (context, index) {
                                     if (index == 0) {
                                       // return Container();
-                                      return buildTopUI(context);
+                                      return EpisodeDetailComponent(
+                                        subscription: subscription,
+                                      );
                                     }
                                     EpisodeData _episode = _viewController
                                         .podcastEpisodes[index - 1];
@@ -427,8 +361,19 @@ class PodcastPage extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget buildTopUI(BuildContext context) {
+class EpisodeDetailComponent extends StatefulWidget {
+  const EpisodeDetailComponent({super.key, required this.subscription});
+  final SubscriptionData subscription;
+  @override
+  State<EpisodeDetailComponent> createState() => _EpisodeDetailComponentState();
+}
+
+class _EpisodeDetailComponentState extends State<EpisodeDetailComponent> {
+  bool isTapped = false;
+  @override
+  Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.only(left: 16.0, right: 16.0),
       child: Column(
@@ -440,25 +385,33 @@ class PodcastPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child:
-                    // Hero(
-                    //   tag: 'logo${podcast.collectionId}',
-                    //   child:
-                    Container(
-                  width: 100.0,
-                  height: 100.0,
-                  clipBehavior: Clip.antiAlias,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12.0),
-                  ),
-                  child: Image.network(
-                    subscription.artworkUrl,
-                    fit: BoxFit.cover,
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    isTapped = !isTapped;
+                  });
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: AnimatedContainer(
+                    height: isTapped ? 110.0 : 100.0,
+                    width: isTapped ? 110 : 100.0,
+                    duration: Duration(milliseconds: 200),
+                    curve: Curves.fastOutSlowIn,
+                    child: Container(
+                      width: 100.0,
+                      height: 100.0,
+                      clipBehavior: Clip.antiAlias,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                      child: Image.network(
+                        widget.subscription.artworkUrl,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
                   ),
                 ),
-                // ),
               ),
               SizedBox(
                 width: 16.0,
@@ -472,7 +425,7 @@ class PodcastPage extends StatelessWidget {
                     width: MediaQuery.of(context).size.width * 0.60,
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      subscription.podcastName,
+                      widget.subscription.podcastName,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
@@ -496,10 +449,10 @@ class PodcastPage extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          if (subscription.releaseDate != null)
+                          if (widget.subscription.releaseDate != null)
                             Text(
                               DateFormat('yMMMd')
-                                  .format(subscription.releaseDate!),
+                                  .format(widget.subscription.releaseDate!),
                               style: TextStyle(
                                 fontSize: 14.0,
                                 color: Theme.of(context)
@@ -509,12 +462,12 @@ class PodcastPage extends StatelessWidget {
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
-                          if (subscription.releaseDate != null)
+                          if (widget.subscription.releaseDate != null)
                             SizedBox(
                               width: 18.0,
                             ),
                           Text(
-                            subscription.country ?? '',
+                            widget.subscription.country ?? '',
                             style: TextStyle(
                               fontSize: 14.0,
                               color: Theme.of(context)
@@ -531,7 +484,7 @@ class PodcastPage extends StatelessWidget {
                         height: 4.0,
                       ),
                       Text(
-                        subscription.genre ?? "",
+                        widget.subscription.genre ?? "",
                         style: TextStyle(
                           fontSize: 12.0,
                           color: Theme.of(context)
@@ -578,11 +531,11 @@ class PodcastPage extends StatelessWidget {
               Consumer(
                 builder: (context, ref, child) {
                   bool _isSubbed = ref.watch(
-                    podcastPageViewController(subscription)
+                    podcastPageViewController(widget.subscription)
                         .select((value) => value.isSubscribed),
                   );
                   bool _isLoading = ref.watch(
-                    podcastPageViewController(subscription)
+                    podcastPageViewController(widget.subscription)
                         .select((value) => value.isLoading),
                   );
                   return _isLoading
@@ -599,11 +552,11 @@ class PodcastPage extends StatelessWidget {
                           ? GestureDetector(
                               onTap: () {
                                 ref
-                                    .read(
-                                        podcastPageViewController(subscription)
-                                            .notifier)
+                                    .read(podcastPageViewController(
+                                            widget.subscription)
+                                        .notifier)
                                     .removeFromSubscriptionsAction(
-                                        subscription);
+                                        widget.subscription);
                               },
                               child: Container(
                                 decoration: BoxDecoration(
@@ -637,10 +590,11 @@ class PodcastPage extends StatelessWidget {
                           : GestureDetector(
                               onTap: () {
                                 ref
-                                    .read(
-                                        podcastPageViewController(subscription)
-                                            .notifier)
-                                    .saveToSubscriptionsAction(subscription);
+                                    .read(podcastPageViewController(
+                                            widget.subscription)
+                                        .notifier)
+                                    .saveToSubscriptionsAction(
+                                        widget.subscription);
                               },
                               child: Container(
                                 decoration: BoxDecoration(
@@ -688,7 +642,7 @@ class PodcastPage extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      "${subscription.contentAdvisory ?? ' N.A '}",
+                      "${widget.subscription.contentAdvisory ?? ' N.A '}",
                       style: TextStyle(
                         fontSize: 12.0,
                         color: Theme.of(context)
@@ -707,45 +661,74 @@ class PodcastPage extends StatelessWidget {
           SizedBox(
             height: 12.0,
           ),
-          InkWell(
-            onTap: () => onTapAboutPodcast(context),
-            child: Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12.0),
-                // color: Colors.white38,
-                color:
-                    Theme.of(context).colorScheme.secondary.withOpacity(0.05),
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      "About Podcast",
-                      style: TextStyle(
-                        fontSize: 18.0,
-                        color: Theme.of(context)
-                            .colorScheme
-                            .secondary
-                            .withOpacity(0.6),
-                        fontFamily: 'Segoe',
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: null,
-                    icon: Icon(
-                      Icons.arrow_forward_ios,
-                      color: Theme.of(context).colorScheme.secondary,
-                      size: 16.0,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
+          if (isTapped)
+            Column(
+              children: [
+                Consumer(
+                  builder: (context, ref, child) {
+                    String _description = ref.watch(
+                        podcastPageViewController(widget.subscription)
+                            .select((value) => value.description));
+                    bool _isLoading = ref.watch(
+                      podcastPageViewController(widget.subscription)
+                          .select((value) => value.isLoading),
+                    );
+                    return _isLoading
+                        ? Container(
+                            width: 200.0,
+                            height: 1.0,
+                            child: LinearProgressIndicator(
+                              color: Theme.of(context).colorScheme.secondary,
+                              backgroundColor: Theme.of(context).highlightColor,
+                              minHeight: 1,
+                            ),
+                          )
+                        : Html(
+                            data: _description,
+                          );
+                  },
+                ),
+              ],
+            )
+          // InkWell(
+          //   onTap: () => onTapAboutPodcast(context),
+          //   child: Container(
+          //     padding:
+          //         const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+          //     decoration: BoxDecoration(
+          //       borderRadius: BorderRadius.circular(12.0),
+          //       // color: Colors.white38,
+          //       color:
+          //           Theme.of(context).colorScheme.secondary.withOpacity(0.05),
+          //     ),
+          //     child: Row(
+          //       children: [
+          //         Expanded(
+          //           child: Text(
+          //             "About Podcast",
+          //             style: TextStyle(
+          //               fontSize: 18.0,
+          //               color: Theme.of(context)
+          //                   .colorScheme
+          //                   .secondary
+          //                   .withOpacity(0.6),
+          //               fontFamily: 'Segoe',
+          //               fontWeight: FontWeight.w600,
+          //             ),
+          //           ),
+          //         ),
+          //         IconButton(
+          //           onPressed: null,
+          //           icon: Icon(
+          //             Icons.arrow_forward_ios,
+          //             color: Theme.of(context).colorScheme.secondary,
+          //             size: 16.0,
+          //           ),
+          //         ),
+          //       ],
+          //     ),
+          //   ),
+          // ),
           // ExpandablePanel(
           //   theme: ExpandableThemeData(
           //       iconColor: Theme.of(context).colorScheme.secondary),

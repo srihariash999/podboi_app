@@ -81,13 +81,11 @@ class ThemeState {
 ThemeData _lightTheme = ThemeData(
   primaryColor: Color(0xFF302F4D),
   primaryColorLight: Color(0xFF302F4D),
-  // backgroundColor: Colors.white,
   highlightColor: Color(0xFF98c1d9),
-  // ignore: deprecated_member_use
-  buttonColor: Color(0xFF3d5a80),
+  // buttonColor: Color(0xFF3d5a80),
   colorScheme: ColorScheme.light(
     secondary: Colors.black,
-    background: Colors.white,
+    primary: Colors.white,
   ),
 );
 
@@ -96,9 +94,8 @@ ThemeData _darkTheme = ThemeData(
   primaryColorLight: Colors.white,
   colorScheme: ColorScheme.dark(
     secondary: Colors.white,
-    background: Color(0xFF120D31),
+    primary: Color(0xFF120D31),
   ),
   highlightColor: Color(0xFF98c1d9),
-  // ignore: deprecated_member_use
-  buttonColor: Color(0xFF3d5a80),
+  // buttonColor: Color(0xFF3d5a80),
 );

@@ -88,9 +88,10 @@ class ListeningHistory extends Table
         name
       ];
   @override
-  String get aliasedName => _alias ?? 'listening_history';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'listening_history';
+  String get actualTableName => $name;
+  static const String $name = 'listening_history';
   @override
   VerificationContext validateIntegrity(
       Insertable<ListeningHistoryData> instance,
@@ -607,9 +608,10 @@ class Subscription extends Table
         contentAdvisory
       ];
   @override
-  String get aliasedName => _alias ?? 'subscription';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'subscription';
+  String get actualTableName => $name;
+  static const String $name = 'subscription';
   @override
   VerificationContext validateIntegrity(Insertable<SubscriptionData> instance,
       {bool isInserting = false}) {
@@ -1223,9 +1225,10 @@ class Episode extends Table with TableInfo<Episode, EpisodeData> {
         podcastName
       ];
   @override
-  String get aliasedName => _alias ?? 'episode';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'episode';
+  String get actualTableName => $name;
+  static const String $name = 'episode';
   @override
   VerificationContext validateIntegrity(Insertable<EpisodeData> instance,
       {bool isInserting = false}) {
@@ -1781,6 +1784,7 @@ class EpisodeCompanion extends UpdateCompanion<EpisodeData> {
 
 abstract class _$MyDb extends GeneratedDatabase {
   _$MyDb(QueryExecutor e) : super(e);
+  _$MyDbManager get managers => _$MyDbManager(this);
   late final ListeningHistory listeningHistory = ListeningHistory(this);
   late final Subscription subscription = Subscription(this);
   late final Episode episode = Episode(this);
@@ -1999,4 +2003,750 @@ abstract class _$MyDb extends GeneratedDatabase {
           ),
         ],
       );
+}
+
+typedef $ListeningHistoryInsertCompanionBuilder = ListeningHistoryCompanion
+    Function({
+  Value<int> id,
+  required String url,
+  required String artist,
+  required String icon,
+  required String album,
+  required String duration,
+  required String podcastName,
+  required String podcastArtwork,
+  required String listenedOn,
+  required String name,
+});
+typedef $ListeningHistoryUpdateCompanionBuilder = ListeningHistoryCompanion
+    Function({
+  Value<int> id,
+  Value<String> url,
+  Value<String> artist,
+  Value<String> icon,
+  Value<String> album,
+  Value<String> duration,
+  Value<String> podcastName,
+  Value<String> podcastArtwork,
+  Value<String> listenedOn,
+  Value<String> name,
+});
+
+class $ListeningHistoryTableManager extends RootTableManager<
+    _$MyDb,
+    ListeningHistory,
+    ListeningHistoryData,
+    $ListeningHistoryFilterComposer,
+    $ListeningHistoryOrderingComposer,
+    $ListeningHistoryProcessedTableManager,
+    $ListeningHistoryInsertCompanionBuilder,
+    $ListeningHistoryUpdateCompanionBuilder> {
+  $ListeningHistoryTableManager(_$MyDb db, ListeningHistory table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $ListeningHistoryFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $ListeningHistoryOrderingComposer(ComposerState(db, table)),
+          getChildManagerBuilder: (p) =>
+              $ListeningHistoryProcessedTableManager(p),
+          getUpdateCompanionBuilder: ({
+            Value<int> id = const Value.absent(),
+            Value<String> url = const Value.absent(),
+            Value<String> artist = const Value.absent(),
+            Value<String> icon = const Value.absent(),
+            Value<String> album = const Value.absent(),
+            Value<String> duration = const Value.absent(),
+            Value<String> podcastName = const Value.absent(),
+            Value<String> podcastArtwork = const Value.absent(),
+            Value<String> listenedOn = const Value.absent(),
+            Value<String> name = const Value.absent(),
+          }) =>
+              ListeningHistoryCompanion(
+            id: id,
+            url: url,
+            artist: artist,
+            icon: icon,
+            album: album,
+            duration: duration,
+            podcastName: podcastName,
+            podcastArtwork: podcastArtwork,
+            listenedOn: listenedOn,
+            name: name,
+          ),
+          getInsertCompanionBuilder: ({
+            Value<int> id = const Value.absent(),
+            required String url,
+            required String artist,
+            required String icon,
+            required String album,
+            required String duration,
+            required String podcastName,
+            required String podcastArtwork,
+            required String listenedOn,
+            required String name,
+          }) =>
+              ListeningHistoryCompanion.insert(
+            id: id,
+            url: url,
+            artist: artist,
+            icon: icon,
+            album: album,
+            duration: duration,
+            podcastName: podcastName,
+            podcastArtwork: podcastArtwork,
+            listenedOn: listenedOn,
+            name: name,
+          ),
+        ));
+}
+
+class $ListeningHistoryProcessedTableManager extends ProcessedTableManager<
+    _$MyDb,
+    ListeningHistory,
+    ListeningHistoryData,
+    $ListeningHistoryFilterComposer,
+    $ListeningHistoryOrderingComposer,
+    $ListeningHistoryProcessedTableManager,
+    $ListeningHistoryInsertCompanionBuilder,
+    $ListeningHistoryUpdateCompanionBuilder> {
+  $ListeningHistoryProcessedTableManager(super.$state);
+}
+
+class $ListeningHistoryFilterComposer
+    extends FilterComposer<_$MyDb, ListeningHistory> {
+  $ListeningHistoryFilterComposer(super.$state);
+  ColumnFilters<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get url => $state.composableBuilder(
+      column: $state.table.url,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get artist => $state.composableBuilder(
+      column: $state.table.artist,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get icon => $state.composableBuilder(
+      column: $state.table.icon,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get album => $state.composableBuilder(
+      column: $state.table.album,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get duration => $state.composableBuilder(
+      column: $state.table.duration,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get podcastName => $state.composableBuilder(
+      column: $state.table.podcastName,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get podcastArtwork => $state.composableBuilder(
+      column: $state.table.podcastArtwork,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get listenedOn => $state.composableBuilder(
+      column: $state.table.listenedOn,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get name => $state.composableBuilder(
+      column: $state.table.name,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+}
+
+class $ListeningHistoryOrderingComposer
+    extends OrderingComposer<_$MyDb, ListeningHistory> {
+  $ListeningHistoryOrderingComposer(super.$state);
+  ColumnOrderings<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get url => $state.composableBuilder(
+      column: $state.table.url,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get artist => $state.composableBuilder(
+      column: $state.table.artist,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get icon => $state.composableBuilder(
+      column: $state.table.icon,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get album => $state.composableBuilder(
+      column: $state.table.album,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get duration => $state.composableBuilder(
+      column: $state.table.duration,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get podcastName => $state.composableBuilder(
+      column: $state.table.podcastName,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get podcastArtwork => $state.composableBuilder(
+      column: $state.table.podcastArtwork,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get listenedOn => $state.composableBuilder(
+      column: $state.table.listenedOn,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get name => $state.composableBuilder(
+      column: $state.table.name,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+typedef $SubscriptionInsertCompanionBuilder = SubscriptionCompanion Function({
+  Value<int> id,
+  required String podcastName,
+  Value<int?> podcastId,
+  required String feedUrl,
+  required String artworkUrl,
+  required DateTime dateAdded,
+  Value<DateTime?> lastEpisodeDate,
+  Value<int?> trackCount,
+  Value<DateTime?> releaseDate,
+  Value<String?> country,
+  Value<String?> genre,
+  Value<String?> contentAdvisory,
+});
+typedef $SubscriptionUpdateCompanionBuilder = SubscriptionCompanion Function({
+  Value<int> id,
+  Value<String> podcastName,
+  Value<int?> podcastId,
+  Value<String> feedUrl,
+  Value<String> artworkUrl,
+  Value<DateTime> dateAdded,
+  Value<DateTime?> lastEpisodeDate,
+  Value<int?> trackCount,
+  Value<DateTime?> releaseDate,
+  Value<String?> country,
+  Value<String?> genre,
+  Value<String?> contentAdvisory,
+});
+
+class $SubscriptionTableManager extends RootTableManager<
+    _$MyDb,
+    Subscription,
+    SubscriptionData,
+    $SubscriptionFilterComposer,
+    $SubscriptionOrderingComposer,
+    $SubscriptionProcessedTableManager,
+    $SubscriptionInsertCompanionBuilder,
+    $SubscriptionUpdateCompanionBuilder> {
+  $SubscriptionTableManager(_$MyDb db, Subscription table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $SubscriptionFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $SubscriptionOrderingComposer(ComposerState(db, table)),
+          getChildManagerBuilder: (p) => $SubscriptionProcessedTableManager(p),
+          getUpdateCompanionBuilder: ({
+            Value<int> id = const Value.absent(),
+            Value<String> podcastName = const Value.absent(),
+            Value<int?> podcastId = const Value.absent(),
+            Value<String> feedUrl = const Value.absent(),
+            Value<String> artworkUrl = const Value.absent(),
+            Value<DateTime> dateAdded = const Value.absent(),
+            Value<DateTime?> lastEpisodeDate = const Value.absent(),
+            Value<int?> trackCount = const Value.absent(),
+            Value<DateTime?> releaseDate = const Value.absent(),
+            Value<String?> country = const Value.absent(),
+            Value<String?> genre = const Value.absent(),
+            Value<String?> contentAdvisory = const Value.absent(),
+          }) =>
+              SubscriptionCompanion(
+            id: id,
+            podcastName: podcastName,
+            podcastId: podcastId,
+            feedUrl: feedUrl,
+            artworkUrl: artworkUrl,
+            dateAdded: dateAdded,
+            lastEpisodeDate: lastEpisodeDate,
+            trackCount: trackCount,
+            releaseDate: releaseDate,
+            country: country,
+            genre: genre,
+            contentAdvisory: contentAdvisory,
+          ),
+          getInsertCompanionBuilder: ({
+            Value<int> id = const Value.absent(),
+            required String podcastName,
+            Value<int?> podcastId = const Value.absent(),
+            required String feedUrl,
+            required String artworkUrl,
+            required DateTime dateAdded,
+            Value<DateTime?> lastEpisodeDate = const Value.absent(),
+            Value<int?> trackCount = const Value.absent(),
+            Value<DateTime?> releaseDate = const Value.absent(),
+            Value<String?> country = const Value.absent(),
+            Value<String?> genre = const Value.absent(),
+            Value<String?> contentAdvisory = const Value.absent(),
+          }) =>
+              SubscriptionCompanion.insert(
+            id: id,
+            podcastName: podcastName,
+            podcastId: podcastId,
+            feedUrl: feedUrl,
+            artworkUrl: artworkUrl,
+            dateAdded: dateAdded,
+            lastEpisodeDate: lastEpisodeDate,
+            trackCount: trackCount,
+            releaseDate: releaseDate,
+            country: country,
+            genre: genre,
+            contentAdvisory: contentAdvisory,
+          ),
+        ));
+}
+
+class $SubscriptionProcessedTableManager extends ProcessedTableManager<
+    _$MyDb,
+    Subscription,
+    SubscriptionData,
+    $SubscriptionFilterComposer,
+    $SubscriptionOrderingComposer,
+    $SubscriptionProcessedTableManager,
+    $SubscriptionInsertCompanionBuilder,
+    $SubscriptionUpdateCompanionBuilder> {
+  $SubscriptionProcessedTableManager(super.$state);
+}
+
+class $SubscriptionFilterComposer extends FilterComposer<_$MyDb, Subscription> {
+  $SubscriptionFilterComposer(super.$state);
+  ColumnFilters<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get podcastName => $state.composableBuilder(
+      column: $state.table.podcastName,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get podcastId => $state.composableBuilder(
+      column: $state.table.podcastId,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get feedUrl => $state.composableBuilder(
+      column: $state.table.feedUrl,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get artworkUrl => $state.composableBuilder(
+      column: $state.table.artworkUrl,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<DateTime> get dateAdded => $state.composableBuilder(
+      column: $state.table.dateAdded,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<DateTime> get lastEpisodeDate => $state.composableBuilder(
+      column: $state.table.lastEpisodeDate,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get trackCount => $state.composableBuilder(
+      column: $state.table.trackCount,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<DateTime> get releaseDate => $state.composableBuilder(
+      column: $state.table.releaseDate,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get country => $state.composableBuilder(
+      column: $state.table.country,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get genre => $state.composableBuilder(
+      column: $state.table.genre,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get contentAdvisory => $state.composableBuilder(
+      column: $state.table.contentAdvisory,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+}
+
+class $SubscriptionOrderingComposer
+    extends OrderingComposer<_$MyDb, Subscription> {
+  $SubscriptionOrderingComposer(super.$state);
+  ColumnOrderings<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get podcastName => $state.composableBuilder(
+      column: $state.table.podcastName,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get podcastId => $state.composableBuilder(
+      column: $state.table.podcastId,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get feedUrl => $state.composableBuilder(
+      column: $state.table.feedUrl,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get artworkUrl => $state.composableBuilder(
+      column: $state.table.artworkUrl,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<DateTime> get dateAdded => $state.composableBuilder(
+      column: $state.table.dateAdded,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<DateTime> get lastEpisodeDate => $state.composableBuilder(
+      column: $state.table.lastEpisodeDate,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get trackCount => $state.composableBuilder(
+      column: $state.table.trackCount,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<DateTime> get releaseDate => $state.composableBuilder(
+      column: $state.table.releaseDate,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get country => $state.composableBuilder(
+      column: $state.table.country,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get genre => $state.composableBuilder(
+      column: $state.table.genre,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get contentAdvisory => $state.composableBuilder(
+      column: $state.table.contentAdvisory,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+typedef $EpisodeInsertCompanionBuilder = EpisodeCompanion Function({
+  Value<int> id,
+  required String guid,
+  required String title,
+  required String description,
+  Value<String?> link,
+  Value<DateTime?> publicationDate,
+  Value<String?> contentUrl,
+  Value<String?> imageUrl,
+  Value<String?> author,
+  Value<int?> season,
+  Value<int?> episodeNumber,
+  Value<int?> duration,
+  Value<int?> podcastId,
+  Value<String?> podcastName,
+});
+typedef $EpisodeUpdateCompanionBuilder = EpisodeCompanion Function({
+  Value<int> id,
+  Value<String> guid,
+  Value<String> title,
+  Value<String> description,
+  Value<String?> link,
+  Value<DateTime?> publicationDate,
+  Value<String?> contentUrl,
+  Value<String?> imageUrl,
+  Value<String?> author,
+  Value<int?> season,
+  Value<int?> episodeNumber,
+  Value<int?> duration,
+  Value<int?> podcastId,
+  Value<String?> podcastName,
+});
+
+class $EpisodeTableManager extends RootTableManager<
+    _$MyDb,
+    Episode,
+    EpisodeData,
+    $EpisodeFilterComposer,
+    $EpisodeOrderingComposer,
+    $EpisodeProcessedTableManager,
+    $EpisodeInsertCompanionBuilder,
+    $EpisodeUpdateCompanionBuilder> {
+  $EpisodeTableManager(_$MyDb db, Episode table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer: $EpisodeFilterComposer(ComposerState(db, table)),
+          orderingComposer: $EpisodeOrderingComposer(ComposerState(db, table)),
+          getChildManagerBuilder: (p) => $EpisodeProcessedTableManager(p),
+          getUpdateCompanionBuilder: ({
+            Value<int> id = const Value.absent(),
+            Value<String> guid = const Value.absent(),
+            Value<String> title = const Value.absent(),
+            Value<String> description = const Value.absent(),
+            Value<String?> link = const Value.absent(),
+            Value<DateTime?> publicationDate = const Value.absent(),
+            Value<String?> contentUrl = const Value.absent(),
+            Value<String?> imageUrl = const Value.absent(),
+            Value<String?> author = const Value.absent(),
+            Value<int?> season = const Value.absent(),
+            Value<int?> episodeNumber = const Value.absent(),
+            Value<int?> duration = const Value.absent(),
+            Value<int?> podcastId = const Value.absent(),
+            Value<String?> podcastName = const Value.absent(),
+          }) =>
+              EpisodeCompanion(
+            id: id,
+            guid: guid,
+            title: title,
+            description: description,
+            link: link,
+            publicationDate: publicationDate,
+            contentUrl: contentUrl,
+            imageUrl: imageUrl,
+            author: author,
+            season: season,
+            episodeNumber: episodeNumber,
+            duration: duration,
+            podcastId: podcastId,
+            podcastName: podcastName,
+          ),
+          getInsertCompanionBuilder: ({
+            Value<int> id = const Value.absent(),
+            required String guid,
+            required String title,
+            required String description,
+            Value<String?> link = const Value.absent(),
+            Value<DateTime?> publicationDate = const Value.absent(),
+            Value<String?> contentUrl = const Value.absent(),
+            Value<String?> imageUrl = const Value.absent(),
+            Value<String?> author = const Value.absent(),
+            Value<int?> season = const Value.absent(),
+            Value<int?> episodeNumber = const Value.absent(),
+            Value<int?> duration = const Value.absent(),
+            Value<int?> podcastId = const Value.absent(),
+            Value<String?> podcastName = const Value.absent(),
+          }) =>
+              EpisodeCompanion.insert(
+            id: id,
+            guid: guid,
+            title: title,
+            description: description,
+            link: link,
+            publicationDate: publicationDate,
+            contentUrl: contentUrl,
+            imageUrl: imageUrl,
+            author: author,
+            season: season,
+            episodeNumber: episodeNumber,
+            duration: duration,
+            podcastId: podcastId,
+            podcastName: podcastName,
+          ),
+        ));
+}
+
+class $EpisodeProcessedTableManager extends ProcessedTableManager<
+    _$MyDb,
+    Episode,
+    EpisodeData,
+    $EpisodeFilterComposer,
+    $EpisodeOrderingComposer,
+    $EpisodeProcessedTableManager,
+    $EpisodeInsertCompanionBuilder,
+    $EpisodeUpdateCompanionBuilder> {
+  $EpisodeProcessedTableManager(super.$state);
+}
+
+class $EpisodeFilterComposer extends FilterComposer<_$MyDb, Episode> {
+  $EpisodeFilterComposer(super.$state);
+  ColumnFilters<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get guid => $state.composableBuilder(
+      column: $state.table.guid,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get title => $state.composableBuilder(
+      column: $state.table.title,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get description => $state.composableBuilder(
+      column: $state.table.description,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get link => $state.composableBuilder(
+      column: $state.table.link,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<DateTime> get publicationDate => $state.composableBuilder(
+      column: $state.table.publicationDate,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get contentUrl => $state.composableBuilder(
+      column: $state.table.contentUrl,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get imageUrl => $state.composableBuilder(
+      column: $state.table.imageUrl,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get author => $state.composableBuilder(
+      column: $state.table.author,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get season => $state.composableBuilder(
+      column: $state.table.season,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get episodeNumber => $state.composableBuilder(
+      column: $state.table.episodeNumber,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get duration => $state.composableBuilder(
+      column: $state.table.duration,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get podcastId => $state.composableBuilder(
+      column: $state.table.podcastId,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get podcastName => $state.composableBuilder(
+      column: $state.table.podcastName,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+}
+
+class $EpisodeOrderingComposer extends OrderingComposer<_$MyDb, Episode> {
+  $EpisodeOrderingComposer(super.$state);
+  ColumnOrderings<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get guid => $state.composableBuilder(
+      column: $state.table.guid,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get title => $state.composableBuilder(
+      column: $state.table.title,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get description => $state.composableBuilder(
+      column: $state.table.description,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get link => $state.composableBuilder(
+      column: $state.table.link,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<DateTime> get publicationDate => $state.composableBuilder(
+      column: $state.table.publicationDate,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get contentUrl => $state.composableBuilder(
+      column: $state.table.contentUrl,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get imageUrl => $state.composableBuilder(
+      column: $state.table.imageUrl,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get author => $state.composableBuilder(
+      column: $state.table.author,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get season => $state.composableBuilder(
+      column: $state.table.season,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get episodeNumber => $state.composableBuilder(
+      column: $state.table.episodeNumber,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get duration => $state.composableBuilder(
+      column: $state.table.duration,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get podcastId => $state.composableBuilder(
+      column: $state.table.podcastId,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get podcastName => $state.composableBuilder(
+      column: $state.table.podcastName,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+class _$MyDbManager {
+  final _$MyDb _db;
+  _$MyDbManager(this._db);
+  $ListeningHistoryTableManager get listeningHistory =>
+      $ListeningHistoryTableManager(_db, _db.listeningHistory);
+  $SubscriptionTableManager get subscription =>
+      $SubscriptionTableManager(_db, _db.subscription);
+  $EpisodeTableManager get episode => $EpisodeTableManager(_db, _db.episode);
 }
