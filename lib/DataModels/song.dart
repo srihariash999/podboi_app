@@ -5,11 +5,12 @@ class Song {
   final String icon;
   final String album;
   final Duration? duration;
-  Song(
-      {required this.url,
-      required this.name,
-      required this.artist,
-      required this.icon,
-      required this.album,
-      required this.duration});
+  Song({
+    required this.url,
+    required this.name,
+    required this.artist,
+    required this.icon,
+    required this.album,
+    required this.duration,
+  });
 }

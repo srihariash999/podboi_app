@@ -111,20 +111,21 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                               .withOpacity(0.50),
                         ),
                       ),
-                      Text(
-                        DateFormat('yMMMd').format(
-                          _episodeData.publicationDate!.toLocal(),
+                      if (_episodeData.publicationDate != null)
+                        Text(
+                          DateFormat('yMMMd').format(
+                            _episodeData.publicationDate!.toLocal(),
+                          ),
+                          style: TextStyle(
+                            fontSize: 11.0,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .secondary
+                                .withOpacity(0.40),
+                            fontFamily: 'Segoe',
+                            fontWeight: FontWeight.w800,
+                          ),
                         ),
-                        style: TextStyle(
-                          fontSize: 11.0,
-                          color: Theme.of(context)
-                              .colorScheme
-                              .secondary
-                              .withOpacity(0.40),
-                          fontFamily: 'Segoe',
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
                       SizedBox(width: 12.0),
                       Text(
                         (_episodeData.season != null
@@ -220,6 +221,7 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                             artist: "${_episodeData.author}",
                             album: _podcast.podcastName,
                           ),
+                          _episodeData,
                         );
 
                     _ref.read(historyController.notifier).saveToHistoryAction(

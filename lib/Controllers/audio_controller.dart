@@ -3,6 +3,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:podboi/DataModels/song.dart';
+import 'package:podboi/Services/database/database.dart';
 
 final audioController =
     StateNotifierProvider<AudioStateNotifier, AudioState>((ref) {
@@ -31,11 +32,11 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
 
   late final MyAudioHandler _audioHandler;
 
-  requestPlayingSong(Song song) async {
-    await _loadSong(song);
+  Future<void> requestPlayingSong(Song song, EpisodeData? episodeData) async {
+    await _loadSong(song, episodeData);
   }
 
-  Future<void> _loadSong(Song song) async {
+  Future<void> _loadSong(Song song, EpisodeData? episodeData) async {
     // final mediaItem = MediaItem(
     //   id: '',
     //   album: song.album,
@@ -47,7 +48,9 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
       playerState: false,
       isPlayerShow: true,
       isPlaying: true,
+      episodeData: episodeData ?? null,
     );
+
     var _stream = await _audioHandler.prepareForPlaying(song);
 
     _stream.listen((pst) {
@@ -97,6 +100,7 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
     state = state.copyWith(
       isPlayerShow: false,
       isPlaying: false,
+      episodeData: null,
     );
   }
 
@@ -105,6 +109,7 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
     state = state.copyWith(
       isPlayerShow: false,
       isPlaying: false,
+      episodeData: null,
     );
   }
 
@@ -126,19 +131,24 @@ class AudioState {
   final AudioHandler audioHandler;
   final Stream<Duration> positionStream;
   final bool playerState;
-  AudioState(
-      {required this.audioHandler,
-      required this.isPlaying,
-      required this.isPlayerShow,
-      required this.positionStream,
-      required this.playerState});
+  final EpisodeData? episodeData;
+  AudioState({
+    required this.audioHandler,
+    required this.isPlaying,
+    required this.isPlayerShow,
+    required this.positionStream,
+    required this.playerState,
+    required this.episodeData,
+  });
   factory AudioState.initial() {
     return AudioState(
-        isPlaying: false,
-        audioHandler: MyAudioHandler(null),
-        isPlayerShow: false,
-        positionStream: AudioService.position,
-        playerState: false);
+      isPlaying: false,
+      audioHandler: MyAudioHandler(null),
+      isPlayerShow: false,
+      positionStream: AudioService.position,
+      playerState: false,
+      episodeData: null,
+    );
   }
   AudioState copyWith({
     bool? isPlayerShow,
@@ -146,13 +156,16 @@ class AudioState {
     AudioHandler? audioHandler,
     Stream<Duration>? positionStream,
     bool? playerState,
+    EpisodeData? episodeData,
   }) {
     return AudioState(
-        audioHandler: audioHandler ?? this.audioHandler,
-        isPlayerShow: isPlayerShow ?? this.isPlayerShow,
-        isPlaying: isPlaying ?? this.isPlaying,
-        positionStream: positionStream ?? this.positionStream,
-        playerState: playerState ?? this.playerState);
+      audioHandler: audioHandler ?? this.audioHandler,
+      isPlayerShow: isPlayerShow ?? this.isPlayerShow,
+      isPlaying: isPlaying ?? this.isPlaying,
+      positionStream: positionStream ?? this.positionStream,
+      playerState: playerState ?? this.playerState,
+      episodeData: episodeData ?? this.episodeData,
+    );
   }
 }
 

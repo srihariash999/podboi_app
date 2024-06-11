@@ -14,19 +14,12 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   final appDocumentDirectory = await getApplicationDocumentsDirectory();
-  final database = Directory('${appDocumentDirectory.path}/database');
 
-  //database.delete(recursive: true);
+  final database = Directory('${appDocumentDirectory.path}/database');
 
   Hive.init(database.path);
 
-  // Hive.registerAdapter(SubscriptionAdapter());
-
-  // await Hive.openBox('subscriptionsBox');
   await Hive.openBox('generalBox');
-  // await Hive.openBox('historyBox');
-
-  // await initAudioService();
 
   runApp(
     ProviderScope(
@@ -36,7 +29,6 @@ void main() async {
 }
 
 class MyApp extends StatefulWidget {
-  // This widget is the root of your application.
   @override
   _MyAppState createState() => _MyAppState();
 }
@@ -47,17 +39,18 @@ class _MyAppState extends State<MyApp> {
     String? _name = Hive.box('generalBox').get('userName');
 
     return Consumer(builder: (context, ref, child) {
+      // Get current selected theme (fallback to default)
       ThemeData _currTheme = ref.watch(themeController).themeData;
 
-      // ref.watch(audioController.notifier).getAudioStatus().then((value) {
-      //   print(" This is main ^^^^^^^^^^^^ : $value");
-      // });
+      SystemChrome.setSystemUIOverlayStyle(
+        SystemUiOverlayStyle(
+            statusBarColor: Theme.of(context).colorScheme.secondary),
+      );
 
-      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-          statusBarColor: Theme.of(context).colorScheme.secondary));
       return MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
+        // Setting theme setting to current selected theme
         theme: _currTheme,
         // home: LoginScreen(),
         home: _name == null ? WelcomePage() : BaseScreen(),
