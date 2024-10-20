@@ -319,6 +319,25 @@ class ListeningHistoryData extends DataClass
         listenedOn: listenedOn ?? this.listenedOn,
         name: name ?? this.name,
       );
+  ListeningHistoryData copyWithCompanion(ListeningHistoryCompanion data) {
+    return ListeningHistoryData(
+      id: data.id.present ? data.id.value : this.id,
+      url: data.url.present ? data.url.value : this.url,
+      artist: data.artist.present ? data.artist.value : this.artist,
+      icon: data.icon.present ? data.icon.value : this.icon,
+      album: data.album.present ? data.album.value : this.album,
+      duration: data.duration.present ? data.duration.value : this.duration,
+      podcastName:
+          data.podcastName.present ? data.podcastName.value : this.podcastName,
+      podcastArtwork: data.podcastArtwork.present
+          ? data.podcastArtwork.value
+          : this.podcastArtwork,
+      listenedOn:
+          data.listenedOn.present ? data.listenedOn.value : this.listenedOn,
+      name: data.name.present ? data.name.value : this.name,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('ListeningHistoryData(')
@@ -894,6 +913,31 @@ class SubscriptionData extends DataClass
             ? contentAdvisory.value
             : this.contentAdvisory,
       );
+  SubscriptionData copyWithCompanion(SubscriptionCompanion data) {
+    return SubscriptionData(
+      id: data.id.present ? data.id.value : this.id,
+      podcastName:
+          data.podcastName.present ? data.podcastName.value : this.podcastName,
+      podcastId: data.podcastId.present ? data.podcastId.value : this.podcastId,
+      feedUrl: data.feedUrl.present ? data.feedUrl.value : this.feedUrl,
+      artworkUrl:
+          data.artworkUrl.present ? data.artworkUrl.value : this.artworkUrl,
+      dateAdded: data.dateAdded.present ? data.dateAdded.value : this.dateAdded,
+      lastEpisodeDate: data.lastEpisodeDate.present
+          ? data.lastEpisodeDate.value
+          : this.lastEpisodeDate,
+      trackCount:
+          data.trackCount.present ? data.trackCount.value : this.trackCount,
+      releaseDate:
+          data.releaseDate.present ? data.releaseDate.value : this.releaseDate,
+      country: data.country.present ? data.country.value : this.country,
+      genre: data.genre.present ? data.genre.value : this.genre,
+      contentAdvisory: data.contentAdvisory.present
+          ? data.contentAdvisory.value
+          : this.contentAdvisory,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('SubscriptionData(')
@@ -1539,6 +1583,32 @@ class EpisodeData extends DataClass implements Insertable<EpisodeData> {
         podcastId: podcastId.present ? podcastId.value : this.podcastId,
         podcastName: podcastName.present ? podcastName.value : this.podcastName,
       );
+  EpisodeData copyWithCompanion(EpisodeCompanion data) {
+    return EpisodeData(
+      id: data.id.present ? data.id.value : this.id,
+      guid: data.guid.present ? data.guid.value : this.guid,
+      title: data.title.present ? data.title.value : this.title,
+      description:
+          data.description.present ? data.description.value : this.description,
+      link: data.link.present ? data.link.value : this.link,
+      publicationDate: data.publicationDate.present
+          ? data.publicationDate.value
+          : this.publicationDate,
+      contentUrl:
+          data.contentUrl.present ? data.contentUrl.value : this.contentUrl,
+      imageUrl: data.imageUrl.present ? data.imageUrl.value : this.imageUrl,
+      author: data.author.present ? data.author.value : this.author,
+      season: data.season.present ? data.season.value : this.season,
+      episodeNumber: data.episodeNumber.present
+          ? data.episodeNumber.value
+          : this.episodeNumber,
+      duration: data.duration.present ? data.duration.value : this.duration,
+      podcastId: data.podcastId.present ? data.podcastId.value : this.podcastId,
+      podcastName:
+          data.podcastName.present ? data.podcastName.value : this.podcastName,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('EpisodeData(')
@@ -1784,7 +1854,7 @@ class EpisodeCompanion extends UpdateCompanion<EpisodeData> {
 
 abstract class _$MyDb extends GeneratedDatabase {
   _$MyDb(QueryExecutor e) : super(e);
-  _$MyDbManager get managers => _$MyDbManager(this);
+  $MyDbManager get managers => $MyDbManager(this);
   late final ListeningHistory listeningHistory = ListeningHistory(this);
   late final Subscription subscription = Subscription(this);
   late final Episode episode = Episode(this);
@@ -2005,7 +2075,7 @@ abstract class _$MyDb extends GeneratedDatabase {
       );
 }
 
-typedef $ListeningHistoryInsertCompanionBuilder = ListeningHistoryCompanion
+typedef $ListeningHistoryCreateCompanionBuilder = ListeningHistoryCompanion
     Function({
   Value<int> id,
   required String url,
@@ -2031,88 +2101,6 @@ typedef $ListeningHistoryUpdateCompanionBuilder = ListeningHistoryCompanion
   Value<String> listenedOn,
   Value<String> name,
 });
-
-class $ListeningHistoryTableManager extends RootTableManager<
-    _$MyDb,
-    ListeningHistory,
-    ListeningHistoryData,
-    $ListeningHistoryFilterComposer,
-    $ListeningHistoryOrderingComposer,
-    $ListeningHistoryProcessedTableManager,
-    $ListeningHistoryInsertCompanionBuilder,
-    $ListeningHistoryUpdateCompanionBuilder> {
-  $ListeningHistoryTableManager(_$MyDb db, ListeningHistory table)
-      : super(TableManagerState(
-          db: db,
-          table: table,
-          filteringComposer:
-              $ListeningHistoryFilterComposer(ComposerState(db, table)),
-          orderingComposer:
-              $ListeningHistoryOrderingComposer(ComposerState(db, table)),
-          getChildManagerBuilder: (p) =>
-              $ListeningHistoryProcessedTableManager(p),
-          getUpdateCompanionBuilder: ({
-            Value<int> id = const Value.absent(),
-            Value<String> url = const Value.absent(),
-            Value<String> artist = const Value.absent(),
-            Value<String> icon = const Value.absent(),
-            Value<String> album = const Value.absent(),
-            Value<String> duration = const Value.absent(),
-            Value<String> podcastName = const Value.absent(),
-            Value<String> podcastArtwork = const Value.absent(),
-            Value<String> listenedOn = const Value.absent(),
-            Value<String> name = const Value.absent(),
-          }) =>
-              ListeningHistoryCompanion(
-            id: id,
-            url: url,
-            artist: artist,
-            icon: icon,
-            album: album,
-            duration: duration,
-            podcastName: podcastName,
-            podcastArtwork: podcastArtwork,
-            listenedOn: listenedOn,
-            name: name,
-          ),
-          getInsertCompanionBuilder: ({
-            Value<int> id = const Value.absent(),
-            required String url,
-            required String artist,
-            required String icon,
-            required String album,
-            required String duration,
-            required String podcastName,
-            required String podcastArtwork,
-            required String listenedOn,
-            required String name,
-          }) =>
-              ListeningHistoryCompanion.insert(
-            id: id,
-            url: url,
-            artist: artist,
-            icon: icon,
-            album: album,
-            duration: duration,
-            podcastName: podcastName,
-            podcastArtwork: podcastArtwork,
-            listenedOn: listenedOn,
-            name: name,
-          ),
-        ));
-}
-
-class $ListeningHistoryProcessedTableManager extends ProcessedTableManager<
-    _$MyDb,
-    ListeningHistory,
-    ListeningHistoryData,
-    $ListeningHistoryFilterComposer,
-    $ListeningHistoryOrderingComposer,
-    $ListeningHistoryProcessedTableManager,
-    $ListeningHistoryInsertCompanionBuilder,
-    $ListeningHistoryUpdateCompanionBuilder> {
-  $ListeningHistoryProcessedTableManager(super.$state);
-}
 
 class $ListeningHistoryFilterComposer
     extends FilterComposer<_$MyDb, ListeningHistory> {
@@ -2222,7 +2210,98 @@ class $ListeningHistoryOrderingComposer
           ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
-typedef $SubscriptionInsertCompanionBuilder = SubscriptionCompanion Function({
+class $ListeningHistoryTableManager extends RootTableManager<
+    _$MyDb,
+    ListeningHistory,
+    ListeningHistoryData,
+    $ListeningHistoryFilterComposer,
+    $ListeningHistoryOrderingComposer,
+    $ListeningHistoryCreateCompanionBuilder,
+    $ListeningHistoryUpdateCompanionBuilder,
+    (
+      ListeningHistoryData,
+      BaseReferences<_$MyDb, ListeningHistory, ListeningHistoryData>
+    ),
+    ListeningHistoryData,
+    PrefetchHooks Function()> {
+  $ListeningHistoryTableManager(_$MyDb db, ListeningHistory table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $ListeningHistoryFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $ListeningHistoryOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<String> url = const Value.absent(),
+            Value<String> artist = const Value.absent(),
+            Value<String> icon = const Value.absent(),
+            Value<String> album = const Value.absent(),
+            Value<String> duration = const Value.absent(),
+            Value<String> podcastName = const Value.absent(),
+            Value<String> podcastArtwork = const Value.absent(),
+            Value<String> listenedOn = const Value.absent(),
+            Value<String> name = const Value.absent(),
+          }) =>
+              ListeningHistoryCompanion(
+            id: id,
+            url: url,
+            artist: artist,
+            icon: icon,
+            album: album,
+            duration: duration,
+            podcastName: podcastName,
+            podcastArtwork: podcastArtwork,
+            listenedOn: listenedOn,
+            name: name,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            required String url,
+            required String artist,
+            required String icon,
+            required String album,
+            required String duration,
+            required String podcastName,
+            required String podcastArtwork,
+            required String listenedOn,
+            required String name,
+          }) =>
+              ListeningHistoryCompanion.insert(
+            id: id,
+            url: url,
+            artist: artist,
+            icon: icon,
+            album: album,
+            duration: duration,
+            podcastName: podcastName,
+            podcastArtwork: podcastArtwork,
+            listenedOn: listenedOn,
+            name: name,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $ListeningHistoryProcessedTableManager = ProcessedTableManager<
+    _$MyDb,
+    ListeningHistory,
+    ListeningHistoryData,
+    $ListeningHistoryFilterComposer,
+    $ListeningHistoryOrderingComposer,
+    $ListeningHistoryCreateCompanionBuilder,
+    $ListeningHistoryUpdateCompanionBuilder,
+    (
+      ListeningHistoryData,
+      BaseReferences<_$MyDb, ListeningHistory, ListeningHistoryData>
+    ),
+    ListeningHistoryData,
+    PrefetchHooks Function()>;
+typedef $SubscriptionCreateCompanionBuilder = SubscriptionCompanion Function({
   Value<int> id,
   required String podcastName,
   Value<int?> podcastId,
@@ -2250,95 +2329,6 @@ typedef $SubscriptionUpdateCompanionBuilder = SubscriptionCompanion Function({
   Value<String?> genre,
   Value<String?> contentAdvisory,
 });
-
-class $SubscriptionTableManager extends RootTableManager<
-    _$MyDb,
-    Subscription,
-    SubscriptionData,
-    $SubscriptionFilterComposer,
-    $SubscriptionOrderingComposer,
-    $SubscriptionProcessedTableManager,
-    $SubscriptionInsertCompanionBuilder,
-    $SubscriptionUpdateCompanionBuilder> {
-  $SubscriptionTableManager(_$MyDb db, Subscription table)
-      : super(TableManagerState(
-          db: db,
-          table: table,
-          filteringComposer:
-              $SubscriptionFilterComposer(ComposerState(db, table)),
-          orderingComposer:
-              $SubscriptionOrderingComposer(ComposerState(db, table)),
-          getChildManagerBuilder: (p) => $SubscriptionProcessedTableManager(p),
-          getUpdateCompanionBuilder: ({
-            Value<int> id = const Value.absent(),
-            Value<String> podcastName = const Value.absent(),
-            Value<int?> podcastId = const Value.absent(),
-            Value<String> feedUrl = const Value.absent(),
-            Value<String> artworkUrl = const Value.absent(),
-            Value<DateTime> dateAdded = const Value.absent(),
-            Value<DateTime?> lastEpisodeDate = const Value.absent(),
-            Value<int?> trackCount = const Value.absent(),
-            Value<DateTime?> releaseDate = const Value.absent(),
-            Value<String?> country = const Value.absent(),
-            Value<String?> genre = const Value.absent(),
-            Value<String?> contentAdvisory = const Value.absent(),
-          }) =>
-              SubscriptionCompanion(
-            id: id,
-            podcastName: podcastName,
-            podcastId: podcastId,
-            feedUrl: feedUrl,
-            artworkUrl: artworkUrl,
-            dateAdded: dateAdded,
-            lastEpisodeDate: lastEpisodeDate,
-            trackCount: trackCount,
-            releaseDate: releaseDate,
-            country: country,
-            genre: genre,
-            contentAdvisory: contentAdvisory,
-          ),
-          getInsertCompanionBuilder: ({
-            Value<int> id = const Value.absent(),
-            required String podcastName,
-            Value<int?> podcastId = const Value.absent(),
-            required String feedUrl,
-            required String artworkUrl,
-            required DateTime dateAdded,
-            Value<DateTime?> lastEpisodeDate = const Value.absent(),
-            Value<int?> trackCount = const Value.absent(),
-            Value<DateTime?> releaseDate = const Value.absent(),
-            Value<String?> country = const Value.absent(),
-            Value<String?> genre = const Value.absent(),
-            Value<String?> contentAdvisory = const Value.absent(),
-          }) =>
-              SubscriptionCompanion.insert(
-            id: id,
-            podcastName: podcastName,
-            podcastId: podcastId,
-            feedUrl: feedUrl,
-            artworkUrl: artworkUrl,
-            dateAdded: dateAdded,
-            lastEpisodeDate: lastEpisodeDate,
-            trackCount: trackCount,
-            releaseDate: releaseDate,
-            country: country,
-            genre: genre,
-            contentAdvisory: contentAdvisory,
-          ),
-        ));
-}
-
-class $SubscriptionProcessedTableManager extends ProcessedTableManager<
-    _$MyDb,
-    Subscription,
-    SubscriptionData,
-    $SubscriptionFilterComposer,
-    $SubscriptionOrderingComposer,
-    $SubscriptionProcessedTableManager,
-    $SubscriptionInsertCompanionBuilder,
-    $SubscriptionUpdateCompanionBuilder> {
-  $SubscriptionProcessedTableManager(super.$state);
-}
 
 class $SubscriptionFilterComposer extends FilterComposer<_$MyDb, Subscription> {
   $SubscriptionFilterComposer(super.$state);
@@ -2467,7 +2457,100 @@ class $SubscriptionOrderingComposer
           ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
-typedef $EpisodeInsertCompanionBuilder = EpisodeCompanion Function({
+class $SubscriptionTableManager extends RootTableManager<
+    _$MyDb,
+    Subscription,
+    SubscriptionData,
+    $SubscriptionFilterComposer,
+    $SubscriptionOrderingComposer,
+    $SubscriptionCreateCompanionBuilder,
+    $SubscriptionUpdateCompanionBuilder,
+    (SubscriptionData, BaseReferences<_$MyDb, Subscription, SubscriptionData>),
+    SubscriptionData,
+    PrefetchHooks Function()> {
+  $SubscriptionTableManager(_$MyDb db, Subscription table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $SubscriptionFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $SubscriptionOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<String> podcastName = const Value.absent(),
+            Value<int?> podcastId = const Value.absent(),
+            Value<String> feedUrl = const Value.absent(),
+            Value<String> artworkUrl = const Value.absent(),
+            Value<DateTime> dateAdded = const Value.absent(),
+            Value<DateTime?> lastEpisodeDate = const Value.absent(),
+            Value<int?> trackCount = const Value.absent(),
+            Value<DateTime?> releaseDate = const Value.absent(),
+            Value<String?> country = const Value.absent(),
+            Value<String?> genre = const Value.absent(),
+            Value<String?> contentAdvisory = const Value.absent(),
+          }) =>
+              SubscriptionCompanion(
+            id: id,
+            podcastName: podcastName,
+            podcastId: podcastId,
+            feedUrl: feedUrl,
+            artworkUrl: artworkUrl,
+            dateAdded: dateAdded,
+            lastEpisodeDate: lastEpisodeDate,
+            trackCount: trackCount,
+            releaseDate: releaseDate,
+            country: country,
+            genre: genre,
+            contentAdvisory: contentAdvisory,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            required String podcastName,
+            Value<int?> podcastId = const Value.absent(),
+            required String feedUrl,
+            required String artworkUrl,
+            required DateTime dateAdded,
+            Value<DateTime?> lastEpisodeDate = const Value.absent(),
+            Value<int?> trackCount = const Value.absent(),
+            Value<DateTime?> releaseDate = const Value.absent(),
+            Value<String?> country = const Value.absent(),
+            Value<String?> genre = const Value.absent(),
+            Value<String?> contentAdvisory = const Value.absent(),
+          }) =>
+              SubscriptionCompanion.insert(
+            id: id,
+            podcastName: podcastName,
+            podcastId: podcastId,
+            feedUrl: feedUrl,
+            artworkUrl: artworkUrl,
+            dateAdded: dateAdded,
+            lastEpisodeDate: lastEpisodeDate,
+            trackCount: trackCount,
+            releaseDate: releaseDate,
+            country: country,
+            genre: genre,
+            contentAdvisory: contentAdvisory,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $SubscriptionProcessedTableManager = ProcessedTableManager<
+    _$MyDb,
+    Subscription,
+    SubscriptionData,
+    $SubscriptionFilterComposer,
+    $SubscriptionOrderingComposer,
+    $SubscriptionCreateCompanionBuilder,
+    $SubscriptionUpdateCompanionBuilder,
+    (SubscriptionData, BaseReferences<_$MyDb, Subscription, SubscriptionData>),
+    SubscriptionData,
+    PrefetchHooks Function()>;
+typedef $EpisodeCreateCompanionBuilder = EpisodeCompanion Function({
   Value<int> id,
   required String guid,
   required String title,
@@ -2499,101 +2582,6 @@ typedef $EpisodeUpdateCompanionBuilder = EpisodeCompanion Function({
   Value<int?> podcastId,
   Value<String?> podcastName,
 });
-
-class $EpisodeTableManager extends RootTableManager<
-    _$MyDb,
-    Episode,
-    EpisodeData,
-    $EpisodeFilterComposer,
-    $EpisodeOrderingComposer,
-    $EpisodeProcessedTableManager,
-    $EpisodeInsertCompanionBuilder,
-    $EpisodeUpdateCompanionBuilder> {
-  $EpisodeTableManager(_$MyDb db, Episode table)
-      : super(TableManagerState(
-          db: db,
-          table: table,
-          filteringComposer: $EpisodeFilterComposer(ComposerState(db, table)),
-          orderingComposer: $EpisodeOrderingComposer(ComposerState(db, table)),
-          getChildManagerBuilder: (p) => $EpisodeProcessedTableManager(p),
-          getUpdateCompanionBuilder: ({
-            Value<int> id = const Value.absent(),
-            Value<String> guid = const Value.absent(),
-            Value<String> title = const Value.absent(),
-            Value<String> description = const Value.absent(),
-            Value<String?> link = const Value.absent(),
-            Value<DateTime?> publicationDate = const Value.absent(),
-            Value<String?> contentUrl = const Value.absent(),
-            Value<String?> imageUrl = const Value.absent(),
-            Value<String?> author = const Value.absent(),
-            Value<int?> season = const Value.absent(),
-            Value<int?> episodeNumber = const Value.absent(),
-            Value<int?> duration = const Value.absent(),
-            Value<int?> podcastId = const Value.absent(),
-            Value<String?> podcastName = const Value.absent(),
-          }) =>
-              EpisodeCompanion(
-            id: id,
-            guid: guid,
-            title: title,
-            description: description,
-            link: link,
-            publicationDate: publicationDate,
-            contentUrl: contentUrl,
-            imageUrl: imageUrl,
-            author: author,
-            season: season,
-            episodeNumber: episodeNumber,
-            duration: duration,
-            podcastId: podcastId,
-            podcastName: podcastName,
-          ),
-          getInsertCompanionBuilder: ({
-            Value<int> id = const Value.absent(),
-            required String guid,
-            required String title,
-            required String description,
-            Value<String?> link = const Value.absent(),
-            Value<DateTime?> publicationDate = const Value.absent(),
-            Value<String?> contentUrl = const Value.absent(),
-            Value<String?> imageUrl = const Value.absent(),
-            Value<String?> author = const Value.absent(),
-            Value<int?> season = const Value.absent(),
-            Value<int?> episodeNumber = const Value.absent(),
-            Value<int?> duration = const Value.absent(),
-            Value<int?> podcastId = const Value.absent(),
-            Value<String?> podcastName = const Value.absent(),
-          }) =>
-              EpisodeCompanion.insert(
-            id: id,
-            guid: guid,
-            title: title,
-            description: description,
-            link: link,
-            publicationDate: publicationDate,
-            contentUrl: contentUrl,
-            imageUrl: imageUrl,
-            author: author,
-            season: season,
-            episodeNumber: episodeNumber,
-            duration: duration,
-            podcastId: podcastId,
-            podcastName: podcastName,
-          ),
-        ));
-}
-
-class $EpisodeProcessedTableManager extends ProcessedTableManager<
-    _$MyDb,
-    Episode,
-    EpisodeData,
-    $EpisodeFilterComposer,
-    $EpisodeOrderingComposer,
-    $EpisodeProcessedTableManager,
-    $EpisodeInsertCompanionBuilder,
-    $EpisodeUpdateCompanionBuilder> {
-  $EpisodeProcessedTableManager(super.$state);
-}
 
 class $EpisodeFilterComposer extends FilterComposer<_$MyDb, Episode> {
   $EpisodeFilterComposer(super.$state);
@@ -2741,9 +2729,109 @@ class $EpisodeOrderingComposer extends OrderingComposer<_$MyDb, Episode> {
           ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
-class _$MyDbManager {
+class $EpisodeTableManager extends RootTableManager<
+    _$MyDb,
+    Episode,
+    EpisodeData,
+    $EpisodeFilterComposer,
+    $EpisodeOrderingComposer,
+    $EpisodeCreateCompanionBuilder,
+    $EpisodeUpdateCompanionBuilder,
+    (EpisodeData, BaseReferences<_$MyDb, Episode, EpisodeData>),
+    EpisodeData,
+    PrefetchHooks Function()> {
+  $EpisodeTableManager(_$MyDb db, Episode table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer: $EpisodeFilterComposer(ComposerState(db, table)),
+          orderingComposer: $EpisodeOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<String> guid = const Value.absent(),
+            Value<String> title = const Value.absent(),
+            Value<String> description = const Value.absent(),
+            Value<String?> link = const Value.absent(),
+            Value<DateTime?> publicationDate = const Value.absent(),
+            Value<String?> contentUrl = const Value.absent(),
+            Value<String?> imageUrl = const Value.absent(),
+            Value<String?> author = const Value.absent(),
+            Value<int?> season = const Value.absent(),
+            Value<int?> episodeNumber = const Value.absent(),
+            Value<int?> duration = const Value.absent(),
+            Value<int?> podcastId = const Value.absent(),
+            Value<String?> podcastName = const Value.absent(),
+          }) =>
+              EpisodeCompanion(
+            id: id,
+            guid: guid,
+            title: title,
+            description: description,
+            link: link,
+            publicationDate: publicationDate,
+            contentUrl: contentUrl,
+            imageUrl: imageUrl,
+            author: author,
+            season: season,
+            episodeNumber: episodeNumber,
+            duration: duration,
+            podcastId: podcastId,
+            podcastName: podcastName,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            required String guid,
+            required String title,
+            required String description,
+            Value<String?> link = const Value.absent(),
+            Value<DateTime?> publicationDate = const Value.absent(),
+            Value<String?> contentUrl = const Value.absent(),
+            Value<String?> imageUrl = const Value.absent(),
+            Value<String?> author = const Value.absent(),
+            Value<int?> season = const Value.absent(),
+            Value<int?> episodeNumber = const Value.absent(),
+            Value<int?> duration = const Value.absent(),
+            Value<int?> podcastId = const Value.absent(),
+            Value<String?> podcastName = const Value.absent(),
+          }) =>
+              EpisodeCompanion.insert(
+            id: id,
+            guid: guid,
+            title: title,
+            description: description,
+            link: link,
+            publicationDate: publicationDate,
+            contentUrl: contentUrl,
+            imageUrl: imageUrl,
+            author: author,
+            season: season,
+            episodeNumber: episodeNumber,
+            duration: duration,
+            podcastId: podcastId,
+            podcastName: podcastName,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $EpisodeProcessedTableManager = ProcessedTableManager<
+    _$MyDb,
+    Episode,
+    EpisodeData,
+    $EpisodeFilterComposer,
+    $EpisodeOrderingComposer,
+    $EpisodeCreateCompanionBuilder,
+    $EpisodeUpdateCompanionBuilder,
+    (EpisodeData, BaseReferences<_$MyDb, Episode, EpisodeData>),
+    EpisodeData,
+    PrefetchHooks Function()>;
+
+class $MyDbManager {
   final _$MyDb _db;
-  _$MyDbManager(this._db);
+  $MyDbManager(this._db);
   $ListeningHistoryTableManager get listeningHistory =>
       $ListeningHistoryTableManager(_db, _db.listeningHistory);
   $SubscriptionTableManager get subscription =>

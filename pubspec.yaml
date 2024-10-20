@@ -11,33 +11,25 @@ environment:
 dependencies:
   audio_service: ^0.18.8
   audio_session: ^0.1.13
-
   cached_network_image: ^3.3.1
-
-  # For UI uses
   cupertino_icons: ^1.0.5
-
-  # For api requests.
   dio: ^5.4.3+1
-
   drift: ^2.1.0
   feather_icons: ^1.2.0
   flutter:
     sdk: flutter
   flutter_html: ^3.0.0-beta.2
-  # For state management.
   flutter_riverpod: ^2.5.1
-
-  # For database use.
+  flutter_slidable: ^3.1.1
   hive: ^2.2.3
   intl: ^0.19.0
   just_audio: ^0.9.30
+  just_audio_background: ^0.0.1-beta.13
   line_icons: ^2.0.1
   path: ^1.8.2
   path_provider: ^2.0.11
-
-  # For podcast search and audio playing
   podcast_search: ^0.7.1
+  rxdart: ^0.28.0
   sqlite3_flutter_libs: ^0.5.10
 
 dev_dependencies:

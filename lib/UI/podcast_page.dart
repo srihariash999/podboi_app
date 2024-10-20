@@ -315,6 +315,7 @@ class PodcastPage extends StatelessWidget {
                               )
                             : RefreshIndicator(
                                 onRefresh: refresh,
+                                color: Theme.of(context).colorScheme.secondary,
                                 child: ListView.separated(
                                   physics: BouncingScrollPhysics(),
                                   separatorBuilder: (context, index) {
@@ -334,7 +335,6 @@ class PodcastPage extends StatelessWidget {
                                           1,
                                   itemBuilder: (context, index) {
                                     if (index == 0) {
-                                      // return Container();
                                       return EpisodeDetailComponent(
                                         subscription: subscription,
                                       );

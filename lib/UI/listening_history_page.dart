@@ -152,8 +152,6 @@ class ListeningHistoryView extends StatelessWidget {
                                                       artist: _lhi.artist,
                                                       album: _lhi.album,
                                                     ),
-                                                    // TODO: get episode data here somehow.
-                                                    null,
                                                   );
                                               ref
                                                   .read(historyController
@@ -221,7 +219,10 @@ class ListeningHistoryView extends StatelessWidget {
                   ],
                 ),
               ),
-              Align(alignment: Alignment.bottomCenter, child: MiniPlayer()),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: MiniPlayer(),
+              ),
             ],
           ),
         ),
