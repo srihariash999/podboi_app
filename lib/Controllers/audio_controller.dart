@@ -15,8 +15,7 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
 
   AudioPlayer? _player;
   ConcatenatingAudioSource _playlist = ConcatenatingAudioSource(children: []);
-  int nextMediaId = 0;
-  int addedCount = 0;
+  int _currentIndex = -1;
 
   Stream<PositionData>? get _positionDataStream =>
       _player?.positionStream != null &&
@@ -43,7 +42,7 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
       AudioSource.uri(
         Uri.parse(song.url),
         tag: MediaItem(
-          id: '${nextMediaId++}',
+          id: song.url,
           album: song.album,
           title: song.name,
           artUri: Uri.parse(song.icon),
@@ -64,7 +63,7 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
       AudioSource.uri(
         Uri.parse(song.url),
         tag: MediaItem(
-          id: '${nextMediaId++}',
+          id: song.url,
           album: song.album,
           title: song.name,
           artUri: Uri.parse(song.icon),
@@ -79,57 +78,13 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
       print('A stream error occurred: $e');
     });
 
-    bool _hasReachedEnd = false;
-
-    _player?.positionStream.listen((position) {
-      // Check if the current position is at or beyond the episode's end
-      if (position.inSeconds >= _player!.duration!.inSeconds &&
-          !_hasReachedEnd) {
-        _hasReachedEnd = true; // Set the flag to prevent further triggers
-        print("Reached end of episode.");
-
-        // Handle the end of the current episode and move to the next
-        if (_playlist.length >= 1) {
-          print("One or more episodes in queue, removing the first one");
-          _playlist.removeAt(0);
-        }
-
-        // Check if there are more episodes to play
-        if (_playlist.length == 0) {
-          print("No more episodes in queue");
-          state = state.copyWith(isPlayerShow: false, playlist: null);
-        } else {
-          print("Playing next episode");
-          state = state.copyWith(playlist: _playlist.children);
-          _hasReachedEnd = false; // Reset the flag when next episode starts
-        }
-      }
-
-      // Reset the flag when not at the end, allowing for the next episode's end to be detected
-      if (position.inSeconds < _player!.duration!.inSeconds) {
-        _hasReachedEnd = false;
+    _player?.sequenceStateStream.listen((st) {
+      if (st != null && st.currentIndex != _currentIndex) {
+        _currentIndex = st.currentIndex;
+        print("Set current index from seq.: $_currentIndex");
+        state = state.copyWith(currentPlayingIndex: _currentIndex);
       }
     });
-
-    // _player?.positionStream.listen(
-    //   (position) {
-    //     if (position.inSeconds >= _player!.duration!.inSeconds) {
-    //       print(" reached end of episode.");
-    //       if (_playlist.length >= 1) {
-    //         print(" one or more episodes in queue, removing the first one");
-    //         _playlist.removeAt(0);
-    //       }
-
-    //       if (_playlist.length == 0) {
-    //         print(" no more episodes in queue");
-    //         state = state.copyWith(isPlayerShow: false, playlist: null);
-    //       } else {
-    //         print(" playing next episode");
-    //         state = state.copyWith(playlist: _playlist.children);
-    //       }
-    //     }
-    //   },
-    // );
 
     try {
       await _player?.setAudioSource(_playlist);
@@ -140,12 +95,12 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
     }
 
     _player!.play();
+
     state = state.copyWith(
       isPlayerShow: true,
       isPlaying: true,
       stream: _positionDataStream?.asBroadcastStream(),
       player: _player,
-      currentPlaying: song,
       playlist: _playlist.children,
     );
   }
@@ -177,14 +132,14 @@ class AudioState {
   final bool isPlayerShow;
   final Stream<PositionData>? stream;
   final AudioPlayer? player;
-  final Song? currentPlaying;
   List<AudioSource>? playlist;
+  int currentPlayingIndex;
   AudioState({
     required this.isPlaying,
     required this.isPlayerShow,
     required this.stream,
     required this.player,
-    this.currentPlaying,
+    required this.currentPlayingIndex,
     this.playlist,
   });
   factory AudioState.initial() {
@@ -193,6 +148,7 @@ class AudioState {
       isPlayerShow: false,
       stream: null,
       player: null,
+      currentPlayingIndex: -1,
       playlist: null,
     );
   }
@@ -201,7 +157,7 @@ class AudioState {
     bool? isPlaying,
     Stream<PositionData>? stream,
     AudioPlayer? player,
-    Song? currentPlaying,
+    int? currentPlayingIndex,
     List<AudioSource>? playlist,
   }) {
     return AudioState(
@@ -209,8 +165,8 @@ class AudioState {
       isPlaying: isPlaying ?? this.isPlaying,
       stream: stream ?? this.stream,
       player: player ?? this.player,
-      currentPlaying: currentPlaying ?? this.currentPlaying,
       playlist: playlist ?? this.playlist,
+      currentPlayingIndex: currentPlayingIndex ?? this.currentPlayingIndex,
     );
   }
 }
