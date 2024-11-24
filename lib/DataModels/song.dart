@@ -1,3 +1,5 @@
+import 'package:podboi/Services/database/database.dart';
+
 class Song {
   final String url;
   final String name;
@@ -5,6 +7,7 @@ class Song {
   final String icon;
   final String album;
   final Duration? duration;
+  final EpisodeData episodeData;
   Song({
     required this.url,
     required this.name,
@@ -12,5 +15,23 @@ class Song {
     required this.icon,
     required this.album,
     required this.duration,
+    required this.episodeData,
   });
+
+  factory Song.dummy() {
+    return Song(
+      url: "",
+      name: "",
+      artist: "",
+      icon: "",
+      album: "",
+      duration: Duration.zero,
+      episodeData: EpisodeData(
+        id: 0,
+        guid: "",
+        title: "",
+        description: "",
+      ),
+    );
+  }
 }

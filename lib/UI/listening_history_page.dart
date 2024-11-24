@@ -8,7 +8,7 @@ import 'package:podboi/Controllers/history_controller.dart';
 import 'package:podboi/DataModels/song.dart';
 import 'package:podboi/Services/database/database.dart';
 import 'package:podboi/Shared/episode_display_widget.dart';
-import 'package:podboi/UI/mini_player.dart';
+import 'package:podboi/UI/player.dart';
 
 class ListeningHistoryView extends StatelessWidget {
   ListeningHistoryView({Key? key, required this.ref}) : super(key: key);
@@ -151,6 +151,13 @@ class ListeningHistoryView extends StatelessWidget {
                                                       ),
                                                       artist: _lhi.artist,
                                                       album: _lhi.album,
+                                                      episodeData: EpisodeData(
+                                                        id: _lhi.id,
+                                                        guid:
+                                                            _lhi.id.toString(),
+                                                        title: _lhi.name,
+                                                        description: _lhi.name,
+                                                      ),
                                                     ),
                                                   );
                                               ref

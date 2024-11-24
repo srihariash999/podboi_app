@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podboi/UI/home_page.dart';
-import 'package:podboi/UI/mini_player.dart';
+import 'package:podboi/UI/player.dart';
 import 'package:podboi/UI/subscriptions_page.dart';
 
 class BaseScreen extends StatefulWidget {

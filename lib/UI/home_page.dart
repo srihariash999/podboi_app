@@ -122,7 +122,7 @@ class HomePage extends StatelessWidget {
                   ),
                   isCollapsed: true,
                   contentPadding: const EdgeInsets.symmetric(vertical: 16.0),
-                  hintText: "  Search",
+                  hintText: "Search",
                   alignLabelWithHint: true,
                   hintStyle: TextStyle(
                     fontSize: 16.0,

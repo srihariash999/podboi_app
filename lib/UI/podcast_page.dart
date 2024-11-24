@@ -8,7 +8,7 @@ import 'package:line_icons/line_icons.dart';
 import 'package:podboi/Controllers/podcast_page_controller.dart';
 import 'package:podboi/Services/database/database.dart';
 import 'package:podboi/Shared/detailed_episode_widget.dart';
-import 'package:podboi/UI/mini_player.dart';
+import 'package:podboi/UI/player.dart';
 
 class PodcastPage extends StatelessWidget {
   final SubscriptionData subscription;

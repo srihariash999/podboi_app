@@ -7,7 +7,7 @@ import 'package:line_icons/line_icons.dart';
 import 'package:podboi/Controllers/profile_screen_controller.dart';
 import 'package:podboi/Controllers/theme_controller.dart';
 import 'package:podboi/UI/listening_history_page.dart';
-import 'package:podboi/UI/mini_player.dart';
+import 'package:podboi/UI/player.dart';
 // import 'package:podboi/UI/listening_history.dart';
 
 class ProfileScreen extends StatelessWidget {

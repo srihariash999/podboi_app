@@ -86,7 +86,7 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
 
                                       _ref
                                           .read(audioController.notifier)
-                                          .requestPlayingSong(
+                                          .requestAddingToQueue(
                                             Song(
                                               url: _episodeData.contentUrl!,
                                               icon: _podcast.artworkUrl,
@@ -97,6 +97,7 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                                                           0),
                                               artist: "${_episodeData.author}",
                                               album: _podcast.podcastName,
+                                              episodeData: _episodeData,
                                             ),
                                           );
                                     },
@@ -135,6 +136,7 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                               Duration(seconds: _episodeData.duration ?? 0),
                           artist: "${_episodeData.author}",
                           album: _podcast.podcastName,
+                          episodeData: _episodeData,
                         ),
                       );
                 },
@@ -277,6 +279,7 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                                   Duration(seconds: _episodeData.duration ?? 0),
                               artist: "${_episodeData.author}",
                               album: _podcast.podcastName,
+                              episodeData: _episodeData,
                             ),
                           );
 
