@@ -1,6 +1,7 @@
 import 'package:hive/hive.dart';
+import 'package:podboi/Constants/constants.dart';
 
-Box _box = Hive.box('generalBox');
+Box _box = Hive.box(K.boxes.generalBox);
 
 Future<bool> saveNameRequest(
     {required String nameToSave, required String avatarToSave}) async {

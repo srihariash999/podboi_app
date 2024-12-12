@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive/hive.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:podboi/Constants/constants.dart';
 import 'package:podboi/Controllers/theme_controller.dart';
 
 import 'package:podboi/UI/base_screen.dart';
@@ -21,7 +22,9 @@ void main() async {
 
   Hive.init(database.path);
 
-  await Hive.openBox('generalBox');
+  await Hive.openBox(K.boxes.generalBox);
+
+  await Hive.openBox(K.boxes.settingsBox);
 
   await JustAudioBackground.init(
     androidNotificationChannelId: 'com.zepplaud.podboi',
@@ -47,7 +50,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    String? _name = Hive.box('generalBox').get('userName');
+    String? _name = Hive.box(K.boxes.generalBox).get('userName');
 
     return Consumer(builder: (context, ref, child) {
       // Get current selected theme (fallback to default)

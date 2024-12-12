@@ -6,9 +6,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:podboi/Controllers/profile_screen_controller.dart';
 import 'package:podboi/Controllers/theme_controller.dart';
+import 'package:podboi/UI/Common/custom_chip_button.dart';
+import 'package:podboi/UI/Pages/settings_page.dart';
 import 'package:podboi/UI/listening_history_page.dart';
 import 'package:podboi/UI/player.dart';
-// import 'package:podboi/UI/listening_history.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -47,269 +48,281 @@ class ProfileScreen extends StatelessWidget {
                     SizedBox(
                       height: 24.0,
                     ),
-                    Consumer(builder: (context, ref, child) {
-                      String _name = ref.watch(
-                          profileController.select((value) => value.userName));
-                      String _avatar = ref.watch(profileController
-                          .select((value) => value.userAvatar));
+                    Consumer(
+                      builder: (context, ref, child) {
+                        String _name = ref.watch(profileController
+                            .select((value) => value.userName));
+                        String _avatar = ref.watch(profileController
+                            .select((value) => value.userAvatar));
 
-                      return Column(
-                        children: [
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 20.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Expanded(
-                                  flex: 3,
-                                  child: Center(
-                                    child: Text(
-                                      "$_name",
-                                      style: TextStyle(
-                                        // fontFamily: 'Segoe',
-                                        fontSize: 28.0,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .secondary,
-                                        fontWeight: FontWeight.w700,
+                        return Column(
+                          children: [
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Expanded(
+                                    flex: 3,
+                                    child: Center(
+                                      child: Text(
+                                        "$_name",
+                                        style: TextStyle(
+                                          // fontFamily: 'Segoe',
+                                          fontSize: 28.0,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .secondary,
+                                          fontWeight: FontWeight.w700,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                                Expanded(
-                                  child: Container(
-                                    height: 60.0,
-                                    width: 55.0,
-                                    child: Icon(
-                                      _avatar == 'user'
-                                          ? LineIcons.user
-                                          : _avatar == 'userNinja'
-                                              ? LineIcons.userNinja
-                                              : LineIcons.userAstronaut,
-                                      size: 38.0,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .secondary,
+                                  Expanded(
+                                    child: Container(
+                                      height: 60.0,
+                                      width: 55.0,
+                                      child: Icon(
+                                        _avatar == 'user'
+                                            ? LineIcons.user
+                                            : _avatar == 'userNinja'
+                                                ? LineIcons.userNinja
+                                                : LineIcons.userAstronaut,
+                                        size: 38.0,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .secondary,
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                          SizedBox(
-                            height: 24.0,
-                          ),
-                          Center(
-                            child: TextButton(
-                              onPressed: () async {
-                                showModalBottomSheet<void>(
+                            SizedBox(
+                              height: 24.0,
+                            ),
+                            Center(
+                              child: CustomChipButtonWidget(
+                                onTap: () async {
+                                  showModalBottomSheet<void>(
                                     context: context,
                                     builder: (BuildContext context) {
                                       return ProfileEditWidget(
                                         userName: _name,
                                         userAvatar: _avatar,
                                       );
-                                    });
-                              },
-                              child: Container(
-                                width: MediaQuery.of(context).size.width * 0.25,
-                                margin: EdgeInsets.symmetric(horizontal: 24.0),
-                                padding: EdgeInsets.symmetric(vertical: 12.0),
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                    borderRadius: BorderRadius.circular(18.0)),
+                                    },
+                                  );
+                                },
                                 child: Text(
                                   'EDIT',
                                   style: TextStyle(
                                     fontSize: 16.0,
                                     fontWeight: FontWeight.w500,
-                                    color: Colors.white,
+                                    color:
+                                        Theme.of(context).colorScheme.secondary,
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
-                      );
-                    }),
+                          ],
+                        );
+                      },
+                    ),
                     SizedBox(
                       height: 52.0,
                     ),
                     Consumer(
                       builder: (context, ref, child) {
-                        return GestureDetector(
-                          onTap: () {
-                            Navigator.of(context).push(
-                              PageRouteBuilder(
-                                transitionDuration: Duration(milliseconds: 500),
-                                transitionsBuilder: (context, animation,
-                                    secondaryAnimation, child) {
-                                  const begin = Offset(1.0, 0.0);
-                                  const end = Offset.zero;
-                                  const curve = Curves.ease;
-
-                                  final tween = Tween(begin: begin, end: end);
-                                  final curvedAnimation = CurvedAnimation(
-                                    parent: animation,
-                                    curve: curve,
-                                  );
-
-                                  return SlideTransition(
-                                    position: tween.animate(curvedAnimation),
-                                    child: child,
-                                  );
-                                },
-                                pageBuilder: (_, __, ___) =>
-                                    ListeningHistoryView(ref: ref),
-                              ),
-                            );
-                          },
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 20.0),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  flex: 3,
-                                  child: Text(
-                                    "Listening history",
-                                    style: TextStyle(
-                                      // fontFamily: 'Segoe',
-                                      fontSize: 20.0,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .secondary,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ),
-                                Icon(
-                                  LineIcons.history,
-                                  size: 28.0,
-                                  color: Theme.of(context).primaryColorLight,
-                                ),
-                              ],
+                        String _currentTheme =
+                            ref.watch(themeController).currentTheme;
+                        return Column(
+                          children: [
+                            Divider(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .secondary
+                                  .withOpacity(0.2),
+                              height: 1.0,
                             ),
-                          ),
+
+                            // Listening History Tile
+                            ProfilePageTileWidget(
+                              tailingWidget: Icon(
+                                LineIcons.history,
+                                size: 28.0,
+                                color: Theme.of(context).primaryColorLight,
+                              ),
+                              tileName: "Listening history",
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  PageRouteBuilder(
+                                    transitionDuration:
+                                        Duration(milliseconds: 500),
+                                    transitionsBuilder: (context, animation,
+                                        secondaryAnimation, child) {
+                                      const begin = Offset(1.0, 0.0);
+                                      const end = Offset.zero;
+                                      const curve = Curves.ease;
+
+                                      final tween =
+                                          Tween(begin: begin, end: end);
+                                      final curvedAnimation = CurvedAnimation(
+                                        parent: animation,
+                                        curve: curve,
+                                      );
+
+                                      return SlideTransition(
+                                        position:
+                                            tween.animate(curvedAnimation),
+                                        child: child,
+                                      );
+                                    },
+                                    pageBuilder: (_, __, ___) =>
+                                        ListeningHistoryView(ref: ref),
+                                  ),
+                                );
+                              },
+                            ),
+
+                            Divider(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .secondary
+                                  .withOpacity(0.2),
+                              height: 1.0,
+                            ),
+
+                            // Theme Tile
+                            ProfilePageTileWidget(
+                              onTap: () {
+                                if (_currentTheme == 'light') {
+                                  ref
+                                      .read(themeController.notifier)
+                                      .changeTheme('dark');
+                                } else {
+                                  ref
+                                      .read(themeController.notifier)
+                                      .changeTheme('light');
+                                }
+                              },
+                              tileName: "Theme",
+                              tailingWidget: Row(
+                                children: [
+                                  AnimatedSwitcher(
+                                    duration: Duration(milliseconds: 500),
+                                    switchInCurve: Curves.easeInSine,
+                                    switchOutCurve: Curves.easeOutSine,
+                                    transitionBuilder: (Widget child,
+                                        Animation<double> animation) {
+                                      final offsetAnimation = Tween<Offset>(
+                                              begin: Offset(0.0, 0.8),
+                                              end: Offset(0.0, 0.0))
+                                          .animate(animation);
+                                      return SlideTransition(
+                                        position: offsetAnimation,
+                                        child: child,
+                                      );
+                                    },
+                                    child: _currentTheme == 'light'
+                                        ? Icon(
+                                            FeatherIcons.sun,
+                                            key: UniqueKey(),
+                                            size: 30.0,
+                                            color: Theme.of(context)
+                                                .primaryColorLight,
+                                          )
+                                        : Icon(
+                                            FeatherIcons.moon,
+                                            key: UniqueKey(),
+                                            size: 30.0,
+                                            color: Theme.of(context)
+                                                .primaryColorLight,
+                                          ),
+                                  ),
+                                  SizedBox(
+                                    width: 6.0,
+                                  ),
+                                  CupertinoSwitch(
+                                    value: _currentTheme == 'light',
+                                    trackColor: Theme.of(context).primaryColor,
+                                    activeColor:
+                                        Theme.of(context).highlightColor,
+                                    onChanged: (val) async {
+                                      if (val) {
+                                        ref
+                                            .read(themeController.notifier)
+                                            .changeTheme('light');
+                                      } else {
+                                        ref
+                                            .read(themeController.notifier)
+                                            .changeTheme('dark');
+                                      }
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            Divider(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .secondary
+                                  .withOpacity(0.2),
+                              height: 1.0,
+                            ),
+
+                            // Settings Tile
+                            ProfilePageTileWidget(
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  PageRouteBuilder(
+                                    transitionDuration:
+                                        Duration(milliseconds: 500),
+                                    transitionsBuilder: (context, animation,
+                                        secondaryAnimation, child) {
+                                      const begin = Offset(1.0, 0.0);
+                                      const end = Offset.zero;
+                                      const curve = Curves.ease;
+
+                                      final tween =
+                                          Tween(begin: begin, end: end);
+                                      final curvedAnimation = CurvedAnimation(
+                                        parent: animation,
+                                        curve: curve,
+                                      );
+
+                                      return SlideTransition(
+                                        position:
+                                            tween.animate(curvedAnimation),
+                                        child: child,
+                                      );
+                                    },
+                                    pageBuilder: (_, __, ___) => SettingsPage(),
+                                  ),
+                                );
+                              },
+                              tileName: "Settings",
+                              tailingWidget: Icon(
+                                Icons.settings_rounded,
+                                size: 28.0,
+                                color: Theme.of(context).primaryColorLight,
+                              ),
+                            ),
+
+                            Divider(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .secondary
+                                  .withOpacity(0.2),
+                              height: 1.0,
+                            ),
+                          ],
                         );
                       },
-                    ),
-                    SizedBox(
-                      height: 20.0,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                      child: Divider(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .secondary
-                            .withOpacity(0.2),
-                        height: 1.0,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 20.0,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20.0),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            flex: 3,
-                            child: Text(
-                              "Theme",
-                              style: TextStyle(
-                                // fontFamily: 'Segoe',
-                                fontSize: 20.0,
-                                color: Theme.of(context).colorScheme.secondary,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                          Consumer(builder: (context, ref, child) {
-                            String _currentTheme =
-                                ref.watch(themeController).currentTheme;
-                            return Row(
-                              children: [
-                                AnimatedSwitcher(
-                                  duration: Duration(milliseconds: 500),
-                                  switchInCurve: Curves.easeInSine,
-                                  switchOutCurve: Curves.easeOutSine,
-                                  transitionBuilder: (Widget child,
-                                      Animation<double> animation) {
-                                    // return ScaleTransition(
-                                    //   scale: animation,
-                                    //   child: child,
-                                    // );
-
-                                    final offsetAnimation = Tween<Offset>(
-                                            begin: Offset(0.0, 0.8),
-                                            end: Offset(0.0, 0.0))
-                                        .animate(animation);
-                                    return SlideTransition(
-                                      position: offsetAnimation,
-                                      child: child,
-                                    );
-                                  },
-                                  child: _currentTheme == 'light'
-                                      ? Icon(
-                                          FeatherIcons.sun,
-                                          key: UniqueKey(),
-                                          size: 30.0,
-                                          color: Theme.of(context)
-                                              .primaryColorLight,
-                                        )
-                                      : Icon(
-                                          FeatherIcons.moon,
-                                          key: UniqueKey(),
-                                          size: 30.0,
-                                          color: Theme.of(context)
-                                              .primaryColorLight,
-                                        ),
-                                ),
-                                SizedBox(
-                                  width: 6.0,
-                                ),
-                                CupertinoSwitch(
-                                  value: _currentTheme == 'light',
-                                  trackColor: Theme.of(context).primaryColor,
-                                  activeColor: Theme.of(context).highlightColor,
-                                  onChanged: (val) async {
-                                    if (val) {
-                                      ref
-                                          .read(themeController.notifier)
-                                          .changeTheme('light');
-                                    } else {
-                                      ref
-                                          .read(themeController.notifier)
-                                          .changeTheme('dark');
-                                    }
-                                  },
-                                ),
-                              ],
-                            );
-                          }),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: 20.0,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                      child: Divider(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .secondary
-                            .withOpacity(0.2),
-                        height: 1.0,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 20.0,
                     ),
                   ],
                 ),
@@ -317,6 +330,46 @@ class ProfileScreen extends StatelessWidget {
               Align(alignment: Alignment.bottomCenter, child: MiniPlayer()),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class ProfilePageTileWidget extends StatelessWidget {
+  const ProfilePageTileWidget({
+    required this.onTap,
+    required this.tileName,
+    required this.tailingWidget,
+    super.key,
+  });
+
+  final void Function()? onTap;
+  final String tileName;
+  final Widget tailingWidget;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
+        child: Row(
+          children: [
+            Expanded(
+              flex: 3,
+              child: Text(
+                tileName,
+                style: TextStyle(
+                  fontFamily: 'Segoe',
+                  fontSize: 20.0,
+                  color: Theme.of(context).colorScheme.secondary,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+            tailingWidget,
+          ],
         ),
       ),
     );
@@ -509,47 +562,24 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                TextButton(
-                  child: Container(
-                    width: MediaQuery.of(context).size.width * 0.25,
-                    padding: EdgeInsets.symmetric(vertical: 12.0),
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                        color: Color(0xFF98c1d9).withOpacity(0.7),
-                        borderRadius: BorderRadius.circular(18.0)),
-                    child: Text(
-                      'CANCEL',
-                      style: TextStyle(
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.white.withOpacity(0.9),
-                      ),
+                CustomChipButtonWidget(
+                  onTap: () => Navigator.pop(context),
+                  child: Text(
+                    'Cancel',
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.w500,
+                      color: Theme.of(context).colorScheme.secondary,
                     ),
                   ),
-                  onPressed: () => Navigator.pop(context),
                 ),
+                const SizedBox(width: 16.0),
                 Consumer(builder: (context, ref, child) {
                   bool _loading = ref.watch(
                     profileController.select((value) => value.loading),
                   );
-                  return TextButton(
-                    child: Container(
-                      width: MediaQuery.of(context).size.width * 0.25,
-                      padding: EdgeInsets.symmetric(vertical: 12.0),
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.primary,
-                          borderRadius: BorderRadius.circular(18.0)),
-                      child: Text(
-                        _loading ? 'Saving...' : 'Save',
-                        style: TextStyle(
-                          fontSize: 16.0,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    onPressed: () async {
+                  return CustomChipButtonWidget(
+                    onTap: () async {
                       if (!_loading) {
                         await ref.read(profileController.notifier).editProfile(
                               name: _nameController.text.trim(),
@@ -558,6 +588,15 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget> {
                         Navigator.pop(context);
                       }
                     },
+                    color: Color(0xFF98c1d9).withOpacity(0.7),
+                    child: Text(
+                      _loading ? 'Saving...' : 'Save',
+                      style: TextStyle(
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.w500,
+                        color: Theme.of(context).colorScheme.secondary,
+                      ),
+                    ),
                   );
                 }),
               ],

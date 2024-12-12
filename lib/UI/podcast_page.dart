@@ -107,16 +107,6 @@ class PodcastPage extends StatelessWidget {
     );
   }
 
-  // void onTapAboutPodcast(BuildContext context) {
-  //   showModalBottomSheet(
-  //       enableDrag: true,
-  //       isScrollControlled: true,
-  //       context: context,
-  //       builder: (context) {
-  //         return
-  //       });
-  // }
-
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -416,111 +406,114 @@ class _EpisodeDetailComponentState extends State<EpisodeDetailComponent> {
               SizedBox(
                 width: 16.0,
               ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    height: 50.0,
-                    width: MediaQuery.of(context).size.width * 0.60,
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      widget.subscription.podcastName,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 17.0,
-                        color: Theme.of(context)
-                            .colorScheme
-                            .secondary
-                            .withOpacity(0.70),
-                        fontFamily: 'Segoe',
-                        fontWeight: FontWeight.w800,
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      height: 50.0,
+                      width: MediaQuery.of(context).size.width * 0.60,
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        widget.subscription.podcastName,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 17.0,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .secondary
+                              .withOpacity(0.70),
+                          fontFamily: 'Segoe',
+                          fontWeight: FontWeight.w800,
+                        ),
                       ),
                     ),
-                  ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        height: 8.0,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          if (widget.subscription.releaseDate != null)
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: 8.0,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            if (widget.subscription.releaseDate != null)
+                              Text(
+                                DateFormat('yMMMd')
+                                    .format(widget.subscription.releaseDate!),
+                                style: TextStyle(
+                                  fontSize: 14.0,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .secondary
+                                      .withOpacity(0.50),
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            if (widget.subscription.releaseDate != null)
+                              SizedBox(
+                                width: 18.0,
+                              ),
                             Text(
-                              DateFormat('yMMMd')
-                                  .format(widget.subscription.releaseDate!),
+                              widget.subscription.country ?? '',
                               style: TextStyle(
                                 fontSize: 14.0,
                                 color: Theme.of(context)
                                     .colorScheme
                                     .secondary
                                     .withOpacity(0.50),
+                                // fontFamily: 'Segoe',
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
-                          if (widget.subscription.releaseDate != null)
-                            SizedBox(
-                              width: 18.0,
-                            ),
-                          Text(
-                            widget.subscription.country ?? '',
-                            style: TextStyle(
-                              fontSize: 14.0,
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .secondary
-                                  .withOpacity(0.50),
-                              // fontFamily: 'Segoe',
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 4.0,
-                      ),
-                      Text(
-                        widget.subscription.genre ?? "",
-                        style: TextStyle(
-                          fontSize: 12.0,
-                          color: Theme.of(context)
-                              .colorScheme
-                              .secondary
-                              .withOpacity(0.70),
-                          fontFamily: 'Segoe',
-                          fontWeight: FontWeight.w500,
+                          ],
                         ),
-                      ),
-                      // Container(
-                      //   width: MediaQuery.of(context).size.width * 0.60,
-                      //   child: Wrap(
-                      //     children: subscription.genre!.map(
-                      //       (i) {
-                      //         int x = subscription.genre!.indexOf(i);
-                      //         int l = subscription.genre!.length;
-                      //         String gName = i.name;
-                      //         if (x < l - 1) gName += " , ";
-                      //         return Text(
-                      //           gName,
-                      //           style: TextStyle(
-                      //             fontSize: 12.0,
-                      //             color:
-                      //                 Theme.of(context).colorScheme.secondary.withOpacity(0.70),
-                      //             fontFamily: 'Segoe',
-                      //             fontWeight: FontWeight.w500,
-                      //           ),
-                      //         );
-                      //       },
-                      //     ).toList(),
-                      //   ),
-                      // ),
-                    ],
-                  )
-                ],
+                        SizedBox(
+                          height: 4.0,
+                        ),
+                        Text(
+                          widget.subscription.genre ?? "",
+                          softWrap: true,
+                          style: TextStyle(
+                            fontSize: 12.0,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .secondary
+                                .withOpacity(0.70),
+                            fontFamily: 'Segoe',
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        // Container(
+                        //   width: MediaQuery.of(context).size.width * 0.60,
+                        //   child: Wrap(
+                        //     children: subscription.genre!.map(
+                        //       (i) {
+                        //         int x = subscription.genre!.indexOf(i);
+                        //         int l = subscription.genre!.length;
+                        //         String gName = i.name;
+                        //         if (x < l - 1) gName += " , ";
+                        //         return Text(
+                        //           gName,
+                        //           style: TextStyle(
+                        //             fontSize: 12.0,
+                        //             color:
+                        //                 Theme.of(context).colorScheme.secondary.withOpacity(0.70),
+                        //             fontFamily: 'Segoe',
+                        //             fontWeight: FontWeight.w500,
+                        //           ),
+                        //         );
+                        //       },
+                        //     ).toList(),
+                        //   ),
+                        // ),
+                      ],
+                    )
+                  ],
+                ),
               ),
             ],
           ),

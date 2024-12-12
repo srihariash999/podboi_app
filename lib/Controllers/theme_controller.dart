@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive/hive.dart';
+import 'package:podboi/Constants/constants.dart';
 
 //* Provider for accessing themestate.
 final themeController =
@@ -8,7 +9,7 @@ final themeController =
   return ThemeStateNotifier();
 });
 
-Box _genBox = Hive.box('generalBox');
+Box _genBox = Hive.box(K.boxes.generalBox);
 
 //* state notifier for changes and actions.
 class ThemeStateNotifier extends StateNotifier<ThemeState> {

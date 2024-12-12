@@ -1,4 +1,3 @@
-import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -31,6 +30,18 @@ class ListeningHistoryView extends StatelessWidget {
       ),
       child: Scaffold(
         backgroundColor: Theme.of(context).colorScheme.primary,
+        appBar: AppBar(
+          title: Text(
+            'Listening History',
+            style: TextStyle(
+              fontFamily: 'Segoe',
+              fontSize: 22.0,
+              color: Theme.of(context).colorScheme.secondary,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          backgroundColor: Theme.of(context).colorScheme.primary,
+        ),
         body: SafeArea(
           child: Column(
             children: [
@@ -39,34 +50,6 @@ class ListeningHistoryView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        IconButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          icon: Icon(
-                            FeatherIcons.arrowLeft,
-                            color: Theme.of(context).colorScheme.secondary,
-                          ),
-                        ),
-                        SizedBox(
-                          width: 20.0,
-                        ),
-                        Text(
-                          'Listening History',
-                          style: TextStyle(
-                            // fontFamily: 'Segoe',
-                            fontSize: 22.0,
-                            color: Theme.of(context).colorScheme.secondary,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 24.0,
-                    ),
                     Expanded(
                       child: Consumer(
                         builder: (context, ref, child) {
