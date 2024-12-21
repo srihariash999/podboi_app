@@ -13,8 +13,8 @@ final audioController =
 class AudioStateNotifier extends StateNotifier<AudioState> {
   final ref;
 
-  AudioPlayer? _player;
   List<Song> _playlist = [];
+  AudioPlayer? _player;
   // debounce throttle
   var throttle = false;
 

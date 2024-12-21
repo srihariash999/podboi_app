@@ -6,10 +6,11 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 import 'package:podboi/Controllers/audio_controller.dart';
 import 'package:podboi/Controllers/history_controller.dart';
+import 'package:podboi/DataModels/episode_data.dart';
 import 'package:podboi/DataModels/song.dart';
+import 'package:podboi/DataModels/subscription_data.dart';
 import 'package:podboi/Helpers/helpers.dart';
-// import 'package:podboi/Controllers/history_controller.dart';
-import 'package:podboi/Services/database/database.dart';
+
 // import 'package:podcast_search/podcast_search.dart';
 
 class DetailedEpsiodeViewWidget extends StatelessWidget {

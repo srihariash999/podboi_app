@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podboi/Services/database/database.dart';
-import 'package:podboi/Services/database/database_service.dart';
+import 'package:podboi/DataModels/listening_history.dart';
 
 //* Provider for accessing historystate.
 final historyController =
@@ -43,39 +42,39 @@ class HistoryStateNotifier extends StateNotifier<HistoryState> {
   int _page = 0;
 
   getHistory({bool fullRefresh = false}) async {
-    if (fullRefresh) {
-      _page = 0;
-      state.historyList.clear();
-    }
-    state = state.copyWith(
-      isLoading: true,
-    );
-    List<ListeningHistoryData> _list = await ref
-        .watch(databaseServiceProvider)
-        .getLhiListPaginated(_limit, _page);
-    state = state.copyWith(
-      historyList: _list,
-      isLoading: false,
-      isLoadMoreLoading: false,
-      scrollController: _scrollController,
-    );
+    // if (fullRefresh) {
+    //   _page = 0;
+    //   state.historyList.clear();
+    // }
+    // state = state.copyWith(
+    //   isLoading: true,
+    // );
+    // List<ListeningHistoryData> _list = await ref
+    //     .watch(databaseServiceProvider)
+    //     .getLhiListPaginated(_limit, _page);
+    // state = state.copyWith(
+    //   historyList: _list,
+    //   isLoading: false,
+    //   isLoadMoreLoading: false,
+    //   scrollController: _scrollController,
+    // );
   }
 
   getNextPage() async {
-    if (state.noNextPage) return;
-    _page++;
-    state = state.copyWith(
-      isLoadMoreLoading: true,
-    );
-    List<ListeningHistoryData> _list = await ref
-        .watch(databaseServiceProvider)
-        .getLhiListPaginated(_limit, _page);
-    state = state.copyWith(
-      historyList: [...state.historyList, ..._list],
-      isLoadMoreLoading: false,
-      scrollController: _scrollController,
-      noNextPage: _list.isEmpty,
-    );
+    // if (state.noNextPage) return;
+    // _page++;
+    // state = state.copyWith(
+    //   isLoadMoreLoading: true,
+    // );
+    // List<ListeningHistoryData> _list = await ref
+    //     .watch(databaseServiceProvider)
+    //     .getLhiListPaginated(_limit, _page);
+    // state = state.copyWith(
+    //   historyList: [...state.historyList, ..._list],
+    //   isLoadMoreLoading: false,
+    //   scrollController: _scrollController,
+    //   noNextPage: _list.isEmpty,
+    // );
   }
 
   saveToHistoryAction({
@@ -89,55 +88,55 @@ class HistoryStateNotifier extends StateNotifier<HistoryState> {
     required String podcastArtWork,
     required String podcastName,
   }) async {
-    List<ListeningHistoryData> _list =
-        await ref.watch(databaseServiceProvider).getLhiList();
-    bool _flagged = false;
-    ListeningHistoryData? _lhi;
-    for (var i in _list) {
-      if (i.name == name && i.podcastName == podcastName) {
-        _flagged = true;
-        _lhi = i;
-        break;
-      }
-    }
-    if (_flagged == false) {
-      bool s = await ref.watch(databaseServiceProvider).saveLhi(
-            ListeningHistoryData(
-              id: 0,
-              url: url,
-              name: name,
-              artist: artist,
-              icon: icon,
-              album: album,
-              duration: duration,
-              listenedOn: listenedOn,
-              podcastArtwork: podcastArtWork,
-              podcastName: podcastName,
-            ),
-          );
-      if (s) {
-        getHistory();
-      }
-    } else {
-      await ref.watch(databaseServiceProvider).removeLhiItem(_lhi!.id);
-      bool s = await ref.watch(databaseServiceProvider).saveLhi(
-            ListeningHistoryData(
-              id: 0,
-              url: url,
-              name: name,
-              artist: artist,
-              icon: icon,
-              album: album,
-              duration: duration,
-              listenedOn: listenedOn,
-              podcastArtwork: podcastArtWork,
-              podcastName: podcastName,
-            ),
-          );
-      if (s) {
-        getHistory();
-      }
-    }
+    // List<ListeningHistoryData> _list =
+    //     await ref.watch(databaseServiceProvider).getLhiList();
+    // bool _flagged = false;
+    // ListeningHistoryData? _lhi;
+    // for (var i in _list) {
+    //   if (i.name == name && i.podcastName == podcastName) {
+    //     _flagged = true;
+    //     _lhi = i;
+    //     break;
+    //   }
+    // }
+    // if (_flagged == false) {
+    //   bool s = await ref.watch(databaseServiceProvider).saveLhi(
+    //         ListeningHistoryData(
+    //           id: 0,
+    //           url: url,
+    //           name: name,
+    //           artist: artist,
+    //           icon: icon,
+    //           album: album,
+    //           duration: duration,
+    //           listenedOn: listenedOn,
+    //           podcastArtwork: podcastArtWork,
+    //           podcastName: podcastName,
+    //         ),
+    //       );
+    //   if (s) {
+    //     getHistory();
+    //   }
+    // } else {
+    //   await ref.watch(databaseServiceProvider).removeLhiItem(_lhi!.id);
+    //   bool s = await ref.watch(databaseServiceProvider).saveLhi(
+    //         ListeningHistoryData(
+    //           id: 0,
+    //           url: url,
+    //           name: name,
+    //           artist: artist,
+    //           icon: icon,
+    //           album: album,
+    //           duration: duration,
+    //           listenedOn: listenedOn,
+    //           podcastArtwork: podcastArtWork,
+    //           podcastName: podcastName,
+    //         ),
+    //       );
+    //   if (s) {
+    //     getHistory();
+    //   }
+    // }
   }
 }
 

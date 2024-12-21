@@ -32,8 +32,8 @@ void main() async {
     androidNotificationOngoing: true,
   );
 
-  final session = await AudioSession.instance;
-  await session.configure(const AudioSessionConfiguration.speech());
+  // final session = await AudioSession.instance;
+  // await session.configure(const AudioSessionConfiguration.speech());
 
   runApp(
     ProviderScope(

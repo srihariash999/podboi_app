@@ -4,8 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:podboi/Controllers/audio_controller.dart';
 import 'package:podboi/Controllers/history_controller.dart';
+import 'package:podboi/DataModels/episode_data.dart';
+import 'package:podboi/DataModels/listening_history.dart';
 import 'package:podboi/DataModels/song.dart';
-import 'package:podboi/Services/database/database.dart';
 import 'package:podboi/Shared/episode_display_widget.dart';
 import 'package:podboi/UI/player.dart';
 

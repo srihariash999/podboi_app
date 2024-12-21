@@ -1,4 +1,4 @@
-import 'package:podboi/Services/database/database.dart';
+import 'package:podboi/DataModels/episode_data.dart';
 
 class Song {
   final String url;

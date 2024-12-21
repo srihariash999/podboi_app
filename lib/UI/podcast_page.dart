@@ -6,7 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:podboi/Controllers/podcast_page_controller.dart';
-import 'package:podboi/Services/database/database.dart';
+import 'package:podboi/DataModels/episode_data.dart';
+import 'package:podboi/DataModels/subscription_data.dart';
 import 'package:podboi/Shared/detailed_episode_widget.dart';
 import 'package:podboi/UI/player.dart';
 

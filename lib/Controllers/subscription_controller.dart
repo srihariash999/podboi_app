@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podboi/Services/database/database_service.dart';
-import '../Services/database/database.dart' as db;
+import 'package:podboi/DataModels/subscription_data.dart';
 
 final subscriptionsPageViewController =
     StateNotifierProvider<SubscriptionsPageNotifier, SubscriptionState>((ref) {
@@ -8,30 +7,33 @@ final subscriptionsPageViewController =
 });
 
 class SubscriptionsPageNotifier extends StateNotifier<SubscriptionState> {
-  final StateNotifierProviderRef<SubscriptionsPageNotifier, SubscriptionState> ref;
+  final StateNotifierProviderRef<SubscriptionsPageNotifier, SubscriptionState>
+      ref;
   SubscriptionsPageNotifier(this.ref) : super(SubscriptionState.initial()) {
     _initLoadSubs();
   }
 
   Future<void> _initLoadSubs() async {
-    state = state.copyWith(isLoading: true);
-    List<db.SubscriptionData> savedSubs =
-        await ref.watch(databaseServiceProvider).getAllSubscriptions();
+    state = state.copyWith(isLoading: false);
+    // state = state.copyWith(isLoading: true);
+    // List<db.SubscriptionData> savedSubs =
+    //     await ref.watch(databaseServiceProvider).getAllSubscriptions();
 
-    state = state.copyWith(subscriptionsList: savedSubs, isLoading: false);
+    // state = state.copyWith(subscriptionsList: savedSubs, isLoading: false);
   }
 
   Future<void> loadSubscriptions() async {
-    state = state.copyWith(isLoading: true);
-    List<db.SubscriptionData> _subs =
-        await ref.watch(databaseServiceProvider).getAllSubscriptions();
+    state = state.copyWith(isLoading: false);
+    // state = state.copyWith(isLoading: true);
+    // List<db.SubscriptionData> _subs =
+    //     await ref.watch(databaseServiceProvider).getAllSubscriptions();
 
-    state = state.copyWith(subscriptionsList: _subs, isLoading: false);
+    // state = state.copyWith(subscriptionsList: _subs, isLoading: false);
   }
 }
 
 class SubscriptionState {
-  final List<db.SubscriptionData> subscriptionsList;
+  final List<SubscriptionData> subscriptionsList;
   final bool isLoading;
   SubscriptionState({
     required this.isLoading,
@@ -44,7 +46,7 @@ class SubscriptionState {
     );
   }
   SubscriptionState copyWith({
-    List<db.SubscriptionData>? subscriptionsList,
+    List<SubscriptionData>? subscriptionsList,
     bool? isLoading,
   }) {
     return SubscriptionState(
