@@ -4,5 +4,5 @@ class K {
 
 class BoxNames {
   String settingsBox = "settings-box";
-  String generalBox = "general-box";
+  String subscriptionBox = "subscription-box";
 }

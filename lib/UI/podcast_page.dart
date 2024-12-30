@@ -9,6 +9,7 @@ import 'package:podboi/Controllers/podcast_page_controller.dart';
 import 'package:podboi/DataModels/episode_data.dart';
 import 'package:podboi/DataModels/subscription_data.dart';
 import 'package:podboi/Shared/detailed_episode_widget.dart';
+import 'package:podboi/UI/Common/podboi_loader.dart';
 import 'package:podboi/UI/player.dart';
 
 class PodcastPage extends StatelessWidget {
@@ -298,11 +299,12 @@ class PodcastPage extends StatelessWidget {
                         return _viewController.isLoading
                             ? Container(
                                 alignment: Alignment.center,
-                                child: CircularProgressIndicator(
-                                  color:
-                                      Theme.of(context).colorScheme.secondary,
-                                  strokeWidth: 1,
-                                ),
+                                child: PodboiLoader(),
+                                // CircularProgressIndicator(
+                                //   color:
+                                //       Theme.of(context).colorScheme.secondary,
+                                //   strokeWidth: 1,
+                                // ),
                               )
                             : RefreshIndicator(
                                 onRefresh: refresh,

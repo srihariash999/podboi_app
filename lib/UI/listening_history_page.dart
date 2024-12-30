@@ -8,6 +8,7 @@ import 'package:podboi/DataModels/episode_data.dart';
 import 'package:podboi/DataModels/listening_history.dart';
 import 'package:podboi/DataModels/song.dart';
 import 'package:podboi/Shared/episode_display_widget.dart';
+import 'package:podboi/UI/Common/podboi_loader.dart';
 import 'package:podboi/UI/player.dart';
 
 class ListeningHistoryView extends StatelessWidget {
@@ -67,11 +68,12 @@ class ListeningHistoryView extends StatelessWidget {
                           return _loading
                               ? Container(
                                   alignment: Alignment.center,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 1.0,
-                                    color:
-                                        Theme.of(context).colorScheme.secondary,
-                                  ),
+                                  child: PodboiLoader(),
+                                  // CircularProgressIndicator(
+                                  //   strokeWidth: 1.0,
+                                  //   color:
+                                  //       Theme.of(context).colorScheme.secondary,
+                                  // ),
                                 )
                               : _list.length == 0
                                   ? Container(
@@ -129,10 +131,8 @@ class ListeningHistoryView extends StatelessWidget {
                                                       url: _lhi.url,
                                                       icon: _lhi.icon,
                                                       name: _lhi.name,
-                                                      duration: Duration(
-                                                        seconds: int.parse(
-                                                            _lhi.duration),
-                                                      ),
+                                                      duration: int.parse(
+                                                          _lhi.duration),
                                                       artist: _lhi.artist,
                                                       album: _lhi.album,
                                                       episodeData: EpisodeData(

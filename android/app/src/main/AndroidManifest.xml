@@ -2,8 +2,9 @@
  xmlns:tools="http://schemas.android.com/tools"
     package="com.example.podboi">
    <uses-permission android:name="android.permission.WAKE_LOCK"/>
-   <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/> 
-   <uses-permission android:name="android.permission.INTERNET"/> 
+   <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+   <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+   <uses-permission android:name="android.permission.INTERNET"/>
    <application
         android:label="podboi"
         android:icon="@mipmap/ic_launcher"
@@ -40,7 +41,7 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        
+
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data
@@ -58,7 +59,7 @@
             </intent-filter>
         </receiver>
 
-        
+
     </application>
-    
+
 </manifest>

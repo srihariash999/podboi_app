@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podboi/Controllers/settings_controller.dart';
+import 'package:podboi/UI/Common/podboi_loader.dart';
 import 'package:podboi/UI/home_page.dart';
 import 'package:podboi/UI/player.dart';
 import 'package:podboi/UI/subscriptions_page.dart';
@@ -36,10 +37,11 @@ class _BaseScreenState extends State<BaseScreen> {
             return Container(
               color: Theme.of(context).colorScheme.primary,
               child: Center(
-                child: CircularProgressIndicator(
-                  color: Theme.of(context).colorScheme.secondary,
-                  strokeWidth: 1.0,
-                ),
+                child: PodboiLoader(),
+                // CircularProgressIndicator(
+                //   color: Theme.of(context).colorScheme.secondary,
+                //   strokeWidth: 1.0,
+                // ),
               ),
             );
           }

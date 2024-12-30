@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podboi/Controllers/general_box_controller.dart';
+import 'package:podboi/Services/database/settings_box_controller.dart';
 import 'package:podcast_search/podcast_search.dart';
 
 var _search = Search();
@@ -17,8 +17,8 @@ class HomeScreenStateNotifier extends StateNotifier<HomeScreenState> {
 
   _getUserName() async {
     state = state.copyWith(
-      userName: getSavedUserName(),
-      userAvatar: getSavedUserAvatar(),
+      userName: SettingsBoxController.getSavedUserName(),
+      userAvatar: SettingsBoxController.getSavedUserAvatar(),
     );
   }
 

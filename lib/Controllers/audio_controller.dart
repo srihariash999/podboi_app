@@ -1,8 +1,10 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:podboi/DataModels/cached_playback_state.dart';
 import 'package:podboi/DataModels/position_data.dart';
 import 'package:podboi/DataModels/song.dart';
+import 'package:podboi/Services/database/playback_cache_controller.dart';
 import 'package:rxdart/rxdart.dart';
 
 final audioController =
@@ -18,7 +20,22 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
   // debounce throttle
   var throttle = false;
 
-  AudioStateNotifier(this.ref) : super(InitialAudioState()) {}
+  AudioStateNotifier(this.ref) : super(InitialAudioState()) {
+    getLastSavedPlaybackPosition().then((pos) {
+      if (pos != null) {
+        requestPlayingSong(pos.song, initialPosition: pos.duration);
+      }
+    });
+  }
+
+  Future<CachedPlaybackState?> getLastSavedPlaybackPosition() async {
+    var pos = await PlaybackCacheController.getLastSavedPlaybackPosition();
+
+    print(
+        " last saved playback position : ${pos?.duration} , ${pos?.song.name}");
+
+    return pos;
+  }
 
   // ** Function to call from UI to add a song to the queue (plays the song if queue is empty)
   Future<void> requestAddingToQueue(Song song) async {
@@ -32,23 +49,27 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
   }
 
   //**  Function to call from UI to play a song
-  Future<void> requestPlayingSong(Song song) async {
+  Future<void> requestPlayingSong(Song song, {int? initialPosition}) async {
     print(" new play request for : ${song.name}");
     // Emit a loading state.
     state = LoadingAudioState(song: song);
 
     _player ??= AudioPlayer();
 
-    _player!.processingStateStream.listen((ProcessingState pState) {
-      print(" new pstate : $pState");
+    _player!.processingStateStream.listen((ProcessingState pState) async {
       if (pState == ProcessingState.completed && !throttle) {
+        // Debounce the processing state callback.
         throttle = true;
         Future.delayed(Duration(milliseconds: 500), () {
           throttle = false;
         });
+
+        var res = await PlaybackCacheController.clearSavedPlaybackPosition();
+        print(" cleared saved playback position : $res");
+        // If there are items in the queue, play the next item.
         if (_playlist.isNotEmpty) {
           print(" Playing next item on the queue");
-          // play the next item in the queue and remove it from the queue.
+          // remove the item from the queue and play it.
           var nextItem = _playlist.removeAt(0);
           print(" next item is : ${nextItem.name}");
           requestPlayingSong(nextItem);
@@ -68,12 +89,17 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
             album: song.album,
             title: song.name,
             artUri: Uri.parse(song.icon),
-            duration: song.duration,
+            duration: Duration(seconds: song.duration ?? 0),
           ),
         ),
+        initialPosition: Duration(seconds: initialPosition ?? 0),
       );
 
       _player!.play();
+
+      if (initialPosition != null) {
+        _player!.pause();
+      }
 
       var posStream =
           Rx.combineLatest3<Duration, Duration, Duration?, PositionData>(
@@ -88,6 +114,15 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
       _player!.playbackEventStream.listen((PlaybackEvent event) {},
           onError: (Object e, StackTrace stackTrace) {
         print('A stream error occurred: $e');
+      });
+
+      _player?.positionStream.asBroadcastStream().listen((positionData) async {
+        print(" new player position data : $positionData");
+        var res = await PlaybackCacheController.storePlaybackPosition(
+          positionData.inSeconds,
+          song,
+        );
+        print(" saved playback position : $res");
       });
 
       state = LoadedAudioState(

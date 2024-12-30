@@ -580,7 +580,7 @@ class QueueItem extends StatelessWidget {
                   SizedBox(height: 4.0),
                   Text(
                     Helpers.formatDurationToMinutes(
-                      song.duration ?? Duration.zero,
+                      Duration(seconds: song.duration ?? 0),
                     ),
                     style: TextStyle(
                       fontSize: 12.0,

@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hive/hive.dart';
-import 'package:podboi/Constants/constants.dart';
+import 'package:podboi/Services/database/settings_box_controller.dart';
 
 //* Provider for accessing themestate.
 final themeController =
     StateNotifierProvider<ThemeStateNotifier, ThemeState>((ref) {
   return ThemeStateNotifier();
 });
-
-Box _genBox = Hive.box(K.boxes.generalBox);
 
 //* state notifier for changes and actions.
 class ThemeStateNotifier extends StateNotifier<ThemeState> {
@@ -18,7 +15,7 @@ class ThemeStateNotifier extends StateNotifier<ThemeState> {
   }
 
   getTheme() {
-    String? _theme = _genBox.get('theme');
+    String? _theme = SettingsBoxController.getSavedTheme();
 
     if (_theme == null) {
       print(" theme is null");
@@ -45,7 +42,7 @@ class ThemeStateNotifier extends StateNotifier<ThemeState> {
 
   changeTheme(String newTheme) async {
     print(" user wants to change theme to : $newTheme");
-    await _genBox.put('theme', newTheme);
+    await SettingsBoxController.saveThemeRequest(newTheme);
     if (newTheme == 'light') {
       state = state.copyWith(
         themeData: _lightTheme,

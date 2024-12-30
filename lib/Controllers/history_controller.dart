@@ -38,7 +38,7 @@ class HistoryStateNotifier extends StateNotifier<HistoryState> {
 
   final StateNotifierProviderRef<HistoryStateNotifier, HistoryState> ref;
 
-  int _limit = 20;
+  // ignore: unused_field
   int _page = 0;
 
   getHistory({bool fullRefresh = false}) async {

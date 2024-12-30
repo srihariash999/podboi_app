@@ -92,10 +92,8 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                                               url: _episodeData.contentUrl!,
                                               icon: _podcast.artworkUrl,
                                               name: _episodeData.title,
-                                              duration: Duration(
-                                                  seconds:
-                                                      _episodeData.duration ??
-                                                          0),
+                                              duration:
+                                                  _episodeData.duration ?? 0,
                                               artist: "${_episodeData.author}",
                                               album: _podcast.podcastName,
                                               episodeData: _episodeData,
@@ -133,8 +131,7 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                           url: _episodeData.contentUrl!,
                           icon: _podcast.artworkUrl,
                           name: _episodeData.title,
-                          duration:
-                              Duration(seconds: _episodeData.duration ?? 0),
+                          duration: _episodeData.duration ?? 0,
                           artist: "${_episodeData.author}",
                           album: _podcast.podcastName,
                           episodeData: _episodeData,
@@ -276,8 +273,7 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                               url: _episodeData.contentUrl!,
                               icon: _podcast.artworkUrl,
                               name: _episodeData.title,
-                              duration:
-                                  Duration(seconds: _episodeData.duration ?? 0),
+                              duration: _episodeData.duration ?? 0,
                               artist: "${_episodeData.author}",
                               album: _podcast.podcastName,
                               episodeData: _episodeData,
