@@ -55,251 +55,229 @@ class _MiniPlayerState extends State<MiniPlayer> {
       showDragHandle: false,
       context: context,
       builder: (context) {
-        return Consumer(builder: (context, ref, child) {
-          var state = ref.watch(audioController);
+        return Consumer(
+          builder: (context, ref, child) {
+            var state = ref.watch(audioController);
 
-          if (state is! LoadedAudioState)
-            return Container(
-              decoration: BoxDecoration(
-                color: Theme.of(context).highlightColor.withOpacity(0.1),
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(16.0),
-                  topRight: Radius.circular(16.0),
-                ),
-              ),
-              padding: const EdgeInsets.only(top: 12.0),
-              height: MediaQuery.of(context).size.height * 0.88,
-              alignment: Alignment.center,
-              child: CircularProgressIndicator(
-                color: Theme.of(context).colorScheme.secondary,
-                strokeWidth: 2.0,
-              ),
-            );
-
-          var _contState = state;
-          var playlist = _contState.playlist;
-          var song = _contState.currentPlaying;
-          return GestureDetector(
-            onVerticalDragEnd: (details) {
-              print(" details ${details}");
-              // if down drag detected, pop out.
-              if (details.primaryVelocity! > 0) {
-                Navigator.pop(context);
-              }
-            },
-            child: Container(
-              decoration: BoxDecoration(
-                color: Theme.of(context).highlightColor.withOpacity(0.1),
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(16.0),
-                  topRight: Radius.circular(16.0),
-                ),
-              ),
-              padding: const EdgeInsets.only(top: 12.0),
-              height: MediaQuery.of(context).size.height * 0.88,
-              child: CustomScrollView(
-                slivers: [
-                  // Close Button
-                  SliverToBoxAdapter(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        InkWell(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .secondary
-                                  .withOpacity(0.6),
-                            ),
-                            margin: const EdgeInsets.only(
-                              right: 18.0,
-                              top: 12.0,
-                              bottom: 12.0,
-                            ),
-                            padding: const EdgeInsets.all(4.0),
-                            child: Icon(
-                              Icons.close,
-                              color: Theme.of(context).colorScheme.primary,
-                              size: 24.0,
-                            ),
-                          ),
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                        ),
-                      ],
-                    ),
+            if (state is! LoadedAudioState && state is! LoadingAudioState)
+              return Container(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).highlightColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(16.0),
+                    topRight: Radius.circular(16.0),
                   ),
+                ),
+                padding: const EdgeInsets.only(top: 12.0),
+                height: MediaQuery.of(context).size.height * 0.88,
+                alignment: Alignment.center,
+                child: CircularProgressIndicator(
+                  color: Theme.of(context).colorScheme.secondary,
+                  strokeWidth: 2.0,
+                ),
+              );
 
-                  // Album Art and title
-                  SliverToBoxAdapter(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            top: 8.0,
-                            bottom: 24.0,
-                            left: 18.0,
-                            right: 18.0,
-                          ),
-                          child: Center(
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(12.0),
-                              child: Image.network(
-                                song.icon,
-                                fit: BoxFit.cover,
+            // var _contState = state as LoadedAudioState;
+            // var playlist = _contState.playlist;
+            // var song = _contState.currentPlaying;
+
+            List<Song>? playlist;
+            late Song song;
+            AudioPlayer? player;
+
+            if (state is LoadedAudioState) {
+              playlist = state.playlist;
+              song = state.currentPlaying;
+              player = state.player;
+            }
+
+            if (state is LoadingAudioState) {
+              song = state.song;
+            }
+
+            return GestureDetector(
+              onVerticalDragEnd: (details) {
+                print(" details ${details}");
+                // if down drag detected, pop out.
+                if (details.primaryVelocity! > 0) {
+                  Navigator.pop(context);
+                }
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).highlightColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(16.0),
+                    topRight: Radius.circular(16.0),
+                  ),
+                ),
+                padding: const EdgeInsets.only(top: 12.0),
+                height: MediaQuery.of(context).size.height * 0.88,
+                child: CustomScrollView(
+                  slivers: [
+                    // Close Button
+                    SliverToBoxAdapter(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          InkWell(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .secondary
+                                    .withOpacity(0.6),
+                              ),
+                              margin: const EdgeInsets.only(
+                                right: 18.0,
+                                top: 12.0,
+                                bottom: 12.0,
+                              ),
+                              padding: const EdgeInsets.all(4.0),
+                              child: Icon(
+                                Icons.close,
+                                color: Theme.of(context).colorScheme.primary,
+                                size: 24.0,
                               ),
                             ),
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                          child: Text(
-                            song.name,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 18.0,
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .secondary
-                                  .withOpacity(0.8),
-                              fontFamily: 'Segoe',
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SliverToBoxAdapter(child: SizedBox(height: 12.0)),
-
-                  // Play/Pause, Rewind, Fast Forward buttons
-                  SliverToBoxAdapter(
-                    child: ControlButtons(
-                      _contState.player,
-                      ref: ref,
-                    ),
-                  ),
-
-                  // Seekbar
-                  SliverToBoxAdapter(
-                    child: StreamBuilder<PositionData>(
-                      stream: _contState.positionStream,
-                      builder: (context, snapshot) {
-                        final positionData = snapshot.data;
-                        return SeekBar(
-                          duration: positionData?.duration ??
-                              _contState.player.duration ??
-                              _contState.episodeDuration,
-                          position: positionData?.position ??
-                              _contState.player.position,
-                          bufferedPosition: positionData?.bufferedPosition ??
-                              _contState.player.position,
-                          onChangeEnd: (newPosition) {
-                            _contState.player.seek(newPosition);
-                          },
-                        );
-                      },
-                    ),
-                  ),
-
-                  const SliverToBoxAdapter(child: SizedBox(height: 8.0)),
-
-                  // Up Next Heading
-                  SliverToBoxAdapter(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            left: 12.0,
-                            bottom: 16.0,
-                            top: 16.0,
-                          ),
-                          child: Text(
-                            playlist.isEmpty
-                                ? "Up Next"
-                                : "Up Next (${playlist.length})",
-                            style: TextStyle(
-                              fontSize: 22.0,
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .secondary
-                                  .withOpacity(0.8),
-                              fontFamily: 'Segoe',
-                              fontWeight: FontWeight.w700,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  // Empty Queue Tile
-                  if (playlist.isEmpty)
-                    SliverToBoxAdapter(
-                      child: QueueItem(
-                        index: -1,
-                        isEmptyState: true,
-                        showDragHandle: playlist.length >= 2,
-                        onTap: (int index) {},
-                        song: Song.dummy(),
+                        ],
                       ),
                     ),
 
-                  // Playlist / Queue
-                  if (playlist.isNotEmpty)
-                    SliverReorderableList(
-                      itemCount: playlist.length,
-                      onReorder: (x, y) {
-                        ref.read(audioController.notifier).reorderQueue(x, y);
-                      },
-                      itemBuilder: (context, i) {
-                        return Dismissible(
-                          key: ValueKey(playlist[i].url),
-                          background: Container(
-                            color: Colors.redAccent,
-                            alignment: Alignment.centerRight,
-                            child: const Padding(
-                              padding: EdgeInsets.only(right: 8.0),
-                              child: Icon(Icons.delete, color: Colors.white),
-                            ),
-                          ),
-                          onDismissed: (dismissDirection) {
-                            ref
-                                .read(audioController.notifier)
-                                .removeFromQueue(i);
-                          },
-                          child: QueueItem(
-                            index: i,
-                            song: playlist[i],
-                            showDragHandle: playlist.length >= 2,
-                            onTap: (int s) {
-                              ref
-                                  .read(audioController.notifier)
-                                  .skipToSpecificIndex(s);
-                            },
-                          ),
-                        );
-                      },
+                    // Album Art and title
+                    SliverToBoxAdapter(
+                      child: LargePlayerAlbumArtWidget(song: song),
                     ),
 
-                  // Bottom Spacing
-                  SliverToBoxAdapter(
-                    child: SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.03,
-                    ),
-                  )
-                ],
+                    const SliverToBoxAdapter(child: SizedBox(height: 12.0)),
+
+                    // Play/Pause, Rewind, Fast Forward buttons
+                    SliverToBoxAdapter(child: ControlButtons(player, ref: ref)),
+
+                    // Seekbar
+                    if (state is LoadedAudioState)
+                      SliverToBoxAdapter(
+                        child: StreamBuilder<PositionData>(
+                          stream: (state).positionStream,
+                          builder: (context, snapshot) {
+                            final positionData = snapshot.data;
+                            return SeekBar(
+                              duration: positionData?.duration ??
+                                  state.player.duration ??
+                                  state.episodeDuration,
+                              position: positionData?.position ??
+                                  state.player.position,
+                              bufferedPosition:
+                                  positionData?.bufferedPosition ??
+                                      state.player.position,
+                              onChangeEnd: (newPosition) {
+                                state.player.seek(newPosition);
+                              },
+                            );
+                          },
+                        ),
+                      ),
+
+                    const SliverToBoxAdapter(child: SizedBox(height: 8.0)),
+
+                    // Up Next Heading
+                    if (playlist != null)
+                      SliverToBoxAdapter(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                left: 12.0,
+                                bottom: 16.0,
+                                top: 16.0,
+                              ),
+                              child: Text(
+                                playlist.isEmpty
+                                    ? "Up Next"
+                                    : "Up Next (${playlist.length})",
+                                style: TextStyle(
+                                  fontSize: 22.0,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .secondary
+                                      .withOpacity(0.8),
+                                  fontFamily: 'Segoe',
+                                  fontWeight: FontWeight.w700,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                    // Empty Queue Tile
+                    if (playlist != null && playlist.isEmpty)
+                      SliverToBoxAdapter(
+                        child: QueueItem(
+                          index: -1,
+                          isEmptyState: true,
+                          showDragHandle: playlist.length >= 2,
+                          onTap: (int index) {},
+                          song: Song.dummy(),
+                        ),
+                      ),
+
+                    // Playlist / Queue
+                    if (playlist != null && playlist.isNotEmpty)
+                      SliverReorderableList(
+                        itemCount: playlist.length,
+                        onReorder: (x, y) {
+                          ref.read(audioController.notifier).reorderQueue(x, y);
+                        },
+                        itemBuilder: (context, i) {
+                          return Dismissible(
+                            key: ValueKey(playlist![i].url),
+                            background: Container(
+                              color: Colors.redAccent,
+                              alignment: Alignment.centerRight,
+                              child: const Padding(
+                                padding: EdgeInsets.only(right: 8.0),
+                                child: Icon(Icons.delete, color: Colors.white),
+                              ),
+                            ),
+                            onDismissed: (dismissDirection) {
+                              ref
+                                  .read(audioController.notifier)
+                                  .removeFromQueue(i);
+                            },
+                            child: QueueItem(
+                              index: i,
+                              song: playlist[i],
+                              showDragHandle: playlist.length >= 2,
+                              onTap: (int s) {
+                                ref
+                                    .read(audioController.notifier)
+                                    .skipToSpecificIndex(s);
+                              },
+                            ),
+                          );
+                        },
+                      ),
+
+                    // Bottom Spacing
+                    SliverToBoxAdapter(
+                      child: SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.03,
+                      ),
+                    )
+                  ],
+                ),
               ),
-            ),
-          );
-        });
+            );
+          },
+        );
       },
     );
   }
@@ -328,7 +306,7 @@ class _MiniPlayerState extends State<MiniPlayer> {
         padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 4.0),
         child: GestureDetector(
           onTap: () {
-            if (_contState is! LoadedAudioState) return;
+            // if (_contState is! LoadedAudioState) return;
             showLargePlayer();
           },
           child: Card(
@@ -396,6 +374,51 @@ class _MiniPlayerState extends State<MiniPlayer> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class LargePlayerAlbumArtWidget extends StatelessWidget {
+  final Song song;
+
+  const LargePlayerAlbumArtWidget({super.key, required this.song});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(
+            top: 8.0,
+            bottom: 24.0,
+            left: 18.0,
+            right: 18.0,
+          ),
+          child: Center(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12.0),
+              child: Image.network(
+                song.icon,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Text(
+            song.name,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 18.0,
+              color: Theme.of(context).colorScheme.secondary.withOpacity(0.8),
+              fontFamily: 'Segoe',
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -620,7 +643,7 @@ class QueueItem extends StatelessWidget {
 }
 
 class ControlButtons extends StatelessWidget {
-  final AudioPlayer player;
+  final AudioPlayer? player;
   final WidgetRef ref;
 
   const ControlButtons(this.player, {super.key, required this.ref});
@@ -635,7 +658,7 @@ class ControlButtons extends StatelessWidget {
         children: [
           // Rewind button
           StreamBuilder<PlayerState?>(
-            stream: player.playerStateStream,
+            stream: player?.playerStateStream,
             builder: (context, snapshot) => IconButton(
               icon: const Icon(
                 Icons.replay_30,
@@ -648,11 +671,12 @@ class ControlButtons extends StatelessWidget {
           ),
           SizedBox(width: 16.0),
           StreamBuilder<PlayerState>(
-            stream: player.playerStateStream,
+            stream: player?.playerStateStream,
             builder: (context, snapshot) {
               final playerState = snapshot.data;
-              final processingState = playerState?.processingState;
-              final playing = playerState?.playing;
+              final processingState =
+                  playerState?.processingState ?? ProcessingState.loading;
+              final playing = playerState?.playing ?? false;
               if (processingState == ProcessingState.loading ||
                   processingState == ProcessingState.buffering) {
                 return Container(
@@ -667,20 +691,20 @@ class ControlButtons extends StatelessWidget {
                 return IconButton(
                   icon: const Icon(Icons.play_arrow),
                   iconSize: 64.0,
-                  onPressed: player.play,
+                  onPressed: player?.play,
                 );
               } else if (processingState != ProcessingState.completed) {
                 return IconButton(
                   icon: const Icon(Icons.pause),
                   iconSize: 64.0,
-                  onPressed: player.pause,
+                  onPressed: player?.pause,
                 );
               } else {
                 return IconButton(
                   icon: const Icon(Icons.replay),
                   iconSize: 64.0,
-                  onPressed: () => player.seek(Duration.zero,
-                      index: player.effectiveIndices!.first),
+                  onPressed: () => player?.seek(Duration.zero,
+                      index: player?.effectiveIndices!.first),
                 );
               }
             },
@@ -689,7 +713,7 @@ class ControlButtons extends StatelessWidget {
 
           // Fast forward button
           StreamBuilder<PlayerState>(
-            stream: player.playerStateStream,
+            stream: player?.playerStateStream,
             builder: (context, snapshot) => IconButton(
               icon: const Icon(
                 Icons.forward_30,

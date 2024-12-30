@@ -35,7 +35,6 @@ void main() async {
     androidNotificationChannelId: 'com.zepplaud.podboi',
     androidNotificationChannelName: 'Audio playback',
     androidNotificationOngoing: true,
-    androidStopForegroundOnPause: false,
   );
 
   final session = await AudioSession.instance;

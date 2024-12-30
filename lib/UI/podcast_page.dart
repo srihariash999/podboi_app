@@ -530,95 +530,103 @@ class _EpisodeDetailComponentState extends State<EpisodeDetailComponent> {
                     podcastPageViewController(widget.subscription)
                         .select((value) => value.isSubscribed),
                   );
-                  bool _isLoading = ref.watch(
+
+                  bool _isSubscribeButtonLoading = ref.watch(
                     podcastPageViewController(widget.subscription)
-                        .select((value) => value.isLoading),
+                        .select((value) => value.isSubscribeButtonLoading),
                   );
-                  return _isLoading
-                      ? Container(
-                          width: 110.0,
-                          height: 1.0,
-                          child: LinearProgressIndicator(
-                            color: Theme.of(context).colorScheme.secondary,
-                            backgroundColor: Theme.of(context).highlightColor,
-                            minHeight: 1,
+
+                  if (_isSubscribeButtonLoading)
+                    return Container(
+                      width: 124.0,
+                      decoration: BoxDecoration(
+                        color: Colors.yellow.withOpacity(0.3),
+                        borderRadius: BorderRadius.circular(16.0),
+                      ),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 16.0, vertical: 19.0),
+                      alignment: Alignment.center,
+                      child: SizedBox(
+                        height: 2,
+                        child: LinearProgressIndicator(
+                          color: Theme.of(context).colorScheme.secondary,
+                          backgroundColor: Theme.of(context).highlightColor,
+                          minHeight: 1,
+                        ),
+                      ),
+                    );
+
+                  if (_isSubbed)
+                    return GestureDetector(
+                      onTap: () {
+                        ref
+                            .read(podcastPageViewController(widget.subscription)
+                                .notifier)
+                            .removeFromSubscriptionsAction(
+                                widget.subscription, ref);
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.green.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(16.0),
+                        ),
+                        padding: EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'Subscribed',
+                              style: TextStyle(
+                                fontFamily: 'Segoe',
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.green,
+                              ),
+                            ),
+                            SizedBox(
+                              width: 12.0,
+                            ),
+                            Icon(
+                              FeatherIcons.checkCircle,
+                              color: Colors.green,
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  return GestureDetector(
+                    onTap: () {
+                      ref
+                          .read(podcastPageViewController(widget.subscription)
+                              .notifier)
+                          .saveToSubscriptionsAction(widget.subscription, ref);
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.orange.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(16.0),
+                      ),
+                      padding: EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'Subscribe',
+                            style: TextStyle(
+                              fontFamily: 'Segoe',
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.orange,
+                            ),
                           ),
-                        )
-                      : _isSubbed
-                          ? GestureDetector(
-                              onTap: () {
-                                ref
-                                    .read(podcastPageViewController(
-                                            widget.subscription)
-                                        .notifier)
-                                    .removeFromSubscriptionsAction(
-                                        widget.subscription);
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.green.withOpacity(0.2),
-                                  borderRadius: BorderRadius.circular(16.0),
-                                ),
-                                padding: EdgeInsets.all(8.0),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      'Subscribed',
-                                      style: TextStyle(
-                                        fontFamily: 'Segoe',
-                                        fontSize: 16.0,
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.green,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 12.0,
-                                    ),
-                                    Icon(
-                                      FeatherIcons.checkCircle,
-                                      color: Colors.green,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            )
-                          : GestureDetector(
-                              onTap: () {
-                                ref
-                                    .read(podcastPageViewController(
-                                            widget.subscription)
-                                        .notifier)
-                                    .saveToSubscriptionsAction(
-                                        widget.subscription);
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.orange.withOpacity(0.2),
-                                  borderRadius: BorderRadius.circular(16.0),
-                                ),
-                                padding: EdgeInsets.all(8.0),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      'Subscribe',
-                                      style: TextStyle(
-                                        fontFamily: 'Segoe',
-                                        fontSize: 16.0,
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.orange,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 12.0,
-                                    ),
-                                    Icon(FeatherIcons.plusCircle,
-                                        color: Colors.orange),
-                                  ],
-                                ),
-                              ),
-                            );
+                          SizedBox(
+                            width: 12.0,
+                          ),
+                          Icon(FeatherIcons.plusCircle, color: Colors.orange),
+                        ],
+                      ),
+                    ),
+                  );
                 },
               ),
               Padding(

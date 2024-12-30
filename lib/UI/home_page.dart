@@ -38,6 +38,7 @@ class HomePage extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: RefreshIndicator(
+              color: Theme.of(context).primaryColorLight,
               onRefresh: _refresh,
               child: CustomScrollView(
                 slivers: [

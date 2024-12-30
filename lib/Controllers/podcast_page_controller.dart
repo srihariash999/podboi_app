@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:podboi/DataModels/episode_data.dart';
 import 'package:podboi/DataModels/subscription_data.dart';
 import 'package:podboi/Services/database/subscription_box_controller.dart';
@@ -93,25 +94,46 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
     );
   }
 
-  saveToSubscriptionsAction(SubscriptionData podcast) async {
+  saveToSubscriptionsAction(SubscriptionData podcast, WidgetRef ref) async {
     try {
-      state = state.copyWith(isLoading: true);
-      SubscriptionBoxController.saveSubscription(podcast);
-      state = state.copyWith(isLoading: false, isSubscribed: true);
-      print(" podcast ${podcast.podcastName}  is saved to subs");
+      state = state.copyWith(isSubscribeButtonLoading: true);
+      await SubscriptionBoxController.saveSubscription(podcast, ref: ref);
+      state =
+          state.copyWith(isSubscribeButtonLoading: false, isSubscribed: true);
     } catch (e) {
       print("save subscriptions action failed: $e");
+
+      Fluttertoast.showToast(
+          msg: "Unable to save this podcast to subscriptions.",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    } finally {
+      state = state.copyWith(isSubscribeButtonLoading: false);
     }
   }
 
-  removeFromSubscriptionsAction(SubscriptionData podcast) async {
+  removeFromSubscriptionsAction(SubscriptionData podcast, WidgetRef ref) async {
     try {
-      state = state.copyWith(isLoading: true);
-      SubscriptionBoxController.removeSubscription(podcast);
-      state = state.copyWith(isLoading: false, isSubscribed: false);
-      print(" podcast ${podcast.podcastName}  is removed from subs");
+      state = state.copyWith(isSubscribeButtonLoading: true);
+      await SubscriptionBoxController.removeSubscription(podcast, ref: ref);
+      state =
+          state.copyWith(isSubscribeButtonLoading: false, isSubscribed: false);
     } catch (e) {
       print("remove subscriptions action failed: $e");
+      Fluttertoast.showToast(
+          msg: "Unable to remove this podcast from subscriptions.",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    } finally {
+      state = state.copyWith(isSubscribeButtonLoading: false);
     }
   }
 
@@ -146,17 +168,20 @@ class PodcastPageState {
   final List<EpisodeData> podcastEpisodes;
   final String description;
   final bool isLoading;
+  final bool isSubscribeButtonLoading;
   final bool isSubscribed;
   final String? icon;
   final bool epSortingIncr;
 
-  PodcastPageState(
-      {required this.isLoading,
-      required this.podcastEpisodes,
-      required this.isSubscribed,
-      required this.icon,
-      required this.description,
-      required this.epSortingIncr});
+  PodcastPageState({
+    required this.isLoading,
+    required this.podcastEpisodes,
+    required this.isSubscribed,
+    required this.icon,
+    required this.description,
+    required this.epSortingIncr,
+    required this.isSubscribeButtonLoading,
+  });
   factory PodcastPageState.initial() {
     return PodcastPageState(
       isLoading: true,
@@ -165,6 +190,7 @@ class PodcastPageState {
       isSubscribed: false,
       icon: null,
       epSortingIncr: true,
+      isSubscribeButtonLoading: false,
     );
   }
   PodcastPageState copyWith({
@@ -175,6 +201,7 @@ class PodcastPageState {
     String? description,
     bool? epSortingIncr,
     final TextEditingController? episodeSearchController,
+    bool? isSubscribeButtonLoading,
   }) {
     return PodcastPageState(
       isLoading: isLoading ?? this.isLoading,
@@ -183,6 +210,8 @@ class PodcastPageState {
       icon: icon ?? this.icon,
       description: description ?? this.description,
       epSortingIncr: epSortingIncr ?? this.epSortingIncr,
+      isSubscribeButtonLoading:
+          isSubscribeButtonLoading ?? this.isSubscribeButtonLoading,
     );
   }
 }

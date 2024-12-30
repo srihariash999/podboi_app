@@ -19,6 +19,7 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
   AudioPlayer? _player;
   // debounce throttle
   var throttle = false;
+  var playbackCacheThrottle = false;
 
   AudioStateNotifier(this.ref) : super(InitialAudioState()) {
     getLastSavedPlaybackPosition().then((pos) {
@@ -117,12 +118,18 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
       });
 
       _player?.positionStream.asBroadcastStream().listen((positionData) async {
-        print(" new player position data : $positionData");
-        var res = await PlaybackCacheController.storePlaybackPosition(
-          positionData.inSeconds,
-          song,
-        );
-        print(" saved playback position : $res");
+        if (!playbackCacheThrottle) {
+          playbackCacheThrottle = true;
+          Future.delayed(Duration(seconds: 5)).then((value) {
+            playbackCacheThrottle = false;
+          });
+          var res = await PlaybackCacheController.storePlaybackPosition(
+            positionData.inSeconds,
+            song,
+          );
+          print(" new player position data : $positionData");
+          print(" saved playback position : $res");
+        }
       });
 
       state = LoadedAudioState(
