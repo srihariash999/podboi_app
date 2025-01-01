@@ -1,4 +1,3 @@
-import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -37,8 +36,8 @@ void main() async {
     androidNotificationOngoing: true,
   );
 
-  final session = await AudioSession.instance;
-  await session.configure(const AudioSessionConfiguration.speech());
+  // final session = await AudioSession.instance;
+  // await session.configure(const AudioSessionConfiguration.speech());
 
   runApp(
     ProviderScope(

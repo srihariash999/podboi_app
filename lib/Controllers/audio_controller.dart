@@ -1,6 +1,6 @@
-import 'package:audio_service/audio_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 import 'package:podboi/DataModels/cached_playback_state.dart';
 import 'package:podboi/DataModels/position_data.dart';
 import 'package:podboi/DataModels/song.dart';
@@ -52,6 +52,7 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
   //**  Function to call from UI to play a song
   Future<void> requestPlayingSong(Song song, {int? initialPosition}) async {
     print(" new play request for : ${song.name}");
+    print(" url is: ${song.url}");
     // Emit a loading state.
     state = LoadingAudioState(song: song);
 
