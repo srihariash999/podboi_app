@@ -49,6 +49,16 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
     _playlist.add(song);
   }
 
+  Song? get getCurrentPlayingSong {
+    if (state is LoadedAudioState) {
+      return (state as LoadedAudioState).currentPlaying;
+    } else if (state is LoadingAudioState) {
+      return (state as LoadingAudioState).song;
+    }
+
+    return null;
+  }
+
   //**  Function to call from UI to play a song
   Future<void> requestPlayingSong(Song song, {int? initialPosition}) async {
     print(" new play request for : ${song.name}");
@@ -119,17 +129,20 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
       });
 
       _player?.positionStream.asBroadcastStream().listen((positionData) async {
+        if (getCurrentPlayingSong == null) return;
+
+        Song song = getCurrentPlayingSong!;
+
         if (!playbackCacheThrottle) {
           playbackCacheThrottle = true;
           Future.delayed(Duration(seconds: 5)).then((value) {
             playbackCacheThrottle = false;
           });
-          var res = await PlaybackCacheController.storePlaybackPosition(
+
+          await PlaybackCacheController.storePlaybackPosition(
             positionData.inSeconds,
             song,
           );
-          print(" new player position data : $positionData");
-          print(" saved playback position : $res");
         }
       });
 

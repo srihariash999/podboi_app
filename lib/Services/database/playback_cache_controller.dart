@@ -12,6 +12,8 @@ class PlaybackCacheController {
   static Future<bool> storePlaybackPosition(int duration, Song song) async {
     var pbState = CachedPlaybackState(duration: duration, song: song);
     await _box.put(_playbackPositionKey, pbState);
+    print(
+        " Saved song with name: ${song.name} at duration: $duration in playback cache.");
     return true;
   }
 
