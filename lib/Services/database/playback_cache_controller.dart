@@ -6,6 +6,7 @@ import 'package:podboi/DataModels/song.dart';
 Box _box = Hive.box(K.boxes.settingsBox);
 
 final String _playbackPositionKey = 'playbackPosition';
+final String _playbckQueueKey = 'playbackQueue';
 
 class PlaybackCacheController {
   // Method to call from anywhere in app to store the current state of playback.
@@ -17,14 +18,44 @@ class PlaybackCacheController {
     return true;
   }
 
+  static Future<bool> storePlaybackQueue(List<Song> queue) async {
+    await _box.put(_playbckQueueKey, queue);
+    print(" Saved queue with length: ${queue.length} in playback cache.");
+    return true;
+  }
+
   // Method to retrieve last saved playback state. (Might be stored at anytime, if needed add expiry.)
   static Future<CachedPlaybackState?> getLastSavedPlaybackPosition() async {
     return _box.get(_playbackPositionKey);
   }
 
+  // Method to retrieve last saved playback queue. (Might be stored at anytime, if needed add expiry.)
+  static Future<List<Song>?> getLastSavedPlaybackQueue() async {
+    try {
+      var list = _box.get(_playbckQueueKey);
+      List<Song> queue = [];
+      for (var i in list) {
+        queue.add(i as Song);
+      }
+      return queue;
+    } catch (e) {
+      print("error in getting playback queue: $e");
+      return null;
+    }
+  }
+
   static Future<bool> clearSavedPlaybackPosition() async {
     try {
       await _box.delete(_playbackPositionKey);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  static Future<bool> clearSavedPlaybackQueue() async {
+    try {
+      await _box.delete(_playbckQueueKey);
       return true;
     } catch (e) {
       return false;

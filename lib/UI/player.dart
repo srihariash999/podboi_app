@@ -77,10 +77,6 @@ class _MiniPlayerState extends State<MiniPlayer> {
                 ),
               );
 
-            // var _contState = state as LoadedAudioState;
-            // var playlist = _contState.playlist;
-            // var song = _contState.currentPlaying;
-
             List<Song>? playlist;
             late Song song;
             AudioPlayer? player;
@@ -93,6 +89,7 @@ class _MiniPlayerState extends State<MiniPlayer> {
 
             if (state is LoadingAudioState) {
               song = state.song;
+              playlist = state.playlist;
             }
 
             return GestureDetector(

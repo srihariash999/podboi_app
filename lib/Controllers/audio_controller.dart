@@ -27,6 +27,12 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
         requestPlayingSong(pos.song, initialPosition: pos.duration);
       }
     });
+
+    getLastSavedPlaybackQueue().then((queue) {
+      if (queue != null) {
+        _playlist = queue;
+      }
+    });
   }
 
   Future<CachedPlaybackState?> getLastSavedPlaybackPosition() async {
@@ -38,6 +44,14 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
     return pos;
   }
 
+  Future<List<Song>?> getLastSavedPlaybackQueue() async {
+    var queue = await PlaybackCacheController.getLastSavedPlaybackQueue();
+
+    print(" last saved playback queue : ${queue?.length}");
+
+    return queue;
+  }
+
   // ** Function to call from UI to add a song to the queue (plays the song if queue is empty)
   Future<void> requestAddingToQueue(Song song) async {
     if (state is InitialAudioState && _playlist.isEmpty) {
@@ -47,6 +61,8 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
     }
     print(" adding to queue");
     _playlist.add(song);
+    // save the queue to cache
+    await PlaybackCacheController.storePlaybackQueue(_playlist);
   }
 
   Song? get getCurrentPlayingSong {
@@ -64,7 +80,7 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
     print(" new play request for : ${song.name}");
     print(" url is: ${song.url}");
     // Emit a loading state.
-    state = LoadingAudioState(song: song);
+    state = LoadingAudioState(song: song, playlist: _playlist);
 
     _player ??= AudioPlayer();
 
@@ -85,8 +101,11 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
           var nextItem = _playlist.removeAt(0);
           print(" next item is : ${nextItem.name}");
           requestPlayingSong(nextItem);
+          // save the queue to cache
+          await PlaybackCacheController.storePlaybackQueue(_playlist);
         }
         print(" no more items in the queue to play");
+        await PlaybackCacheController.clearSavedPlaybackQueue();
       }
     });
 
@@ -183,7 +202,7 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
         ?.seek(Duration(seconds: (currentPos - 30) < 0 ? 0 : currentPos - 30));
   }
 
-  void reorderQueue(int oldIndex, int newIndex) {
+  Future<void> reorderQueue(int oldIndex, int newIndex) async {
     if (oldIndex == newIndex || throttle) return;
 
     Future.delayed(Duration(milliseconds: 200), () {
@@ -197,10 +216,15 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
     } else {
       _playlist.insert(newIndex, _playlist.removeAt(oldIndex));
     }
+
+    // save the queue to cache
+    await PlaybackCacheController.storePlaybackQueue(_playlist);
   }
 
-  void removeFromQueue(int index) {
+  Future<void> removeFromQueue(int index) async {
     _playlist.removeAt(index);
+    // save the queue to cache
+    await PlaybackCacheController.storePlaybackQueue(_playlist);
   }
 
   Future<void> skipToSpecificIndex(int index) async {
@@ -216,6 +240,9 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
     }
     print(" length of playlist after skip : ${_playlist.length}");
     requestPlayingSong(itemAtIndex);
+
+    // save the queue to cache
+    await PlaybackCacheController.storePlaybackQueue(_playlist);
   }
 }
 
@@ -225,7 +252,8 @@ class InitialAudioState extends AudioState {}
 
 class LoadingAudioState extends AudioState {
   final Song song;
-  LoadingAudioState({required this.song});
+  final List<Song> playlist;
+  LoadingAudioState({required this.song, required this.playlist});
 }
 
 class ErrorAudioState extends AudioState {
