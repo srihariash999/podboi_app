@@ -79,10 +79,23 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
   Future<void> requestPlayingSong(Song song, {int? initialPosition}) async {
     print(" new play request for : ${song.name}");
     print(" url is: ${song.url}");
+
+    var oldState = state;
+
     // Emit a loading state.
     state = LoadingAudioState(song: song, playlist: _playlist);
 
     _player ??= AudioPlayer();
+
+    if (oldState is LoadedAudioState || oldState is LoadingAudioState) {
+      // if another song was playing at the time of request, push that to top of the playlist
+
+      var oldSong = (oldState is LoadedAudioState)
+          ? oldState.currentPlaying
+          : (oldState as LoadingAudioState).song;
+
+      _playlist.insert(0, oldSong);
+    }
 
     _player!.processingStateStream.listen((ProcessingState pState) async {
       if (pState == ProcessingState.completed && !throttle) {
