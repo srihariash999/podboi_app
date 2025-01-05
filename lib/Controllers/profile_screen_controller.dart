@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podboi/Controllers/general_box_controller.dart';
+import 'package:podboi/Services/database/settings_box_controller.dart';
 
 //* Provider for accessing profilestate.
 final profileController =
@@ -17,15 +17,16 @@ class ProfileStateNotifier extends StateNotifier<ProfileState> {
   _getUserDetails() {
     print(" this is called");
     state = state.copyWith(
-      userAvatar: getSavedUserAvatar(),
-      userName: getSavedUserName(),
+      userAvatar: SettingsBoxController.getSavedUserAvatar(),
+      userName: SettingsBoxController.getSavedUserName(),
     );
   }
 
   editProfile({required String name, required String avatar}) async {
     state = state.copyWith(loading: true);
     print(" edit called");
-    await saveNameRequest(nameToSave: name, avatarToSave: avatar);
+    await SettingsBoxController.saveNameRequest(
+        nameToSave: name, avatarToSave: avatar);
     state = state.copyWith(userAvatar: avatar, userName: name, loading: false);
     print(" profile edited ");
   }
