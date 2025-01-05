@@ -141,6 +141,7 @@ class ListeningHistoryView extends StatelessWidget {
                                                             _lhi.id.toString(),
                                                         title: _lhi.name,
                                                         description: _lhi.name,
+                                                        podcastId: 0,
                                                       ),
                                                     ),
                                                   );

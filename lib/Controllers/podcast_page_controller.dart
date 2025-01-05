@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:podboi/DataModels/episode_data.dart';
 import 'package:podboi/DataModels/subscription_data.dart';
+import 'package:podboi/Services/database/podcast_episode_box_controller.dart';
 import 'package:podboi/Services/database/subscription_box_controller.dart';
 import 'package:podcast_search/podcast_search.dart' as ps;
 
@@ -37,40 +38,78 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
       {bool initial = false}) async {
     if (initial) state = state.copyWith(isLoading: true);
 
-    // Podcast _podcast;
     _episodes.clear();
     try {
-      // print(" feed url : $feedUrl");
-      ps.Podcast.loadFeed(url: feedUrl).then((ps.Podcast _podcast) async {
-        if (_podcast.episodes.length != _episodes.length) {
-          for (var i in _podcast.episodes) {
-            _episodes.add(
-              EpisodeData(
-                id: 0,
-                guid: i.guid,
-                title: i.title,
-                description: i.description,
-                link: i.link,
-                publicationDate: i.publicationDate,
-                contentUrl: i.contentUrl,
-                imageUrl: i.imageUrl,
-                author: i.author,
-                season: i.season,
-                episodeNumber: i.episode,
-                duration: i.duration?.inSeconds,
-                podcastId: id,
-                podcastName: _podcast.title,
-              ),
-            );
-          }
-          _filteredEpisodes = _episodes;
-          state = state.copyWith(
-            podcastEpisodes: _filteredEpisodes,
-            description: _podcast.description,
-            isLoading: false,
+      // try and load stuff from local storage.
+      var storedEps =
+          await PodcastEpisodeBoxController.maybeGetEpisodesForPodcast(id);
+
+      // If local storage has episodes, show them.
+      if (storedEps != null && storedEps.isNotEmpty) {
+        print(" loaded ${storedEps.length} from local cache");
+
+        _episodes = [...storedEps];
+        _filteredEpisodes = [..._episodes];
+
+        state = state.copyWith(
+          podcastEpisodes: _filteredEpisodes,
+          isLoading: false,
+          description: podcast.podcastName,
+        );
+      } else {
+        print(" nothing to load from local cache");
+      }
+
+      // load from network.
+      ps.Podcast _podcast = await ps.Podcast.loadFeed(url: feedUrl);
+
+      if (_podcast.episodes.length != _episodes.length) {
+        print(
+            " more episodes found in network than local  network len: ${_podcast.episodes.length} local len: ${_episodes.length} ");
+        // clear the episodes;
+        _episodes.clear();
+        _filteredEpisodes.clear();
+
+        Map<String, int> storedPlaybackValDict = {};
+        for (var i in storedEps ?? []) {
+          storedPlaybackValDict[i.guid] = i.playedDuration ?? 0;
+        }
+
+        for (var i in _podcast.episodes) {
+          _episodes.add(
+            EpisodeData(
+              id: 0,
+              guid: i.guid,
+              title: i.title,
+              description: i.description,
+              link: i.link,
+              publicationDate: i.publicationDate,
+              contentUrl: i.contentUrl,
+              imageUrl: i.imageUrl,
+              author: i.author,
+              season: i.season,
+              episodeNumber: i.episode,
+              duration: i.duration?.inSeconds,
+              podcastId: id,
+              podcastName: _podcast.title,
+              playedDuration: storedPlaybackValDict[i.guid] ?? 0,
+            ),
           );
         }
-      });
+
+        _filteredEpisodes = [..._episodes];
+
+        // store new episodes to local storage.
+        var toSave = [..._episodes];
+        toSave.sort((a, b) => a.publicationDate!.compareTo(b.publicationDate!));
+        await PodcastEpisodeBoxController.saveEpisodesForPodcast(toSave, id);
+
+        state = state.copyWith(
+          podcastEpisodes: _filteredEpisodes,
+          description: _podcast.description,
+          isLoading: false,
+        );
+      }
     } on ps.PodcastFailedException catch (e) {
       print(" error in getting pod eps: ${e.toString()}");
       state = state.copyWith(

@@ -5,6 +5,7 @@ import 'package:podboi/DataModels/cached_playback_state.dart';
 import 'package:podboi/DataModels/position_data.dart';
 import 'package:podboi/DataModels/song.dart';
 import 'package:podboi/Services/database/playback_cache_controller.dart';
+import 'package:podboi/Services/database/podcast_episode_box_controller.dart';
 import 'package:rxdart/rxdart.dart';
 
 final audioController =
@@ -24,7 +25,11 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
   AudioStateNotifier(this.ref) : super(InitialAudioState()) {
     getLastSavedPlaybackPosition().then((pos) {
       if (pos != null) {
-        requestPlayingSong(pos.song, initialPosition: pos.duration);
+        requestPlayingSong(
+          pos.song,
+          initialPosition: pos.duration,
+          pauseOnLoad: true,
+        );
       }
     });
 
@@ -56,7 +61,12 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
   Future<void> requestAddingToQueue(Song song) async {
     if (state is InitialAudioState && _playlist.isEmpty) {
       print(" directly playing stuff.");
-      requestPlayingSong(song);
+
+      // get played duration of the next item
+      var playedDuration = await PodcastEpisodeBoxController.getPlayedDuration(
+          song.episodeData.guid, song.episodeData.podcastId);
+
+      requestPlayingSong(song, initialPosition: playedDuration);
       return;
     }
     print(" adding to queue");
@@ -76,26 +86,15 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
   }
 
   //**  Function to call from UI to play a song
-  Future<void> requestPlayingSong(Song song, {int? initialPosition}) async {
+  Future<void> requestPlayingSong(Song song,
+      {int? initialPosition, bool pauseOnLoad = false}) async {
     print(" new play request for : ${song.name}");
     print(" url is: ${song.url}");
-
-    var oldState = state;
 
     // Emit a loading state.
     state = LoadingAudioState(song: song, playlist: _playlist);
 
     _player ??= AudioPlayer();
-
-    if (oldState is LoadedAudioState || oldState is LoadingAudioState) {
-      // if another song was playing at the time of request, push that to top of the playlist
-
-      var oldSong = (oldState is LoadedAudioState)
-          ? oldState.currentPlaying
-          : (oldState as LoadingAudioState).song;
-
-      _playlist.insert(0, oldSong);
-    }
 
     _player!.processingStateStream.listen((ProcessingState pState) async {
       if (pState == ProcessingState.completed && !throttle) {
@@ -113,7 +112,13 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
           // remove the item from the queue and play it.
           var nextItem = _playlist.removeAt(0);
           print(" next item is : ${nextItem.name}");
-          requestPlayingSong(nextItem);
+
+          // get played duration of the next item
+          var playedDuration =
+              await PodcastEpisodeBoxController.getPlayedDuration(
+                  nextItem.episodeData.guid, nextItem.episodeData.podcastId);
+
+          requestPlayingSong(nextItem, initialPosition: playedDuration);
           // save the queue to cache
           await PlaybackCacheController.storePlaybackQueue(_playlist);
         }
@@ -125,6 +130,18 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
     Duration? epDur;
 
     try {
+      bool isInitPosToConsider = false;
+
+      if (_player?.position.inSeconds != null &&
+          _player?.position.inSeconds != 0 &&
+          initialPosition != null &&
+          initialPosition != 0 &&
+          (initialPosition < (_player?.position.inSeconds ?? 0)) &&
+          (_player?.position.inSeconds != null &&
+              (initialPosition / _player!.position.inSeconds) < 0.99)) {
+        isInitPosToConsider = true;
+      }
+
       epDur = await _player?.setAudioSource(
         AudioSource.uri(
           Uri.parse(song.url),
@@ -136,12 +153,14 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
             duration: Duration(seconds: song.duration ?? 0),
           ),
         ),
-        initialPosition: Duration(seconds: initialPosition ?? 0),
+        initialPosition: isInitPosToConsider
+            ? Duration(seconds: initialPosition ?? 0)
+            : null,
       );
 
       _player!.play();
 
-      if (initialPosition != null) {
+      if (pauseOnLoad) {
         _player!.pause();
       }
 
@@ -174,6 +193,12 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
           await PlaybackCacheController.storePlaybackPosition(
             positionData.inSeconds,
             song,
+          );
+
+          await PodcastEpisodeBoxController.storePlayedDuration(
+            song.episodeData.guid,
+            positionData.inSeconds,
+            song.episodeData.podcastId,
           );
         }
       });
@@ -252,7 +277,14 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
       _playlist.insert(0, (state as LoadingAudioState).song);
     }
     print(" length of playlist after skip : ${_playlist.length}");
-    requestPlayingSong(itemAtIndex);
+
+    // get played duration of the next item
+    var playedDuration = await PodcastEpisodeBoxController.getPlayedDuration(
+      itemAtIndex.episodeData.guid,
+      itemAtIndex.episodeData.podcastId,
+    );
+
+    requestPlayingSong(itemAtIndex, initialPosition: playedDuration);
 
     // save the queue to cache
     await PlaybackCacheController.storePlaybackQueue(_playlist);

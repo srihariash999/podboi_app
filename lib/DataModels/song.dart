@@ -41,6 +41,7 @@ class Song {
         guid: "",
         title: "",
         description: "",
+        podcastId: 0,
       ),
     );
   }

@@ -21,6 +21,7 @@ class EpisodeDataAdapter extends TypeAdapter<EpisodeData> {
       guid: fields[1] as String,
       title: fields[2] as String,
       description: fields[3] as String,
+      podcastId: fields[12] as int,
       link: fields[4] as String?,
       publicationDate: fields[5] as DateTime?,
       contentUrl: fields[6] as String?,
@@ -29,15 +30,15 @@ class EpisodeDataAdapter extends TypeAdapter<EpisodeData> {
       season: fields[9] as int?,
       episodeNumber: fields[10] as int?,
       duration: fields[11] as int?,
-      podcastId: fields[12] as int?,
       podcastName: fields[13] as String?,
+      playedDuration: fields[14] as int?,
     );
   }
 
   @override
   void write(BinaryWriter writer, EpisodeData obj) {
     writer
-      ..writeByte(14)
+      ..writeByte(15)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -65,7 +66,9 @@ class EpisodeDataAdapter extends TypeAdapter<EpisodeData> {
       ..writeByte(12)
       ..write(obj.podcastId)
       ..writeByte(13)
-      ..write(obj.podcastName);
+      ..write(obj.podcastName)
+      ..writeByte(14)
+      ..write(obj.playedDuration);
   }
 
   @override
