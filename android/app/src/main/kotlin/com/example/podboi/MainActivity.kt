@@ -1,4 +1,4 @@
-package com.example.podboi
+package com.zepplaud.podboi
 
 import io.flutter.embedding.android.FlutterActivity
 

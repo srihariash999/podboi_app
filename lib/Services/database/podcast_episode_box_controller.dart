@@ -58,7 +58,6 @@ class PodcastEpisodeBoxController {
         episodeBox.put(guid, episode.copyWith(playedDuration: playedDuration));
         print(
             " stored played duration for episode with guid: $guid. Updated duration: $playedDuration");
-        print(" poo: ${(episodeBox.get(guid))?.playedDuration}");
         await episodeBox.close();
         return true;
       } else {

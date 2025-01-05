@@ -48,6 +48,9 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
       if (storedEps != null && storedEps.isNotEmpty) {
         print(" loaded ${storedEps.length} from local cache");
 
+        storedEps
+            .sort((a, b) => b.publicationDate!.compareTo(a.publicationDate!));
+
         _episodes = [...storedEps];
         _filteredEpisodes = [..._episodes];
 
@@ -101,7 +104,7 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
 
         // store new episodes to local storage.
         var toSave = [..._episodes];
-        toSave.sort((a, b) => a.publicationDate!.compareTo(b.publicationDate!));
+        toSave.sort((a, b) => b.publicationDate!.compareTo(a.publicationDate!));
         await PodcastEpisodeBoxController.saveEpisodesForPodcast(toSave, id);
 
         state = state.copyWith(
