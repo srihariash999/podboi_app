@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:podboi/Controllers/audio_controller.dart';
 import 'package:podboi/Controllers/history_controller.dart';
-import 'package:podboi/DataModels/episode_data.dart';
 import 'package:podboi/DataModels/listening_history.dart';
 import 'package:podboi/DataModels/song.dart';
 import 'package:podboi/Shared/episode_display_widget.dart';
@@ -57,10 +56,7 @@ class ListeningHistoryView extends StatelessWidget {
                         builder: (context, ref, child) {
                           bool _loading = ref.watch(
                               historyController.select((v) => v.isLoading));
-                          bool _loadMoreLoading = ref.watch(historyController
-                              .select((v) => v.isLoadMoreLoading));
-                          bool _noNextPage = ref.watch(
-                              historyController.select((v) => v.noNextPage));
+
                           List<ListeningHistoryData> _list = ref.watch(
                             historyController
                                 .select((value) => value.historyList),
@@ -69,11 +65,6 @@ class ListeningHistoryView extends StatelessWidget {
                               ? Container(
                                   alignment: Alignment.center,
                                   child: PodboiLoader(),
-                                  // CircularProgressIndicator(
-                                  //   strokeWidth: 1.0,
-                                  //   color:
-                                  //       Theme.of(context).colorScheme.secondary,
-                                  // ),
                                 )
                               : _list.length == 0
                                   ? Container(
@@ -81,7 +72,7 @@ class ListeningHistoryView extends StatelessWidget {
                                       child: Text(
                                         " No history found",
                                         style: TextStyle(
-                                          // fontFamily: 'Segoe',
+                                          fontFamily: 'Segoe',
                                           fontSize: 18.0,
                                           color: Theme.of(context)
                                               .colorScheme
@@ -94,31 +85,8 @@ class ListeningHistoryView extends StatelessWidget {
                                   : RefreshIndicator(
                                       onRefresh: _refresh,
                                       child: ListView.separated(
-                                        itemCount: _list.length + 1,
+                                        itemCount: _list.length,
                                         itemBuilder: (context, index) {
-                                          if (index == _list.length) {
-                                            if (_noNextPage) return Container();
-                                            return InkWell(
-                                              onTap: () => ref
-                                                  .read(historyController
-                                                      .notifier)
-                                                  .getNextPage(),
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                  horizontal: 12.0,
-                                                  vertical: 12.0,
-                                                ),
-                                                child: Center(
-                                                  child: Text(
-                                                    _loadMoreLoading
-                                                        ? "Loading more ..."
-                                                        : "Load More",
-                                                  ),
-                                                ),
-                                              ),
-                                            );
-                                          }
                                           ListeningHistoryData _lhi =
                                               _list[index];
                                           return GestureDetector(
@@ -128,39 +96,39 @@ class ListeningHistoryView extends StatelessWidget {
                                                       audioController.notifier)
                                                   .requestPlayingSong(
                                                     Song(
-                                                      url: _lhi.url,
-                                                      icon: _lhi.icon,
-                                                      name: _lhi.name,
-                                                      duration: int.parse(
-                                                          _lhi.duration),
-                                                      artist: _lhi.artist,
-                                                      album: _lhi.album,
-                                                      episodeData: EpisodeData(
-                                                        id: _lhi.id,
-                                                        guid:
-                                                            _lhi.id.toString(),
-                                                        title: _lhi.name,
-                                                        description: _lhi.name,
-                                                        podcastId: 0,
-                                                      ),
+                                                      url: _lhi.episodeData
+                                                              .contentUrl ??
+                                                          '',
+                                                      icon: _lhi.episodeData
+                                                              .imageUrl ??
+                                                          '',
+                                                      name: _lhi
+                                                          .episodeData.title,
+                                                      duration: int.parse(_lhi
+                                                              .episodeData
+                                                              .duration
+                                                              ?.toString() ??
+                                                          "0"),
+                                                      artist: _lhi.episodeData
+                                                              .author ??
+                                                          '',
+                                                      album: _lhi.episodeData
+                                                              .podcastName ??
+                                                          '',
+                                                      episodeData:
+                                                          _lhi.episodeData,
                                                     ),
                                                   );
                                               ref
                                                   .read(historyController
                                                       .notifier)
                                                   .saveToHistoryAction(
-                                                    url: _lhi.url,
-                                                    name: _lhi.name,
-                                                    artist: _lhi.artist,
-                                                    icon: _lhi.icon,
-                                                    album: _lhi.album,
-                                                    duration: _lhi.duration,
-                                                    listenedOn: DateTime.now()
-                                                        .toString(),
-                                                    podcastArtWork:
-                                                        _lhi.podcastArtwork,
-                                                    podcastName:
-                                                        _lhi.podcastName,
+                                                    data: ListeningHistoryData(
+                                                      listenedOn: DateTime.now()
+                                                          .toString(),
+                                                      episodeData:
+                                                          _lhi.episodeData,
+                                                    ),
                                                   );
                                             },
                                             child: Padding(
@@ -169,7 +137,9 @@ class ListeningHistoryView extends StatelessWidget {
                                               ),
                                               child: EpisodeDisplayWidget(
                                                 context: context,
-                                                posterUrl: _lhi.podcastArtwork,
+                                                posterUrl:
+                                                    _lhi.episodeData.imageUrl ??
+                                                        "",
                                                 episodeUploadDate:
                                                     DateFormat('yMMMd').format(
                                                           DateTime.parse(
@@ -181,10 +151,12 @@ class ListeningHistoryView extends StatelessWidget {
                                                           DateTime.parse(
                                                               _lhi.listenedOn),
                                                         ),
-                                                episodeTitle: _lhi.name,
+                                                episodeTitle:
+                                                    _lhi.episodeData.title,
                                                 episodeDuration: Duration(
-                                                      seconds: int.parse(
-                                                          _lhi.duration),
+                                                      seconds: _lhi.episodeData
+                                                              .duration ??
+                                                          0,
                                                     ).inMinutes.toString() +
                                                     " Mins",
                                               ),

@@ -49,6 +49,8 @@ class EpisodeDisplayWidget extends StatelessWidget {
                         child: Text(
                           episodeTitle,
                           textAlign: TextAlign.start,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             fontFamily: 'Segoe',
                             fontSize: 14.0,

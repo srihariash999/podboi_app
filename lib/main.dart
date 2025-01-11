@@ -5,6 +5,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:podboi/Constants/constants.dart';
+import 'package:podboi/DataModels/listening_history.dart';
 import 'package:podboi/Services/database/settings_box_controller.dart';
 import 'package:podboi/Controllers/theme_controller.dart';
 import 'package:podboi/DataModels/cached_playback_state.dart';
@@ -25,10 +26,12 @@ void main() async {
   Hive.registerAdapter(EpisodeDataAdapter());
   Hive.registerAdapter(CachedPlaybackStateAdapter());
   Hive.registerAdapter(SubscriptionDataAdapter());
+  Hive.registerAdapter(ListeningHistoryDataAdapter());
 
   // Open all boxes.
   await Hive.openBox(K.boxes.settingsBox);
   await Hive.openBox<SubscriptionData>(K.boxes.subscriptionBox);
+  await Hive.openBox<ListeningHistoryData>(K.boxes.listeningHistoryBox);
 
   await JustAudioBackground.init(
     androidNotificationChannelId: 'com.zepplaud.podboi',

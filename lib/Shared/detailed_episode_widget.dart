@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:podboi/Controllers/audio_controller.dart';
 import 'package:podboi/Controllers/history_controller.dart';
 import 'package:podboi/DataModels/episode_data.dart';
+import 'package:podboi/DataModels/listening_history.dart';
 import 'package:podboi/DataModels/song.dart';
 import 'package:podboi/DataModels/subscription_data.dart';
 import 'package:podboi/Helpers/helpers.dart';
@@ -316,18 +317,10 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                               _ref
                                   .read(historyController.notifier)
                                   .saveToHistoryAction(
-                                    url: _episodeData.contentUrl!.toString(),
-                                    name: _episodeData.title,
-                                    artist: "${_episodeData.author}",
-                                    icon: _podcast.artworkUrl,
-                                    album: "${_podcast.podcastName}",
-                                    duration: Duration(
-                                            seconds: _episodeData.duration ?? 0)
-                                        .inSeconds
-                                        .toString(),
-                                    listenedOn: DateTime.now().toString(),
-                                    podcastArtWork: _podcast.artworkUrl,
-                                    podcastName: "${_podcast.podcastName}",
+                                    data: ListeningHistoryData(
+                                      listenedOn: DateTime.now().toString(),
+                                      episodeData: _episodeData,
+                                    ),
                                   );
                             },
                             child: Icon(

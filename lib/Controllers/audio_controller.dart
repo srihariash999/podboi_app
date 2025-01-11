@@ -2,8 +2,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:podboi/DataModels/cached_playback_state.dart';
+import 'package:podboi/DataModels/listening_history.dart';
 import 'package:podboi/DataModels/position_data.dart';
 import 'package:podboi/DataModels/song.dart';
+import 'package:podboi/Services/database/listening_history_box_controller.dart';
 import 'package:podboi/Services/database/playback_cache_controller.dart';
 import 'package:podboi/Services/database/podcast_episode_box_controller.dart';
 import 'package:rxdart/rxdart.dart';
@@ -193,6 +195,13 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
           await PlaybackCacheController.storePlaybackPosition(
             positionData.inSeconds,
             song,
+          );
+
+          await ListeningHistoryBoxController.saveEpisodeToHistory(
+            ListeningHistoryData(
+              listenedOn: DateTime.now().toString(),
+              episodeData: song.episodeData,
+            ),
           );
 
           await PodcastEpisodeBoxController.storePlayedDuration(
