@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podboi/Constants/controller_references.dart';
-import 'package:podboi/Controllers/general_box_controller.dart';
+import 'package:podboi/Services/database/settings_box_controller.dart';
 import 'package:podboi/Services/network/api.dart';
 
 final loginRegisterController =
@@ -23,7 +23,7 @@ class LoginRegisterStateNotifier extends StateNotifier<LoginRegisterState> {
 
     if (res != null) {
       if (res.statusCode == 200) {
-        bool _b = await saveTokenRequest(token: res.data);
+        bool _b = await SettingsBoxController.saveTokenRequest(token: res.data);
         if (_b) {
           print(" login success, token saved !");
         }

@@ -6,11 +6,10 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 import 'package:podboi/Controllers/audio_controller.dart';
 import 'package:podboi/Controllers/history_controller.dart';
+import 'package:podboi/DataModels/episode_data.dart';
 import 'package:podboi/DataModels/song.dart';
+import 'package:podboi/DataModels/subscription_data.dart';
 import 'package:podboi/Helpers/helpers.dart';
-// import 'package:podboi/Controllers/history_controller.dart';
-import 'package:podboi/Services/database/database.dart';
-// import 'package:podcast_search/podcast_search.dart';
 
 class DetailedEpsiodeViewWidget extends StatelessWidget {
   const DetailedEpsiodeViewWidget({
@@ -27,8 +26,17 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
   final SubscriptionData _podcast;
   final WidgetRef _ref;
 
+  double _computePlayingDuration(EpisodeData episodeData) {
+    if (episodeData.playedDuration == null ||
+        episodeData.duration == null ||
+        episodeData.duration == 0) return 0.0;
+
+    return (episodeData.playedDuration! / episodeData.duration!).toDouble();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final playedDuration = _computePlayingDuration(_episodeData);
     return InkWell(
       onTap: () {
         showModalBottomSheet(
@@ -86,17 +94,16 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
 
                                       _ref
                                           .read(audioController.notifier)
-                                          .requestPlayingSong(
+                                          .requestAddingToQueue(
                                             Song(
                                               url: _episodeData.contentUrl!,
                                               icon: _podcast.artworkUrl,
                                               name: _episodeData.title,
-                                              duration: Duration(
-                                                  seconds:
-                                                      _episodeData.duration ??
-                                                          0),
+                                              duration:
+                                                  _episodeData.duration ?? 0,
                                               artist: "${_episodeData.author}",
                                               album: _podcast.podcastName,
+                                              episodeData: _episodeData,
                                             ),
                                           );
                                     },
@@ -131,10 +138,10 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                           url: _episodeData.contentUrl!,
                           icon: _podcast.artworkUrl,
                           name: _episodeData.title,
-                          duration:
-                              Duration(seconds: _episodeData.duration ?? 0),
+                          duration: _episodeData.duration ?? 0,
                           artist: "${_episodeData.author}",
                           album: _podcast.podcastName,
+                          episodeData: _episodeData,
                         ),
                       );
                 },
@@ -247,6 +254,7 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                   ],
                 ),
               ),
+              const SizedBox(height: 6.0),
               Row(
                 children: [
                   Expanded(
@@ -264,41 +272,74 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                       ),
                     ),
                   ),
-                  IconButton(
-                    onPressed: () async {
-                      print("episodeData link: ${_episodeData.contentUrl}");
-
-                      _ref.read(audioController.notifier).requestPlayingSong(
-                            Song(
-                              url: _episodeData.contentUrl!,
-                              icon: _podcast.artworkUrl,
-                              name: _episodeData.title,
-                              duration:
-                                  Duration(seconds: _episodeData.duration ?? 0),
-                              artist: "${_episodeData.author}",
-                              album: _podcast.podcastName,
+                  Container(
+                    alignment: Alignment.center,
+                    child: Stack(
+                      children: [
+                        if (playedDuration > 0.0)
+                          CircularProgressIndicator(
+                            value: playedDuration,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Theme.of(context)
+                                  .colorScheme
+                                  .secondary
+                                  .withOpacity(0.70),
                             ),
-                          );
+                            backgroundColor: Theme.of(context)
+                                .colorScheme
+                                .secondary
+                                .withOpacity(0.2),
+                            strokeWidth: 2.0,
+                          ),
+                        SizedBox(
+                          width: 39.0,
+                          height: 36.0,
+                          child: InkWell(
+                            onTap: () async {
+                              print(
+                                  "episodeData link: ${_episodeData.contentUrl}");
 
-                      _ref.read(historyController.notifier).saveToHistoryAction(
-                            url: _episodeData.contentUrl!.toString(),
-                            name: _episodeData.title,
-                            artist: "${_episodeData.author}",
-                            icon: _podcast.artworkUrl,
-                            album: "${_podcast.podcastName}",
-                            duration:
-                                Duration(seconds: _episodeData.duration ?? 0)
-                                    .inSeconds
-                                    .toString(),
-                            listenedOn: DateTime.now().toString(),
-                            podcastArtWork: _podcast.artworkUrl,
-                            podcastName: "${_podcast.podcastName}",
-                          );
-                    },
-                    icon: Icon(
-                      FeatherIcons.play,
-                      color: Theme.of(context).colorScheme.secondary,
-                      size: 20.0,
+                              _ref
+                                  .read(audioController.notifier)
+                                  .requestPlayingSong(
+                                    Song(
+                                      url: _episodeData.contentUrl!,
+                                      icon: _podcast.artworkUrl,
+                                      name: _episodeData.title,
+                                      duration: _episodeData.duration ?? 0,
+                                      artist: "${_episodeData.author}",
+                                      album: _podcast.podcastName,
+                                      episodeData: _episodeData,
+                                    ),
+                                  );
+
+                              _ref
+                                  .read(historyController.notifier)
+                                  .saveToHistoryAction(
+                                    url: _episodeData.contentUrl!.toString(),
+                                    name: _episodeData.title,
+                                    artist: "${_episodeData.author}",
+                                    icon: _podcast.artworkUrl,
+                                    album: "${_podcast.podcastName}",
+                                    duration: Duration(
+                                            seconds: _episodeData.duration ?? 0)
+                                        .inSeconds
+                                        .toString(),
+                                    listenedOn: DateTime.now().toString(),
+                                    podcastArtWork: _podcast.artworkUrl,
+                                    podcastName: "${_podcast.podcastName}",
+                                  );
+                            },
+                            child: Icon(
+                              (playedDuration > 0.99)
+                                  ? FeatherIcons.check
+                                  : FeatherIcons.play,
+                              color: Theme.of(context).colorScheme.secondary,
+                              size: 20.0,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   )
                 ],

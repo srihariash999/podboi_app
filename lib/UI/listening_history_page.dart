@@ -1,14 +1,15 @@
-import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:podboi/Controllers/audio_controller.dart';
 import 'package:podboi/Controllers/history_controller.dart';
+import 'package:podboi/DataModels/episode_data.dart';
+import 'package:podboi/DataModels/listening_history.dart';
 import 'package:podboi/DataModels/song.dart';
-import 'package:podboi/Services/database/database.dart';
 import 'package:podboi/Shared/episode_display_widget.dart';
-import 'package:podboi/UI/mini_player.dart';
+import 'package:podboi/UI/Common/podboi_loader.dart';
+import 'package:podboi/UI/player.dart';
 
 class ListeningHistoryView extends StatelessWidget {
   ListeningHistoryView({Key? key, required this.ref}) : super(key: key);
@@ -31,6 +32,18 @@ class ListeningHistoryView extends StatelessWidget {
       ),
       child: Scaffold(
         backgroundColor: Theme.of(context).colorScheme.primary,
+        appBar: AppBar(
+          title: Text(
+            'Listening History',
+            style: TextStyle(
+              fontFamily: 'Segoe',
+              fontSize: 22.0,
+              color: Theme.of(context).colorScheme.secondary,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          backgroundColor: Theme.of(context).colorScheme.primary,
+        ),
         body: SafeArea(
           child: Column(
             children: [
@@ -39,34 +52,6 @@ class ListeningHistoryView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        IconButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          icon: Icon(
-                            FeatherIcons.arrowLeft,
-                            color: Theme.of(context).colorScheme.secondary,
-                          ),
-                        ),
-                        SizedBox(
-                          width: 20.0,
-                        ),
-                        Text(
-                          'Listening History',
-                          style: TextStyle(
-                            // fontFamily: 'Segoe',
-                            fontSize: 22.0,
-                            color: Theme.of(context).colorScheme.secondary,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 24.0,
-                    ),
                     Expanded(
                       child: Consumer(
                         builder: (context, ref, child) {
@@ -83,11 +68,12 @@ class ListeningHistoryView extends StatelessWidget {
                           return _loading
                               ? Container(
                                   alignment: Alignment.center,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 1.0,
-                                    color:
-                                        Theme.of(context).colorScheme.secondary,
-                                  ),
+                                  child: PodboiLoader(),
+                                  // CircularProgressIndicator(
+                                  //   strokeWidth: 1.0,
+                                  //   color:
+                                  //       Theme.of(context).colorScheme.secondary,
+                                  // ),
                                 )
                               : _list.length == 0
                                   ? Container(
@@ -145,12 +131,18 @@ class ListeningHistoryView extends StatelessWidget {
                                                       url: _lhi.url,
                                                       icon: _lhi.icon,
                                                       name: _lhi.name,
-                                                      duration: Duration(
-                                                        seconds: int.parse(
-                                                            _lhi.duration),
-                                                      ),
+                                                      duration: int.parse(
+                                                          _lhi.duration),
                                                       artist: _lhi.artist,
                                                       album: _lhi.album,
+                                                      episodeData: EpisodeData(
+                                                        id: _lhi.id,
+                                                        guid:
+                                                            _lhi.id.toString(),
+                                                        title: _lhi.name,
+                                                        description: _lhi.name,
+                                                        podcastId: 0,
+                                                      ),
                                                     ),
                                                   );
                                               ref

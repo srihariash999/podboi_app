@@ -6,9 +6,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:podboi/Controllers/podcast_page_controller.dart';
-import 'package:podboi/Services/database/database.dart';
+import 'package:podboi/DataModels/episode_data.dart';
+import 'package:podboi/DataModels/subscription_data.dart';
 import 'package:podboi/Shared/detailed_episode_widget.dart';
-import 'package:podboi/UI/mini_player.dart';
+import 'package:podboi/UI/Common/podboi_loader.dart';
+import 'package:podboi/UI/player.dart';
 
 class PodcastPage extends StatelessWidget {
   final SubscriptionData subscription;
@@ -106,16 +108,6 @@ class PodcastPage extends StatelessWidget {
       },
     );
   }
-
-  // void onTapAboutPodcast(BuildContext context) {
-  //   showModalBottomSheet(
-  //       enableDrag: true,
-  //       isScrollControlled: true,
-  //       context: context,
-  //       builder: (context) {
-  //         return
-  //       });
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -307,11 +299,12 @@ class PodcastPage extends StatelessWidget {
                         return _viewController.isLoading
                             ? Container(
                                 alignment: Alignment.center,
-                                child: CircularProgressIndicator(
-                                  color:
-                                      Theme.of(context).colorScheme.secondary,
-                                  strokeWidth: 1,
-                                ),
+                                child: PodboiLoader(),
+                                // CircularProgressIndicator(
+                                //   color:
+                                //       Theme.of(context).colorScheme.secondary,
+                                //   strokeWidth: 1,
+                                // ),
                               )
                             : RefreshIndicator(
                                 onRefresh: refresh,
@@ -398,14 +391,11 @@ class _EpisodeDetailComponentState extends State<EpisodeDetailComponent> {
                     width: isTapped ? 110 : 100.0,
                     duration: Duration(milliseconds: 200),
                     curve: Curves.fastOutSlowIn,
-                    child: Container(
-                      width: 100.0,
-                      height: 100.0,
-                      clipBehavior: Clip.antiAlias,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12.0),
-                      ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12.0),
                       child: Image.network(
+                        width: 100.0,
+                        height: 100.0,
                         widget.subscription.artworkUrl,
                         fit: BoxFit.cover,
                       ),
@@ -416,111 +406,114 @@ class _EpisodeDetailComponentState extends State<EpisodeDetailComponent> {
               SizedBox(
                 width: 16.0,
               ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    height: 50.0,
-                    width: MediaQuery.of(context).size.width * 0.60,
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      widget.subscription.podcastName,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 17.0,
-                        color: Theme.of(context)
-                            .colorScheme
-                            .secondary
-                            .withOpacity(0.70),
-                        fontFamily: 'Segoe',
-                        fontWeight: FontWeight.w800,
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      height: 50.0,
+                      width: MediaQuery.of(context).size.width * 0.60,
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        widget.subscription.podcastName,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 17.0,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .secondary
+                              .withOpacity(0.70),
+                          fontFamily: 'Segoe',
+                          fontWeight: FontWeight.w800,
+                        ),
                       ),
                     ),
-                  ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        height: 8.0,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          if (widget.subscription.releaseDate != null)
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: 8.0,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            if (widget.subscription.releaseDate != null)
+                              Text(
+                                DateFormat('yMMMd')
+                                    .format(widget.subscription.releaseDate!),
+                                style: TextStyle(
+                                  fontSize: 14.0,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .secondary
+                                      .withOpacity(0.50),
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            if (widget.subscription.releaseDate != null)
+                              SizedBox(
+                                width: 18.0,
+                              ),
                             Text(
-                              DateFormat('yMMMd')
-                                  .format(widget.subscription.releaseDate!),
+                              widget.subscription.country ?? '',
                               style: TextStyle(
                                 fontSize: 14.0,
                                 color: Theme.of(context)
                                     .colorScheme
                                     .secondary
                                     .withOpacity(0.50),
+                                // fontFamily: 'Segoe',
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
-                          if (widget.subscription.releaseDate != null)
-                            SizedBox(
-                              width: 18.0,
-                            ),
-                          Text(
-                            widget.subscription.country ?? '',
-                            style: TextStyle(
-                              fontSize: 14.0,
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .secondary
-                                  .withOpacity(0.50),
-                              // fontFamily: 'Segoe',
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 4.0,
-                      ),
-                      Text(
-                        widget.subscription.genre ?? "",
-                        style: TextStyle(
-                          fontSize: 12.0,
-                          color: Theme.of(context)
-                              .colorScheme
-                              .secondary
-                              .withOpacity(0.70),
-                          fontFamily: 'Segoe',
-                          fontWeight: FontWeight.w500,
+                          ],
                         ),
-                      ),
-                      // Container(
-                      //   width: MediaQuery.of(context).size.width * 0.60,
-                      //   child: Wrap(
-                      //     children: subscription.genre!.map(
-                      //       (i) {
-                      //         int x = subscription.genre!.indexOf(i);
-                      //         int l = subscription.genre!.length;
-                      //         String gName = i.name;
-                      //         if (x < l - 1) gName += " , ";
-                      //         return Text(
-                      //           gName,
-                      //           style: TextStyle(
-                      //             fontSize: 12.0,
-                      //             color:
-                      //                 Theme.of(context).colorScheme.secondary.withOpacity(0.70),
-                      //             fontFamily: 'Segoe',
-                      //             fontWeight: FontWeight.w500,
-                      //           ),
-                      //         );
-                      //       },
-                      //     ).toList(),
-                      //   ),
-                      // ),
-                    ],
-                  )
-                ],
+                        SizedBox(
+                          height: 4.0,
+                        ),
+                        Text(
+                          widget.subscription.genre ?? "",
+                          softWrap: true,
+                          style: TextStyle(
+                            fontSize: 12.0,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .secondary
+                                .withOpacity(0.70),
+                            fontFamily: 'Segoe',
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        // Container(
+                        //   width: MediaQuery.of(context).size.width * 0.60,
+                        //   child: Wrap(
+                        //     children: subscription.genre!.map(
+                        //       (i) {
+                        //         int x = subscription.genre!.indexOf(i);
+                        //         int l = subscription.genre!.length;
+                        //         String gName = i.name;
+                        //         if (x < l - 1) gName += " , ";
+                        //         return Text(
+                        //           gName,
+                        //           style: TextStyle(
+                        //             fontSize: 12.0,
+                        //             color:
+                        //                 Theme.of(context).colorScheme.secondary.withOpacity(0.70),
+                        //             fontFamily: 'Segoe',
+                        //             fontWeight: FontWeight.w500,
+                        //           ),
+                        //         );
+                        //       },
+                        //     ).toList(),
+                        //   ),
+                        // ),
+                      ],
+                    )
+                  ],
+                ),
               ),
             ],
           ),
@@ -534,95 +527,103 @@ class _EpisodeDetailComponentState extends State<EpisodeDetailComponent> {
                     podcastPageViewController(widget.subscription)
                         .select((value) => value.isSubscribed),
                   );
-                  bool _isLoading = ref.watch(
+
+                  bool _isSubscribeButtonLoading = ref.watch(
                     podcastPageViewController(widget.subscription)
-                        .select((value) => value.isLoading),
+                        .select((value) => value.isSubscribeButtonLoading),
                   );
-                  return _isLoading
-                      ? Container(
-                          width: 110.0,
-                          height: 1.0,
-                          child: LinearProgressIndicator(
-                            color: Theme.of(context).colorScheme.secondary,
-                            backgroundColor: Theme.of(context).highlightColor,
-                            minHeight: 1,
+
+                  if (_isSubscribeButtonLoading)
+                    return Container(
+                      width: 124.0,
+                      decoration: BoxDecoration(
+                        color: Colors.yellow.withOpacity(0.3),
+                        borderRadius: BorderRadius.circular(16.0),
+                      ),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 16.0, vertical: 19.0),
+                      alignment: Alignment.center,
+                      child: SizedBox(
+                        height: 2,
+                        child: LinearProgressIndicator(
+                          color: Theme.of(context).colorScheme.secondary,
+                          backgroundColor: Theme.of(context).highlightColor,
+                          minHeight: 1,
+                        ),
+                      ),
+                    );
+
+                  if (_isSubbed)
+                    return GestureDetector(
+                      onTap: () {
+                        ref
+                            .read(podcastPageViewController(widget.subscription)
+                                .notifier)
+                            .removeFromSubscriptionsAction(
+                                widget.subscription, ref);
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.green.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(16.0),
+                        ),
+                        padding: EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'Subscribed',
+                              style: TextStyle(
+                                fontFamily: 'Segoe',
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.green,
+                              ),
+                            ),
+                            SizedBox(
+                              width: 12.0,
+                            ),
+                            Icon(
+                              FeatherIcons.checkCircle,
+                              color: Colors.green,
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  return GestureDetector(
+                    onTap: () {
+                      ref
+                          .read(podcastPageViewController(widget.subscription)
+                              .notifier)
+                          .saveToSubscriptionsAction(widget.subscription, ref);
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.orange.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(16.0),
+                      ),
+                      padding: EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'Subscribe',
+                            style: TextStyle(
+                              fontFamily: 'Segoe',
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.orange,
+                            ),
                           ),
-                        )
-                      : _isSubbed
-                          ? GestureDetector(
-                              onTap: () {
-                                ref
-                                    .read(podcastPageViewController(
-                                            widget.subscription)
-                                        .notifier)
-                                    .removeFromSubscriptionsAction(
-                                        widget.subscription);
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.green.withOpacity(0.2),
-                                  borderRadius: BorderRadius.circular(16.0),
-                                ),
-                                padding: EdgeInsets.all(8.0),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      'Subscribed',
-                                      style: TextStyle(
-                                        fontFamily: 'Segoe',
-                                        fontSize: 16.0,
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.green,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 12.0,
-                                    ),
-                                    Icon(
-                                      FeatherIcons.checkCircle,
-                                      color: Colors.green,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            )
-                          : GestureDetector(
-                              onTap: () {
-                                ref
-                                    .read(podcastPageViewController(
-                                            widget.subscription)
-                                        .notifier)
-                                    .saveToSubscriptionsAction(
-                                        widget.subscription);
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.orange.withOpacity(0.2),
-                                  borderRadius: BorderRadius.circular(16.0),
-                                ),
-                                padding: EdgeInsets.all(8.0),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      'Subscribe',
-                                      style: TextStyle(
-                                        fontFamily: 'Segoe',
-                                        fontSize: 16.0,
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.orange,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 12.0,
-                                    ),
-                                    Icon(FeatherIcons.plusCircle,
-                                        color: Colors.orange),
-                                  ],
-                                ),
-                              ),
-                            );
+                          SizedBox(
+                            width: 12.0,
+                          ),
+                          Icon(FeatherIcons.plusCircle, color: Colors.orange),
+                        ],
+                      ),
+                    ),
+                  );
                 },
               ),
               Padding(

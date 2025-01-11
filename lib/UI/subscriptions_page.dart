@@ -3,10 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:podboi/Controllers/profile_screen_controller.dart';
-import 'package:podboi/Services/database/database.dart';
+import 'package:podboi/Controllers/subscription_controller.dart';
+import 'package:podboi/DataModels/subscription_data.dart';
+import 'package:podboi/UI/Common/podboi_loader.dart';
 import 'package:podboi/UI/podcast_page.dart';
 import 'package:podboi/UI/profile_page.dart';
-import 'package:podboi/Controllers/subscription_controller.dart';
 
 class SubscriptionsPage extends StatelessWidget {
   const SubscriptionsPage({Key? key}) : super(key: key);
@@ -106,16 +107,18 @@ class SubscriptionsPage extends StatelessWidget {
                   return _viewController.isLoading
                       ? Container(
                           alignment: Alignment.center,
-                          child: CircularProgressIndicator(
-                            color: Colors.black,
-                            strokeWidth: 1.0,
-                          ),
+                          child: PodboiLoader(),
+                          // CircularProgressIndicator(
+                          //   color: Colors.black,
+                          //   strokeWidth: 1.0,
+                          // ),
                         )
                       : Expanded(
                           child: Padding(
                             padding:
                                 const EdgeInsets.only(left: 8.0, right: 8.0),
                             child: RefreshIndicator(
+                              color: Theme.of(context).primaryColorLight,
                               onRefresh: refresh,
                               child: GridView.builder(
                                 gridDelegate:

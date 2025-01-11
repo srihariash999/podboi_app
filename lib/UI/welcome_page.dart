@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:line_icons/line_icons.dart';
-import 'package:podboi/Controllers/general_box_controller.dart';
+import 'package:podboi/Services/database/settings_box_controller.dart';
 import 'package:podboi/UI/base_screen.dart';
 
+// TODO: See if we can extract the business logic from this UI screen to a controller. And make this stateless.
 class WelcomePage extends StatefulWidget {
   WelcomePage({Key? key}) : super(key: key);
 
@@ -204,13 +205,15 @@ class _WelcomePageState extends State<WelcomePage> {
                     height: 50.0,
                   ),
                   Center(
+                    // TODO: Replace this with CustomChipButtonWidget
                     child: TextButton(
                       onPressed: () async {
                         if (_nameController.text.trim().length > 0) {
-                          bool r = await saveNameRequest(
+                          bool r = await SettingsBoxController.saveNameRequest(
                             nameToSave: _nameController.text.trim(),
                             avatarToSave: _selectedAvatar,
                           );
+                          print(" result of saving name : $r");
                           if (r) {
                             Navigator.pushReplacement(
                               context,
@@ -246,7 +249,7 @@ class _WelcomePageState extends State<WelcomePage> {
                   Center(
                     child: TextButton(
                       onPressed: () async {
-                        bool r = await saveNameRequest(
+                        bool r = await SettingsBoxController.saveNameRequest(
                           nameToSave: 'User',
                           avatarToSave: _selectedAvatar,
                         );

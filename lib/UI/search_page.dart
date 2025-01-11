@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:podboi/Controllers/search_controller.dart';
-import 'package:podboi/Services/database/database.dart';
+import 'package:podboi/DataModels/subscription_data.dart';
+import 'package:podboi/UI/Common/podboi_loader.dart';
 import 'package:podboi/UI/podcast_page.dart';
 import 'package:podcast_search/podcast_search.dart';
 
@@ -87,12 +88,13 @@ class CustomSearchDelegate extends SearchDelegate<String> {
         return _viewController.isLoading
             ? Container(
                 margin: const EdgeInsets.only(top: 10.0),
-                color:  Theme.of(context).colorScheme.primary,
+                color: Theme.of(context).colorScheme.primary,
                 alignment: Alignment.center,
-                child: CircularProgressIndicator(
-                  strokeWidth: 1.0,
-                  color: Theme.of(context).highlightColor,
-                ),
+                child: PodboiLoader(),
+                //  CircularProgressIndicator(
+                //   strokeWidth: 1.0,
+                //   color: Theme.of(context).highlightColor,
+                // ),
               )
             : _viewController.searchResults.length == 0
                 ? Container(

@@ -4,8 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:podboi/Controllers/home_screen_controller.dart';
 import 'package:podboi/Controllers/profile_screen_controller.dart';
-import 'package:podboi/Services/database/database.dart';
+import 'package:podboi/DataModels/subscription_data.dart';
 import 'package:podboi/Shared/podcast_display_widget.dart';
+import 'package:podboi/UI/Common/podboi_loader.dart';
 import 'package:podboi/UI/podcast_page.dart';
 import 'package:podboi/UI/profile_page.dart';
 import 'package:podboi/UI/search_page.dart';
@@ -37,6 +38,7 @@ class HomePage extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: RefreshIndicator(
+              color: Theme.of(context).primaryColorLight,
               onRefresh: _refresh,
               child: CustomScrollView(
                 slivers: [
@@ -122,7 +124,7 @@ class HomePage extends StatelessWidget {
                   ),
                   isCollapsed: true,
                   contentPadding: const EdgeInsets.symmetric(vertical: 16.0),
-                  hintText: "  Search",
+                  hintText: "Search",
                   alignLabelWithHint: true,
                   hintStyle: TextStyle(
                     fontSize: 16.0,
@@ -166,10 +168,11 @@ class HomePage extends StatelessWidget {
                 child: Container(
                   height: MediaQuery.of(context).size.height * 0.6,
                   alignment: Alignment.center,
-                  child: CircularProgressIndicator(
-                    color: Theme.of(context).colorScheme.secondary,
-                    strokeWidth: 1.0,
-                  ),
+                  child: PodboiLoader(),
+                  // CircularProgressIndicator(
+                  //   color: Theme.of(context).colorScheme.secondary,
+                  //   strokeWidth: 1.0,
+                  // ),
                 ),
               )
             : _topPodcasts.length == 0
