@@ -391,14 +391,11 @@ class _EpisodeDetailComponentState extends State<EpisodeDetailComponent> {
                     width: isTapped ? 110 : 100.0,
                     duration: Duration(milliseconds: 200),
                     curve: Curves.fastOutSlowIn,
-                    child: Container(
-                      width: 100.0,
-                      height: 100.0,
-                      clipBehavior: Clip.antiAlias,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12.0),
-                      ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12.0),
                       child: Image.network(
+                        width: 100.0,
+                        height: 100.0,
                         widget.subscription.artworkUrl,
                         fit: BoxFit.cover,
                       ),

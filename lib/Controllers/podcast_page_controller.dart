@@ -48,8 +48,8 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
       if (storedEps != null && storedEps.isNotEmpty) {
         print(" loaded ${storedEps.length} from local cache");
 
-        storedEps
-            .sort((a, b) => b.publicationDate!.compareTo(a.publicationDate!));
+        storedEps.sort((a, b) => (b.publicationDate ?? DateTime.now())
+            .compareTo(a.publicationDate ?? DateTime.now()));
 
         _episodes = [...storedEps];
         _filteredEpisodes = [..._episodes];
@@ -104,7 +104,8 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
 
         // store new episodes to local storage.
         var toSave = [..._episodes];
-        toSave.sort((a, b) => b.publicationDate!.compareTo(a.publicationDate!));
+        toSave.sort((a, b) => (b.publicationDate ?? DateTime.now())
+            .compareTo((a.publicationDate ?? DateTime.now())));
         await PodcastEpisodeBoxController.saveEpisodesForPodcast(toSave, id);
 
         state = state.copyWith(
@@ -186,10 +187,10 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
       );
       bool _incr = !state.epSortingIncr;
       _incr
-          ? _episodes
-              .sort((a, b) => b.publicationDate!.compareTo(a.publicationDate!))
-          : _episodes
-              .sort((a, b) => a.publicationDate!.compareTo(b.publicationDate!));
+          ? _episodes.sort((a, b) => (b.publicationDate ?? DateTime.now())
+              .compareTo(a.publicationDate ?? DateTime.now()))
+          : _episodes.sort((a, b) => (a.publicationDate ?? DateTime.now())
+              .compareTo(b.publicationDate ?? DateTime.now()));
       _filteredEpisodes = _episodes;
       state = state.copyWith(
         podcastEpisodes: _filteredEpisodes,
