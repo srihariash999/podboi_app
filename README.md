@@ -26,7 +26,7 @@ This project is still in development stage. So, feature requests are welcome. Fe
 - [x] Mini player implementation
 - [x] Light and Dark Modes
 - [x] Manage Subscriptions
-- [ ] Playlist (adding, removing, reordering)
+- [x] Playlist (adding, removing, reordering)
 - [ ] Sleep timer
 - [ ] Connecting to gpodder and proper account management & backup.
  
