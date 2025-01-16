@@ -132,33 +132,33 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
     Duration? epDur;
 
     try {
-      bool isInitPosToConsider = false;
+      // bool isInitPosToConsider = false;
 
-      if (_player?.position.inSeconds != null &&
-          _player?.position.inSeconds != 0 &&
-          initialPosition != null &&
-          initialPosition != 0 &&
-          (initialPosition < (_player?.position.inSeconds ?? 0)) &&
-          (_player?.position.inSeconds != null &&
-              (initialPosition / _player!.position.inSeconds) < 0.99)) {
-        isInitPosToConsider = true;
-      }
+      // if (_player?.position.inSeconds != null &&
+      //     _player?.position.inSeconds != 0 &&
+      //     initialPosition != null &&
+      //     initialPosition != 0 &&
+      //     (_player?.position.inSeconds != null &&
+      //         (initialPosition / _player!.position.inSeconds) < 0.99)) {
+      //   isInitPosToConsider = true;
+      // }
 
       epDur = await _player?.setAudioSource(
-        AudioSource.uri(
-          Uri.parse(song.url),
-          tag: MediaItem(
-            id: song.url,
-            album: song.album,
-            title: song.name,
-            artUri: Uri.parse(song.icon),
-            duration: Duration(seconds: song.duration ?? 0),
+          AudioSource.uri(
+            Uri.parse(song.url),
+            tag: MediaItem(
+              id: song.url,
+              album: song.album,
+              title: song.name,
+              artUri: Uri.parse(song.icon),
+              duration: Duration(seconds: song.duration ?? 0),
+            ),
           ),
-        ),
-        initialPosition: isInitPosToConsider
-            ? Duration(seconds: initialPosition ?? 0)
-            : null,
-      );
+          initialPosition: Duration(seconds: initialPosition ?? 0)
+          // initialPosition: isInitPosToConsider
+          //     ? Duration(seconds: initialPosition ?? 0)
+          //     : null,
+          );
 
       _player!.play();
 
