@@ -24,7 +24,7 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
   var throttle = false;
   var playbackCacheThrottle = false;
 
-  AudioStateNotifier(this.ref) : super(InitialAudioState()) {
+  AudioStateNotifier(this.ref) : super(InitialAudioState(playlist: [])) {
     getLastSavedPlaybackPosition().then((pos) {
       if (pos != null) {
         requestPlayingSong(
@@ -59,6 +59,19 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
     return queue;
   }
 
+  void emitUpdatedPlaylistLoadedState(
+      LoadedAudioState st, List<Song> newPlaylist) {
+    var newState = LoadedAudioState(
+      positionStream: st.positionStream,
+      player: st.player,
+      processingStateStream: st.processingStateStream,
+      playlist: newPlaylist,
+      episodeDuration: st.episodeDuration,
+      currentPlaying: st.currentPlaying,
+    );
+    state = newState;
+  }
+
   // ** Function to call from UI to add a song to the queue (plays the song if queue is empty)
   Future<void> requestAddingToQueue(Song song) async {
     if (state is InitialAudioState && _playlist.isEmpty) {
@@ -75,6 +88,10 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
     _playlist.add(song);
     // save the queue to cache
     await PlaybackCacheController.storePlaybackQueue(_playlist);
+
+    if (state is LoadedAudioState) {
+      emitUpdatedPlaylistLoadedState(state as LoadedAudioState, _playlist);
+    }
   }
 
   Song? get getCurrentPlayingSong {
@@ -123,6 +140,11 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
           requestPlayingSong(nextItem, initialPosition: playedDuration);
           // save the queue to cache
           await PlaybackCacheController.storePlaybackQueue(_playlist);
+
+          if (state is LoadedAudioState) {
+            emitUpdatedPlaylistLoadedState(
+                state as LoadedAudioState, _playlist);
+          }
         }
         print(" no more items in the queue to play");
         await PlaybackCacheController.clearSavedPlaybackQueue();
@@ -224,7 +246,7 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
       // Catch load errors: 404, invalid url ...
       print("Error loading playlist: $e");
       print(stackTrace);
-      state = ErrorAudioState(errorMessage: e.toString());
+      state = ErrorAudioState(errorMessage: e.toString(), playlist: _playlist);
     }
   }
 
@@ -266,12 +288,20 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
 
     // save the queue to cache
     await PlaybackCacheController.storePlaybackQueue(_playlist);
+
+    if (state is LoadedAudioState) {
+      emitUpdatedPlaylistLoadedState(state as LoadedAudioState, _playlist);
+    }
   }
 
   Future<void> removeFromQueue(int index) async {
     _playlist.removeAt(index);
     // save the queue to cache
     await PlaybackCacheController.storePlaybackQueue(_playlist);
+
+    if (state is LoadedAudioState) {
+      emitUpdatedPlaylistLoadedState(state as LoadedAudioState, _playlist);
+    }
   }
 
   Future<void> skipToSpecificIndex(int index) async {
@@ -297,23 +327,36 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
 
     // save the queue to cache
     await PlaybackCacheController.storePlaybackQueue(_playlist);
+
+    if (state is LoadedAudioState) {
+      emitUpdatedPlaylistLoadedState(state as LoadedAudioState, _playlist);
+    }
   }
 }
 
-abstract class AudioState {}
+abstract class AudioState {
+  final List<Song> playlist;
 
-class InitialAudioState extends AudioState {}
+  AudioState({required this.playlist});
+}
+
+class InitialAudioState extends AudioState {
+  InitialAudioState({required super.playlist});
+}
 
 class LoadingAudioState extends AudioState {
   final Song song;
   final List<Song> playlist;
-  LoadingAudioState({required this.song, required this.playlist});
+  LoadingAudioState({required this.song, required this.playlist})
+      : super(
+          playlist: playlist,
+        );
 }
 
 class ErrorAudioState extends AudioState {
   String errorMessage;
 
-  ErrorAudioState({required this.errorMessage});
+  ErrorAudioState({required this.errorMessage, required super.playlist});
 }
 
 class LoadedAudioState extends AudioState {
@@ -331,5 +374,5 @@ class LoadedAudioState extends AudioState {
     required this.playlist,
     required this.episodeDuration,
     required this.currentPlaying,
-  });
+  }) : super(playlist: playlist);
 }
