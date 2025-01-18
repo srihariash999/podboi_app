@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:just_audio_background/just_audio_background.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:podboi/Constants/constants.dart';
 import 'package:podboi/DataModels/listening_history.dart';
@@ -32,12 +31,6 @@ void main() async {
   await Hive.openBox(K.boxes.settingsBox);
   await Hive.openBox<SubscriptionData>(K.boxes.subscriptionBox);
   await Hive.openBox<ListeningHistoryData>(K.boxes.listeningHistoryBox);
-
-  await JustAudioBackground.init(
-    androidNotificationChannelId: 'com.zepplaud.podboi',
-    androidNotificationChannelName: 'Audio playback',
-    androidNotificationOngoing: true,
-  );
 
   // final session = await AudioSession.instance;
   // await session.configure(const AudioSessionConfiguration.speech());

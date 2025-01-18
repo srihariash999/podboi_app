@@ -8,19 +8,25 @@ Box _box = Hive.box(K.boxes.settingsBox);
 final String _playbackPositionKey = 'playbackPosition';
 final String _playbckQueueKey = 'playbackQueue';
 
+bool logsEnabled = false;
+
 class PlaybackCacheController {
   // Method to call from anywhere in app to store the current state of playback.
   static Future<bool> storePlaybackPosition(int duration, Song song) async {
     var pbState = CachedPlaybackState(duration: duration, song: song);
     await _box.put(_playbackPositionKey, pbState);
-    print(
-        " Saved song with name: ${song.name} at duration: $duration in playback cache.");
+    if (logsEnabled) {
+      print(
+          " Saved song with name: ${song.name} at duration: $duration in playback cache.");
+    }
     return true;
   }
 
   static Future<bool> storePlaybackQueue(List<Song> queue) async {
     await _box.put(_playbckQueueKey, queue);
-    print(" Saved queue with length: ${queue.length} in playback cache.");
+    if (logsEnabled) {
+      print(" Saved queue with length: ${queue.length} in playback cache.");
+    }
     return true;
   }
 

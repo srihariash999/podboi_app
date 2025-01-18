@@ -9,6 +9,7 @@ environment:
   sdk: ">=3.0.5 <4.0.0"
 
 dependencies:
+  audio_service: ^0.18.16
   cached_network_image: ^3.4.1
   cupertino_icons: ^1.0.8
   dio: ^5.7.0
@@ -23,7 +24,6 @@ dependencies:
   hive_flutter: ^1.1.0
   intl: ^0.19.0
   just_audio: ^0.9.42
-  just_audio_background: ^0.0.1-beta.14
   line_icons: ^2.0.3
   lottie: ^3.2.0
   path: ^1.8.2

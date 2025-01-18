@@ -1,6 +1,6 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:just_audio_background/just_audio_background.dart';
 import 'package:podboi/DataModels/cached_playback_state.dart';
 import 'package:podboi/DataModels/listening_history.dart';
 import 'package:podboi/DataModels/position_data.dart';
@@ -15,16 +15,113 @@ final audioController =
   return AudioStateNotifier(ref);
 });
 
+class MyAudioHandler extends BaseAudioHandler
+    with
+        QueueHandler, // mix in default queue callback implementations
+        SeekHandler {
+  final AudioPlayer player;
+
+  MyAudioHandler({required this.player}) {
+    player.playbackEventStream.map(_transformEvent).pipe(playbackState);
+  }
+
+  // The most common callbacks:
+  void setMediaItem(MediaItem item) {
+    mediaItem.add(item);
+  }
+
+  @override
+  Future<void> play() => player.play();
+
+  @override
+  Future<void> pause() => player.pause();
+
+  @override
+  Future<void> stop() => player.stop();
+
+  @override
+  Future<void> seek(Duration position) => player.seek(position);
+
+  @override
+  Future<void> skipToQueueItem(int i) => player.seek(Duration.zero, index: i);
+
+  @override
+  Future<void> click([MediaButton button = MediaButton.media]) async {
+    switch (button) {
+      case MediaButton.media:
+        if (player.playing) {
+          await pause();
+        } else {
+          await play();
+        }
+        break;
+      case MediaButton.next:
+        await seek(Duration(seconds: player.position.inSeconds + 30));
+        await play();
+        break;
+      case MediaButton.previous:
+        await seek(Duration(seconds: player.position.inSeconds - 30));
+        await play();
+        break;
+    }
+  }
+
+  PlaybackState _transformEvent(PlaybackEvent event) {
+    return PlaybackState(
+      controls: [
+        MediaControl.rewind,
+        if (player.playing) MediaControl.pause else MediaControl.play,
+        MediaControl.stop,
+        MediaControl.fastForward,
+        // MediaControl.custom(androidIcon: androidIcon, label: label, name: name)
+      ],
+      systemActions: const {
+        MediaAction.seek,
+        MediaAction.seekForward,
+        MediaAction.seekBackward,
+      },
+      androidCompactActionIndices: const [0, 1, 3],
+      processingState: const {
+        ProcessingState.idle: AudioProcessingState.idle,
+        ProcessingState.loading: AudioProcessingState.loading,
+        ProcessingState.buffering: AudioProcessingState.buffering,
+        ProcessingState.ready: AudioProcessingState.ready,
+        ProcessingState.completed: AudioProcessingState.completed,
+      }[player.processingState]!,
+      playing: player.playing,
+      updatePosition: player.position,
+      bufferedPosition: player.bufferedPosition,
+      speed: player.speed,
+      queueIndex: event.currentIndex,
+    );
+  }
+}
+
 class AudioStateNotifier extends StateNotifier<AudioState> {
   final ref;
 
   List<Song> _playlist = [];
-  AudioPlayer? _player;
+  late AudioPlayer _player;
+
+  late MyAudioHandler _audioHandler;
+
   // debounce throttle
   var throttle = false;
   var playbackCacheThrottle = false;
 
   AudioStateNotifier(this.ref) : super(InitialAudioState(playlist: [])) {
+    _player = AudioPlayer();
+
+    AudioService.init(
+      builder: () => MyAudioHandler(player: _player),
+      config: AudioServiceConfig(
+        androidNotificationChannelId: 'com.zepplaud.podboi',
+        androidNotificationChannelName: 'Music playback',
+      ),
+    ).then((service) {
+      _audioHandler = service;
+    });
+
     getLastSavedPlaybackPosition().then((pos) {
       if (pos != null) {
         requestPlayingSong(
@@ -45,8 +142,8 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
   Future<CachedPlaybackState?> getLastSavedPlaybackPosition() async {
     var pos = await PlaybackCacheController.getLastSavedPlaybackPosition();
 
-    print(
-        " last saved playback position : ${pos?.duration} , ${pos?.song.name}");
+    // print(
+    //     " last saved playback position : ${pos?.duration} , ${pos?.song.name}");
 
     return pos;
   }
@@ -54,7 +151,7 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
   Future<List<Song>?> getLastSavedPlaybackQueue() async {
     var queue = await PlaybackCacheController.getLastSavedPlaybackQueue();
 
-    print(" last saved playback queue : ${queue?.length}");
+    // print(" last saved playback queue : ${queue?.length}");
 
     return queue;
   }
@@ -113,9 +210,7 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
     // Emit a loading state.
     state = LoadingAudioState(song: song, playlist: _playlist);
 
-    _player ??= AudioPlayer();
-
-    _player!.processingStateStream.listen((ProcessingState pState) async {
+    _player.processingStateStream.listen((ProcessingState pState) async {
       if (pState == ProcessingState.completed && !throttle) {
         // Debounce the processing state callback.
         throttle = true;
@@ -154,56 +249,46 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
     Duration? epDur;
 
     try {
-      // bool isInitPosToConsider = false;
+      MediaItem mi = MediaItem(
+        id: song.url,
+        album: song.album,
+        title: song.name,
+        artUri: Uri.parse(song.icon),
+        duration: Duration(seconds: song.duration ?? 0),
+      );
+      epDur = await _player.setAudioSource(
+        AudioSource.uri(
+          Uri.parse(song.url),
+          tag: mi,
+        ),
+        initialPosition: Duration(seconds: initialPosition ?? 0),
+      );
 
-      // if (_player?.position.inSeconds != null &&
-      //     _player?.position.inSeconds != 0 &&
-      //     initialPosition != null &&
-      //     initialPosition != 0 &&
-      //     (_player?.position.inSeconds != null &&
-      //         (initialPosition / _player!.position.inSeconds) < 0.99)) {
-      //   isInitPosToConsider = true;
-      // }
-
-      epDur = await _player?.setAudioSource(
-          AudioSource.uri(
-            Uri.parse(song.url),
-            tag: MediaItem(
-              id: song.url,
-              album: song.album,
-              title: song.name,
-              artUri: Uri.parse(song.icon),
-              duration: Duration(seconds: song.duration ?? 0),
-            ),
-          ),
-          initialPosition: Duration(seconds: initialPosition ?? 0)
-          // initialPosition: isInitPosToConsider
-          //     ? Duration(seconds: initialPosition ?? 0)
-          //     : null,
-          );
-
-      _player!.play();
+      _audioHandler.setMediaItem(mi);
+      // _player.play();
+      _audioHandler.play();
 
       if (pauseOnLoad) {
-        _player!.pause();
+        // _player.pause();
+        _audioHandler.pause();
       }
 
       var posStream =
           Rx.combineLatest3<Duration, Duration, Duration?, PositionData>(
-        _player!.positionStream,
-        _player!.bufferedPositionStream,
-        _player!.durationStream,
+        _player.positionStream,
+        _player.bufferedPositionStream,
+        _player.durationStream,
         (position, bufferedPosition, duration) =>
             PositionData(position, bufferedPosition, duration ?? Duration.zero),
       );
 
       // Listen to errors during playback.
-      _player!.playbackEventStream.listen((PlaybackEvent event) {},
+      _player.playbackEventStream.listen((PlaybackEvent event) {},
           onError: (Object e, StackTrace stackTrace) {
         print('A stream error occurred: $e');
       });
 
-      _player?.positionStream.asBroadcastStream().listen((positionData) async {
+      _player.positionStream.asBroadcastStream().listen((positionData) async {
         if (getCurrentPlayingSong == null) return;
 
         Song song = getCurrentPlayingSong!;
@@ -236,8 +321,8 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
 
       state = LoadedAudioState(
         positionStream: posStream.asBroadcastStream(),
-        player: _player!,
-        processingStateStream: _player!.processingStateStream,
+        player: _player,
+        processingStateStream: _player.processingStateStream,
         playlist: _playlist,
         episodeDuration: epDur!,
         currentPlaying: song,
@@ -253,22 +338,22 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
   Future<void> fastForward() async {
     if (state is! LoadedAudioState && state is! LoadingAudioState) return;
 
-    var currentPos = _player?.position.inSeconds;
+    var currentPos = _player.position.inSeconds;
 
-    if (currentPos == null) return;
-
-    await _player?.seek(Duration(seconds: currentPos + 30));
+    // await _player.seek(Duration(seconds: currentPos + 30));
+    await _audioHandler.seek(Duration(seconds: currentPos + 30));
   }
 
   Future<void> rewind() async {
     if (state is! LoadedAudioState && state is! LoadingAudioState) return;
 
-    var currentPos = _player?.position.inSeconds;
+    var currentPos = _player.position.inSeconds;
 
-    if (currentPos == null) return;
+    // await _player
+    //     .seek(Duration(seconds: (currentPos - 30) < 0 ? 0 : currentPos - 30));
 
-    await _player
-        ?.seek(Duration(seconds: (currentPos - 30) < 0 ? 0 : currentPos - 30));
+    await _audioHandler
+        .seek(Duration(seconds: (currentPos - 30) < 0 ? 0 : currentPos - 30));
   }
 
   Future<void> reorderQueue(int oldIndex, int newIndex) async {
@@ -306,16 +391,18 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
 
   Future<void> skipToSpecificIndex(int index) async {
     if (index < 0 || index >= _playlist.length) return;
-    print(" length of playlist befoire skip : ${_playlist.length}");
+    // print(" length of playlist befoire skip : ${_playlist.length}");
     var itemAtIndex = _playlist.removeAt(index);
     if (state is LoadedAudioState) {
-      await _player?.pause();
+      // await _player.pause();
+      await _audioHandler.pause();
       _playlist.insert(0, (state as LoadedAudioState).currentPlaying);
     } else if (state is LoadingAudioState) {
-      await _player?.pause();
+      // await _player.pause();
+      await _audioHandler.pause();
       _playlist.insert(0, (state as LoadingAudioState).song);
     }
-    print(" length of playlist after skip : ${_playlist.length}");
+    // print(" length of playlist after skip : ${_playlist.length}");
 
     // get played duration of the next item
     var playedDuration = await PodcastEpisodeBoxController.getPlayedDuration(
