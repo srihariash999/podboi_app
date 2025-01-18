@@ -129,7 +129,7 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
         child: Slidable(
           key: ValueKey(_episodeData.contentUrl),
-          endActionPane: ActionPane(
+          startActionPane: ActionPane(
             motion: ScrollMotion(),
             children: [
               SlidableAction(
