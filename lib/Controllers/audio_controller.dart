@@ -419,6 +419,10 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
       emitUpdatedPlaylistLoadedState(state as LoadedAudioState, _playlist);
     }
   }
+
+  Future<void> stop() async {
+    await _audioHandler.stop();
+  }
 }
 
 abstract class AudioState {

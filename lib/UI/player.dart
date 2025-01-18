@@ -435,17 +435,32 @@ class QueueItem extends StatelessWidget {
 class ControlButtons extends StatelessWidget {
   final AudioPlayer? player;
   final WidgetRef ref;
+  final void Function() goToQueueAction;
 
-  const ControlButtons(this.player, {super.key, required this.ref});
+  const ControlButtons(this.player,
+      {super.key, required this.ref, required this.goToQueueAction});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16.0),
+      padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
       child: Row(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
+          // Stop Button
+          StreamBuilder<PlayerState?>(
+            stream: player?.playerStateStream,
+            builder: (context, snapshot) => IconButton(
+              icon: const Icon(
+                Icons.stop,
+                size: 48.0,
+              ),
+              onPressed: (snapshot.data?.playing ?? false)
+                  ? ref.read(audioController.notifier).stop
+                  : null,
+            ),
+          ),
+
           // Rewind button
           StreamBuilder<PlayerState?>(
             stream: player?.playerStateStream,
@@ -459,7 +474,8 @@ class ControlButtons extends StatelessWidget {
                   : null,
             ),
           ),
-          SizedBox(width: 16.0),
+
+          // Play/Pause Button
           StreamBuilder<PlayerState>(
             stream: player?.playerStateStream,
             builder: (context, snapshot) {
@@ -499,7 +515,6 @@ class ControlButtons extends StatelessWidget {
               }
             },
           ),
-          SizedBox(width: 16.0),
 
           // Fast forward button
           StreamBuilder<PlayerState>(
@@ -513,6 +528,15 @@ class ControlButtons extends StatelessWidget {
                   ? ref.read(audioController.notifier).fastForward
                   : null,
             ),
+          ),
+
+          // Queue View Button
+          IconButton(
+            icon: const Icon(
+              Icons.playlist_play_outlined,
+              size: 42.0,
+            ),
+            onPressed: goToQueueAction,
           ),
         ],
       ),
@@ -601,7 +625,6 @@ class _LargePlayerState extends State<LargePlayer> {
                     ),
                   ),
                   const SizedBox(height: 16.0),
-                  // Up Next Heading
                   Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 16.0,
@@ -662,7 +685,6 @@ class _LargePlayerState extends State<LargePlayer> {
                       ],
                     ),
                   ),
-
                   const SizedBox(height: 24.0),
                   Expanded(
                     child: PageView.builder(
@@ -683,7 +705,16 @@ class _LargePlayerState extends State<LargePlayer> {
                               SizedBox(height: 12.0),
 
                               // Play/Pause, Rewind, Fast Forward buttons
-                              ControlButtons(player, ref: ref),
+                              ControlButtons(
+                                player,
+                                ref: ref,
+                                goToQueueAction: () {
+                                  widget.pageController.nextPage(
+                                    duration: Duration(milliseconds: 150),
+                                    curve: Curves.easeInOut,
+                                  );
+                                },
+                              ),
 
                               // Seekbar
                               if (state is LoadedAudioState)
