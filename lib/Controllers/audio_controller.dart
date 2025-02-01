@@ -105,6 +105,9 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
 
   late MyAudioHandler _audioHandler;
 
+  final ListeningHistoryBoxController _listeningHistoryBoxController =
+      ListeningHistoryBoxController.initialize();
+
   // debounce throttle
   var throttle = false;
   var playbackCacheThrottle = false;
@@ -304,7 +307,7 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
             song,
           );
 
-          await ListeningHistoryBoxController.saveEpisodeToHistory(
+          await _listeningHistoryBoxController.saveEpisodeToHistory(
             ListeningHistoryData(
               listenedOn: DateTime.now().toString(),
               episodeData: song.episodeData,
