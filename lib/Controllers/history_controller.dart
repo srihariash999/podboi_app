@@ -11,6 +11,9 @@ final historyController =
 
 //* state notifier for changes and actions.
 class HistoryStateNotifier extends StateNotifier<HistoryState> {
+  final ListeningHistoryBoxController _listeningHistoryBoxController =
+      ListeningHistoryBoxController.initialize();
+
   HistoryStateNotifier(this.ref) : super(HistoryState.initial()) {
     getHistory();
   }
@@ -28,7 +31,7 @@ class HistoryStateNotifier extends StateNotifier<HistoryState> {
     );
 
     List<ListeningHistoryData> _list =
-        await ListeningHistoryBoxController.getHistoryList();
+        await _listeningHistoryBoxController.getHistoryList();
 
     state = state.copyWith(
       historyList: _list,
@@ -37,7 +40,7 @@ class HistoryStateNotifier extends StateNotifier<HistoryState> {
   }
 
   saveToHistoryAction({required ListeningHistoryData data}) async {
-    await ListeningHistoryBoxController.saveEpisodeToHistory(data);
+    await _listeningHistoryBoxController.saveEpisodeToHistory(data);
     getHistory();
   }
 }

@@ -7,7 +7,7 @@ import 'package:line_icons/line_icons.dart';
 import 'package:podboi/Controllers/profile_screen_controller.dart';
 import 'package:podboi/Controllers/theme_controller.dart';
 import 'package:podboi/UI/Common/custom_chip_button.dart';
-import 'package:podboi/UI/Pages/settings_page.dart';
+import 'package:podboi/UI/settings_page.dart';
 import 'package:podboi/UI/listening_history_page.dart';
 import 'package:podboi/UI/player.dart';
 
