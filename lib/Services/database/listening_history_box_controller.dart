@@ -14,7 +14,7 @@ class ListeningHistoryBoxController {
   Box<ListeningHistoryData> get box => _box;
 
   /// Initializes a new instance of [ListeningHistoryBoxController] with specified box
-  factory ListeningHistoryBoxController.initialize() {
+  factory ListeningHistoryBoxController.initialize() {  
     return ListeningHistoryBoxController(
       Hive.box<ListeningHistoryData>(K.boxes.listeningHistoryBox),
     );

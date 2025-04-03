@@ -14,21 +14,21 @@ class ProfileStateNotifier extends StateNotifier<ProfileState> {
     _getUserDetails();
   }
 
+  final SettingsBoxController _settingsBoxController =
+      SettingsBoxController.initialize();
+
   _getUserDetails() {
-    print(" this is called");
     state = state.copyWith(
-      userAvatar: SettingsBoxController.getSavedUserAvatar(),
-      userName: SettingsBoxController.getSavedUserName(),
+      userAvatar: _settingsBoxController.getSavedUserAvatar(),
+      userName: _settingsBoxController.getSavedUserName(),
     );
   }
 
   editProfile({required String name, required String avatar}) async {
     state = state.copyWith(loading: true);
-    print(" edit called");
-    await SettingsBoxController.saveNameRequest(
+    await _settingsBoxController.saveNameRequest(
         nameToSave: name, avatarToSave: avatar);
     state = state.copyWith(userAvatar: avatar, userName: name, loading: false);
-    print(" profile edited ");
   }
 }
 

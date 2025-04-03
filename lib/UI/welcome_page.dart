@@ -17,6 +17,9 @@ class _WelcomePageState extends State<WelcomePage> {
 
   String _selectedAvatar = 'user';
 
+  final SettingsBoxController _settingsBoxController =
+      SettingsBoxController.initialize();
+
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -209,7 +212,7 @@ class _WelcomePageState extends State<WelcomePage> {
                     child: TextButton(
                       onPressed: () async {
                         if (_nameController.text.trim().length > 0) {
-                          bool r = await SettingsBoxController.saveNameRequest(
+                          bool r = await _settingsBoxController.saveNameRequest(
                             nameToSave: _nameController.text.trim(),
                             avatarToSave: _selectedAvatar,
                           );
@@ -249,7 +252,7 @@ class _WelcomePageState extends State<WelcomePage> {
                   Center(
                     child: TextButton(
                       onPressed: () async {
-                        bool r = await SettingsBoxController.saveNameRequest(
+                        bool r = await _settingsBoxController.saveNameRequest(
                           nameToSave: 'User',
                           avatarToSave: _selectedAvatar,
                         );
