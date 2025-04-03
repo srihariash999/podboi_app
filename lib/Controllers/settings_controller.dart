@@ -27,7 +27,7 @@ class SettingsStateNotifier extends StateNotifier<SettingsState> {
   Future<void> saveSettings({required bool newSubsFirst}) async {
     try {
       state = SettingsState(subsFirst: newSubsFirst, loading: true);
-      await _settingsBoxController.saveSettings(subsFirst: newSubsFirst);
+      await _settingsBoxController.saveSubsFirstSetting(newSubsFirst);
       state = SettingsState(subsFirst: newSubsFirst, loading: false);
     } catch (e) {
       print(" error in saving settings : $e");

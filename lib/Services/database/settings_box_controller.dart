@@ -3,8 +3,6 @@ import 'package:podboi/Constants/constants.dart';
 
 // Box _box = Hive.box(K.boxes.settingsBox);
 
-const _subsFirstKey = 'subsFirst';
-
 class SettingsBoxController {
   final Box _box;
 
@@ -21,11 +19,9 @@ class SettingsBoxController {
     );
   }
 
-  Future<bool> saveSettings({bool? subsFirst}) async {
+  Future<bool> saveSubsFirstSetting(bool subsFirst) async {
     try {
-      if (subsFirst != null) {
-        await box.put(_subsFirstKey, subsFirst);
-      }
+      await box.put(K.settingsKeys.subsFirstKey, subsFirst);
       return true;
     } catch (e) {
       print(" error saving some or all settings to settings box $e");
@@ -34,14 +30,14 @@ class SettingsBoxController {
   }
 
   bool getSubsFirst() {
-    return box.get(_subsFirstKey) ?? false;
+    return box.get(K.settingsKeys.subsFirstKey) ?? false;
   }
 
   Future<bool> saveNameRequest(
       {required String nameToSave, required String avatarToSave}) async {
     try {
-      await box.put('userName', nameToSave);
-      await box.put('userAvatar', avatarToSave);
+      await box.put(K.settingsKeys.userNameKey, nameToSave);
+      await box.put(K.settingsKeys.userAvatarKey, avatarToSave);
       return true;
     } catch (e) {
       print(" error saving name to the box : $e");
@@ -51,7 +47,7 @@ class SettingsBoxController {
 
   Future<bool> saveTokenRequest({required String token}) async {
     try {
-      await box.put('token', token);
+      await box.put(K.settingsKeys.tokenKey, token);
       return true;
     } catch (e) {
       print(" error saving token to the box : $e");
@@ -60,24 +56,24 @@ class SettingsBoxController {
   }
 
   String getSavedToken() {
-    return box.get('token') ?? "";
+    return box.get(K.settingsKeys.tokenKey) ?? "";
   }
 
   String? getSavedUserName() {
-    return box.get('userName');
+    return box.get(K.settingsKeys.userNameKey);
   }
 
   String? getSavedUserAvatar() {
-    return box.get('userAvatar');
+    return box.get(K.settingsKeys.userAvatarKey);
   }
 
   String? getSavedTheme() {
-    return box.get('theme');
+    return box.get(K.settingsKeys.themeKey);
   }
 
   Future<bool> saveThemeRequest(String theme) async {
     try {
-      await box.put('theme', theme);
+      await box.put(K.settingsKeys.themeKey, theme);
       return true;
     } catch (e) {
       print(" error saving theme to the box : $e");
