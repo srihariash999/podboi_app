@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:podboi/Constants/constants.dart';
 
 class PodboiLoader extends StatelessWidget {
   const PodboiLoader({
@@ -11,11 +12,14 @@ class PodboiLoader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: size,
       width: size,
-      child: Lottie.asset('assets/loaders/loader_2.json',
-          fit: BoxFit.cover, frameRate: FrameRate(120)),
+      child: Lottie.asset(
+        K.animationAssets.loading,
+        fit: BoxFit.cover,
+        frameRate: FrameRate(120),
+      ),
     );
   }
 }

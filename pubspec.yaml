@@ -51,5 +51,4 @@ flutter:
         - asset: fonts/SegoeUiBold.ttf
 
   assets:
-    - assets/loaders/loader_1.json
-    - assets/loaders/loader_2.json
+    - assets/loader.json

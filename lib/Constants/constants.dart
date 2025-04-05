@@ -1,6 +1,7 @@
 class K {
   static BoxNames boxes = BoxNames();
   static SettingsKeys settingsKeys = SettingsKeys();
+  static AnimationAssets animationAssets = AnimationAssets();
 }
 
 class BoxNames {
@@ -15,4 +16,8 @@ class SettingsKeys {
   String userAvatarKey = "userAvatar";
   String themeKey = "theme";
   String tokenKey = "token";
+}
+
+class AnimationAssets {
+  String loading = "assets/loader.json";
 }
