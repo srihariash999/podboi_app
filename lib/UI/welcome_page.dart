@@ -271,7 +271,9 @@ class _WelcomePageState extends State<WelcomePage> {
                         padding: EdgeInsets.symmetric(vertical: 16.0),
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
-                            color: Color(0xFF98c1d9).withOpacity(0.7),
+                            color: Theme.of(context)
+                                .highlightColor
+                                .withOpacity(0.7),
                             borderRadius: BorderRadius.circular(18.0)),
                         child: Text(
                           'SKIP',

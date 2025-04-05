@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:podboi/Controllers/profile_screen_controller.dart';
 import 'package:podboi/Controllers/theme_controller.dart';
-import 'package:podboi/UI/Common/custom_chip_button.dart';
+import 'package:podboi/UI/Common/podboi_primary_button.dart';
 import 'package:podboi/UI/settings_page.dart';
 import 'package:podboi/UI/listening_history_page.dart';
 import 'package:podboi/UI/player.dart';
@@ -105,7 +105,7 @@ class ProfileScreen extends StatelessWidget {
                               height: 24.0,
                             ),
                             Center(
-                              child: CustomChipButtonWidget(
+                              child: PodboiPrimaryButton(
                                 onTap: () async {
                                   showModalBottomSheet<void>(
                                     context: context,
@@ -561,7 +561,7 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CustomChipButtonWidget(
+              PodboiPrimaryButton(
                 onTap: () => Navigator.pop(context),
                 child: Text(
                   'Cancel',
@@ -577,7 +577,7 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget> {
                 bool _loading = ref.watch(
                   profileController.select((value) => value.loading),
                 );
-                return CustomChipButtonWidget(
+                return PodboiPrimaryButton(
                   onTap: () async {
                     if (!_loading) {
                       await ref.read(profileController.notifier).editProfile(
@@ -587,7 +587,7 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget> {
                       Navigator.pop(context);
                     }
                   },
-                  color: Color(0xFF98c1d9).withOpacity(0.7),
+                  color: Theme.of(context).highlightColor.withOpacity(0.7),
                   child: Text(
                     _loading ? 'Saving...' : 'Save',
                     style: TextStyle(

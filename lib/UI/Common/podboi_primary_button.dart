@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
-//TODO: Rename this with something like PodboiPrimaryButton or something.
-class CustomChipButtonWidget extends StatelessWidget {
-  const CustomChipButtonWidget({
+class PodboiPrimaryButton extends StatelessWidget {
+  const PodboiPrimaryButton({
     required this.onTap,
     required this.child,
     this.color,
