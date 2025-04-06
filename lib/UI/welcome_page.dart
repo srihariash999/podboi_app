@@ -185,6 +185,43 @@ class WelcomePage extends StatelessWidget {
                             customWitdh:
                                 MediaQuery.of(context).size.width * 0.35,
                             onTap: () async {
+                              String defaultName = ref
+                                  .read(welcomePageController.notifier)
+                                  .defaultUserName;
+
+                              String defaultAvatar = ref
+                                  .read(welcomePageController.notifier)
+                                  .defaultAvatar;
+                              await ref
+                                  .read(welcomePageController.notifier)
+                                  .saveNameRequest(
+                                    nameToSave: defaultName,
+                                    avatarToSave: defaultAvatar,
+                                  );
+
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => BaseScreen(),
+                                ),
+                              );
+                            },
+                            color: Theme.of(context)
+                                .highlightColor
+                                .withOpacity(0.7),
+                            child: Text(
+                              'SKIP',
+                              style: TextStyle(
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.w500,
+                                color: kGeneralButtonColor,
+                              ),
+                            ),
+                          ),
+                          PodboiPrimaryButton(
+                            customWitdh:
+                                MediaQuery.of(context).size.width * 0.35,
+                            onTap: () async {
                               bool r = await ref
                                   .read(welcomePageController.notifier)
                                   .saveNameRequest(
@@ -221,43 +258,6 @@ class WelcomePage extends StatelessWidget {
                                 fontSize: 16.0,
                                 fontWeight: FontWeight.w500,
                                 color: Colors.white,
-                              ),
-                            ),
-                          ),
-                          PodboiPrimaryButton(
-                            customWitdh:
-                                MediaQuery.of(context).size.width * 0.35,
-                            onTap: () async {
-                              String defaultName = ref
-                                  .read(welcomePageController.notifier)
-                                  .defaultUserName;
-
-                              String defaultAvatar = ref
-                                  .read(welcomePageController.notifier)
-                                  .defaultAvatar;
-                              await ref
-                                  .read(welcomePageController.notifier)
-                                  .saveNameRequest(
-                                    nameToSave: defaultName,
-                                    avatarToSave: defaultAvatar,
-                                  );
-
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => BaseScreen(),
-                                ),
-                              );
-                            },
-                            color: Theme.of(context)
-                                .highlightColor
-                                .withOpacity(0.7),
-                            child: Text(
-                              'SKIP',
-                              style: TextStyle(
-                                fontSize: 16.0,
-                                fontWeight: FontWeight.w500,
-                                color: kGeneralButtonColor,
                               ),
                             ),
                           ),
