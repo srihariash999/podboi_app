@@ -7,7 +7,7 @@ import 'package:podboi/Controllers/history_controller.dart';
 import 'package:podboi/DataModels/listening_history.dart';
 import 'package:podboi/DataModels/song.dart';
 import 'package:podboi/Shared/episode_display_widget.dart';
-import 'package:podboi/UI/Common/podboi_loader.dart';
+import 'package:podboi/UI/podboi_loader.dart';
 import 'package:podboi/UI/player.dart';
 
 class ListeningHistoryView extends StatelessWidget {

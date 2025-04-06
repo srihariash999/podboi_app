@@ -1,16 +1,27 @@
 import 'package:hive/hive.dart';
 import 'package:podboi/Constants/constants.dart';
 
-Box _box = Hive.box(K.boxes.settingsBox);
-
-const _subsFirstKey = 'subsFirst';
+// Box _box = Hive.box(K.boxes.settingsBox);
 
 class SettingsBoxController {
-  static Future<bool> saveSettings({bool? subsFirst}) async {
+  final Box _box;
+
+  /// Constructor to initialize the box
+  SettingsBoxController(this._box);
+
+  /// Gets the box instance
+  Box get box => _box;
+
+  ///Factory constructor that also initialises the box.
+  factory SettingsBoxController.initialize() {
+    return SettingsBoxController(
+      Hive.box(K.boxes.settingsBox),
+    );
+  }
+
+  Future<bool> saveSubsFirstSetting(bool subsFirst) async {
     try {
-      if (subsFirst != null) {
-        await _box.put(_subsFirstKey, subsFirst);
-      }
+      await box.put(K.settingsKeys.subsFirstKey, subsFirst);
       return true;
     } catch (e) {
       print(" error saving some or all settings to settings box $e");
@@ -18,15 +29,15 @@ class SettingsBoxController {
     }
   }
 
-  static bool getSubsFirst() {
-    return _box.get(_subsFirstKey) ?? false;
+  bool getSubsFirst() {
+    return box.get(K.settingsKeys.subsFirstKey) ?? false;
   }
 
-  static Future<bool> saveNameRequest(
+  Future<bool> saveNameRequest(
       {required String nameToSave, required String avatarToSave}) async {
     try {
-      await _box.put('userName', nameToSave);
-      await _box.put('userAvatar', avatarToSave);
+      await box.put(K.settingsKeys.userNameKey, nameToSave);
+      await box.put(K.settingsKeys.userAvatarKey, avatarToSave);
       return true;
     } catch (e) {
       print(" error saving name to the box : $e");
@@ -34,9 +45,9 @@ class SettingsBoxController {
     }
   }
 
-  static Future<bool> saveTokenRequest({required String token}) async {
+  Future<bool> saveTokenRequest({required String token}) async {
     try {
-      await _box.put('token', token);
+      await box.put(K.settingsKeys.tokenKey, token);
       return true;
     } catch (e) {
       print(" error saving token to the box : $e");
@@ -44,25 +55,25 @@ class SettingsBoxController {
     }
   }
 
-  static String getSavedToken() {
-    return _box.get('token') ?? "";
+  String getSavedToken() {
+    return box.get(K.settingsKeys.tokenKey) ?? "";
   }
 
-  static String? getSavedUserName() {
-    return _box.get('userName');
+  String? getSavedUserName() {
+    return box.get(K.settingsKeys.userNameKey);
   }
 
-  static String? getSavedUserAvatar() {
-    return _box.get('userAvatar');
+  String? getSavedUserAvatar() {
+    return box.get(K.settingsKeys.userAvatarKey);
   }
 
-  static String? getSavedTheme() {
-    return _box.get('theme');
+  String? getSavedTheme() {
+    return box.get(K.settingsKeys.themeKey);
   }
 
-  static Future<bool> saveThemeRequest(String theme) async {
+  Future<bool> saveThemeRequest(String theme) async {
     try {
-      await _box.put('theme', theme);
+      await box.put(K.settingsKeys.themeKey, theme);
       return true;
     } catch (e) {
       print(" error saving theme to the box : $e");

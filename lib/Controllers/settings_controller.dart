@@ -11,10 +11,13 @@ class SettingsStateNotifier extends StateNotifier<SettingsState> {
     loadSettings();
   }
 
+  final SettingsBoxController _settingsBoxController =
+      SettingsBoxController.initialize();
+
   void loadSettings() async {
     try {
       state = SettingsState(subsFirst: false, loading: true);
-      var _subsFirst = await SettingsBoxController.getSubsFirst();
+      var _subsFirst = await _settingsBoxController.getSubsFirst();
       state = SettingsState(subsFirst: _subsFirst, loading: false);
     } catch (e) {
       print(" error in loading settings : $e");
@@ -24,7 +27,7 @@ class SettingsStateNotifier extends StateNotifier<SettingsState> {
   Future<void> saveSettings({required bool newSubsFirst}) async {
     try {
       state = SettingsState(subsFirst: newSubsFirst, loading: true);
-      await SettingsBoxController.saveSettings(subsFirst: newSubsFirst);
+      await _settingsBoxController.saveSubsFirstSetting(newSubsFirst);
       state = SettingsState(subsFirst: newSubsFirst, loading: false);
     } catch (e) {
       print(" error in saving settings : $e");

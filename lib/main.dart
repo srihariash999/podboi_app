@@ -48,9 +48,12 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  final SettingsBoxController _settingsBoxController =
+      SettingsBoxController.initialize();
+
   @override
   Widget build(BuildContext context) {
-    String? _name = SettingsBoxController.getSavedUserName();
+    String? _name = _settingsBoxController.getSavedUserName();
 
     return Consumer(builder: (context, ref, child) {
       // Get current selected theme (fallback to default)

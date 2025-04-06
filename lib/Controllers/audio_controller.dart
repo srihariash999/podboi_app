@@ -105,6 +105,12 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
 
   late MyAudioHandler _audioHandler;
 
+  final ListeningHistoryBoxController _listeningHistoryBoxController =
+      ListeningHistoryBoxController.initialize();
+
+  final PlaybackCacheController _playbackCacheController =
+      PlaybackCacheController.initialize();
+
   // debounce throttle
   var throttle = false;
   var playbackCacheThrottle = false;
@@ -140,7 +146,7 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
   }
 
   Future<CachedPlaybackState?> getLastSavedPlaybackPosition() async {
-    var pos = await PlaybackCacheController.getLastSavedPlaybackPosition();
+    var pos = await _playbackCacheController.getLastSavedPlaybackPosition();
 
     // print(
     //     " last saved playback position : ${pos?.duration} , ${pos?.song.name}");
@@ -149,7 +155,7 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
   }
 
   Future<List<Song>?> getLastSavedPlaybackQueue() async {
-    var queue = await PlaybackCacheController.getLastSavedPlaybackQueue();
+    var queue = await _playbackCacheController.getLastSavedPlaybackQueue();
 
     // print(" last saved playback queue : ${queue?.length}");
 
@@ -184,7 +190,7 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
     print(" adding to queue");
     _playlist.add(song);
     // save the queue to cache
-    await PlaybackCacheController.storePlaybackQueue(_playlist);
+    await _playbackCacheController.storePlaybackQueue(_playlist);
 
     if (state is LoadedAudioState) {
       emitUpdatedPlaylistLoadedState(state as LoadedAudioState, _playlist);
@@ -218,7 +224,7 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
           throttle = false;
         });
 
-        var res = await PlaybackCacheController.clearSavedPlaybackPosition();
+        var res = await _playbackCacheController.clearSavedPlaybackPosition();
         print(" cleared saved playback position : $res");
         // If there are items in the queue, play the next item.
         if (_playlist.isNotEmpty) {
@@ -234,7 +240,7 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
 
           requestPlayingSong(nextItem, initialPosition: playedDuration);
           // save the queue to cache
-          await PlaybackCacheController.storePlaybackQueue(_playlist);
+          await _playbackCacheController.storePlaybackQueue(_playlist);
 
           if (state is LoadedAudioState) {
             emitUpdatedPlaylistLoadedState(
@@ -242,7 +248,7 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
           }
         }
         print(" no more items in the queue to play");
-        await PlaybackCacheController.clearSavedPlaybackQueue();
+        await _playbackCacheController.clearSavedPlaybackQueue();
       }
     });
 
@@ -299,12 +305,12 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
             playbackCacheThrottle = false;
           });
 
-          await PlaybackCacheController.storePlaybackPosition(
+          await _playbackCacheController.storePlaybackPosition(
             positionData.inSeconds,
             song,
           );
 
-          await ListeningHistoryBoxController.saveEpisodeToHistory(
+          await _listeningHistoryBoxController.saveEpisodeToHistory(
             ListeningHistoryData(
               listenedOn: DateTime.now().toString(),
               episodeData: song.episodeData,
@@ -372,7 +378,7 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
     }
 
     // save the queue to cache
-    await PlaybackCacheController.storePlaybackQueue(_playlist);
+    await _playbackCacheController.storePlaybackQueue(_playlist);
 
     if (state is LoadedAudioState) {
       emitUpdatedPlaylistLoadedState(state as LoadedAudioState, _playlist);
@@ -382,7 +388,7 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
   Future<void> removeFromQueue(int index) async {
     _playlist.removeAt(index);
     // save the queue to cache
-    await PlaybackCacheController.storePlaybackQueue(_playlist);
+    await _playbackCacheController.storePlaybackQueue(_playlist);
 
     if (state is LoadedAudioState) {
       emitUpdatedPlaylistLoadedState(state as LoadedAudioState, _playlist);
@@ -413,7 +419,7 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
     requestPlayingSong(itemAtIndex, initialPosition: playedDuration);
 
     // save the queue to cache
-    await PlaybackCacheController.storePlaybackQueue(_playlist);
+    await _playbackCacheController.storePlaybackQueue(_playlist);
 
     if (state is LoadedAudioState) {
       emitUpdatedPlaylistLoadedState(state as LoadedAudioState, _playlist);

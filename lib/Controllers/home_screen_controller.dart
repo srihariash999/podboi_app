@@ -14,11 +14,14 @@ class HomeScreenStateNotifier extends StateNotifier<HomeScreenState> {
     getTopPodcasts();
     _getUserName();
   }
+  
+  final SettingsBoxController _settingsBoxController =
+      SettingsBoxController.initialize();
 
   _getUserName() async {
     state = state.copyWith(
-      userName: SettingsBoxController.getSavedUserName(),
-      userAvatar: SettingsBoxController.getSavedUserAvatar(),
+      userName: _settingsBoxController.getSavedUserName(),
+      userAvatar: _settingsBoxController.getSavedUserAvatar(),
     );
   }
 

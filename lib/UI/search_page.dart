@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:podboi/Controllers/search_controller.dart';
 import 'package:podboi/DataModels/subscription_data.dart';
-import 'package:podboi/UI/Common/podboi_loader.dart';
+import 'package:podboi/UI/podboi_loader.dart';
 import 'package:podboi/UI/podcast_page.dart';
 import 'package:podcast_search/podcast_search.dart';
 
