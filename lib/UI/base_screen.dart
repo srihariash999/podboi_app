@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podboi/Controllers/settings_controller.dart';
+import 'package:podboi/Helpers/helpers.dart';
 import 'package:podboi/UI/podboi_loader.dart';
 import 'package:podboi/UI/home_page.dart';
 import 'package:podboi/UI/player.dart';
@@ -109,7 +110,8 @@ class _BaseScreenState extends State<BaseScreen> {
                       color: Theme.of(context).colorScheme.secondary,
                     ),
                     label: "Home",
-                    icon: Icon(Icons.home, color: Colors.grey.withOpacity(0.5)),
+                    icon: Icon(Icons.home,
+                        color: Colors.grey.withOpacityValue(0.5)),
                   ),
                 if (settings.subsFirst)
                   BottomNavigationBarItem(
@@ -120,7 +122,7 @@ class _BaseScreenState extends State<BaseScreen> {
                     label: 'Subscriptions',
                     icon: Icon(
                       Icons.book,
-                      color: Colors.grey.withOpacity(0.5),
+                      color: Colors.grey.withOpacityValue(0.5),
                     ),
                   ),
                 if (settings.subsFirst)
@@ -130,7 +132,8 @@ class _BaseScreenState extends State<BaseScreen> {
                       color: Theme.of(context).colorScheme.secondary,
                     ),
                     label: "Home",
-                    icon: Icon(Icons.home, color: Colors.grey.withOpacity(0.5)),
+                    icon: Icon(Icons.home,
+                        color: Colors.grey.withOpacityValue(0.5)),
                   ),
                 if (!settings.subsFirst)
                   BottomNavigationBarItem(
@@ -141,7 +144,7 @@ class _BaseScreenState extends State<BaseScreen> {
                     label: 'Subscriptions',
                     icon: Icon(
                       Icons.book,
-                      color: Colors.grey.withOpacity(0.5),
+                      color: Colors.grey.withOpacityValue(0.5),
                     ),
                   ),
               ],

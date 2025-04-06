@@ -8,6 +8,7 @@ import 'package:line_icons/line_icons.dart';
 import 'package:podboi/Controllers/podcast_page_controller.dart';
 import 'package:podboi/DataModels/episode_data.dart';
 import 'package:podboi/DataModels/subscription_data.dart';
+import 'package:podboi/Helpers/helpers.dart';
 import 'package:podboi/Shared/detailed_episode_widget.dart';
 import 'package:podboi/UI/podboi_loader.dart';
 import 'package:podboi/UI/player.dart';
@@ -47,7 +48,7 @@ class PodcastPage extends StatelessWidget {
                       color: Theme.of(context)
                           .colorScheme
                           .secondary
-                          .withOpacity(0.70),
+                          .withOpacityValue(0.70),
                     ),
                     Text(
                       " Sort Episodes Newest to Oldest",
@@ -56,7 +57,7 @@ class PodcastPage extends StatelessWidget {
                         color: Theme.of(context)
                             .colorScheme
                             .secondary
-                            .withOpacity(0.70),
+                            .withOpacityValue(0.70),
                         fontFamily: 'Segoe',
                         fontWeight: FontWeight.w800,
                       ),
@@ -84,7 +85,7 @@ class PodcastPage extends StatelessWidget {
                       color: Theme.of(context)
                           .colorScheme
                           .secondary
-                          .withOpacity(0.70),
+                          .withOpacityValue(0.70),
                     ),
                     Text(
                       "Sort Episodes Oldest to Newest",
@@ -93,7 +94,7 @@ class PodcastPage extends StatelessWidget {
                         color: Theme.of(context)
                             .colorScheme
                             .secondary
-                            .withOpacity(0.70),
+                            .withOpacityValue(0.70),
                         fontFamily: 'Segoe',
                         fontWeight: FontWeight.w800,
                       ),
@@ -213,7 +214,7 @@ class PodcastPage extends StatelessWidget {
                                     color: Theme.of(context)
                                         .colorScheme
                                         .secondary
-                                        .withOpacity(0.7),
+                                        .withOpacityValue(0.7),
                                   ),
                                   suffixIcon: episodeSearchController
                                           .text.isEmpty
@@ -233,7 +234,7 @@ class PodcastPage extends StatelessWidget {
                                             color: Theme.of(context)
                                                 .colorScheme
                                                 .secondary
-                                                .withOpacity(0.7),
+                                                .withOpacityValue(0.7),
                                           ),
                                         ),
                                   contentPadding:
@@ -248,9 +249,10 @@ class PodcastPage extends StatelessWidget {
                                   ),
                                   fillColor: Theme.of(context)
                                       .highlightColor
-                                      .withOpacity(0.5),
+                                      .withOpacityValue(0.5),
                                   filled: true,
-                                  focusColor: Colors.black.withOpacity(0.30),
+                                  focusColor:
+                                      Colors.black.withOpacityValue(0.30),
                                   enabledBorder: OutlineInputBorder(
                                     borderSide: BorderSide.none,
                                     borderRadius: BorderRadius.circular(20.0),
@@ -319,7 +321,7 @@ class PodcastPage extends StatelessWidget {
                                         color: Theme.of(context)
                                             .colorScheme
                                             .secondary
-                                            .withOpacity(0.2),
+                                            .withOpacityValue(0.2),
                                       ),
                                     );
                                   },
@@ -424,7 +426,7 @@ class _EpisodeDetailComponentState extends State<EpisodeDetailComponent> {
                           color: Theme.of(context)
                               .colorScheme
                               .secondary
-                              .withOpacity(0.70),
+                              .withOpacityValue(0.70),
                           fontFamily: 'Segoe',
                           fontWeight: FontWeight.w800,
                         ),
@@ -449,7 +451,7 @@ class _EpisodeDetailComponentState extends State<EpisodeDetailComponent> {
                                   color: Theme.of(context)
                                       .colorScheme
                                       .secondary
-                                      .withOpacity(0.50),
+                                      .withOpacityValue(0.50),
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -464,7 +466,7 @@ class _EpisodeDetailComponentState extends State<EpisodeDetailComponent> {
                                 color: Theme.of(context)
                                     .colorScheme
                                     .secondary
-                                    .withOpacity(0.50),
+                                    .withOpacityValue(0.50),
                                 // fontFamily: 'Segoe',
                                 fontWeight: FontWeight.w600,
                               ),
@@ -482,7 +484,7 @@ class _EpisodeDetailComponentState extends State<EpisodeDetailComponent> {
                             color: Theme.of(context)
                                 .colorScheme
                                 .secondary
-                                .withOpacity(0.70),
+                                .withOpacityValue(0.70),
                             fontFamily: 'Segoe',
                             fontWeight: FontWeight.w500,
                           ),
@@ -501,7 +503,7 @@ class _EpisodeDetailComponentState extends State<EpisodeDetailComponent> {
                         //           style: TextStyle(
                         //             fontSize: 12.0,
                         //             color:
-                        //                 Theme.of(context).colorScheme.secondary.withOpacity(0.70),
+                        //                 Theme.of(context).colorScheme.secondary.withOpacityValue(0.70),
                         //             fontFamily: 'Segoe',
                         //             fontWeight: FontWeight.w500,
                         //           ),
@@ -537,7 +539,7 @@ class _EpisodeDetailComponentState extends State<EpisodeDetailComponent> {
                     return Container(
                       width: 124.0,
                       decoration: BoxDecoration(
-                        color: Colors.yellow.withOpacity(0.3),
+                        color: Colors.yellow.withOpacityValue(0.3),
                         borderRadius: BorderRadius.circular(16.0),
                       ),
                       padding: EdgeInsets.symmetric(
@@ -564,7 +566,7 @@ class _EpisodeDetailComponentState extends State<EpisodeDetailComponent> {
                       },
                       child: Container(
                         decoration: BoxDecoration(
-                          color: Colors.green.withOpacity(0.2),
+                          color: Colors.green.withOpacityValue(0.2),
                           borderRadius: BorderRadius.circular(16.0),
                         ),
                         padding: EdgeInsets.all(8.0),
@@ -600,7 +602,7 @@ class _EpisodeDetailComponentState extends State<EpisodeDetailComponent> {
                     },
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.orange.withOpacity(0.2),
+                        color: Colors.orange.withOpacityValue(0.2),
                         borderRadius: BorderRadius.circular(16.0),
                       ),
                       padding: EdgeInsets.all(8.0),
@@ -637,7 +639,7 @@ class _EpisodeDetailComponentState extends State<EpisodeDetailComponent> {
                         color: Theme.of(context)
                             .colorScheme
                             .secondary
-                            .withOpacity(0.50),
+                            .withOpacityValue(0.50),
                         fontFamily: 'Segoe',
                         fontWeight: FontWeight.w600,
                       ),
@@ -649,7 +651,7 @@ class _EpisodeDetailComponentState extends State<EpisodeDetailComponent> {
                         color: Theme.of(context)
                             .colorScheme
                             .secondary
-                            .withOpacity(0.80),
+                            .withOpacityValue(0.80),
                         fontFamily: 'Segoe',
                         fontWeight: FontWeight.w600,
                       ),
@@ -700,7 +702,7 @@ class _EpisodeDetailComponentState extends State<EpisodeDetailComponent> {
           //       borderRadius: BorderRadius.circular(12.0),
           //       // color: Colors.white38,
           //       color:
-          //           Theme.of(context).colorScheme.secondary.withOpacity(0.05),
+          //           Theme.of(context).colorScheme.secondary.withOpacityValue(0.05),
           //     ),
           //     child: Row(
           //       children: [
@@ -712,7 +714,7 @@ class _EpisodeDetailComponentState extends State<EpisodeDetailComponent> {
           //               color: Theme.of(context)
           //                   .colorScheme
           //                   .secondary
-          //                   .withOpacity(0.6),
+          //                   .withOpacityValue(0.6),
           //               fontFamily: 'Segoe',
           //               fontWeight: FontWeight.w600,
           //             ),
@@ -742,7 +744,7 @@ class _EpisodeDetailComponentState extends State<EpisodeDetailComponent> {
           //         color: Theme.of(context)
           //             .colorScheme
           //             .secondary
-          //             .withOpacity(0.6),
+          //             .withOpacityValue(0.6),
           //         fontFamily: 'Segoe',
           //         fontWeight: FontWeight.w600,
           //       ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podboi/Controllers/settings_controller.dart';
+import 'package:podboi/Helpers/helpers.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -80,7 +81,8 @@ class SettingsPage extends StatelessWidget {
             ),
           ),
           Divider(
-            color: Theme.of(context).colorScheme.secondary.withOpacity(0.2),
+            color:
+                Theme.of(context).colorScheme.secondary.withOpacityValue(0.2),
             height: 1.0,
           ),
         ],

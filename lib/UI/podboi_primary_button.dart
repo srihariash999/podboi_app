@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:podboi/Helpers/helpers.dart';
 
 class PodboiPrimaryButton extends StatelessWidget {
   const PodboiPrimaryButton({
@@ -28,8 +29,8 @@ class PodboiPrimaryButton extends StatelessWidget {
           ),
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color:
-                color ?? Theme.of(context).primaryColorLight.withOpacity(0.1),
+            color: color ??
+                Theme.of(context).primaryColorLight.withOpacityValue(0.1),
             borderRadius: BorderRadius.circular(8.0),
           ),
           clipBehavior: Clip.antiAlias,

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:podboi/Constants/constants.dart';
 import 'package:podboi/Helpers/helpers.dart';
@@ -74,6 +75,13 @@ void main() {
       expect(Helpers.getIconFromAvatarName(K.avatarNames.userAstronaut),
           LineIcons.userAstronaut);
       expect(Helpers.getIconFromAvatarName('unknownAvatar'), LineIcons.user);
+    });
+  });
+
+  group('ColorOpactiy Extension', () {
+    test('returns color with opacity value', () {
+      Color color = const Color(0xFF000000);
+      expect(color.withOpacityValue(0.50), const Color(0x80000000));
     });
   });
 }

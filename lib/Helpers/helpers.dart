@@ -25,3 +25,10 @@ class Helpers {
     return LineIcons.user;
   }
 }
+
+extension ColorOpacity on Color {
+  Color withOpacityValue(double opacity) {
+    assert(opacity >= 0.0 && opacity <= 1.0);
+    return this.withAlpha((opacity * 255).round());
+  }
+}

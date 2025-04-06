@@ -6,6 +6,7 @@ import 'package:podboi/Controllers/audio_controller.dart';
 import 'package:podboi/Controllers/history_controller.dart';
 import 'package:podboi/DataModels/listening_history.dart';
 import 'package:podboi/DataModels/song.dart';
+import 'package:podboi/Helpers/helpers.dart';
 import 'package:podboi/Shared/episode_display_widget.dart';
 import 'package:podboi/UI/podboi_loader.dart';
 import 'package:podboi/UI/player.dart';
@@ -77,7 +78,7 @@ class ListeningHistoryView extends StatelessWidget {
                                           color: Theme.of(context)
                                               .colorScheme
                                               .secondary
-                                              .withOpacity(0.7),
+                                              .withOpacityValue(0.7),
                                           fontWeight: FontWeight.w500,
                                         ),
                                       ),
@@ -171,7 +172,7 @@ class ListeningHistoryView extends StatelessWidget {
                                               color: Theme.of(context)
                                                   .colorScheme
                                                   .secondary
-                                                  .withOpacity(0.2),
+                                                  .withOpacityValue(0.2),
                                             ),
                                           );
                                         },

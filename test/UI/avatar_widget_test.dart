@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:podboi/Constants/constants.dart';
+import 'package:podboi/Helpers/helpers.dart';
 import 'package:podboi/UI/avatar_widget.dart';
 
 void main() {
@@ -53,7 +54,7 @@ void main() {
       );
 
       final icon = tester.widget<Icon>(find.byIcon(LineIcons.userAstronaut));
-      expect(icon.color, Colors.black.withOpacity(0.4));
+      expect(icon.color, Colors.black.withOpacityValue(0.4));
     });
   });
 }

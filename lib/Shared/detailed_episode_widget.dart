@@ -81,7 +81,7 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                                           color: Theme.of(context)
                                               .colorScheme
                                               .secondary
-                                              .withOpacity(0.8),
+                                              .withOpacityValue(0.8),
                                           fontFamily: 'Segoe',
                                           fontWeight: FontWeight.w700,
                                         ),
@@ -172,7 +172,7 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                             color: Theme.of(context)
                                 .colorScheme
                                 .secondary
-                                .withOpacity(0.50),
+                                .withOpacityValue(0.50),
                           ),
                         ),
                         if (_episodeData.publicationDate != null)
@@ -185,7 +185,7 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                               color: Theme.of(context)
                                   .colorScheme
                                   .secondary
-                                  .withOpacity(0.40),
+                                  .withOpacityValue(0.40),
                               fontFamily: 'Segoe',
                               fontWeight: FontWeight.w800,
                             ),
@@ -203,7 +203,7 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                             color: Theme.of(context)
                                 .colorScheme
                                 .secondary
-                                .withOpacity(0.40),
+                                .withOpacityValue(0.40),
                             fontFamily: 'Segoe',
                             fontWeight: FontWeight.w800,
                           ),
@@ -222,7 +222,7 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                             color: Theme.of(context)
                                 .colorScheme
                                 .secondary
-                                .withOpacity(0.50),
+                                .withOpacityValue(0.50),
                           ),
                         ),
                         Text(
@@ -232,7 +232,7 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                             color: Theme.of(context)
                                 .colorScheme
                                 .secondary
-                                .withOpacity(0.40),
+                                .withOpacityValue(0.40),
                             fontFamily: 'Segoe',
                             fontWeight: FontWeight.w800,
                           ),
@@ -245,7 +245,7 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                         //       : ' -- ',
                         //   style: TextStyle(
                         //     fontSize: 10.0,
-                        //     color: Theme.of(context).colorScheme.secondary.withOpacity(0.40),
+                        //     color: Theme.of(context).colorScheme.secondary.withOpacityValue(0.40),
                         //     fontFamily: 'Segoe',
                         //     fontWeight: FontWeight.w800,
                         //   ),
@@ -284,12 +284,12 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                               Theme.of(context)
                                   .colorScheme
                                   .secondary
-                                  .withOpacity(0.70),
+                                  .withOpacityValue(0.70),
                             ),
                             backgroundColor: Theme.of(context)
                                 .colorScheme
                                 .secondary
-                                .withOpacity(0.2),
+                                .withOpacityValue(0.2),
                             strokeWidth: 2.0,
                           ),
                         SizedBox(

@@ -29,7 +29,7 @@ class AvatarWidget extends StatelessWidget {
             size: 52.0,
             color: avatarName == selectedAvatar
                 ? Colors.black
-                : Colors.black.withOpacity(0.4),
+                : Colors.black.withOpacityValue(0.4),
           ),
         );
       },

@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:podboi/Helpers/helpers.dart';
 
 class SeekBar extends StatefulWidget {
   final Duration duration;
@@ -33,7 +34,7 @@ class SeekBarState extends State<SeekBar> {
     _sliderThemeData = SliderTheme.of(context).copyWith(
       trackHeight: 2.0,
       thumbColor: Theme.of(context).primaryColorLight,
-      activeTrackColor: Colors.redAccent.withOpacity(0.5),
+      activeTrackColor: Colors.redAccent.withOpacityValue(0.5),
       inactiveTrackColor: Theme.of(context).primaryColor,
     );
   }

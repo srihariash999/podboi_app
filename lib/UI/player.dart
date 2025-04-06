@@ -83,7 +83,7 @@ class _MiniPlayerState extends State<MiniPlayer> {
     }
 
     return Material(
-      color: Theme.of(context).highlightColor.withOpacity(0.1),
+      color: Theme.of(context).highlightColor.withOpacityValue(0.1),
       child: Container(
         constraints: BoxConstraints(
           maxHeight: MediaQuery.of(context).size.height * 0.08,
@@ -133,7 +133,7 @@ class _MiniPlayerState extends State<MiniPlayer> {
                           color: Theme.of(context)
                               .colorScheme
                               .secondary
-                              .withOpacity(0.8),
+                              .withOpacityValue(0.8),
                           fontFamily: 'Segoe',
                           fontWeight: FontWeight.w400,
                         ),
@@ -202,7 +202,8 @@ class LargePlayerAlbumArtWidget extends StatelessWidget {
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 18.0,
-              color: Theme.of(context).colorScheme.secondary.withOpacity(0.8),
+              color:
+                  Theme.of(context).colorScheme.secondary.withOpacityValue(0.8),
               fontFamily: 'Segoe',
               fontWeight: FontWeight.w700,
             ),
@@ -299,7 +300,7 @@ class QueueItem extends StatelessWidget {
         margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
         padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
         decoration: BoxDecoration(
-          color: Theme.of(context).primaryColor.withOpacity(0.3),
+          color: Theme.of(context).primaryColor.withOpacityValue(0.3),
           borderRadius: BorderRadius.circular(12.0),
         ),
         child: Column(
@@ -308,7 +309,10 @@ class QueueItem extends StatelessWidget {
               "Nothing in Queue",
               style: TextStyle(
                 fontSize: 24.0,
-                color: Theme.of(context).colorScheme.secondary.withOpacity(0.8),
+                color: Theme.of(context)
+                    .colorScheme
+                    .secondary
+                    .withOpacityValue(0.8),
                 fontFamily: 'Segoe',
                 fontWeight: FontWeight.w700,
               ),
@@ -319,7 +323,10 @@ class QueueItem extends StatelessWidget {
               "You can queue episodes to play next by swiping right on an episode.",
               style: TextStyle(
                 fontSize: 18.0,
-                color: Theme.of(context).colorScheme.secondary.withOpacity(0.8),
+                color: Theme.of(context)
+                    .colorScheme
+                    .secondary
+                    .withOpacityValue(0.8),
                 fontFamily: 'Segoe',
                 fontWeight: FontWeight.w500,
               ),
@@ -336,7 +343,7 @@ class QueueItem extends StatelessWidget {
         margin: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
         padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
         decoration: BoxDecoration(
-          color: Theme.of(context).primaryColorLight.withOpacity(0.1),
+          color: Theme.of(context).primaryColorLight.withOpacityValue(0.1),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -368,7 +375,7 @@ class QueueItem extends StatelessWidget {
                       color: Theme.of(context)
                           .colorScheme
                           .secondary
-                          .withOpacity(0.4),
+                          .withOpacityValue(0.4),
                       fontFamily: 'Segoe',
                       fontWeight: FontWeight.w700,
                     ),
@@ -383,7 +390,7 @@ class QueueItem extends StatelessWidget {
                       color: Theme.of(context)
                           .colorScheme
                           .secondary
-                          .withOpacity(0.8),
+                          .withOpacityValue(0.8),
                       fontFamily: 'Segoe',
                       fontWeight: FontWeight.w700,
                     ),
@@ -400,7 +407,7 @@ class QueueItem extends StatelessWidget {
                       color: Theme.of(context)
                           .colorScheme
                           .secondary
-                          .withOpacity(0.4),
+                          .withOpacityValue(0.4),
                       fontFamily: 'Segoe',
                       fontWeight: FontWeight.w700,
                     ),
@@ -421,7 +428,7 @@ class QueueItem extends StatelessWidget {
                     color: Theme.of(context)
                         .colorScheme
                         .secondary
-                        .withOpacity(0.8),
+                        .withOpacityValue(0.8),
                   ),
                 ),
               ),
@@ -562,7 +569,7 @@ class _LargePlayerState extends State<LargePlayer> {
       height: MediaQuery.of(context).size.height * 0.92,
       child: Container(
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primary.withOpacity(0.7),
+          color: Theme.of(context).colorScheme.primary.withOpacityValue(0.7),
           // color: Colors.red,
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(16.0),
@@ -579,7 +586,7 @@ class _LargePlayerState extends State<LargePlayer> {
             if (state is! LoadedAudioState && state is! LoadingAudioState)
               return Container(
                 decoration: BoxDecoration(
-                  color: Theme.of(context).highlightColor.withOpacity(0.1),
+                  color: Theme.of(context).highlightColor.withOpacityValue(0.1),
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(16.0),
                     topRight: Radius.circular(16.0),
@@ -641,7 +648,7 @@ class _LargePlayerState extends State<LargePlayer> {
                               color: Theme.of(context)
                                   .colorScheme
                                   .secondary
-                                  .withOpacity(0.8),
+                                  .withOpacityValue(0.8),
                               fontFamily: 'Segoe',
                               fontWeight: FontWeight.w700,
                             ),
@@ -676,7 +683,7 @@ class _LargePlayerState extends State<LargePlayer> {
                               color: Theme.of(context)
                                   .colorScheme
                                   .secondary
-                                  .withOpacity(0.8),
+                                  .withOpacityValue(0.8),
                               fontFamily: 'Segoe',
                               fontWeight: FontWeight.w700,
                             ),

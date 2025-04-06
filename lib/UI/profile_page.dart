@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:podboi/Controllers/profile_screen_controller.dart';
 import 'package:podboi/Controllers/theme_controller.dart';
+import 'package:podboi/Helpers/helpers.dart';
 import 'package:podboi/UI/podboi_primary_button.dart';
 import 'package:podboi/UI/settings_page.dart';
 import 'package:podboi/UI/listening_history_page.dart';
@@ -147,7 +148,7 @@ class ProfileScreen extends StatelessWidget {
                               color: Theme.of(context)
                                   .colorScheme
                                   .secondary
-                                  .withOpacity(0.2),
+                                  .withOpacityValue(0.2),
                               height: 1.0,
                             ),
 
@@ -194,7 +195,7 @@ class ProfileScreen extends StatelessWidget {
                               color: Theme.of(context)
                                   .colorScheme
                                   .secondary
-                                  .withOpacity(0.2),
+                                  .withOpacityValue(0.2),
                               height: 1.0,
                             ),
 
@@ -250,8 +251,9 @@ class ProfileScreen extends StatelessWidget {
                                   ),
                                   CupertinoSwitch(
                                     value: _currentTheme == 'light',
-                                    trackColor: Theme.of(context).primaryColor,
-                                    activeColor:
+                                    inactiveTrackColor:
+                                        Theme.of(context).primaryColor,
+                                    activeTrackColor:
                                         Theme.of(context).highlightColor,
                                     onChanged: (val) async {
                                       if (val) {
@@ -273,7 +275,7 @@ class ProfileScreen extends StatelessWidget {
                               color: Theme.of(context)
                                   .colorScheme
                                   .secondary
-                                  .withOpacity(0.2),
+                                  .withOpacityValue(0.2),
                               height: 1.0,
                             ),
 
@@ -319,7 +321,7 @@ class ProfileScreen extends StatelessWidget {
                               color: Theme.of(context)
                                   .colorScheme
                                   .secondary
-                                  .withOpacity(0.2),
+                                  .withOpacityValue(0.2),
                               height: 1.0,
                             ),
                           ],
@@ -406,7 +408,7 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget> {
   Widget build(BuildContext context) {
     return Container(
       height: MediaQuery.of(context).size.height * 0.5,
-      color: Theme.of(context).colorScheme.primary.withOpacity(0.8),
+      color: Theme.of(context).colorScheme.primary.withOpacityValue(0.8),
       margin: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -422,7 +424,10 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget> {
               style: TextStyle(
                 fontSize: 16.0,
                 fontWeight: FontWeight.w700,
-                color: Theme.of(context).colorScheme.secondary.withOpacity(0.9),
+                color: Theme.of(context)
+                    .colorScheme
+                    .secondary
+                    .withOpacityValue(0.9),
                 fontFamily: 'Segoe',
               ),
             ),
@@ -434,7 +439,8 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget> {
             width: MediaQuery.of(context).size.width * 0.85,
             child: Theme(
               data: ThemeData(
-                primaryColor: Theme.of(context).primaryColor.withOpacity(0.30),
+                primaryColor:
+                    Theme.of(context).primaryColor.withOpacityValue(0.30),
               ),
               child: TextField(
                 controller: _nameController,
@@ -459,11 +465,12 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget> {
                     color: Theme.of(context)
                         .colorScheme
                         .secondary
-                        .withOpacity(0.50),
+                        .withOpacityValue(0.50),
                   ),
-                  fillColor: Theme.of(context).highlightColor.withOpacity(0.4),
+                  fillColor:
+                      Theme.of(context).highlightColor.withOpacityValue(0.4),
                   filled: true,
-                  focusColor: Colors.black.withOpacity(0.30),
+                  focusColor: Colors.black.withOpacityValue(0.30),
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide.none,
                     borderRadius: BorderRadius.circular(12.0),
@@ -492,7 +499,10 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget> {
               style: TextStyle(
                 fontSize: 16.0,
                 fontWeight: FontWeight.w700,
-                color: Theme.of(context).colorScheme.secondary.withOpacity(0.9),
+                color: Theme.of(context)
+                    .colorScheme
+                    .secondary
+                    .withOpacityValue(0.9),
                 fontFamily: 'Segoe',
               ),
             ),
@@ -517,7 +527,7 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget> {
                       : Theme.of(context)
                           .colorScheme
                           .secondary
-                          .withOpacity(0.4),
+                          .withOpacityValue(0.4),
                 ),
               ),
               GestureDetector(
@@ -534,7 +544,7 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget> {
                       : Theme.of(context)
                           .colorScheme
                           .secondary
-                          .withOpacity(0.4),
+                          .withOpacityValue(0.4),
                 ),
               ),
               GestureDetector(
@@ -551,7 +561,7 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget> {
                       : Theme.of(context)
                           .colorScheme
                           .secondary
-                          .withOpacity(0.4),
+                          .withOpacityValue(0.4),
                 ),
               ),
             ],
@@ -588,7 +598,7 @@ class _ProfileEditWidgetState extends State<ProfileEditWidget> {
                       Navigator.pop(context);
                     }
                   },
-                  color: Theme.of(context).highlightColor.withOpacity(0.7),
+                  color: Theme.of(context).highlightColor.withOpacityValue(0.7),
                   child: Text(
                     _loading ? 'Saving...' : 'Save',
                     style: TextStyle(

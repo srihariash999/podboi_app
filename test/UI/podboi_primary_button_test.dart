@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:podboi/Constants/theme_data.dart';
+import 'package:podboi/Helpers/helpers.dart';
 import 'package:podboi/UI/podboi_primary_button.dart';
 
 void main() {
@@ -34,7 +35,7 @@ void main() {
         matching: find.byType(Container),
       ));
       expect((container.decoration as BoxDecoration).color,
-          kLightThemeData.primaryColorLight.withOpacity(0.1));
+          kLightThemeData.primaryColorLight.withOpacityValue(0.1));
 
       final BuildContext context = tester.element(find.byType(SizedBox));
       final sizedBox = tester.widget<SizedBox>(find.byType(SizedBox));
@@ -70,7 +71,7 @@ void main() {
         matching: find.byType(Container),
       ));
       expect((container.decoration as BoxDecoration).color,
-          kDarkThemeData.primaryColorLight.withOpacity(0.1));
+          kDarkThemeData.primaryColorLight.withOpacityValue(0.1));
 
       final BuildContext context = tester.element(find.byType(SizedBox));
       final sizedBox = tester.widget<SizedBox>(find.byType(SizedBox));

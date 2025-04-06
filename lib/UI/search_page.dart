@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:podboi/Controllers/search_controller.dart';
 import 'package:podboi/DataModels/subscription_data.dart';
+import 'package:podboi/Helpers/helpers.dart';
 import 'package:podboi/UI/podboi_loader.dart';
 import 'package:podboi/UI/podcast_page.dart';
 import 'package:podcast_search/podcast_search.dart';
@@ -19,10 +20,10 @@ class CustomSearchDelegate extends SearchDelegate<String> {
       appBarTheme: AppBarTheme(
         // backgroundColor: Theme.of(context).backgroundColor,
 
-        backgroundColor: Theme.of(context).highlightColor.withOpacity(0.4),
+        backgroundColor: Theme.of(context).highlightColor.withOpacityValue(0.4),
         elevation: 0.0,
         iconTheme: IconThemeData(
-          color: Colors.black.withOpacity(0.7),
+          color: Colors.black.withOpacityValue(0.7),
         ),
       ),
       textTheme: TextTheme(
@@ -30,7 +31,7 @@ class CustomSearchDelegate extends SearchDelegate<String> {
           fontSize: 16.0,
           decoration: TextDecoration.none,
           fontWeight: FontWeight.w400,
-          color: Theme.of(context).colorScheme.secondary.withOpacity(0.8),
+          color: Theme.of(context).colorScheme.secondary.withOpacityValue(0.8),
           fontFamily: 'Segoe',
         ),
       ),
@@ -40,12 +41,13 @@ class CustomSearchDelegate extends SearchDelegate<String> {
         hintStyle: TextStyle(
           fontSize: 16.0,
           fontWeight: FontWeight.w400,
-          color: Theme.of(context).colorScheme.secondary.withOpacity(0.4),
+          color: Theme.of(context).colorScheme.secondary.withOpacityValue(0.4),
           fontFamily: 'Segoe',
         ),
-        // fillColor: Theme.of(context).highlightColor.withOpacity(0.4),
+        // fillColor: Theme.of(context).highlightColor.withOpacityValue(0.4),
         // filled: true,
-        focusColor: Theme.of(context).colorScheme.secondary.withOpacity(0.30),
+        focusColor:
+            Theme.of(context).colorScheme.secondary.withOpacityValue(0.30),
         enabledBorder: OutlineInputBorder(
           borderSide: BorderSide.none,
           borderRadius: BorderRadius.circular(20.0),
@@ -239,7 +241,7 @@ class CustomSearchDelegate extends SearchDelegate<String> {
                                                     color: Theme.of(context)
                                                         .colorScheme
                                                         .secondary
-                                                        .withOpacity(0.50),
+                                                        .withOpacityValue(0.50),
                                                   ),
                                                 ),
                                                 Padding(
@@ -257,7 +259,8 @@ class CustomSearchDelegate extends SearchDelegate<String> {
                                                       color: Theme.of(context)
                                                           .colorScheme
                                                           .secondary
-                                                          .withOpacity(0.50),
+                                                          .withOpacityValue(
+                                                              0.50),
                                                     ),
                                                   ),
                                                 ),

@@ -5,6 +5,7 @@ import 'package:line_icons/line_icons.dart';
 import 'package:podboi/Controllers/home_screen_controller.dart';
 import 'package:podboi/Controllers/profile_screen_controller.dart';
 import 'package:podboi/DataModels/subscription_data.dart';
+import 'package:podboi/Helpers/helpers.dart';
 import 'package:podboi/Shared/podcast_display_widget.dart';
 import 'package:podboi/UI/podboi_loader.dart';
 import 'package:podboi/UI/podcast_page.dart';
@@ -72,7 +73,7 @@ class HomePage extends StatelessWidget {
                               color: Theme.of(context)
                                   .colorScheme
                                   .secondary
-                                  .withOpacity(0.50),
+                                  .withOpacityValue(0.50),
                             ),
                           ),
                           SizedBox(
@@ -106,11 +107,12 @@ class HomePage extends StatelessWidget {
             width: MediaQuery.of(context).size.width - 32.0,
             child: Theme(
               data: ThemeData(
-                primaryColor: Theme.of(context).primaryColor.withOpacity(0.20),
+                primaryColor:
+                    Theme.of(context).primaryColor.withOpacityValue(0.20),
               ),
               child: TextField(
                 readOnly: true,
-                cursorColor: Colors.black.withOpacity(0.30),
+                cursorColor: Colors.black.withOpacityValue(0.30),
                 onTap: () {
                   showSearch(
                     context: context,
@@ -129,11 +131,12 @@ class HomePage extends StatelessWidget {
                   hintStyle: TextStyle(
                     fontSize: 16.0,
                     fontWeight: FontWeight.w500,
-                    color: Theme.of(context).primaryColor.withOpacity(0.7),
+                    color: Theme.of(context).primaryColor.withOpacityValue(0.7),
                   ),
-                  fillColor: Theme.of(context).highlightColor.withOpacity(0.5),
+                  fillColor:
+                      Theme.of(context).highlightColor.withOpacityValue(0.5),
                   filled: true,
-                  focusColor: Colors.black.withOpacity(0.30),
+                  focusColor: Colors.black.withOpacityValue(0.30),
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide.none,
                     borderRadius: BorderRadius.circular(20.0),
@@ -190,7 +193,7 @@ class HomePage extends StatelessWidget {
                               color: Theme.of(context)
                                   .colorScheme
                                   .secondary
-                                  .withOpacity(0.6),
+                                  .withOpacityValue(0.6),
                               fontFamily: 'Segoe',
                             ),
                           ),
@@ -335,8 +338,10 @@ class HomePage extends StatelessWidget {
               style: TextStyle(
                 fontFamily: 'Segoe',
                 fontSize: 16.0,
-                color:
-                    Theme.of(context).colorScheme.secondary.withOpacity(0.50),
+                color: Theme.of(context)
+                    .colorScheme
+                    .secondary
+                    .withOpacityValue(0.50),
                 fontWeight: FontWeight.w300,
               ),
             ),

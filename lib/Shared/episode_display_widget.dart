@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:podboi/Helpers/helpers.dart';
 
 class EpisodeDisplayWidget extends StatelessWidget {
   final BuildContext context;
@@ -71,7 +72,7 @@ class EpisodeDisplayWidget extends StatelessWidget {
                             color: Theme.of(context)
                                 .colorScheme
                                 .secondary
-                                .withOpacity(0.50),
+                                .withOpacityValue(0.50),
                           ),
                         ),
                       ),
@@ -90,7 +91,7 @@ class EpisodeDisplayWidget extends StatelessWidget {
                       color: Theme.of(context)
                           .colorScheme
                           .secondary
-                          .withOpacity(0.30),
+                          .withOpacityValue(0.30),
                     ),
                   ),
                 ],

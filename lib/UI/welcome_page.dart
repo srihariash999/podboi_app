@@ -5,6 +5,7 @@ import 'package:line_icons/line_icons.dart';
 import 'package:podboi/Constants/constants.dart';
 import 'package:podboi/Constants/theme_data.dart';
 import 'package:podboi/Controllers/welcome_page_controller.dart';
+import 'package:podboi/Helpers/helpers.dart';
 import 'package:podboi/UI/podboi_primary_button.dart';
 import 'package:podboi/UI/base_screen.dart';
 import 'package:podboi/UI/avatar_widget.dart';
@@ -88,7 +89,7 @@ class WelcomePage extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 16.0,
                           fontWeight: FontWeight.w700,
-                          color: Colors.black.withOpacity(0.7),
+                          color: Colors.black.withOpacityValue(0.7),
                           fontFamily: 'Segoe',
                         ),
                       ),
@@ -99,20 +100,20 @@ class WelcomePage extends StatelessWidget {
                         width: MediaQuery.of(context).size.width * 0.85,
                         child: Theme(
                           data: ThemeData(
-                            primaryColor: Colors.black.withOpacity(0.30),
+                            primaryColor: Colors.black.withOpacityValue(0.30),
                           ),
                           child: TextField(
                             controller: _nameController,
-                            cursorColor: Colors.black.withOpacity(0.30),
+                            cursorColor: Colors.black.withOpacityValue(0.30),
                             style: TextStyle(
                               fontSize: 16.0,
                               fontWeight: FontWeight.w300,
-                              color: Colors.black.withOpacity(0.60),
+                              color: Colors.black.withOpacityValue(0.60),
                             ),
                             decoration: InputDecoration(
                               prefixIcon: Icon(
                                 LineIcons.user,
-                                color: Colors.black.withOpacity(0.40),
+                                color: Colors.black.withOpacityValue(0.40),
                               ),
                               isCollapsed: true,
                               contentPadding:
@@ -122,11 +123,11 @@ class WelcomePage extends StatelessWidget {
                               hintStyle: TextStyle(
                                 fontSize: 16.0,
                                 fontWeight: FontWeight.w500,
-                                color: Colors.black.withOpacity(0.50),
+                                color: Colors.black.withOpacityValue(0.50),
                               ),
-                              fillColor: Colors.black.withOpacity(0.05),
+                              fillColor: Colors.black.withOpacityValue(0.05),
                               filled: true,
-                              focusColor: Colors.black.withOpacity(0.30),
+                              focusColor: Colors.black.withOpacityValue(0.30),
                               enabledBorder: OutlineInputBorder(
                                 borderSide: BorderSide.none,
                                 borderRadius: BorderRadius.circular(12.0),
@@ -151,7 +152,7 @@ class WelcomePage extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 16.0,
                           fontWeight: FontWeight.w700,
-                          color: Colors.black.withOpacity(0.7),
+                          color: Colors.black.withOpacityValue(0.7),
                           fontFamily: 'Segoe',
                         ),
                       ),
@@ -208,7 +209,7 @@ class WelcomePage extends StatelessWidget {
                             },
                             color: Theme.of(context)
                                 .highlightColor
-                                .withOpacity(0.7),
+                                .withOpacityValue(0.7),
                             child: Text(
                               'SKIP',
                               style: TextStyle(
