@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:podboi/Constants/theme_data.dart';
-import 'package:podboi/UI/Common/podboi_primary_button.dart';
+import 'package:podboi/UI/podboi_primary_button.dart';
 
 void main() {
   group('PodboiPrimaryButton Widget Tests', () {
@@ -35,6 +35,10 @@ void main() {
       ));
       expect((container.decoration as BoxDecoration).color,
           kLightThemeData.primaryColorLight.withOpacity(0.1));
+
+      final BuildContext context = tester.element(find.byType(SizedBox));
+      final sizedBox = tester.widget<SizedBox>(find.byType(SizedBox));
+      expect(sizedBox.width, MediaQuery.of(context).size.width * 0.25);
     });
 
     testWidgets('renders correctly with default properties in dark theme',
@@ -67,6 +71,10 @@ void main() {
       ));
       expect((container.decoration as BoxDecoration).color,
           kDarkThemeData.primaryColorLight.withOpacity(0.1));
+
+      final BuildContext context = tester.element(find.byType(SizedBox));
+      final sizedBox = tester.widget<SizedBox>(find.byType(SizedBox));
+      expect(sizedBox.width, MediaQuery.of(context).size.width * 0.25);
     });
 
     testWidgets('triggers onTap callback when tapped',
@@ -120,6 +128,27 @@ void main() {
 
       // Assert
       expect((container.decoration as BoxDecoration).color, customColor);
+    });
+
+    testWidgets('renders correctly with custom width',
+        (WidgetTester tester) async {
+      // Arrange
+      const customWidth = 100.0;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: PodboiPrimaryButton(
+              customWitdh: customWidth,
+              onTap: () {},
+              child: const Text('Custom Width'),
+            ),
+          ),
+        ),
+      );
+
+      final sizedBox = tester.widget<SizedBox>(find.byType(SizedBox));
+      expect(sizedBox.width, customWidth);
     });
 
     testWidgets('has correct padding and alignment',

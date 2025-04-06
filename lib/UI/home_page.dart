@@ -6,7 +6,7 @@ import 'package:podboi/Controllers/home_screen_controller.dart';
 import 'package:podboi/Controllers/profile_screen_controller.dart';
 import 'package:podboi/DataModels/subscription_data.dart';
 import 'package:podboi/Shared/podcast_display_widget.dart';
-import 'package:podboi/UI/Common/podboi_loader.dart';
+import 'package:podboi/UI/podboi_loader.dart';
 import 'package:podboi/UI/podcast_page.dart';
 import 'package:podboi/UI/profile_page.dart';
 import 'package:podboi/UI/search_page.dart';

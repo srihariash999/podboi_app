@@ -1,3 +1,5 @@
+import 'package:line_icons/line_icons.dart';
+import 'package:podboi/Constants/constants.dart';
 import 'package:podboi/Helpers/helpers.dart';
 import 'package:test/test.dart';
 
@@ -63,5 +65,15 @@ void main() {
         );
       },
     );
+  });
+
+  group('getIconFromAvatarName', () {
+    test('returns correct icon for different avatars', () {
+      expect(Helpers.getIconFromAvatarName(K.avatarNames.userNinja),
+          LineIcons.userNinja);
+      expect(Helpers.getIconFromAvatarName(K.avatarNames.userAstronaut),
+          LineIcons.userAstronaut);
+      expect(Helpers.getIconFromAvatarName('unknownAvatar'), LineIcons.user);
+    });
   });
 }

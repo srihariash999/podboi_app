@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lottie/lottie.dart';
-import 'package:podboi/UI/Common/podboi_loader.dart';
+import 'package:podboi/UI/podboi_loader.dart';
 
 void main() {
   group('Podboi loader test', () {

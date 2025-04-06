@@ -2,6 +2,7 @@ class K {
   static BoxNames boxes = BoxNames();
   static SettingsKeys settingsKeys = SettingsKeys();
   static AnimationAssets animationAssets = AnimationAssets();
+  static AvatarNames avatarNames = AvatarNames();
 }
 
 class BoxNames {
@@ -20,4 +21,16 @@ class SettingsKeys {
 
 class AnimationAssets {
   String loading = "assets/loader.json";
+}
+
+class AvatarNames {
+  String user = "user";
+  String userNinja = "userNinja";
+  String userAstronaut = "userAstronaut";
+
+  List<String> get allAvatars => [
+        user,
+        userNinja,
+        userAstronaut,
+      ];
 }

@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:podboi/Controllers/profile_screen_controller.dart';
 import 'package:podboi/Controllers/theme_controller.dart';
-import 'package:podboi/UI/Common/podboi_primary_button.dart';
+import 'package:podboi/UI/podboi_primary_button.dart';
 import 'package:podboi/UI/settings_page.dart';
 import 'package:podboi/UI/listening_history_page.dart';
 import 'package:podboi/UI/player.dart';
@@ -107,6 +107,7 @@ class ProfileScreen extends StatelessWidget {
                             Center(
                               child: PodboiPrimaryButton(
                                 onTap: () async {
+                                  //TODO: Logic to update the profile is duplicated from welcome page. Need to refactor
                                   showModalBottomSheet<void>(
                                     context: context,
                                     isScrollControlled: true,

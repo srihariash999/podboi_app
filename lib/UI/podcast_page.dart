@@ -9,7 +9,7 @@ import 'package:podboi/Controllers/podcast_page_controller.dart';
 import 'package:podboi/DataModels/episode_data.dart';
 import 'package:podboi/DataModels/subscription_data.dart';
 import 'package:podboi/Shared/detailed_episode_widget.dart';
-import 'package:podboi/UI/Common/podboi_loader.dart';
+import 'package:podboi/UI/podboi_loader.dart';
 import 'package:podboi/UI/player.dart';
 
 class PodcastPage extends StatelessWidget {
