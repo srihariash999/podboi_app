@@ -9,22 +9,19 @@ import 'package:podcast_search/podcast_search.dart' as ps;
 
 final podcastPageViewController = StateNotifierProvider.autoDispose
     .family<PodcastPageViewNotifier, PodcastPageState, SubscriptionData>(
-        (ref, podcast) {
-  return PodcastPageViewNotifier(podcast, ref);
+        (podcastRef, ref) {
+  return PodcastPageViewNotifier(ref);
 });
 
 class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
   final SubscriptionData podcast;
-
-  final StateNotifierProviderRef<PodcastPageViewNotifier, PodcastPageState> ref;
 
   List<EpisodeData> _filteredEpisodes = [];
   List<EpisodeData> _episodes = [];
 
   int realSubId = -1;
 
-  PodcastPageViewNotifier(this.podcast, this.ref)
-      : super(PodcastPageState.initial()) {
+  PodcastPageViewNotifier(this.podcast) : super(PodcastPageState.initial()) {
     loadPodcastEpisodes(podcast.feedUrl, podcast.podcastId!, initial: true);
 
     SubscriptionBoxController.isPodcastSubbed(podcast).then((value) {

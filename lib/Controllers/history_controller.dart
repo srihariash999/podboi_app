@@ -6,7 +6,7 @@ import 'package:podboi/Services/database/listening_history_box_controller.dart';
 final historyController =
     StateNotifierProvider.autoDispose<HistoryStateNotifier, HistoryState>(
         (ref) {
-  return HistoryStateNotifier(ref);
+  return HistoryStateNotifier();
 });
 
 //* state notifier for changes and actions.
@@ -14,7 +14,7 @@ class HistoryStateNotifier extends StateNotifier<HistoryState> {
   final ListeningHistoryBoxController _listeningHistoryBoxController =
       ListeningHistoryBoxController.initialize();
 
-  HistoryStateNotifier(this.ref) : super(HistoryState.initial()) {
+  HistoryStateNotifier() : super(HistoryState.initial()) {
     getHistory();
   }
 
@@ -22,8 +22,6 @@ class HistoryStateNotifier extends StateNotifier<HistoryState> {
   void dispose() {
     super.dispose();
   }
-
-  final StateNotifierProviderRef<HistoryStateNotifier, HistoryState> ref;
 
   Future<void> getHistory({bool fullRefresh = false}) async {
     state = state.copyWith(

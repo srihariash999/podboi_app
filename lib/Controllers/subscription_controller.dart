@@ -4,13 +4,11 @@ import 'package:podboi/Services/database/subscription_box_controller.dart';
 
 final subscriptionsPageViewController =
     StateNotifierProvider<SubscriptionsPageNotifier, SubscriptionState>((ref) {
-  return SubscriptionsPageNotifier(ref);
+  return SubscriptionsPageNotifier();
 });
 
 class SubscriptionsPageNotifier extends StateNotifier<SubscriptionState> {
-  final StateNotifierProviderRef<SubscriptionsPageNotifier, SubscriptionState>
-      ref;
-  SubscriptionsPageNotifier(this.ref) : super(SubscriptionState.initial()) {
+  SubscriptionsPageNotifier() : super(SubscriptionState.initial()) {
     loadSubscriptions();
   }
 
