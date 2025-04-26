@@ -3,9 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podboi/Controllers/settings_controller.dart';
 import 'package:podboi/Helpers/helpers.dart';
+import 'package:podboi/UI/player/mini_player.dart';
 import 'package:podboi/UI/podboi_loader.dart';
 import 'package:podboi/UI/home_page.dart';
-import 'package:podboi/UI/player.dart';
 import 'package:podboi/UI/subscriptions_page.dart';
 
 class BaseScreen extends StatefulWidget {

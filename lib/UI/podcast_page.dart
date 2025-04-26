@@ -10,8 +10,8 @@ import 'package:podboi/DataModels/episode_data.dart';
 import 'package:podboi/DataModels/subscription_data.dart';
 import 'package:podboi/Helpers/helpers.dart';
 import 'package:podboi/Shared/detailed_episode_widget.dart';
+import 'package:podboi/UI/player/mini_player.dart';
 import 'package:podboi/UI/podboi_loader.dart';
-import 'package:podboi/UI/player.dart';
 
 class PodcastPage extends StatelessWidget {
   final SubscriptionData subscription;
