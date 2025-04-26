@@ -369,7 +369,7 @@ class ControlButtons extends StatelessWidget {
                   iconSize: 64.0,
                   onPressed: () => player?.seek(
                     Duration.zero,
-                    index: player?.effectiveIndices.first,
+                    index: player?.effectiveIndices?.first,
                   ),
                 );
               }

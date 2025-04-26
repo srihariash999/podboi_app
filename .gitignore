@@ -49,3 +49,4 @@ app.*.map.json
 pubspec.lock
 
 coverage/*
+/android/app/.cxx
