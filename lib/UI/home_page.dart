@@ -12,7 +12,7 @@ import 'package:podboi/UI/podcast_page.dart';
 import 'package:podboi/UI/profile_page.dart';
 import 'package:podboi/UI/search_page.dart';
 import 'package:podcast_search/podcast_search.dart';
-import 'package:optimize_battery/optimize_battery.dart';
+import 'package:battery_optimizer/battery_optimizer.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key, required this.ref}) : super(key: key);
@@ -34,10 +34,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _checkBatteryOptimization() async {
-    bool isIgnoringBatteryOptimizations =
-        await OptimizeBattery.isIgnoringBatteryOptimizations();
-    if (!isIgnoringBatteryOptimizations && mounted) {
-      OptimizeBattery.stopOptimizingBatteryUsage();
+    bool isBatteryOptimizationEnabled =
+        await BatteryOptimizer.isBatteryOptimizationEnabled();
+    if (isBatteryOptimizationEnabled && mounted) {
+      BatteryOptimizer.requestDisableBatteryOptimization();
     }
   }
 
