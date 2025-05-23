@@ -12,13 +12,33 @@ import 'package:podboi/UI/podcast_page.dart';
 import 'package:podboi/UI/profile_page.dart';
 import 'package:podboi/UI/search_page.dart';
 import 'package:podcast_search/podcast_search.dart';
+import 'package:optimize_battery/optimize_battery.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   HomePage({Key? key, required this.ref}) : super(key: key);
   final WidgetRef ref;
 
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   Future<void> _refresh() async {
-    ref.read(homeScreenController.notifier).getTopPodcasts();
+    widget.ref.read(homeScreenController.notifier).getTopPodcasts();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _checkBatteryOptimization();
+  }
+
+  Future<void> _checkBatteryOptimization() async {
+    bool isIgnoringBatteryOptimizations =
+        await OptimizeBattery.isIgnoringBatteryOptimizations();
+    if (!isIgnoringBatteryOptimizations && mounted) {
+      OptimizeBattery.stopOptimizingBatteryUsage();
+    }
   }
 
   @override
@@ -44,10 +64,10 @@ class HomePage extends StatelessWidget {
               child: CustomScrollView(
                 slivers: [
                   SliverToBoxAdapter(
-                    child: buildTopUi(context),
+                    child: _buildTopUi(context),
                   ),
                   SliverToBoxAdapter(
-                    child: buildSearchRow(context),
+                    child: _buildSearchRow(context),
                   ),
                   SliverToBoxAdapter(
                     child: Padding(
@@ -83,7 +103,7 @@ class HomePage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  buildDiscoverPodcastsRow(context),
+                  _buildDiscoverPodcastsRow(context),
                 ],
               ),
             ),
@@ -93,7 +113,7 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Padding buildSearchRow(BuildContext context) {
+  Padding _buildSearchRow(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(
         top: 18.0,
@@ -158,14 +178,14 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget buildDiscoverPodcastsRow(BuildContext context) {
+  Widget _buildDiscoverPodcastsRow(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
-        List<Item> _topPodcasts = ref.watch(
+        List<Item> _topPodcasts = widget.ref.watch(
           homeScreenController.select((value) => value.topPodcasts),
         );
         bool _isLoading =
-            ref.watch(homeScreenController.select((value) => value.isLoading));
+            widget.ref.watch(homeScreenController.select((value) => value.isLoading));
         return _isLoading
             ? SliverToBoxAdapter(
                 child: Container(
@@ -261,18 +281,18 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Column buildTopUi(BuildContext context) {
+  Column _buildTopUi(BuildContext context) {
     return Column(
       children: [
         SizedBox(
           height: 16.0,
         ),
         Consumer(builder: (context, ref, child) {
-          String _name = ref.watch(
+          String _name = widget.ref.watch(
             profileController.select((value) => value.userName),
           );
           String _avatar =
-              ref.watch(profileController.select((value) => value.userAvatar));
+              widget.ref.watch(profileController.select((value) => value.userAvatar));
           return Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
