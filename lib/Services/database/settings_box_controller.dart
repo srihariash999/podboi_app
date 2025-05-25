@@ -81,20 +81,6 @@ class SettingsBoxController {
     }
   }
 
-  Future<bool> saveEnableBatteryOptimizationSetting(bool enableBatteryOptimization) async {
-    try {
-      await box.put(K.settingsKeys.enableBatteryOptimizationKey, enableBatteryOptimization);
-      return true;
-    } catch (e) {
-      print(" error saving enableBatteryOptimization to settings box $e");
-      return false;
-    }
-  }
-
-  bool getEnableBatteryOptimizationSetting() {
-    return box.get(K.settingsKeys.enableBatteryOptimizationKey) ?? false;
-  }
-
   Future<bool> saveRewindDurationSetting(int rewindDuration) async {
     try {
       await box.put(K.settingsKeys.rewindDurationKey, rewindDuration);

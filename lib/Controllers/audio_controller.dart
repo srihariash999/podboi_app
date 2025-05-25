@@ -290,7 +290,7 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
 
       // Listen to errors during playback.
       _player.playbackEventStream.listen((PlaybackEvent event) {},
-          onError: (Object e, StackTrace stackTrace) {
+onError: (Object e, StackTrace stackTrace) {
         print('A stream error occurred: $e');
       });
 
@@ -360,8 +360,7 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
     if (state is! LoadedAudioState && state is! LoadingAudioState) return;
 
     var currentPos = _player.position.inSeconds;
-    final forwardSeconds =
-        int.parse(ref.read(settingsController).forwardDuration.toString());
+    final forwardSeconds = ref.read(settingsController).forwardDuration;
 
     await _audioHandler.seek(Duration(seconds: currentPos + forwardSeconds));
   }
@@ -370,12 +369,10 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
     if (state is! LoadedAudioState && state is! LoadingAudioState) return;
 
     var currentPos = _player.position.inSeconds;
-    final rewindSeconds =
-        int.parse(ref.read(settingsController).rewindDuration.toString());
+    final rewindSeconds = ref.read(settingsController).rewindDuration;
 
-    await _audioHandler.seek(Duration(
-        seconds:
-            (currentPos - rewindSeconds) < 0 ? 0 : currentPos - rewindSeconds));
+    await _audioHandler.seek(
+        Duration(seconds: (currentPos - rewindSeconds) < 0 ? 0 : currentPos - rewindSeconds));
   }
 
   Future<void> reorderQueue(int oldIndex, int newIndex) async {

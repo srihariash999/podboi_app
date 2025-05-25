@@ -101,57 +101,54 @@ class SettingsPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 16.0),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        "Enable battery optimization to save power when using podboi.",
-                        style: TextStyle(
-                          fontSize: 16.0,
-                          fontWeight: FontWeight.w500,
-                          color: Theme.of(context).colorScheme.secondary,
-                          fontFamily: 'Segoe',
-                        ),
-                      ),
+                ElevatedButton(
+                  onPressed: () async {
+                    // Ensure context is valid and mounted if this page can be quickly disposed.
+                    if (!Navigator.of(context).mounted) return;
+
+                    try {
+                      bool isOptimized = await BatteryOptimizer.isBatteryOptimizationEnabled();
+                      
+                      if (!Navigator.of(context).mounted) return; // Check again after await
+
+                      if (isOptimized) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Battery optimization is already active or managed by the system.')),
+                        );
+                      } else {
+                        BatteryOptimizer.requestDisableBatteryOptimization();
+                        // Optionally, inform the user that a request has been made.
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Requesting battery optimization setting change...')),
+                        );
+                      }
+                    } catch (e) {
+                        // Handle any errors from the BatteryOptimizer package if necessary
+                        if (!Navigator.of(context).mounted) return;
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Could not determine battery optimization status: $e')),
+                        );
+                    }
+                  },
+                  child: Text("Manage Battery Optimization"),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.secondary,
+                    foregroundColor: Theme.of(context).colorScheme.onSecondary,
+                    textStyle: TextStyle(
+                        fontFamily: 'Segoe', fontWeight: FontWeight.w600),
+                  ),
+                ),
+                 Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Text(
+                    "Tap the button to check the current battery optimization status or to request changes if optimization is disabled for this app. This can help with background playback.",
+                    style: TextStyle(
+                      fontSize: 12.0,
+                      color: Theme.of(context).colorScheme.secondary.withOpacity(0.7),
+                      fontFamily: 'Segoe',
                     ),
-                    const SizedBox(width: 12.0),
-                    SizedBox(
-                      width: 48.0,
-                      height: 32.0,
-                      child: FittedBox(
-                        fit: BoxFit.fitWidth,
-                        child: Consumer(builder: (context, ref, child) {
-                          final settings = ref.watch(settingsController);
-                          return Switch(
-                            activeColor: Theme.of(context).highlightColor,
-                            value: settings.enableBatteryOptimization,
-                            onChanged: (val) async {
-                              ref
-                                  .read(settingsController.notifier)
-                                  .saveSettings(
-                                    newEnableBatteryOptimization: val,
-                                  );
-                              if (val) {
-                                bool isEnabled = await BatteryOptimizer
-                                    .isBatteryOptimizationEnabled();
-                                if (isEnabled) {
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(SnackBar(
-                                    content: Text(
-                                        "Battery optimization is already enabled."),
-                                  ));
-                                } else {
-                                  BatteryOptimizer
-                                      .requestDisableBatteryOptimization();
-                                }
-                              }
-                            },
-                          );
-                        }),
-                      ),
-                    )
-                  ],
-                )
+                  ),
+                ),
               ],
             ),
           ),
@@ -179,7 +176,7 @@ class SettingsPage extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        "Rewind Duration",
+                        "Rewind Duration (seconds)",
                         style: TextStyle(
                           fontSize: 16.0,
                           fontWeight: FontWeight.w500,
@@ -201,7 +198,9 @@ class SettingsPage extends StatelessWidget {
                         }).toList(),
                         onChanged: (val) {
                           if (val != null) {
-                            ref.read(settingsController.notifier).saveSettings(
+                            ref
+                                .read(settingsController.notifier)
+                                .saveSettings(
                                   newRewindDuration: val,
                                 );
                           }
@@ -215,7 +214,7 @@ class SettingsPage extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        "Forward Duration",
+                        "Forward Duration (seconds)",
                         style: TextStyle(
                           fontSize: 16.0,
                           fontWeight: FontWeight.w500,
@@ -237,7 +236,9 @@ class SettingsPage extends StatelessWidget {
                         }).toList(),
                         onChanged: (val) {
                           if (val != null) {
-                            ref.read(settingsController.notifier).saveSettings(
+                            ref
+                                .read(settingsController.notifier)
+                                .saveSettings(
                                   newForwardDuration: val,
                                 );
                           }

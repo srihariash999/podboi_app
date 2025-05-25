@@ -234,55 +234,6 @@ void main() {
     });
   });
 
-  group('Saving and retrieving battery optimization setting', () {
-    test('should save battery optimization setting to settings box', () async {
-      when(mockBox.put(K.settingsKeys.enableBatteryOptimizationKey, true))
-          .thenAnswer((_) => Future.value());
-      var result =
-          await controller.saveEnableBatteryOptimizationSetting(true);
-      verify(mockBox.put(K.settingsKeys.enableBatteryOptimizationKey, true))
-          .called(1);
-      expect(result, true);
-
-      when(mockBox.put(K.settingsKeys.enableBatteryOptimizationKey, false))
-          .thenAnswer((_) => Future.value());
-      result = await controller.saveEnableBatteryOptimizationSetting(false);
-      verify(mockBox.put(K.settingsKeys.enableBatteryOptimizationKey, false))
-          .called(1);
-      expect(result, true);
-    });
-
-    test('return false if saving battery optimization setting fails', () async {
-      when(mockBox.put(K.settingsKeys.enableBatteryOptimizationKey, true))
-          .thenThrow(Exception('Error'));
-      final result =
-          await controller.saveEnableBatteryOptimizationSetting(true);
-      verify(mockBox.put(K.settingsKeys.enableBatteryOptimizationKey, true))
-          .called(1);
-      expect(result, false);
-    });
-
-    test('Retrieve saved battery optimization setting value.', () async {
-      // test for true;
-      when(mockBox.get(K.settingsKeys.enableBatteryOptimizationKey))
-          .thenReturn(true);
-      var savedValue = controller.getEnableBatteryOptimizationSetting();
-      expect(savedValue, true);
-
-      // test for false
-      when(mockBox.get(K.settingsKeys.enableBatteryOptimizationKey))
-          .thenReturn(false);
-      savedValue = controller.getEnableBatteryOptimizationSetting();
-      expect(savedValue, false);
-
-      // test for null (should return default: false)
-      when(mockBox.get(K.settingsKeys.enableBatteryOptimizationKey))
-          .thenReturn(null);
-      savedValue = controller.getEnableBatteryOptimizationSetting();
-      expect(savedValue, false);
-    });
-  });
-
   group('Saving and retrieving rewind duration setting', () {
     test('should save rewind duration setting to settings box', () async {
       when(mockBox.put(K.settingsKeys.rewindDurationKey, 15))

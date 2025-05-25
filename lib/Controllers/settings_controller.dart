@@ -23,18 +23,15 @@ class SettingsStateNotifier extends StateNotifier<SettingsState> {
       state = SettingsState(
         subsFirst: false,
         loading: true,
-        enableBatteryOptimization: false,
         rewindDuration: 30,
         forwardDuration: 30,
       );
       var _subsFirst = await _settingsBoxController.getSubsFirst();
-      var _enableBatteryOptimization = await _settingsBoxController.getEnableBatteryOptimizationSetting();
       var _rewindDuration = await _settingsBoxController.getRewindDurationSetting();
       var _forwardDuration = await _settingsBoxController.getForwardDurationSetting();
       state = SettingsState(
         subsFirst: _subsFirst,
         loading: false,
-        enableBatteryOptimization: _enableBatteryOptimization,
         rewindDuration: _rewindDuration,
         forwardDuration: _forwardDuration,
       );
@@ -45,29 +42,26 @@ class SettingsStateNotifier extends StateNotifier<SettingsState> {
 
   Future<void> saveSettings({
     bool? newSubsFirst,
-    bool? newEnableBatteryOptimization,
     int? newRewindDuration,
     int? newForwardDuration,
   }) async {
     try {
+      // Store current state values to preserve them if not being updated
       final currentSubsFirst = state.subsFirst;
-      final currentEnableBatteryOptimization = state.enableBatteryOptimization;
       final currentRewindDuration = state.rewindDuration;
       final currentForwardDuration = state.forwardDuration;
 
+      // Set loading state, using new values if provided, otherwise current
       state = SettingsState(
         subsFirst: newSubsFirst ?? currentSubsFirst,
         loading: true,
-        enableBatteryOptimization: newEnableBatteryOptimization ?? currentEnableBatteryOptimization,
         rewindDuration: newRewindDuration ?? currentRewindDuration,
         forwardDuration: newForwardDuration ?? currentForwardDuration,
       );
 
+      // Perform save operations for provided values
       if (newSubsFirst != null) {
         await _settingsBoxController.saveSubsFirstSetting(newSubsFirst);
-      }
-      if (newEnableBatteryOptimization != null) {
-        await _settingsBoxController.saveEnableBatteryOptimizationSetting(newEnableBatteryOptimization);
       }
       if (newRewindDuration != null) {
         await _settingsBoxController.saveRewindDurationSetting(newRewindDuration);
@@ -76,15 +70,22 @@ class SettingsStateNotifier extends StateNotifier<SettingsState> {
         await _settingsBoxController.saveForwardDurationSetting(newForwardDuration);
       }
 
+      // Set final state with new values and loading false
       state = SettingsState(
         subsFirst: newSubsFirst ?? currentSubsFirst,
         loading: false,
-        enableBatteryOptimization: newEnableBatteryOptimization ?? currentEnableBatteryOptimization,
         rewindDuration: newRewindDuration ?? currentRewindDuration,
         forwardDuration: newForwardDuration ?? currentForwardDuration,
       );
     } catch (e) {
       print(" error in saving settings : $e");
+      // Optionally, revert to a non-loading state with previous values if error occurs
+      state = SettingsState(
+        subsFirst: currentSubsFirst,
+        loading: false,
+        rewindDuration: currentRewindDuration,
+        forwardDuration: currentForwardDuration,
+      );
     }
   }
 }
@@ -92,14 +93,12 @@ class SettingsStateNotifier extends StateNotifier<SettingsState> {
 class SettingsState {
   final bool subsFirst;
   final bool loading;
-  final bool enableBatteryOptimization;
   final int rewindDuration;
   final int forwardDuration;
 
   SettingsState({
     required this.subsFirst,
     required this.loading,
-    required this.enableBatteryOptimization,
     required this.rewindDuration,
     required this.forwardDuration,
   });
@@ -108,7 +107,6 @@ class SettingsState {
     return SettingsState(
       subsFirst: false,
       loading: false,
-      enableBatteryOptimization: false,
       rewindDuration: 30,
       forwardDuration: 30,
     );
