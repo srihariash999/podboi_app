@@ -134,7 +134,8 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
     );
   }
 
-  saveToSubscriptionsAction(SubscriptionData podcast, WidgetRef ref) async {
+  void saveToSubscriptionsAction(
+      SubscriptionData podcast, WidgetRef ref) async {
     try {
       state = state.copyWith(isSubscribeButtonLoading: true);
       await SubscriptionBoxController.saveSubscription(podcast, ref: ref);
@@ -156,7 +157,8 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
     }
   }
 
-  removeFromSubscriptionsAction(SubscriptionData podcast, WidgetRef ref) async {
+  void removeFromSubscriptionsAction(
+      SubscriptionData podcast, WidgetRef ref) async {
     try {
       state = state.copyWith(isSubscribeButtonLoading: true);
       await SubscriptionBoxController.removeSubscription(podcast, ref: ref);
@@ -196,6 +198,38 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
       );
     } catch (e) {
       debugPrint(" cannot sort episodes  : $e");
+    } finally {
+      state = state.copyWith(
+        isLoading: false,
+      );
+    }
+  }
+
+  Future<void> markEpisodeAsPlayed(EpisodeData episode) async {
+    try {
+      await PodcastEpisodeBoxController.markEpisodeAsPlayed(
+        episode.guid,
+        episode.podcastId,
+      );
+
+      var pods = [..._episodes];
+
+      for (var i = 0; i < pods.length; i++) {
+        if (pods[i].guid == episode.guid) {
+          pods[i] = pods[i].copyWith(
+            playedDuration: episode.duration,
+          );
+          break;
+        }
+      }
+      _episodes = [...pods];
+      _filteredEpisodes = [..._episodes];
+
+      state = state.copyWith(
+        podcastEpisodes: _filteredEpisodes,
+      );
+    } catch (e) {
+      debugPrint(" cannot mark episode as played  : $e");
     } finally {
       state = state.copyWith(
         isLoading: false,

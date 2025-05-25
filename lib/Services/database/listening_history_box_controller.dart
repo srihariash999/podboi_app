@@ -14,7 +14,7 @@ class ListeningHistoryBoxController {
   Box<ListeningHistoryData> get box => _box;
 
   /// Initializes a new instance of [ListeningHistoryBoxController] with specified box
-  factory ListeningHistoryBoxController.initialize() {  
+  factory ListeningHistoryBoxController.initialize() {
     return ListeningHistoryBoxController(
       Hive.box<ListeningHistoryData>(K.boxes.listeningHistoryBox),
     );
@@ -66,7 +66,11 @@ class ListeningHistoryBoxController {
 
   /// Saves a new item to history
   Future<void> _saveNewItem(ListeningHistoryData data) async {
-    await _box.put(data.episodeData.guid.toString(), data);
+    try {
+      await _box.put(data.episodeData.guid.toString(), data);
+    } on Exception catch (e) {
+      _handleError(e, 'Failed to save new item');
+    }
   }
 
   /// Handles errors and prints debugging information

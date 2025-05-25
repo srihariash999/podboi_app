@@ -7,10 +7,10 @@ import 'package:line_icons/line_icons.dart';
 import 'package:podboi/Controllers/profile_screen_controller.dart';
 import 'package:podboi/Controllers/theme_controller.dart';
 import 'package:podboi/Helpers/helpers.dart';
+import 'package:podboi/UI/listening_history_page.dart';
+import 'package:podboi/UI/player/mini_player.dart';
 import 'package:podboi/UI/podboi_primary_button.dart';
 import 'package:podboi/UI/settings_page.dart';
-import 'package:podboi/UI/listening_history_page.dart';
-import 'package:podboi/UI/player.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({Key? key}) : super(key: key);

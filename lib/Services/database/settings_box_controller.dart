@@ -80,4 +80,32 @@ class SettingsBoxController {
       return false;
     }
   }
+
+  Future<bool> saveRewindDurationSetting(int rewindDuration) async {
+    try {
+      await box.put(K.settingsKeys.rewindDurationKey, rewindDuration);
+      return true;
+    } catch (e) {
+      print(" error saving rewindDuration to settings box $e");
+      return false;
+    }
+  }
+
+  int getRewindDurationSetting() {
+    return box.get(K.settingsKeys.rewindDurationKey) ?? 30;
+  }
+
+  Future<bool> saveForwardDurationSetting(int forwardDuration) async {
+    try {
+      await box.put(K.settingsKeys.forwardDurationKey, forwardDuration);
+      return true;
+    } catch (e) {
+      print(" error saving forwardDuration to settings box $e");
+      return false;
+    }
+  }
+
+  int getForwardDurationSetting() {
+    return box.get(K.settingsKeys.forwardDurationKey) ?? 30;
+  }
 }

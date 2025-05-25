@@ -7,28 +7,80 @@ final settingsController =
 });
 
 class SettingsStateNotifier extends StateNotifier<SettingsState> {
-  SettingsStateNotifier() : super(SettingsState.defaultState()) {
+  late final SettingsBoxController _settingsBoxController;
+
+  // Public constructor that uses the default SettingsBoxController
+  SettingsStateNotifier() : this.internal(SettingsBoxController.initialize());
+
+  // Internal constructor for testing or specific initialization
+  SettingsStateNotifier.internal(this._settingsBoxController)
+      : super(SettingsState.defaultState()) {
     loadSettings();
   }
 
-  final SettingsBoxController _settingsBoxController =
-      SettingsBoxController.initialize();
-
   void loadSettings() async {
     try {
-      state = SettingsState(subsFirst: false, loading: true);
+      state = SettingsState(
+        subsFirst: false,
+        loading: true,
+        rewindDuration: 30,
+        forwardDuration: 30,
+      );
       var _subsFirst = await _settingsBoxController.getSubsFirst();
-      state = SettingsState(subsFirst: _subsFirst, loading: false);
+      var _rewindDuration =
+          await _settingsBoxController.getRewindDurationSetting();
+      var _forwardDuration =
+          await _settingsBoxController.getForwardDurationSetting();
+      state = SettingsState(
+        subsFirst: _subsFirst,
+        loading: false,
+        rewindDuration: _rewindDuration,
+        forwardDuration: _forwardDuration,
+      );
     } catch (e) {
       print(" error in loading settings : $e");
     }
   }
 
-  Future<void> saveSettings({required bool newSubsFirst}) async {
+  Future<void> saveSettings({
+    bool? newSubsFirst,
+    int? newRewindDuration,
+    int? newForwardDuration,
+  }) async {
     try {
-      state = SettingsState(subsFirst: newSubsFirst, loading: true);
-      await _settingsBoxController.saveSubsFirstSetting(newSubsFirst);
-      state = SettingsState(subsFirst: newSubsFirst, loading: false);
+      // Store current state values to preserve them if not being updated
+      final currentSubsFirst = state.subsFirst;
+      final currentRewindDuration = state.rewindDuration;
+      final currentForwardDuration = state.forwardDuration;
+
+      // Set loading state, using new values if provided, otherwise current
+      state = SettingsState(
+        subsFirst: newSubsFirst ?? currentSubsFirst,
+        loading: true,
+        rewindDuration: newRewindDuration ?? currentRewindDuration,
+        forwardDuration: newForwardDuration ?? currentForwardDuration,
+      );
+
+      // Perform save operations for provided values
+      if (newSubsFirst != null) {
+        await _settingsBoxController.saveSubsFirstSetting(newSubsFirst);
+      }
+      if (newRewindDuration != null) {
+        await _settingsBoxController
+            .saveRewindDurationSetting(newRewindDuration);
+      }
+      if (newForwardDuration != null) {
+        await _settingsBoxController
+            .saveForwardDurationSetting(newForwardDuration);
+      }
+
+      // Set final state with new values and loading false
+      state = SettingsState(
+        subsFirst: newSubsFirst ?? currentSubsFirst,
+        loading: false,
+        rewindDuration: newRewindDuration ?? currentRewindDuration,
+        forwardDuration: newForwardDuration ?? currentForwardDuration,
+      );
     } catch (e) {
       print(" error in saving settings : $e");
     }
@@ -38,10 +90,22 @@ class SettingsStateNotifier extends StateNotifier<SettingsState> {
 class SettingsState {
   final bool subsFirst;
   final bool loading;
+  final int rewindDuration;
+  final int forwardDuration;
 
-  SettingsState({required this.subsFirst, required this.loading});
+  SettingsState({
+    required this.subsFirst,
+    required this.loading,
+    required this.rewindDuration,
+    required this.forwardDuration,
+  });
 
   factory SettingsState.defaultState() {
-    return SettingsState(subsFirst: false, loading: false);
+    return SettingsState(
+      subsFirst: false,
+      loading: false,
+      rewindDuration: 30,
+      forwardDuration: 30,
+    );
   }
 }
