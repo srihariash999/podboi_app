@@ -83,6 +83,7 @@ class PlaybackCacheController {
       await _box.delete(playbackPositionKey);
       return true;
     } catch (e) {
+      print("error in clearing playback position: $e");
       return false;
     }
   }
@@ -93,6 +94,7 @@ class PlaybackCacheController {
       await _box.delete(playbckQueueKey);
       return true;
     } catch (e) {
+      print("error in clearing playback queue: $e");
       return false;
     }
   }

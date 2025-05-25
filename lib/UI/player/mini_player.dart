@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
@@ -100,11 +101,14 @@ class _MiniPlayerState extends State<MiniPlayer> {
             color: Colors.transparent,
             child: Row(
               children: [
-                Image.network(
-                  song.icon,
-                  height: 52.0,
-                  width: 52.0,
-                  fit: BoxFit.cover,
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(4.0),
+                  child: CachedNetworkImage(
+                    imageUrl: song.icon,
+                    height: 52.0,
+                    width: 52.0,
+                    fit: BoxFit.cover,
+                  ),
                 ),
                 const SizedBox(width: 8.0),
 
@@ -191,13 +195,13 @@ class MiniplayerActionButtons extends StatelessWidget {
                       return IconButton(
                         icon: const Icon(Icons.play_arrow),
                         iconSize: 34.0,
-                        onPressed: state.player.play,
+                        onPressed: ref.read(audioController.notifier).play,
                       );
                     }
                     return IconButton(
                       icon: const Icon(Icons.pause),
                       iconSize: 34.0,
-                      onPressed: state.player.pause,
+                      onPressed: ref.read(audioController.notifier).pause,
                     );
                   }
                   return MiniplayerLoadingIndicator();

@@ -196,7 +196,9 @@ class _LargePlayerState extends State<LargePlayer> {
                                           positionData?.bufferedPosition ??
                                               state.player.position,
                                       onChangeEnd: (newPosition) {
-                                        state.player.seek(newPosition);
+                                        ref
+                                            .read(audioController.notifier)
+                                            .seek(newPosition);
                                       },
                                     );
                                   },
@@ -355,13 +357,13 @@ class ControlButtons extends StatelessWidget {
                 return IconButton(
                   icon: const Icon(Icons.play_arrow),
                   iconSize: 64.0,
-                  onPressed: player?.play,
+                  onPressed: ref.read(audioController.notifier).play,
                 );
               } else if (processingState != ProcessingState.completed) {
                 return IconButton(
                   icon: const Icon(Icons.pause),
                   iconSize: 64.0,
-                  onPressed: player?.pause,
+                  onPressed: ref.read(audioController.notifier).pause,
                 );
               } else {
                 return IconButton(

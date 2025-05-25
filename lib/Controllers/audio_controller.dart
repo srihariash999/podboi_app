@@ -15,17 +15,17 @@ final audioController =
   return AudioStateNotifier(ref);
 });
 
-class MyAudioHandler extends BaseAudioHandler
-    with
-        QueueHandler, // mix in default queue callback implementations
-        SeekHandler {
+class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   final AudioPlayer player;
 
   MyAudioHandler({required this.player}) {
-    player.playbackEventStream.map(_transformEvent).pipe(playbackState);
+    Rx.combineLatest2<PlaybackEvent, bool, PlaybackState>(
+      player.playbackEventStream,
+      player.playingStream,
+      (event, playing) => _transformEvent(event, playing),
+    ).pipe(playbackState);
   }
 
-  // The most common callbacks:
   void setMediaItem(MediaItem item) {
     mediaItem.add(item);
   }
@@ -66,14 +66,13 @@ class MyAudioHandler extends BaseAudioHandler
     }
   }
 
-  PlaybackState _transformEvent(PlaybackEvent event) {
+  PlaybackState _transformEvent(PlaybackEvent event, bool playing) {
     return PlaybackState(
       controls: [
         MediaControl.rewind,
-        if (player.playing) MediaControl.pause else MediaControl.play,
+        if (playing) MediaControl.pause else MediaControl.play,
         MediaControl.stop,
         MediaControl.fastForward,
-        // MediaControl.custom(androidIcon: androidIcon, label: label, name: name)
       ],
       systemActions: const {
         MediaAction.seek,
@@ -81,14 +80,14 @@ class MyAudioHandler extends BaseAudioHandler
         MediaAction.seekBackward,
       },
       androidCompactActionIndices: const [0, 1, 3],
-      processingState: const {
+      processingState: {
         ProcessingState.idle: AudioProcessingState.idle,
         ProcessingState.loading: AudioProcessingState.loading,
         ProcessingState.buffering: AudioProcessingState.buffering,
         ProcessingState.ready: AudioProcessingState.ready,
         ProcessingState.completed: AudioProcessingState.completed,
       }[player.processingState]!,
-      playing: player.playing,
+      playing: playing,
       updatePosition: player.position,
       bufferedPosition: player.bufferedPosition,
       speed: player.speed,
@@ -290,7 +289,7 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
 
       // Listen to errors during playback.
       _player.playbackEventStream.listen((PlaybackEvent event) {},
-          onError: (Object e, StackTrace stackTrace) {
+onError: (Object e, StackTrace stackTrace) {
         print('A stream error occurred: $e');
       });
 
@@ -339,6 +338,21 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
       print(stackTrace);
       state = ErrorAudioState(errorMessage: e.toString(), playlist: _playlist);
     }
+  }
+
+  Future<void> pause() async {
+    if (state is! LoadedAudioState && state is! LoadingAudioState) return;
+    await _audioHandler.pause();
+  }
+
+  Future<void> play() async {
+    if (state is! LoadedAudioState && state is! LoadingAudioState) return;
+    await _audioHandler.play();
+  }
+
+  Future<void> seek(Duration position) async {
+    if (state is! LoadedAudioState && state is! LoadingAudioState) return;
+    await _audioHandler.seek(position);
   }
 
   Future<void> fastForward() async {

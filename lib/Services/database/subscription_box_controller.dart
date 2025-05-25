@@ -30,6 +30,7 @@ class SubscriptionBoxController {
       }
       return isPodFound;
     } catch (e) {
+      print("Error while checking if podcast is subbed: $e");
       return false;
     }
   }
@@ -47,7 +48,7 @@ class SubscriptionBoxController {
       try {
         ref.read(subscriptionsPageViewController.notifier).loadSubscriptions();
       } catch (e) {
-        print(" cannot update subs list after subscribing to a podcast");
+        print(" cannot update subs list after subscribing to a podcast $e");
       }
     }
 

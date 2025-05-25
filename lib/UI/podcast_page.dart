@@ -287,9 +287,16 @@ class PodcastPage extends StatelessWidget {
                   Expanded(
                     child: Consumer(
                       builder: (context, ref, child) {
-                        var _viewController = ref.watch(
-                          podcastPageViewController(subscription),
+                        var isLoading = ref.watch(
+                          podcastPageViewController(subscription)
+                              .select((value) => value.isLoading),
                         );
+
+                        var eps = ref.watch(
+                          podcastPageViewController(subscription)
+                              .select((value) => value.podcastEpisodes),
+                        );
+
                         Future<void> refresh() async {
                           ref
                               .read(podcastPageViewController(subscription)
@@ -298,15 +305,10 @@ class PodcastPage extends StatelessWidget {
                                   subscription.podcastId ?? subscription.id);
                         }
 
-                        return _viewController.isLoading
+                        return isLoading
                             ? Container(
                                 alignment: Alignment.center,
                                 child: PodboiLoader(),
-                                // CircularProgressIndicator(
-                                //   color:
-                                //       Theme.of(context).colorScheme.secondary,
-                                //   strokeWidth: 1,
-                                // ),
                               )
                             : RefreshIndicator(
                                 onRefresh: refresh,
@@ -325,17 +327,14 @@ class PodcastPage extends StatelessWidget {
                                       ),
                                     );
                                   },
-                                  itemCount:
-                                      _viewController.podcastEpisodes.length +
-                                          1,
+                                  itemCount: eps.length + 1,
                                   itemBuilder: (context, index) {
                                     if (index == 0) {
                                       return EpisodeDetailComponent(
                                         subscription: subscription,
                                       );
                                     }
-                                    EpisodeData _episode = _viewController
-                                        .podcastEpisodes[index - 1];
+                                    EpisodeData _episode = eps[index - 1];
                                     return DetailedEpsiodeViewWidget(
                                       episodeData: _episode,
                                       ref: ref,

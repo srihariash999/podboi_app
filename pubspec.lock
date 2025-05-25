@@ -86,6 +86,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.2.1"
+  battery_optimizer:
+    dependency: "direct main"
+    description:
+      name: battery_optimizer
+      sha256: f1686a74c6906bca40c70a98e27d0fa47382100e800bbe8f197e92a2f8b69bbd
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.2"
   boolean_selector:
     dependency: transitive
     description:
@@ -1123,5 +1131,5 @@ packages:
     source: hosted
     version: "3.1.2"
 sdks:
-  dart: ">=3.7.0-0 <4.0.0"
+  dart: ">=3.7.2 <4.0.0"
   flutter: ">=3.27.0"
