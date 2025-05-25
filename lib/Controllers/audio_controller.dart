@@ -8,6 +8,7 @@ import 'package:podboi/DataModels/song.dart';
 import 'package:podboi/Services/database/listening_history_box_controller.dart';
 import 'package:podboi/Services/database/playback_cache_controller.dart';
 import 'package:podboi/Services/database/podcast_episode_box_controller.dart';
+import 'package:podboi/Controllers/settings_controller.dart';
 import 'package:rxdart/rxdart.dart';
 
 final audioController =
@@ -359,21 +360,19 @@ onError: (Object e, StackTrace stackTrace) {
     if (state is! LoadedAudioState && state is! LoadingAudioState) return;
 
     var currentPos = _player.position.inSeconds;
+    final forwardSeconds = ref.read(settingsController).forwardDuration;
 
-    // await _player.seek(Duration(seconds: currentPos + 30));
-    await _audioHandler.seek(Duration(seconds: currentPos + 30));
+    await _audioHandler.seek(Duration(seconds: currentPos + forwardSeconds));
   }
 
   Future<void> rewind() async {
     if (state is! LoadedAudioState && state is! LoadingAudioState) return;
 
     var currentPos = _player.position.inSeconds;
+    final rewindSeconds = ref.read(settingsController).rewindDuration;
 
-    // await _player
-    //     .seek(Duration(seconds: (currentPos - 30) < 0 ? 0 : currentPos - 30));
-
-    await _audioHandler
-        .seek(Duration(seconds: (currentPos - 30) < 0 ? 0 : currentPos - 30));
+    await _audioHandler.seek(
+        Duration(seconds: (currentPos - rewindSeconds) < 0 ? 0 : currentPos - rewindSeconds));
   }
 
   Future<void> reorderQueue(int oldIndex, int newIndex) async {

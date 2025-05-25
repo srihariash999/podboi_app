@@ -233,4 +233,111 @@ void main() {
       expect(savedTheme, null);
     });
   });
+
+  group('Saving and retrieving battery optimization setting', () {
+    test('should save battery optimization setting to settings box', () async {
+      when(mockBox.put(K.settingsKeys.enableBatteryOptimizationKey, true))
+          .thenAnswer((_) => Future.value());
+      var result =
+          await controller.saveEnableBatteryOptimizationSetting(true);
+      verify(mockBox.put(K.settingsKeys.enableBatteryOptimizationKey, true))
+          .called(1);
+      expect(result, true);
+
+      when(mockBox.put(K.settingsKeys.enableBatteryOptimizationKey, false))
+          .thenAnswer((_) => Future.value());
+      result = await controller.saveEnableBatteryOptimizationSetting(false);
+      verify(mockBox.put(K.settingsKeys.enableBatteryOptimizationKey, false))
+          .called(1);
+      expect(result, true);
+    });
+
+    test('return false if saving battery optimization setting fails', () async {
+      when(mockBox.put(K.settingsKeys.enableBatteryOptimizationKey, true))
+          .thenThrow(Exception('Error'));
+      final result =
+          await controller.saveEnableBatteryOptimizationSetting(true);
+      verify(mockBox.put(K.settingsKeys.enableBatteryOptimizationKey, true))
+          .called(1);
+      expect(result, false);
+    });
+
+    test('Retrieve saved battery optimization setting value.', () async {
+      // test for true;
+      when(mockBox.get(K.settingsKeys.enableBatteryOptimizationKey))
+          .thenReturn(true);
+      var savedValue = controller.getEnableBatteryOptimizationSetting();
+      expect(savedValue, true);
+
+      // test for false
+      when(mockBox.get(K.settingsKeys.enableBatteryOptimizationKey))
+          .thenReturn(false);
+      savedValue = controller.getEnableBatteryOptimizationSetting();
+      expect(savedValue, false);
+
+      // test for null (should return default: false)
+      when(mockBox.get(K.settingsKeys.enableBatteryOptimizationKey))
+          .thenReturn(null);
+      savedValue = controller.getEnableBatteryOptimizationSetting();
+      expect(savedValue, false);
+    });
+  });
+
+  group('Saving and retrieving rewind duration setting', () {
+    test('should save rewind duration setting to settings box', () async {
+      when(mockBox.put(K.settingsKeys.rewindDurationKey, 15))
+          .thenAnswer((_) => Future.value());
+      final result = await controller.saveRewindDurationSetting(15);
+      verify(mockBox.put(K.settingsKeys.rewindDurationKey, 15)).called(1);
+      expect(result, true);
+    });
+
+    test('return false if saving rewind duration setting fails', () async {
+      when(mockBox.put(K.settingsKeys.rewindDurationKey, 15))
+          .thenThrow(Exception('Error'));
+      final result = await controller.saveRewindDurationSetting(15);
+      verify(mockBox.put(K.settingsKeys.rewindDurationKey, 15)).called(1);
+      expect(result, false);
+    });
+
+    test('Retrieve saved rewind duration setting value.', () async {
+      when(mockBox.get(K.settingsKeys.rewindDurationKey)).thenReturn(15);
+      var savedValue = controller.getRewindDurationSetting();
+      expect(savedValue, 15);
+
+      // test for null (should return default: 30)
+      when(mockBox.get(K.settingsKeys.rewindDurationKey)).thenReturn(null);
+      savedValue = controller.getRewindDurationSetting();
+      expect(savedValue, 30);
+    });
+  });
+
+  group('Saving and retrieving forward duration setting', () {
+    test('should save forward duration setting to settings box', () async {
+      when(mockBox.put(K.settingsKeys.forwardDurationKey, 45))
+          .thenAnswer((_) => Future.value());
+      final result = await controller.saveForwardDurationSetting(45);
+      verify(mockBox.put(K.settingsKeys.forwardDurationKey, 45)).called(1);
+      expect(result, true);
+    });
+
+    test('return false if saving forward duration setting fails', () async {
+      when(mockBox.put(K.settingsKeys.forwardDurationKey, 45))
+          .thenThrow(Exception('Error'));
+      final result = await controller.saveForwardDurationSetting(45);
+      verify(mockBox.put(K.settingsKeys.forwardDurationKey, 45)).called(1);
+      expect(result, false);
+    });
+
+    test('Retrieve saved forward duration setting value.', () async {
+      when(mockBox.get(K.settingsKeys.forwardDurationKey)).thenReturn(45);
+      var savedValue = controller.getForwardDurationSetting();
+      expect(savedValue, 45);
+
+      // test for null (should return default: 30)
+      when(mockBox.get(K.settingsKeys.forwardDurationKey)).thenReturn(null);
+      savedValue = controller.getForwardDurationSetting();
+      expect(savedValue, 30);
+    });
+  });
 }

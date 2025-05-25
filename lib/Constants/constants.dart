@@ -17,6 +17,9 @@ class SettingsKeys {
   String userAvatarKey = "userAvatar";
   String themeKey = "theme";
   String tokenKey = "token";
+  String enableBatteryOptimizationKey = "enableBatteryOptimization";
+  String rewindDurationKey = "rewindDuration";
+  String forwardDurationKey = "forwardDuration";
 }
 
 class AnimationAssets {

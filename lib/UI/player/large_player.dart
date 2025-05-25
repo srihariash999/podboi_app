@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:podboi/Controllers/audio_controller.dart';
+import 'package:podboi/Controllers/settings_controller.dart';
 import 'package:podboi/DataModels/position_data.dart';
 import 'package:podboi/DataModels/song.dart';
 import 'package:podboi/Helpers/helpers.dart';
@@ -322,17 +323,23 @@ class ControlButtons extends StatelessWidget {
           ),
 
           // Rewind button
-          StreamBuilder<PlayerState?>(
-            stream: player?.playerStateStream,
-            builder: (context, snapshot) => IconButton(
-              icon: const Icon(
-                Icons.replay_30,
-                size: 42.0,
-              ),
-              onPressed: (snapshot.data?.playing ?? false)
-                  ? ref.read(audioController.notifier).rewind
-                  : null,
-            ),
+          Consumer(
+            builder: (context, ref, child) {
+              final rewindSec = ref.watch(settingsController.select((s) => s.rewindDuration));
+              final rewindIcon = rewindSec == 10 ? Icons.replay_10 : Icons.replay_30;
+              return StreamBuilder<PlayerState?>(
+                stream: player?.playerStateStream,
+                builder: (context, snapshot) => IconButton(
+                  icon: Icon(
+                    rewindIcon,
+                    size: 42.0,
+                  ),
+                  onPressed: (snapshot.data?.playing ?? false)
+                      ? ref.read(audioController.notifier).rewind
+                      : null,
+                ),
+              );
+            },
           ),
 
           // Play/Pause Button
@@ -379,17 +386,23 @@ class ControlButtons extends StatelessWidget {
           ),
 
           // Fast forward button
-          StreamBuilder<PlayerState>(
-            stream: player?.playerStateStream,
-            builder: (context, snapshot) => IconButton(
-              icon: const Icon(
-                Icons.forward_30,
-                size: 42.0,
-              ),
-              onPressed: (snapshot.data?.playing ?? false)
-                  ? ref.read(audioController.notifier).fastForward
-                  : null,
-            ),
+          Consumer(
+            builder: (context, ref, child) {
+              final forwardSec = ref.watch(settingsController.select((s) => s.forwardDuration));
+              final forwardIcon = forwardSec == 10 ? Icons.forward_10 : Icons.forward_30;
+              return StreamBuilder<PlayerState>(
+                stream: player?.playerStateStream,
+                builder: (context, snapshot) => IconButton(
+                  icon: Icon(
+                    forwardIcon,
+                    size: 42.0,
+                  ),
+                  onPressed: (snapshot.data?.playing ?? false)
+                      ? ref.read(audioController.notifier).fastForward
+                      : null,
+                ),
+              );
+            },
           ),
 
           // Queue View Button
