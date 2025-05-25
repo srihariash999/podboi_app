@@ -8,6 +8,7 @@ import 'package:podboi/DataModels/song.dart';
 import 'package:podboi/Services/database/listening_history_box_controller.dart';
 import 'package:podboi/Services/database/playback_cache_controller.dart';
 import 'package:podboi/Services/database/podcast_episode_box_controller.dart';
+import 'package:podboi/Controllers/settings_controller.dart';
 import 'package:rxdart/rxdart.dart';
 
 final audioController =
@@ -289,7 +290,7 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
 
       // Listen to errors during playback.
       _player.playbackEventStream.listen((PlaybackEvent event) {},
-onError: (Object e, StackTrace stackTrace) {
+          onError: (Object e, StackTrace stackTrace) {
         print('A stream error occurred: $e');
       });
 
@@ -359,21 +360,22 @@ onError: (Object e, StackTrace stackTrace) {
     if (state is! LoadedAudioState && state is! LoadingAudioState) return;
 
     var currentPos = _player.position.inSeconds;
+    final forwardSeconds =
+        int.parse(ref.read(settingsController).forwardDuration.toString());
 
-    // await _player.seek(Duration(seconds: currentPos + 30));
-    await _audioHandler.seek(Duration(seconds: currentPos + 30));
+    await _audioHandler.seek(Duration(seconds: currentPos + forwardSeconds));
   }
 
   Future<void> rewind() async {
     if (state is! LoadedAudioState && state is! LoadingAudioState) return;
 
     var currentPos = _player.position.inSeconds;
+    final rewindSeconds =
+        int.parse(ref.read(settingsController).rewindDuration.toString());
 
-    // await _player
-    //     .seek(Duration(seconds: (currentPos - 30) < 0 ? 0 : currentPos - 30));
-
-    await _audioHandler
-        .seek(Duration(seconds: (currentPos - 30) < 0 ? 0 : currentPos - 30));
+    await _audioHandler.seek(Duration(
+        seconds:
+            (currentPos - rewindSeconds) < 0 ? 0 : currentPos - rewindSeconds));
   }
 
   Future<void> reorderQueue(int oldIndex, int newIndex) async {

@@ -233,4 +233,62 @@ void main() {
       expect(savedTheme, null);
     });
   });
+
+  group('Saving and retrieving rewind duration setting', () {
+    test('should save rewind duration setting to settings box', () async {
+      when(mockBox.put(K.settingsKeys.rewindDurationKey, 15))
+          .thenAnswer((_) => Future.value());
+      final result = await controller.saveRewindDurationSetting(15);
+      verify(mockBox.put(K.settingsKeys.rewindDurationKey, 15)).called(1);
+      expect(result, true);
+    });
+
+    test('return false if saving rewind duration setting fails', () async {
+      when(mockBox.put(K.settingsKeys.rewindDurationKey, 15))
+          .thenThrow(Exception('Error'));
+      final result = await controller.saveRewindDurationSetting(15);
+      verify(mockBox.put(K.settingsKeys.rewindDurationKey, 15)).called(1);
+      expect(result, false);
+    });
+
+    test('Retrieve saved rewind duration setting value.', () async {
+      when(mockBox.get(K.settingsKeys.rewindDurationKey)).thenReturn(15);
+      var savedValue = controller.getRewindDurationSetting();
+      expect(savedValue, 15);
+
+      // test for null (should return default: 30)
+      when(mockBox.get(K.settingsKeys.rewindDurationKey)).thenReturn(null);
+      savedValue = controller.getRewindDurationSetting();
+      expect(savedValue, 30);
+    });
+  });
+
+  group('Saving and retrieving forward duration setting', () {
+    test('should save forward duration setting to settings box', () async {
+      when(mockBox.put(K.settingsKeys.forwardDurationKey, 45))
+          .thenAnswer((_) => Future.value());
+      final result = await controller.saveForwardDurationSetting(45);
+      verify(mockBox.put(K.settingsKeys.forwardDurationKey, 45)).called(1);
+      expect(result, true);
+    });
+
+    test('return false if saving forward duration setting fails', () async {
+      when(mockBox.put(K.settingsKeys.forwardDurationKey, 45))
+          .thenThrow(Exception('Error'));
+      final result = await controller.saveForwardDurationSetting(45);
+      verify(mockBox.put(K.settingsKeys.forwardDurationKey, 45)).called(1);
+      expect(result, false);
+    });
+
+    test('Retrieve saved forward duration setting value.', () async {
+      when(mockBox.get(K.settingsKeys.forwardDurationKey)).thenReturn(45);
+      var savedValue = controller.getForwardDurationSetting();
+      expect(savedValue, 45);
+
+      // test for null (should return default: 30)
+      when(mockBox.get(K.settingsKeys.forwardDurationKey)).thenReturn(null);
+      savedValue = controller.getForwardDurationSetting();
+      expect(savedValue, 30);
+    });
+  });
 }
