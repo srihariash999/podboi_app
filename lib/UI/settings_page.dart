@@ -179,7 +179,7 @@ class SettingsPage extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        "Rewind Duration (seconds)",
+                        "Rewind Duration",
                         style: TextStyle(
                           fontSize: 16.0,
                           fontWeight: FontWeight.w500,
@@ -201,9 +201,7 @@ class SettingsPage extends StatelessWidget {
                         }).toList(),
                         onChanged: (val) {
                           if (val != null) {
-                            ref
-                                .read(settingsController.notifier)
-                                .saveSettings(
+                            ref.read(settingsController.notifier).saveSettings(
                                   newRewindDuration: val,
                                 );
                           }
@@ -217,7 +215,7 @@ class SettingsPage extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        "Forward Duration (seconds)",
+                        "Forward Duration",
                         style: TextStyle(
                           fontSize: 16.0,
                           fontWeight: FontWeight.w500,
@@ -239,9 +237,7 @@ class SettingsPage extends StatelessWidget {
                         }).toList(),
                         onChanged: (val) {
                           if (val != null) {
-                            ref
-                                .read(settingsController.notifier)
-                                .saveSettings(
+                            ref.read(settingsController.notifier).saveSettings(
                                   newForwardDuration: val,
                                 );
                           }
