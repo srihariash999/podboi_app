@@ -27,8 +27,10 @@ class SettingsStateNotifier extends StateNotifier<SettingsState> {
         forwardDuration: 30,
       );
       var _subsFirst = await _settingsBoxController.getSubsFirst();
-      var _rewindDuration = await _settingsBoxController.getRewindDurationSetting();
-      var _forwardDuration = await _settingsBoxController.getForwardDurationSetting();
+      var _rewindDuration =
+          await _settingsBoxController.getRewindDurationSetting();
+      var _forwardDuration =
+          await _settingsBoxController.getForwardDurationSetting();
       state = SettingsState(
         subsFirst: _subsFirst,
         loading: false,
@@ -64,10 +66,12 @@ class SettingsStateNotifier extends StateNotifier<SettingsState> {
         await _settingsBoxController.saveSubsFirstSetting(newSubsFirst);
       }
       if (newRewindDuration != null) {
-        await _settingsBoxController.saveRewindDurationSetting(newRewindDuration);
+        await _settingsBoxController
+            .saveRewindDurationSetting(newRewindDuration);
       }
       if (newForwardDuration != null) {
-        await _settingsBoxController.saveForwardDurationSetting(newForwardDuration);
+        await _settingsBoxController
+            .saveForwardDurationSetting(newForwardDuration);
       }
 
       // Set final state with new values and loading false
@@ -79,13 +83,6 @@ class SettingsStateNotifier extends StateNotifier<SettingsState> {
       );
     } catch (e) {
       print(" error in saving settings : $e");
-      // Optionally, revert to a non-loading state with previous values if error occurs
-      state = SettingsState(
-        subsFirst: currentSubsFirst,
-        loading: false,
-        rewindDuration: currentRewindDuration,
-        forwardDuration: currentForwardDuration,
-      );
     }
   }
 }
