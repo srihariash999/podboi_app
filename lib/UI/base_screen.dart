@@ -26,9 +26,7 @@ class _BaseScreenState extends State<BaseScreen> {
         statusBarIconBrightness: Theme.of(context).brightness == Brightness.dark
             ? Brightness.light
             : Brightness.dark,
-        statusBarBrightness: Theme.of(context).brightness == Brightness.dark
-            ? Brightness.light
-            : Brightness.dark,
+        statusBarBrightness: Theme.of(context).brightness,
       ),
       child: Consumer(
         builder: (context, ref, child) {

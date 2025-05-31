@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podboi/Controllers/settings_controller.dart';
@@ -59,21 +61,23 @@ class SettingsPage extends StatelessWidget {
                       height: 32.0,
                       child: FittedBox(
                         fit: BoxFit.fitWidth,
-                        child: Consumer(builder: (context, ref, child) {
-                          final stateVal =
-                              ref.watch(settingsController).subsFirst;
-                          return Switch(
-                            activeColor: Theme.of(context).highlightColor,
-                            value: stateVal,
-                            onChanged: (val) {
-                              ref
-                                  .read(settingsController.notifier)
-                                  .saveSettings(
-                                    newSubsFirst: val,
-                                  );
-                            },
-                          );
-                        }),
+                        child: Consumer(
+                          builder: (context, ref, child) {
+                            final stateVal =
+                                ref.watch(settingsController).subsFirst;
+                            return Switch(
+                              activeColor: Theme.of(context).highlightColor,
+                              value: stateVal,
+                              onChanged: (val) {
+                                ref
+                                    .read(settingsController.notifier)
+                                    .saveSettings(
+                                      newSubsFirst: val,
+                                    );
+                              },
+                            );
+                          },
+                        ),
                       ),
                     )
                   ],
@@ -86,75 +90,77 @@ class SettingsPage extends StatelessWidget {
                 Theme.of(context).colorScheme.secondary.withOpacityValue(0.2),
             height: 1.0,
           ),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 28.0, vertical: 16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Battery Optimization",
-                  style: TextStyle(
-                    fontSize: 14.0,
-                    fontWeight: FontWeight.w600,
-                    color: Theme.of(context).highlightColor,
-                    fontFamily: 'Segoe',
-                  ),
-                ),
-                const SizedBox(height: 16.0),
-                ElevatedButton(
-                  onPressed: () async {
-                    if (!Navigator.of(context).mounted) return;
-
-                    try {
-                      BatteryOptimizer.requestDisableBatteryOptimization();
-
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                              'Battery optimization setting change updated.'),
-                        ),
-                      );
-                    } catch (e) {
-                      if (!Navigator.of(context).mounted) return;
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                            content: Text(
-                                'Could not determine battery optimization status: $e')),
-                      );
-                    }
-                  },
-                  child: Text("Manage Battery Optimization"),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.secondary,
-                    textStyle: TextStyle(
-                      fontFamily: 'Segoe',
-                      fontWeight: FontWeight.w600,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: Text(
-                    "Tap the button to check the current battery optimization status or to request changes if optimization is disabled for this app. This can help with background playback.",
+          if (Platform.isAndroid)
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 28.0, vertical: 16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Battery Optimization",
                     style: TextStyle(
-                      fontSize: 12.0,
-                      color: Theme.of(context)
-                          .colorScheme
-                          .secondary
-                          .withOpacityValue(0.7),
+                      fontSize: 14.0,
+                      fontWeight: FontWeight.w600,
+                      color: Theme.of(context).highlightColor,
                       fontFamily: 'Segoe',
                     ),
                   ),
-                ),
-              ],
+                  const SizedBox(height: 16.0),
+                  ElevatedButton(
+                    onPressed: () async {
+                      if (!Navigator.of(context).mounted) return;
+
+                      try {
+                        BatteryOptimizer.requestDisableBatteryOptimization();
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                                'Battery optimization setting change updated.'),
+                          ),
+                        );
+                      } catch (e) {
+                        if (!Navigator.of(context).mounted) return;
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                              content: Text(
+                                  'Could not determine battery optimization status: $e')),
+                        );
+                      }
+                    },
+                    child: Text("Manage Battery Optimization"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Theme.of(context).colorScheme.secondary,
+                      textStyle: TextStyle(
+                        fontFamily: 'Segoe',
+                        fontWeight: FontWeight.w600,
+                        color: Theme.of(context).primaryColor,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Text(
+                      "Tap the button to check the current battery optimization status or to request changes if optimization is disabled for this app. This can help with background playback.",
+                      style: TextStyle(
+                        fontSize: 12.0,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .secondary
+                            .withOpacityValue(0.7),
+                        fontFamily: 'Segoe',
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          Divider(
-            color:
-                Theme.of(context).colorScheme.secondary.withOpacityValue(0.2),
-            height: 1.0,
-          ),
+          if (Platform.isAndroid)
+            Divider(
+              color:
+                  Theme.of(context).colorScheme.secondary.withOpacityValue(0.2),
+              height: 1.0,
+            ),
           Container(
             padding: EdgeInsets.symmetric(horizontal: 28.0, vertical: 16.0),
             child: Column(
