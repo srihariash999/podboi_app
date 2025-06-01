@@ -61,7 +61,7 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
       }
 
       // load from network.
-      ps.Podcast _podcast = await ps.Podcast.loadFeed(url: feedUrl);
+      ps.Podcast _podcast = await ps.Feed.loadFeed(url: feedUrl);
 
       if (_podcast.episodes.length != _episodes.length) {
         print(

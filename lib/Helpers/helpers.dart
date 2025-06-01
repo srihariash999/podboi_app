@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:podboi/Constants/constants.dart';
+import 'package:url_launcher/url_launcher.dart' as ul;
 
 class Helpers {
   static String formatDuration(Duration duration) {
@@ -23,6 +24,13 @@ class Helpers {
     }
 
     return LineIcons.user;
+  }
+
+  static Future<void> launchUrl(String url) async {
+    print("Launching URL: $url");
+    if (!await ul.launchUrl(Uri.parse(url))) {
+      throw Exception('Could not launch $url');
+    }
   }
 }
 
