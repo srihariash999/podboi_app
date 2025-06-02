@@ -27,7 +27,7 @@ class WelcomePage extends StatelessWidget {
       value: SystemUiOverlayStyle(
         statusBarColor: Theme.of(context).colorScheme.primary,
         statusBarIconBrightness: _getStatusBarBrightness(context),
-        statusBarBrightness: _getStatusBarBrightness(context),
+        statusBarBrightness: Theme.of(context).brightness,
       ),
       child: Scaffold(
         backgroundColor: Theme.of(context).colorScheme.primary,

@@ -26,9 +26,7 @@ class ListeningHistoryView extends StatelessWidget {
         statusBarIconBrightness: Theme.of(context).brightness == Brightness.dark
             ? Brightness.light
             : Brightness.dark,
-        statusBarBrightness: Theme.of(context).brightness == Brightness.dark
-            ? Brightness.light
-            : Brightness.dark,
+        statusBarBrightness: Theme.of(context).brightness,
       ),
       child: Scaffold(
         backgroundColor: Theme.of(context).colorScheme.primary,

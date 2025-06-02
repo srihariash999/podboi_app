@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -34,6 +36,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _checkBatteryOptimization() async {
+    if (!Platform.isAndroid) return;
+
     bool isBatteryOptimizationEnabled =
         await BatteryOptimizer.isBatteryOptimizationEnabled();
     if (isBatteryOptimizationEnabled && mounted) {
@@ -49,9 +53,7 @@ class _HomePageState extends State<HomePage> {
         statusBarIconBrightness: Theme.of(context).brightness == Brightness.dark
             ? Brightness.light
             : Brightness.dark,
-        statusBarBrightness: Theme.of(context).brightness == Brightness.dark
-            ? Brightness.light
-            : Brightness.dark,
+        statusBarBrightness: Theme.of(context).brightness,
       ),
       child: Scaffold(
         backgroundColor: Theme.of(context).colorScheme.primary,
@@ -184,8 +186,8 @@ class _HomePageState extends State<HomePage> {
         List<Item> _topPodcasts = widget.ref.watch(
           homeScreenController.select((value) => value.topPodcasts),
         );
-        bool _isLoading =
-            widget.ref.watch(homeScreenController.select((value) => value.isLoading));
+        bool _isLoading = widget.ref
+            .watch(homeScreenController.select((value) => value.isLoading));
         return _isLoading
             ? SliverToBoxAdapter(
                 child: Container(
@@ -291,8 +293,8 @@ class _HomePageState extends State<HomePage> {
           String _name = widget.ref.watch(
             profileController.select((value) => value.userName),
           );
-          String _avatar =
-              widget.ref.watch(profileController.select((value) => value.userAvatar));
+          String _avatar = widget.ref
+              .watch(profileController.select((value) => value.userAvatar));
           return Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,

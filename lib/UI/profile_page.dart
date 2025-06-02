@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -23,9 +25,7 @@ class ProfileScreen extends StatelessWidget {
         statusBarIconBrightness: Theme.of(context).brightness == Brightness.dark
             ? Brightness.light
             : Brightness.dark,
-        statusBarBrightness: Theme.of(context).brightness == Brightness.dark
-            ? Brightness.light
-            : Brightness.dark,
+        statusBarBrightness: Theme.of(context).brightness,
       ),
       child: Scaffold(
         backgroundColor: Theme.of(context).colorScheme.primary,
@@ -42,7 +42,10 @@ class ProfileScreen extends StatelessWidget {
                         Navigator.pop(context);
                       },
                       icon: Icon(
-                        FeatherIcons.arrowLeft,
+                        Platform.isAndroid
+                            ? FeatherIcons.arrowLeft
+                            : FeatherIcons.chevronLeft,
+                        size: !Platform.isAndroid ? 32.0 : null,
                         color: Theme.of(context).colorScheme.secondary,
                       ),
                     ),
