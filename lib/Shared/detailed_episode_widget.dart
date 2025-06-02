@@ -133,16 +133,9 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                               Html(
                                 data: _episodeData.description,
                                 onLinkTap: (url, _, __) {
-                                  if (url == null || url.isEmpty) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content:
-                                            Text('This link cannot be opened.'),
-                                      ),
-                                    );
-                                    return;
+                                  if (url != null) {
+                                    Helpers.launchUrl(url);
                                   }
-                                  Helpers.launchUrl(url);
                                 },
                               ),
                             ],

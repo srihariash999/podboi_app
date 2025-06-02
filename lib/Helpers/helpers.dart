@@ -26,11 +26,8 @@ class Helpers {
     return LineIcons.user;
   }
 
-  static Future<void> launchUrl(String url) async {
-    print("Launching URL: $url");
-    if (!await ul.launchUrl(Uri.parse(url))) {
-      throw Exception('Could not launch $url');
-    }
+  static Future<void> launchUrl(String url) {
+    return ul.launchUrl(Uri.parse(url));
   }
 }
 
