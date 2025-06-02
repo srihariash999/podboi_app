@@ -132,6 +132,11 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                               ),
                               Html(
                                 data: _episodeData.description,
+                                onLinkTap: (url, _, __) {
+                                  if (url != null) {
+                                    Helpers.launchUrl(url);
+                                  }
+                                },
                               ),
                             ],
                           ),
