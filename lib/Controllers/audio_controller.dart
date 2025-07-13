@@ -202,6 +202,10 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
       return (state as LoadedAudioState).currentPlaying;
     } else if (state is LoadingAudioState) {
       return (state as LoadingAudioState).song;
+    } else if (state is ErrorAudioState) {
+      if ((state as ErrorAudioState).song != null) {
+        return (state as ErrorAudioState).song;
+      }
     }
 
     return null;
@@ -337,7 +341,11 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
       // Catch load errors: 404, invalid url ...
       print("Error loading playlist: $e");
       print(stackTrace);
-      state = ErrorAudioState(errorMessage: e.toString(), playlist: _playlist);
+      state = ErrorAudioState(
+        errorMessage: e.toString(),
+        playlist: _playlist,
+        song: song,
+      );
     }
   }
 
@@ -468,8 +476,10 @@ class LoadingAudioState extends AudioState {
 
 class ErrorAudioState extends AudioState {
   String errorMessage;
+  Song? song;
 
-  ErrorAudioState({required this.errorMessage, required super.playlist});
+  ErrorAudioState(
+      {required this.errorMessage, required super.playlist, this.song});
 }
 
 class LoadedAudioState extends AudioState {

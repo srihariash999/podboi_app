@@ -43,8 +43,10 @@ class _MiniPlayerState extends State<MiniPlayer> {
 
           // Error state.
           else if (_contState is ErrorAudioState) {
-            return Container(
-              child: Text(" Error: ${_contState.errorMessage}"),
+            return buildSmallPlayer(
+              _contState,
+              ref,
+              isError: true,
             );
           }
 
@@ -70,8 +72,14 @@ class _MiniPlayerState extends State<MiniPlayer> {
   }
 
   /// SmallPlayer Widget. Height is restricted to `_smallPlayerHeight`
-  Widget buildSmallPlayer(AudioState _contState, WidgetRef ref) {
-    if (_contState is! LoadingAudioState && _contState is! LoadedAudioState) {
+  Widget buildSmallPlayer(
+    AudioState _contState,
+    WidgetRef ref, {
+    bool isError = false,
+  }) {
+    if (_contState is! LoadingAudioState &&
+        _contState is! LoadedAudioState &&
+        _contState is! ErrorAudioState) {
       return Container();
     }
 
@@ -80,6 +88,8 @@ class _MiniPlayerState extends State<MiniPlayer> {
       song = _contState.song;
     } else if (_contState is LoadedAudioState) {
       song = _contState.currentPlaying;
+    } else if (_contState is ErrorAudioState) {
+      song = (ref.read(audioController.notifier).getCurrentPlayingSong)!;
     }
 
     return Material(
@@ -152,12 +162,23 @@ class _MiniPlayerState extends State<MiniPlayer> {
                 if (_contState is LoadingAudioState)
                   MiniplayerLoadingIndicator(),
 
-                if (_contState is LoadedAudioState)
+                if (_contState is LoadedAudioState && !isError)
                   MiniplayerActionButtons(
                     state: _contState,
                     ref: ref,
                   ),
 
+                // Retry button.
+                if (isError)
+                  IconButton(
+                    icon: const Icon(Icons.refresh),
+                    iconSize: 34.0,
+                    onPressed: () {
+                      ref
+                          .read(audioController.notifier)
+                          .requestPlayingSong(song);
+                    },
+                  ),
                 const SizedBox(width: 8.0),
               ],
             ),

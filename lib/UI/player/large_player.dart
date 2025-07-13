@@ -41,7 +41,27 @@ class _LargePlayerState extends State<LargePlayer> {
 
             List<Song> playlist = ref.watch(audioController).playlist;
 
-            if (state is! LoadedAudioState && state is! LoadingAudioState)
+            if (state is ErrorAudioState) {
+              return Column(
+                children: [
+                  LargePlayerAlbumArtWidget(
+                    song: (ref.read(audioController.notifier).getCurrentPlayingSong)!,
+                  ),
+                  SizedBox(height: 12.0),
+                  IconButton(
+                    icon: const Icon(Icons.refresh),
+                    iconSize: 64.0,
+                    onPressed: () {
+                      ref.read(audioController.notifier).requestPlayingSong(
+                            (ref.read(audioController.notifier).getCurrentPlayingSong)!,
+                          );
+                    },
+                  ),
+                ],
+              );
+            }
+
+            if (state is! LoadedAudioState && state is! LoadingAudioState) {
               return Container(
                 decoration: BoxDecoration(
                   color: Theme.of(context).highlightColor.withOpacityValue(0.1),
@@ -57,7 +77,7 @@ class _LargePlayerState extends State<LargePlayer> {
                   strokeWidth: 2.0,
                 ),
               );
-
+            }
             late Song song;
             AudioPlayer? player;
 
