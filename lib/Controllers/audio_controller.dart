@@ -296,6 +296,11 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
       _player.playbackEventStream.listen((PlaybackEvent event) {},
           onError: (Object e, StackTrace stackTrace) {
         print('A stream error occurred: $e');
+        state = ErrorAudioState(
+          errorMessage: e.toString(),
+          playlist: _playlist,
+          song: song,
+        );
       });
 
       _player.positionStream.asBroadcastStream().listen((positionData) async {

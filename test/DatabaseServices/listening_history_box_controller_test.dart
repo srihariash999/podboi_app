@@ -117,7 +117,7 @@ void main() {
         episodeData: mockEpisodeData,
         listenedOn: DateTime.now().toIso8601String(),
       );
-      when(mockBox.values).thenReturn([]);
+      when(mockBox.values).thenThrow(Exception('failed to get items'));
       when(mockBox.put(any, any)).thenThrow(Exception('Save error'));
 
       final result = await controller.saveEpisodeToHistory(mockData);
