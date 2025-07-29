@@ -54,4 +54,42 @@ class SubscriptionData {
     this.genre,
     this.contentAdvisory,
   });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'podcastName': podcastName,
+      'podcastId': podcastId,
+      'feedUrl': feedUrl,
+      'artworkUrl': artworkUrl,
+      'dateAdded': dateAdded.toIso8601String(),
+      'lastEpisodeDate': lastEpisodeDate?.toIso8601String(),
+      'trackCount': trackCount,
+      'releaseDate': releaseDate?.toIso8601String(),
+      'country': country,
+      'genre': genre,
+      'contentAdvisory': contentAdvisory,
+    };
+  }
+
+  factory SubscriptionData.fromJson(Map<String, dynamic> json) {
+    return SubscriptionData(
+      id: json['id'],
+      podcastName: json['podcastName'],
+      podcastId: json['podcastId'],
+      feedUrl: json['feedUrl'],
+      artworkUrl: json['artworkUrl'],
+      dateAdded: DateTime.parse(json['dateAdded']),
+      lastEpisodeDate: json['lastEpisodeDate'] != null
+          ? DateTime.parse(json['lastEpisodeDate'])
+          : null,
+      trackCount: json['trackCount'],
+      releaseDate: json['releaseDate'] != null
+          ? DateTime.parse(json['releaseDate'])
+          : null,
+      country: json['country'],
+      genre: json['genre'],
+      contentAdvisory: json['contentAdvisory'],
+    );
+  }
 }

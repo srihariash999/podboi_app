@@ -15,4 +15,18 @@ class ListeningHistoryData {
     required this.listenedOn,
     required this.episodeData,
   });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'listenedOn': listenedOn,
+      'episodeData': episodeData.toJson(),
+    };
+  }
+
+  factory ListeningHistoryData.fromJson(Map<String, dynamic> json) {
+    return ListeningHistoryData(
+      listenedOn: json['listenedOn'],
+      episodeData: EpisodeData.fromJson(json['episodeData']),
+    );
+  }
 }

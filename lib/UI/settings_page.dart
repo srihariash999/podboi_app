@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:podboi/Controllers/backup_restore_controller.dart';
 import 'package:podboi/Controllers/settings_controller.dart';
 import 'package:podboi/Helpers/helpers.dart';
 import 'package:battery_optimizer/battery_optimizer.dart';
@@ -254,6 +255,53 @@ class SettingsPage extends StatelessWidget {
             color:
                 Theme.of(context).colorScheme.secondary.withOpacityValue(0.2),
             height: 1.0,
+          ),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 28.0, vertical: 16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Backup and Restore",
+                  style: TextStyle(
+                    fontSize: 14.0,
+                    fontWeight: FontWeight.w600,
+                    color: Theme.of(context).highlightColor,
+                    fontFamily: 'Segoe',
+                  ),
+                ),
+                const SizedBox(height: 16.0),
+                ElevatedButton(
+                  onPressed: () {
+                    ref.read(backupRestoreController.notifier).exportData();
+                  },
+                  child: Text("Export Data"),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.secondary,
+                    textStyle: TextStyle(
+                      fontFamily: 'Segoe',
+                      fontWeight: FontWeight.w600,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16.0),
+                ElevatedButton(
+                  onPressed: () {
+                    ref.read(backupRestoreController.notifier).importData();
+                  },
+                  child: Text("Import Data"),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.secondary,
+                    textStyle: TextStyle(
+                      fontFamily: 'Segoe',
+                      fontWeight: FontWeight.w600,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
