@@ -35,7 +35,7 @@ dependencies:
   rxdart: ^0.28.0
   battery_optimizer: ^0.0.2
   url_launcher: ^6.3.1
-  file_picker: ^5.2.5
+  file_picker: ^10.2.0
 
 dev_dependencies:
   build_runner: ^2.2.1

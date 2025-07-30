@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:podboi/Constants/constants.dart';
+import 'package:podboi/DataModels/cached_playback_state.dart';
+import 'package:podboi/DataModels/episode_data.dart';
 import 'package:podboi/DataModels/listening_history.dart';
 import 'package:podboi/DataModels/subscription_data.dart';
 
@@ -43,11 +45,17 @@ class BackupRestoreController extends StateNotifier<bool> {
 
     // Settings
     final settingsBox = Hive.box(K.boxes.settingsBox);
-    data['settings'] = settingsBox.toMap();
+    Map<String, dynamic> settingsMap = {};
+    for (var k in settingsBox.keys) {
+      final val = settingsBox.get(k);
+      if (val.runtimeType is CachedPlaybackState) {
+        settingsMap[k] = (val as CachedPlaybackState).toJson();
+      }
+    }
+    data['settings'] = settingsMap;
 
     // Subscriptions
-    final subscriptionBox =
-        Hive.box<SubscriptionData>(K.boxes.subscriptionBox);
+    final subscriptionBox = Hive.box<SubscriptionData>(K.boxes.subscriptionBox);
     data['subscriptions'] =
         subscriptionBox.values.map((e) => e.toJson()).toList();
 
@@ -62,10 +70,17 @@ class BackupRestoreController extends StateNotifier<bool> {
         Hive.box<SubscriptionData>(K.boxes.subscriptionBox);
     final podcastEpisodeData = <String, dynamic>{};
     for (var sub in subscriptionBoxData.values) {
-      final episodeBox =
-          await Hive.openBox<dynamic>('${sub.podcastId.toString()}');
-      podcastEpisodeData[sub.podcastId.toString()] =
-          episodeBox.values.map((e) => e.toJson()).toList();
+      final id = '${sub.podcastId.toString()}';
+      try {
+        final episodeBox = await Hive.box<EpisodeData>(id);
+        podcastEpisodeData[sub.podcastId.toString()] =
+            episodeBox.values.map((e) => e.toJson()).toList();
+      } catch (e) {
+        print('error opening box for podcast ${id}: $e');
+        final episodeBox = await Hive.openBox<EpisodeData>(id);
+        podcastEpisodeData[sub.podcastId.toString()] =
+            episodeBox.values.map((e) => e.toJson()).toList();
+      }
     }
     data['podcast_episodes'] = podcastEpisodeData;
     return data;
@@ -107,8 +122,7 @@ class BackupRestoreController extends StateNotifier<bool> {
 
     // Restore subscriptions
     final subscriptionsData = data['subscriptions'] as List<dynamic>;
-    final subscriptionBox =
-        Hive.box<SubscriptionData>(K.boxes.subscriptionBox);
+    final subscriptionBox = Hive.box<SubscriptionData>(K.boxes.subscriptionBox);
     for (var subData in subscriptionsData) {
       final sub = SubscriptionData.fromJson(subData);
       subscriptionBox.put(sub.podcastId, sub);
@@ -129,7 +143,9 @@ class BackupRestoreController extends StateNotifier<bool> {
     for (var entry in podcastEpisodesData.entries) {
       final podcastId = entry.key;
       final episodesData = entry.value as List<dynamic>;
-      final episodeBox = await Hive.openBox<dynamic>(podcastId);
+      final episodeBox = Hive.isBoxOpen(podcastId)
+          ? await Hive.box<EpisodeData>(podcastId)
+          : await Hive.openBox<EpisodeData>(podcastId);
       await episodeBox.clear();
       for (var episodeData in episodesData) {
         final episode = EpisodeData.fromJson(episodeData);

@@ -10,12 +10,10 @@ class PodcastEpisodeBoxController {
       episodeBox = await Hive.openBox<EpisodeData>(podcast_id.toString());
       // get episodes
       var episodes = episodeBox.values.toList();
-      // await episodeBox.close();
       return episodes;
     } catch (e) {
       print(
           " Error while trying to fetch cached episodes for podcast with id: $podcast_id. Error: $e");
-      // await episodeBox?.close();
       return null;
     }
   }
@@ -32,7 +30,6 @@ class PodcastEpisodeBoxController {
       for (var episode in episodes) {
         await box.put(episode.guid, episode);
       }
-      // box.close();
       print(
           " saved : ${episodes.length} episodes for podcast: $podcast_id to local cache");
       return true;
@@ -58,18 +55,15 @@ class PodcastEpisodeBoxController {
         episodeBox.put(guid, episode.copyWith(playedDuration: playedDuration));
         print(
             " stored played duration for episode with guid: $guid and pod id $podcast_id. Updated duration: $playedDuration");
-        // await episodeBox.close();
         return true;
       } else {
         print(
             "Episode with guid: $guid not found for podcast id $podcast_id to store played duration ");
-        // await episodeBox.close();
         return false;
       }
     } catch (e) {
       print(
           " Error while trying to store played duration for episode with guid: $guid. Error: $e");
-      // await episodeBox?.close();
       return false;
     }
   }
@@ -85,11 +79,9 @@ class PodcastEpisodeBoxController {
       if (episode != null) {
         print(
             " stored played duration for episode with guid: $guid. Duration: ${episode.playedDuration}");
-        // await episodeBox.close();
         return episode.playedDuration;
       } else {
         print("Episode with guid: $guid not foud to get played duration ");
-        // await episodeBox.close();
         return null;
       }
     } catch (e) {
@@ -113,18 +105,15 @@ class PodcastEpisodeBoxController {
             guid, episode.copyWith(playedDuration: episode.duration));
         print(
             " stored played duration for episode with guid: $guid and pod id $podcast_id. Updated duration: ${episode.duration}");
-        // await episodeBox.close();
         return true;
       } else {
         print(
             "Episode with guid: $guid and podcast id $podcast_id not found to store played duration ");
-        // await episodeBox.close();
         return false;
       }
     } catch (e) {
       print(
-          " Error while trying to store played duration for episode with guid: $guid. Error: $e");
-      // await episodeBox?.close();
+          " Error while trying to mark an episode as played with guid: $guid. Error: $e");
       return false;
     }
   }

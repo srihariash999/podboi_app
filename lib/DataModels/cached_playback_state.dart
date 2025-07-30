@@ -11,4 +11,11 @@ class CachedPlaybackState {
   final Song song;
 
   CachedPlaybackState({required this.duration, required this.song});
+
+  Map<String, dynamic> toJson() {
+    return {
+      'duration': duration,
+      'song': song.toJson(),
+    };
+  }
 }
