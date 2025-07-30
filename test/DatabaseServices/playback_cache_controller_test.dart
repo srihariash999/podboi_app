@@ -6,7 +6,7 @@ import 'package:mockito/mockito.dart';
 import 'package:podboi/Constants/constants.dart';
 import 'package:podboi/DataModels/cached_playback_state.dart';
 import 'package:podboi/DataModels/song.dart';
-import 'package:podboi/Services/database/playback_cache_controller.dart';
+import 'package:podboi/Database/playback_cache_controller.dart';
 
 import 'playback_cache_controller_test.mocks.dart';
 

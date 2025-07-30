@@ -4,7 +4,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hive_test/hive_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:podboi/Constants/constants.dart';
-import 'package:podboi/Services/database/settings_box_controller.dart';
+import 'package:podboi/Database/settings_box_controller.dart';
 
 import 'listening_history_box_controller_test.mocks.dart';
 

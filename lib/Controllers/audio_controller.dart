@@ -5,9 +5,9 @@ import 'package:podboi/DataModels/cached_playback_state.dart';
 import 'package:podboi/DataModels/listening_history.dart';
 import 'package:podboi/DataModels/position_data.dart';
 import 'package:podboi/DataModels/song.dart';
-import 'package:podboi/Services/database/listening_history_box_controller.dart';
-import 'package:podboi/Services/database/playback_cache_controller.dart';
-import 'package:podboi/Services/database/podcast_episode_box_controller.dart';
+import 'package:podboi/Database/listening_history_box_controller.dart';
+import 'package:podboi/Database/playback_cache_controller.dart';
+import 'package:podboi/Database/podcast_episode_box_controller.dart';
 import 'package:podboi/Controllers/settings_controller.dart';
 import 'package:rxdart/rxdart.dart';
 

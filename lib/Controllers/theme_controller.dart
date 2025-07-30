@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podboi/Constants/theme_data.dart';
-import 'package:podboi/Services/database/settings_box_controller.dart';
+import 'package:podboi/Database/settings_box_controller.dart';
 
 //* Provider for accessing themestate.
 final themeController =

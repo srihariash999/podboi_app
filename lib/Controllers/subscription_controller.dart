@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podboi/DataModels/subscription_data.dart';
-import 'package:podboi/Services/database/subscription_box_controller.dart';
+import 'package:podboi/Database/subscription_box_controller.dart';
 
 final subscriptionsPageViewController =
     StateNotifierProvider<SubscriptionsPageNotifier, SubscriptionState>((ref) {

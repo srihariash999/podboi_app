@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podboi/Constants/constants.dart';
-import 'package:podboi/Services/database/settings_box_controller.dart';
+import 'package:podboi/Database/settings_box_controller.dart';
 
 final welcomePageController =
     StateNotifierProvider<WelcomePageStateNotifier, WelcomePageState>((ref) {

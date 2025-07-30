@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:podboi/Constants/theme_data.dart';
 import 'package:podboi/Controllers/theme_controller.dart';
-import 'package:podboi/Services/database/settings_box_controller.dart';
+import 'package:podboi/Database/settings_box_controller.dart';
 
 import '../DatabaseServices/playback_cache_controller_test.mocks.dart';
 

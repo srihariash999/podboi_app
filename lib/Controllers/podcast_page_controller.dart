@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:podboi/DataModels/episode_data.dart';
 import 'package:podboi/DataModels/subscription_data.dart';
-import 'package:podboi/Services/database/podcast_episode_box_controller.dart';
-import 'package:podboi/Services/database/subscription_box_controller.dart';
+import 'package:podboi/Database/podcast_episode_box_controller.dart';
+import 'package:podboi/Database/subscription_box_controller.dart';
 import 'package:podcast_search/podcast_search.dart' as ps;
 
 final podcastPageViewController = StateNotifierProvider.autoDispose

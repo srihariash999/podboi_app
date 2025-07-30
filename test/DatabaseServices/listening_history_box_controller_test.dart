@@ -7,7 +7,7 @@ import 'package:mockito/mockito.dart';
 import 'package:podboi/Constants/constants.dart';
 import 'package:podboi/DataModels/episode_data.dart';
 import 'package:podboi/DataModels/listening_history.dart';
-import 'package:podboi/Services/database/listening_history_box_controller.dart';
+import 'package:podboi/Database/listening_history_box_controller.dart';
 
 import 'listening_history_box_controller_test.mocks.dart';
 

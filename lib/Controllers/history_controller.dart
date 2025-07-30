@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podboi/DataModels/listening_history.dart';
-import 'package:podboi/Services/database/listening_history_box_controller.dart';
+import 'package:podboi/Database/listening_history_box_controller.dart';
 
 //* Provider for accessing historystate.
 final historyController =

@@ -6,7 +6,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:podboi/Constants/constants.dart';
 import 'package:podboi/DataModels/listening_history.dart';
-import 'package:podboi/Services/database/settings_box_controller.dart';
+import 'package:podboi/Database/settings_box_controller.dart';
 import 'package:podboi/Controllers/theme_controller.dart';
 import 'package:podboi/DataModels/cached_playback_state.dart';
 import 'package:podboi/DataModels/episode_data.dart';
