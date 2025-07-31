@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podboi/Services/database/settings_box_controller.dart';
+import 'package:podboi/Database/settings_box_controller.dart';
 
 final settingsController =
     StateNotifierProvider<SettingsStateNotifier, SettingsState>((ref) {
@@ -10,7 +10,7 @@ class SettingsStateNotifier extends StateNotifier<SettingsState> {
   late final SettingsBoxController _settingsBoxController;
 
   // Public constructor that uses the default SettingsBoxController
-  SettingsStateNotifier() : this.internal(SettingsBoxController.initialize());
+  SettingsStateNotifier() : this.internal(SettingsBoxController());
 
   // Internal constructor for testing or specific initialization
   SettingsStateNotifier.internal(this._settingsBoxController)

@@ -85,4 +85,46 @@ class EpisodeData {
       playedDuration: playedDuration ?? this.playedDuration,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'guid': guid,
+      'title': title,
+      'description': description,
+      'link': link,
+      'publicationDate': publicationDate?.toIso8601String(),
+      'contentUrl': contentUrl,
+      'imageUrl': imageUrl,
+      'author': author,
+      'season': season,
+      'episodeNumber': episodeNumber,
+      'duration': duration,
+      'podcastId': podcastId,
+      'podcastName': podcastName,
+      'playedDuration': playedDuration,
+    };
+  }
+
+  factory EpisodeData.fromJson(Map<String, dynamic> json) {
+    return EpisodeData(
+      id: json['id'],
+      guid: json['guid'],
+      title: json['title'],
+      description: json['description'],
+      link: json['link'],
+      publicationDate: json['publicationDate'] != null
+          ? DateTime.parse(json['publicationDate'])
+          : null,
+      contentUrl: json['contentUrl'],
+      imageUrl: json['imageUrl'],
+      author: json['author'],
+      season: json['season'],
+      episodeNumber: json['episodeNumber'],
+      duration: json['duration'],
+      podcastId: json['podcastId'],
+      podcastName: json['podcastName'],
+      playedDuration: json['playedDuration'],
+    );
+  }
 }

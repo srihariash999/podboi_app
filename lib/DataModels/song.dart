@@ -45,4 +45,16 @@ class Song {
       ),
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'url': url,
+      'name': name,
+      'artist': artist,
+      'icon': icon,
+      'album': album,
+      'duration': duration,
+      'episodeData': episodeData.toJson(),
+    };
+  }
 }

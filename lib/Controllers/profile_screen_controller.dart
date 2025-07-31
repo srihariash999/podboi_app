@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podboi/Services/database/settings_box_controller.dart';
+import 'package:podboi/Database/settings_box_controller.dart';
 
 //* Provider for accessing profilestate.
 final profileController =
@@ -14,13 +14,15 @@ class ProfileStateNotifier extends StateNotifier<ProfileState> {
     _getUserDetails();
   }
 
-  final SettingsBoxController _settingsBoxController =
-      SettingsBoxController.initialize();
+  final SettingsBoxController _settingsBoxController = SettingsBoxController();
 
-  _getUserDetails() {
+  _getUserDetails() async {
+    // Fetch user name and avatar from settings box
+    String? userName = await _settingsBoxController.getSavedUserName();
+    String? userAvatar = await _settingsBoxController.getSavedUserAvatar();
     state = state.copyWith(
-      userAvatar: _settingsBoxController.getSavedUserAvatar(),
-      userName: _settingsBoxController.getSavedUserName(),
+      userAvatar: userAvatar,
+      userName: userName,
     );
   }
 

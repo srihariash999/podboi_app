@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podboi/Services/database/settings_box_controller.dart';
+import 'package:podboi/Database/settings_box_controller.dart';
 import 'package:podcast_search/podcast_search.dart';
 
 var _search = Search();
@@ -14,14 +14,16 @@ class HomeScreenStateNotifier extends StateNotifier<HomeScreenState> {
     getTopPodcasts();
     _getUserName();
   }
-  
-  final SettingsBoxController _settingsBoxController =
-      SettingsBoxController.initialize();
+
+  final SettingsBoxController _settingsBoxController = SettingsBoxController();
 
   _getUserName() async {
+    // Fetch user name and avatar from settings box
+    String? userName = await _settingsBoxController.getSavedUserName();
+    String? userAvatar = await _settingsBoxController.getSavedUserAvatar();
     state = state.copyWith(
-      userName: _settingsBoxController.getSavedUserName(),
-      userAvatar: _settingsBoxController.getSavedUserAvatar(),
+      userName: userName,
+      userAvatar: userAvatar,
     );
   }
 

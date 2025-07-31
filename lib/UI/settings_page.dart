@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:podboi/Controllers/backup_restore_controller.dart';
 import 'package:podboi/Controllers/settings_controller.dart';
 import 'package:podboi/Helpers/helpers.dart';
 import 'package:battery_optimizer/battery_optimizer.dart';
@@ -254,6 +255,96 @@ class SettingsPage extends StatelessWidget {
             color:
                 Theme.of(context).colorScheme.secondary.withOpacityValue(0.2),
             height: 1.0,
+          ),
+          Consumer(
+            builder: (context, ref, child) {
+              return Container(
+                padding: EdgeInsets.symmetric(horizontal: 28.0, vertical: 16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Backup and Restore",
+                      style: TextStyle(
+                        fontSize: 14.0,
+                        fontWeight: FontWeight.w600,
+                        color: Theme.of(context).highlightColor,
+                        fontFamily: 'Segoe',
+                      ),
+                    ),
+                    const SizedBox(height: 16.0),
+                    ElevatedButton(
+                      onPressed: () {
+                        ref.read(backupRestoreController.notifier).exportData();
+                      },
+                      child: Text("Export Data"),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            Theme.of(context).colorScheme.secondary,
+                        textStyle: TextStyle(
+                          fontFamily: 'Segoe',
+                          fontWeight: FontWeight.w600,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Text(
+                        "Export your data to a file. This will include your subscriptions, playback history, and settings. You can use this file to restore your data later.",
+                        style: TextStyle(
+                          fontSize: 12.0,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .secondary
+                              .withOpacityValue(0.7),
+                          fontFamily: 'Segoe',
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16.0),
+                    Divider(
+                      color: Theme.of(context)
+                          .colorScheme
+                          .secondary
+                          .withOpacityValue(0.2),
+                      height: 1.0,
+                    ),
+                    const SizedBox(height: 16.0),
+                    ElevatedButton(
+                      onPressed: () {
+                        ref.read(backupRestoreController.notifier).importData();
+                      },
+                      child: Text("Import Data"),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            Theme.of(context).colorScheme.secondary,
+                        textStyle: TextStyle(
+                          fontFamily: 'Segoe',
+                          fontWeight: FontWeight.w600,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8.0),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Text(
+                        "Import your data from a file. This will restore your subscriptions, playback history, and settings from the exported file. It'll overwrite your current data.",
+                        style: TextStyle(
+                          fontSize: 12.0,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .secondary
+                              .withOpacityValue(0.7),
+                          fontFamily: 'Segoe',
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
           ),
         ],
       ),

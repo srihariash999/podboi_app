@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podboi/DataModels/subscription_data.dart';
-import 'package:podboi/Services/database/subscription_box_controller.dart';
+import 'package:podboi/Database/subscription_box_controller.dart';
 
 final subscriptionsPageViewController =
     StateNotifierProvider<SubscriptionsPageNotifier, SubscriptionState>((ref) {
@@ -12,10 +12,13 @@ class SubscriptionsPageNotifier extends StateNotifier<SubscriptionState> {
     loadSubscriptions();
   }
 
+  final SubscriptionBoxController _subscriptionBoxController =
+      SubscriptionBoxController();
+
   Future<void> loadSubscriptions() async {
     state = state.copyWith(isLoading: true);
     List<SubscriptionData> _subs =
-        await SubscriptionBoxController.getSubscriptions();
+        await _subscriptionBoxController.getSubscriptions();
 
     state = state.copyWith(subscriptionsList: _subs, isLoading: false);
   }

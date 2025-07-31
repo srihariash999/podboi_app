@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podboi/Constants/constants.dart';
-import 'package:podboi/Services/database/settings_box_controller.dart';
+import 'package:podboi/Database/settings_box_controller.dart';
 
 final welcomePageController =
     StateNotifierProvider<WelcomePageStateNotifier, WelcomePageState>((ref) {
@@ -23,8 +23,7 @@ class WelcomePageState {
 class WelcomePageStateNotifier extends StateNotifier<WelcomePageState> {
   WelcomePageStateNotifier() : super(WelcomePageState.initial());
 
-  final SettingsBoxController _settingsBoxController =
-      SettingsBoxController.initialize();
+  final SettingsBoxController _settingsBoxController = SettingsBoxController();
 
   void setAvatar(String newAvatar) {
     state = WelcomePageState(avatar: newAvatar);

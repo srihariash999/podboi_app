@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podboi/DataModels/listening_history.dart';
-import 'package:podboi/Services/database/listening_history_box_controller.dart';
+import 'package:podboi/Database/listening_history_box_controller.dart';
 
 //* Provider for accessing historystate.
 final historyController =
@@ -12,7 +12,7 @@ final historyController =
 //* state notifier for changes and actions.
 class HistoryStateNotifier extends StateNotifier<HistoryState> {
   final ListeningHistoryBoxController _listeningHistoryBoxController =
-      ListeningHistoryBoxController.initialize();
+      ListeningHistoryBoxController();
 
   HistoryStateNotifier() : super(HistoryState.initial()) {
     getHistory();
