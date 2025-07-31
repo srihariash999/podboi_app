@@ -344,55 +344,6 @@ class SettingsPage extends StatelessWidget {
                   ],
                 ),
               );
-              // return Container(
-              //   padding: EdgeInsets.symmetric(horizontal: 28.0, vertical: 16.0),
-              //   child: Column(
-              //     crossAxisAlignment: CrossAxisAlignment.start,
-              //     children: [
-              //       Text(
-              //         "Backup and Restore",
-              //         style: TextStyle(
-              //           fontSize: 14.0,
-              //           fontWeight: FontWeight.w600,
-              //           color: Theme.of(context).highlightColor,
-              //           fontFamily: 'Segoe',
-              //         ),
-              //       ),
-              //       const SizedBox(height: 16.0),
-              //       ElevatedButton(
-              //         onPressed: () {
-              //           ref.read(backupRestoreController.notifier).exportData();
-              //         },
-              //         child: Text("Export Data"),
-              //         style: ElevatedButton.styleFrom(
-              //           backgroundColor:
-              //               Theme.of(context).colorScheme.secondary,
-              //           textStyle: TextStyle(
-              //             fontFamily: 'Segoe',
-              //             fontWeight: FontWeight.w600,
-              //             color: Theme.of(context).primaryColor,
-              //           ),
-              //         ),
-              //       ),
-              //       const SizedBox(height: 16.0),
-              //       ElevatedButton(
-              //         onPressed: () {
-              //           ref.read(backupRestoreController.notifier).importData();
-              //         },
-              //         child: Text("Import Data"),
-              //         style: ElevatedButton.styleFrom(
-              //           backgroundColor:
-              //               Theme.of(context).colorScheme.secondary,
-              //           textStyle: TextStyle(
-              //             fontFamily: 'Segoe',
-              //             fontWeight: FontWeight.w600,
-              //             color: Theme.of(context).primaryColor,
-              //           ),
-              //         ),
-              //       ),
-              //     ],
-              //   ),
-              // );
             },
           ),
         ],
