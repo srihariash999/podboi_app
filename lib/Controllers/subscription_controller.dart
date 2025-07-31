@@ -12,10 +12,13 @@ class SubscriptionsPageNotifier extends StateNotifier<SubscriptionState> {
     loadSubscriptions();
   }
 
+  final SubscriptionBoxController _subscriptionBoxController =
+      SubscriptionBoxController();
+
   Future<void> loadSubscriptions() async {
     state = state.copyWith(isLoading: true);
     List<SubscriptionData> _subs =
-        await SubscriptionBoxController.getSubscriptions();
+        await _subscriptionBoxController.getSubscriptions();
 
     state = state.copyWith(subscriptionsList: _subs, isLoading: false);
   }

@@ -1,26 +1,19 @@
 import 'package:hive/hive.dart';
 import 'package:podboi/Constants/constants.dart';
+import 'package:podboi/Database/box_service.dart';
 
 // Box _box = Hive.box(K.boxes.settingsBox);
 
 class SettingsBoxController {
-  final Box _box;
-
-  /// Constructor to initialize the box
-  SettingsBoxController(this._box);
+  final BoxService _boxService = BoxService();
 
   /// Gets the box instance
-  Box get box => _box;
-
-  ///Factory constructor that also initialises the box.
-  factory SettingsBoxController.initialize() {
-    return SettingsBoxController(
-      Hive.box(K.boxes.settingsBox),
-    );
-  }
+  Future<Box<dynamic>> getBox() =>
+      _boxService.getBox<dynamic>(K.boxes.settingsBox);
 
   Future<bool> saveSubsFirstSetting(bool subsFirst) async {
     try {
+      final box = await getBox();
       await box.put(K.settingsKeys.subsFirstKey, subsFirst);
       return true;
     } catch (e) {
@@ -29,13 +22,15 @@ class SettingsBoxController {
     }
   }
 
-  bool getSubsFirst() {
+  Future<bool> getSubsFirst() async {
+    final box = await getBox();
     return box.get(K.settingsKeys.subsFirstKey) ?? false;
   }
 
   Future<bool> saveNameRequest(
       {required String nameToSave, required String avatarToSave}) async {
     try {
+      final box = await getBox();
       await box.put(K.settingsKeys.userNameKey, nameToSave);
       await box.put(K.settingsKeys.userAvatarKey, avatarToSave);
       return true;
@@ -47,6 +42,7 @@ class SettingsBoxController {
 
   Future<bool> saveTokenRequest({required String token}) async {
     try {
+      final box = await getBox();
       await box.put(K.settingsKeys.tokenKey, token);
       return true;
     } catch (e) {
@@ -55,24 +51,29 @@ class SettingsBoxController {
     }
   }
 
-  String getSavedToken() {
+  Future<String> getSavedToken() async {
+    final box = await getBox();
     return box.get(K.settingsKeys.tokenKey) ?? "";
   }
 
-  String? getSavedUserName() {
+  Future<String?> getSavedUserName() async {
+    final box = await getBox();
     return box.get(K.settingsKeys.userNameKey);
   }
 
-  String? getSavedUserAvatar() {
+  Future<String?> getSavedUserAvatar() async {
+    final box = await getBox();
     return box.get(K.settingsKeys.userAvatarKey);
   }
 
-  String? getSavedTheme() {
+  Future<String?> getSavedTheme() async {
+    final box = await getBox();
     return box.get(K.settingsKeys.themeKey);
   }
 
   Future<bool> saveThemeRequest(String theme) async {
     try {
+      final box = await getBox();
       await box.put(K.settingsKeys.themeKey, theme);
       return true;
     } catch (e) {
@@ -83,6 +84,7 @@ class SettingsBoxController {
 
   Future<bool> saveRewindDurationSetting(int rewindDuration) async {
     try {
+      final box = await getBox();
       await box.put(K.settingsKeys.rewindDurationKey, rewindDuration);
       return true;
     } catch (e) {
@@ -91,12 +93,14 @@ class SettingsBoxController {
     }
   }
 
-  int getRewindDurationSetting() {
+  Future<int> getRewindDurationSetting() async {
+    final box = await getBox();
     return box.get(K.settingsKeys.rewindDurationKey) ?? 30;
   }
 
   Future<bool> saveForwardDurationSetting(int forwardDuration) async {
     try {
+      final box = await getBox();
       await box.put(K.settingsKeys.forwardDurationKey, forwardDuration);
       return true;
     } catch (e) {
@@ -105,7 +109,8 @@ class SettingsBoxController {
     }
   }
 
-  int getForwardDurationSetting() {
+  Future<int> getForwardDurationSetting() async {
+    final box = await getBox();
     return box.get(K.settingsKeys.forwardDurationKey) ?? 30;
   }
 }

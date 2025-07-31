@@ -12,7 +12,7 @@ final historyController =
 //* state notifier for changes and actions.
 class HistoryStateNotifier extends StateNotifier<HistoryState> {
   final ListeningHistoryBoxController _listeningHistoryBoxController =
-      ListeningHistoryBoxController.initialize();
+      ListeningHistoryBoxController();
 
   HistoryStateNotifier() : super(HistoryState.initial()) {
     getHistory();

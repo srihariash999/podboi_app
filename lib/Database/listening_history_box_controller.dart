@@ -1,24 +1,15 @@
 import 'package:hive/hive.dart';
 import 'package:podboi/Constants/constants.dart';
 import 'package:podboi/DataModels/listening_history.dart';
+import 'package:podboi/Database/box_service.dart';
 
 /// Controller for managing listening history data operations
 class ListeningHistoryBoxController {
-  /// The Hive box containing listening history data
-  final Box<ListeningHistoryData> _box;
-
-  /// Constructor to initialize the box
-  ListeningHistoryBoxController(this._box);
+  final BoxService _boxService = BoxService();
 
   /// Gets the box instance
-  Box<ListeningHistoryData> get box => _box;
-
-  /// Initializes a new instance of [ListeningHistoryBoxController] with specified box
-  factory ListeningHistoryBoxController.initialize() {
-    return ListeningHistoryBoxController(
-      Hive.box<ListeningHistoryData>(K.boxes.listeningHistoryBox),
-    );
-  }
+  Future<Box<ListeningHistoryData>> getBox() =>
+      _boxService.getBox<ListeningHistoryData>(K.boxes.listeningHistoryBox);
 
   /// Gets the list of listening history from the box
   Future<List<ListeningHistoryData>> getHistoryList() async {
@@ -50,6 +41,7 @@ class ListeningHistoryBoxController {
 
   /// Gets the list of history items from box
   Future<List<ListeningHistoryData>> _getHistoryItems() async {
+    final _box = await getBox();
     final items = _box.values.toList();
     return items;
   }
@@ -61,12 +53,14 @@ class ListeningHistoryBoxController {
     final oldestItem = items
         .reduce((a, b) => a.listenedOn.compareTo(b.listenedOn) < 0 ? a : b);
 
+    final _box = await getBox();
     await _box.delete(oldestItem.episodeData.guid.toString());
   }
 
   /// Saves a new item to history
   Future<void> _saveNewItem(ListeningHistoryData data) async {
     try {
+      final _box = await getBox();
       await _box.put(data.episodeData.guid.toString(), data);
     } on Exception catch (e) {
       _handleError(e, 'Failed to save new item');
@@ -76,6 +70,5 @@ class ListeningHistoryBoxController {
   /// Handles errors and prints debugging information
   void _handleError(Exception e, String message) {
     print('$message: ${e.toString()}');
-    // You can add additional error handling logic here
   }
 }

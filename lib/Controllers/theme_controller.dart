@@ -6,7 +6,7 @@ import 'package:podboi/Database/settings_box_controller.dart';
 //* Provider for accessing themestate.
 final themeController =
     StateNotifierProvider<ThemeStateNotifier, ThemeState>((ref) {
-  return ThemeStateNotifier(sbController: SettingsBoxController.initialize())
+  return ThemeStateNotifier(sbController: SettingsBoxController())
     ..retrieveAndInitialiseTheme();
 });
 
@@ -22,8 +22,8 @@ class ThemeStateNotifier extends StateNotifier<ThemeState> {
       themeKey == kLightThemeKey ? kLightThemeData : kDarkThemeData;
 
   /// Method to retrieve saved theme data from storage and initialise the theme.
-  void retrieveAndInitialiseTheme() {
-    String? _theme = sbController.getSavedTheme();
+  void retrieveAndInitialiseTheme() async {
+    String? _theme = await sbController.getSavedTheme();
 
     state = state.copyWith(
       themeData: getThemeData(_theme ?? kLightThemeKey),

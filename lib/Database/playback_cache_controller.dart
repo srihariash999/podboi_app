@@ -2,32 +2,27 @@ import 'package:hive/hive.dart';
 import 'package:podboi/Constants/constants.dart';
 import 'package:podboi/DataModels/cached_playback_state.dart';
 import 'package:podboi/DataModels/song.dart';
+import 'package:podboi/Database/box_service.dart';
 
 class PlaybackCacheController {
-  /// The Hive box containing listening history data
-  final Box _box;
-
   // Keys
   final String playbackPositionKey = 'playbackPosition';
   final String playbckQueueKey = 'playbackQueue';
 
-  /// Constructor to initialize the box
-  PlaybackCacheController(this._box);
+  final BoxService _boxService = BoxService();
 
   /// Gets the box instance
-  Box get box => _box;
+  Future<Box<dynamic>> getBox() =>
+      _boxService.getBox<dynamic>(K.boxes.settingsBox);
 
-  /// Initializes a new instance of [ListeningHistoryBoxController] with specified box
-  factory PlaybackCacheController.initialize() {
-    return PlaybackCacheController(
-      Hive.box(K.boxes.settingsBox),
-    );
-  }
+  /// Constructor to initialize the box
+  PlaybackCacheController();
 
   // Method to call from anywhere in app to store the current state of playback.
   Future<bool> storePlaybackPosition(int duration, Song song) async {
     try {
       var pbState = CachedPlaybackState(duration: duration, song: song);
+      final _box = await getBox();
       await _box.put(playbackPositionKey, pbState);
       // print(
       //     " Saved song with name: ${song.name} at duration: $duration in playback cache.");
@@ -41,6 +36,7 @@ class PlaybackCacheController {
   // Methid to call from anywhere in app to store the current queue of songs.
   Future<bool> storePlaybackQueue(List<Song> queue) async {
     try {
+      final _box = await getBox();
       await _box.put(playbckQueueKey, queue);
       // print(" Saved queue with length: ${queue.length} in playback cache.");
       return true;
@@ -53,6 +49,7 @@ class PlaybackCacheController {
   // Method to retrieve last saved playback state. (Might be stored at anytime, if needed add expiry.)
   Future<CachedPlaybackState?> getLastSavedPlaybackPosition() async {
     try {
+      final _box = await getBox();
       return _box.get(playbackPositionKey);
     } catch (e) {
       print("error in getting playback position: $e");
@@ -63,6 +60,7 @@ class PlaybackCacheController {
   // Method to retrieve last saved playback queue. (Might be stored at anytime, if needed add expiry.)
   Future<List<Song>?> getLastSavedPlaybackQueue() async {
     try {
+      final _box = await getBox();
       var list = _box.get(playbckQueueKey);
       List<Song> queue = [];
       if (list == null) return null;
@@ -80,6 +78,7 @@ class PlaybackCacheController {
   // Method to clear the saved playback state.
   Future<bool> clearSavedPlaybackPosition() async {
     try {
+      final _box = await getBox();
       await _box.delete(playbackPositionKey);
       return true;
     } catch (e) {
@@ -91,6 +90,7 @@ class PlaybackCacheController {
   // Method to clear the saved playback queue.
   Future<bool> clearSavedPlaybackQueue() async {
     try {
+      final _box = await getBox();
       await _box.delete(playbckQueueKey);
       return true;
     } catch (e) {

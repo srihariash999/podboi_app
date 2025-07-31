@@ -1,13 +1,18 @@
 import 'package:hive/hive.dart';
 import 'package:podboi/DataModels/episode_data.dart';
+import 'package:podboi/Database/box_service.dart';
 
 class PodcastEpisodeBoxController {
+  final BoxService _boxService = BoxService();
+
+  /// Gets the box instance
+  Future<Box<EpisodeData>> getBox(String boxId) =>
+      _boxService.getBox<EpisodeData>(boxId);
+
   // Get stored episodes if present for a podcast
-  static Future<List<EpisodeData>?> maybeGetEpisodesForPodcast(
-      int podcast_id) async {
-    Box<EpisodeData>? episodeBox;
+  Future<List<EpisodeData>?> maybeGetEpisodesForPodcast(int podcast_id) async {
     try {
-      episodeBox = await Hive.openBox<EpisodeData>(podcast_id.toString());
+      final episodeBox = await getBox(podcast_id.toString());
       // get episodes
       var episodes = episodeBox.values.toList();
       return episodes;
@@ -19,16 +24,16 @@ class PodcastEpisodeBoxController {
   }
 
   // Save episodes for a podcast.
-  static Future<bool> saveEpisodesForPodcast(
+  Future<bool> saveEpisodesForPodcast(
       List<EpisodeData> episodes, int podcast_id) async {
     try {
       // Open the box
-      var box = await Hive.openBox<EpisodeData>(podcast_id.toString());
+      final episodeBox = await getBox(podcast_id.toString());
       // Clear the box
-      await box.clear();
+      await episodeBox.clear();
       // Add episodes to the box
       for (var episode in episodes) {
-        await box.put(episode.guid, episode);
+        await episodeBox.put(episode.guid, episode);
       }
       print(
           " saved : ${episodes.length} episodes for podcast: $podcast_id to local cache");
@@ -41,13 +46,11 @@ class PodcastEpisodeBoxController {
   }
 
   // Store played duration of an episode of a podcast.
-  static Future<bool> storePlayedDuration(
+  Future<bool> storePlayedDuration(
       String guid, int playedDuration, int podcast_id) async {
-    Box<EpisodeData>? episodeBox;
-    Box<EpisodeData>? box;
     try {
-      episodeBox =
-          box ?? await Hive.openBox<EpisodeData>(podcast_id.toString());
+      final episodeBox = await getBox(podcast_id.toString());
+
       // get episode
       var episode = episodeBox.get(guid);
       if (episode != null) {
@@ -69,11 +72,11 @@ class PodcastEpisodeBoxController {
   }
 
   // Get played duration of an episode of a podcast.
-  static Future<int?> getPlayedDuration(String guid, int podcast_id) async {
-    Box<EpisodeData>? episodeBox;
+  Future<int?> getPlayedDuration(String guid, int podcast_id) async {
     try {
       // Open the box
-      episodeBox = await Hive.openBox<EpisodeData>(podcast_id.toString());
+      final episodeBox = await getBox(podcast_id.toString());
+
       // get episode
       var episode = episodeBox.get(guid);
       if (episode != null) {
@@ -92,11 +95,11 @@ class PodcastEpisodeBoxController {
   }
 
   // Save an episode as played.
-  static Future<bool> markEpisodeAsPlayed(String guid, int podcast_id) async {
-    Box<EpisodeData>? episodeBox;
+  Future<bool> markEpisodeAsPlayed(String guid, int podcast_id) async {
     try {
       // Open the box
-      episodeBox = await Hive.openBox<EpisodeData>(podcast_id.toString());
+      final episodeBox = await getBox(podcast_id.toString());
+
       // get episode
       var episode = episodeBox.get(guid);
       if (episode != null) {

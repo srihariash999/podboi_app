@@ -13,6 +13,7 @@ import 'package:podboi/DataModels/episode_data.dart';
 import 'package:podboi/DataModels/song.dart';
 import 'package:podboi/DataModels/subscription_data.dart';
 import 'package:podboi/UI/base_screen.dart';
+import 'package:podboi/UI/podboi_loader.dart';
 import 'package:podboi/UI/welcome_page.dart';
 
 void main() async {
@@ -49,13 +50,33 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final SettingsBoxController _settingsBoxController =
-      SettingsBoxController.initialize();
+  bool isLoading = true;
+
+  String? _name;
+
+  void fetchName() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    final SettingsBoxController _settingsBoxController =
+        SettingsBoxController();
+    final _n = await _settingsBoxController.getSavedUserName();
+
+    setState(() {
+      _name = _n;
+      isLoading = false;
+    });
+  }
+
+  @override
+  void initState() {
+    fetchName();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    String? _name = _settingsBoxController.getSavedUserName();
-
     return Consumer(builder: (context, ref, child) {
       // Get current selected theme (fallback to default)
       ThemeData _currTheme = ref.watch(themeController).themeData;
@@ -71,7 +92,13 @@ class _MyAppState extends State<MyApp> {
         // Setting theme setting to current selected theme
         theme: _currTheme,
         // home: LoginScreen(),
-        home: _name == null ? WelcomePage() : BaseScreen(),
+        home: isLoading
+            ? Center(
+                child: PodboiLoader(),
+              )
+            : _name == null
+                ? WelcomePage()
+                : BaseScreen(),
       );
     });
   }

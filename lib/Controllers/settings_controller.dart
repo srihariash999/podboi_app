@@ -10,7 +10,7 @@ class SettingsStateNotifier extends StateNotifier<SettingsState> {
   late final SettingsBoxController _settingsBoxController;
 
   // Public constructor that uses the default SettingsBoxController
-  SettingsStateNotifier() : this.internal(SettingsBoxController.initialize());
+  SettingsStateNotifier() : this.internal(SettingsBoxController());
 
   // Internal constructor for testing or specific initialization
   SettingsStateNotifier.internal(this._settingsBoxController)

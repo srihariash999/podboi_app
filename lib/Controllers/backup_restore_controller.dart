@@ -1,14 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:podboi/Constants/constants.dart';
 import 'package:podboi/DataModels/cached_playback_state.dart';
 import 'package:podboi/DataModels/episode_data.dart';
 import 'package:podboi/DataModels/listening_history.dart';
 import 'package:podboi/DataModels/subscription_data.dart';
+import 'package:podboi/Database/box_service.dart';
 
 final backupRestoreController =
     StateNotifierProvider<BackupRestoreController, bool>((ref) {
@@ -17,6 +18,8 @@ final backupRestoreController =
 
 class BackupRestoreController extends StateNotifier<bool> {
   BackupRestoreController() : super(false);
+
+  final BoxService _boxService = BoxService();
 
   Future<void> exportData() async {
     state = true;
@@ -44,43 +47,39 @@ class BackupRestoreController extends StateNotifier<bool> {
     final Map<String, dynamic> data = {};
 
     // Settings
-    final settingsBox = Hive.box(K.boxes.settingsBox);
+    final settingsBox = await _boxService.getBox<dynamic>(K.boxes.settingsBox);
     Map<String, dynamic> settingsMap = {};
     for (var k in settingsBox.keys) {
       final val = settingsBox.get(k);
       if (val.runtimeType is CachedPlaybackState) {
         settingsMap[k] = (val as CachedPlaybackState).toJson();
+      } else {
+        settingsMap[k] = val;
       }
     }
     data['settings'] = settingsMap;
 
     // Subscriptions
-    final subscriptionBox = Hive.box<SubscriptionData>(K.boxes.subscriptionBox);
+    final subscriptionBox =
+        await _boxService.getBox<SubscriptionData>(K.boxes.subscriptionBox);
     data['subscriptions'] =
         subscriptionBox.values.map((e) => e.toJson()).toList();
 
     // Listening History
-    final listeningHistoryBox =
-        Hive.box<ListeningHistoryData>(K.boxes.listeningHistoryBox);
+    final listeningHistoryBox = await _boxService
+        .getBox<ListeningHistoryData>(K.boxes.listeningHistoryBox);
     data['listening_history'] =
         listeningHistoryBox.values.map((e) => e.toJson()).toList();
 
     // Podcast Episodes
-    final subscriptionBoxData =
-        Hive.box<SubscriptionData>(K.boxes.subscriptionBox);
+
     final podcastEpisodeData = <String, dynamic>{};
-    for (var sub in subscriptionBoxData.values) {
+    for (var sub in subscriptionBox.values) {
       final id = '${sub.podcastId.toString()}';
-      try {
-        final episodeBox = await Hive.box<EpisodeData>(id);
-        podcastEpisodeData[sub.podcastId.toString()] =
-            episodeBox.values.map((e) => e.toJson()).toList();
-      } catch (e) {
-        print('error opening box for podcast ${id}: $e');
-        final episodeBox = await Hive.openBox<EpisodeData>(id);
-        podcastEpisodeData[sub.podcastId.toString()] =
-            episodeBox.values.map((e) => e.toJson()).toList();
-      }
+
+      final episodeBox = await _boxService.getBox<EpisodeData>(id);
+      podcastEpisodeData[sub.podcastId.toString()] =
+          episodeBox.values.map((e) => e.toJson()).toList();
     }
     data['podcast_episodes'] = podcastEpisodeData;
     return data;
@@ -108,21 +107,27 @@ class BackupRestoreController extends StateNotifier<bool> {
   }
 
   Future<void> _restoreAllData(Map<String, dynamic> data) async {
+    final settingsBox = await _boxService.getBox<dynamic>(K.boxes.settingsBox);
+    final subscriptionBox =
+        await _boxService.getBox<SubscriptionData>(K.boxes.subscriptionBox);
+    final listeningHistoryBox = await _boxService
+        .getBox<ListeningHistoryData>(K.boxes.listeningHistoryBox);
+
     // Clear existing data
-    await Hive.box(K.boxes.settingsBox).clear();
-    await Hive.box<SubscriptionData>(K.boxes.subscriptionBox).clear();
-    await Hive.box<ListeningHistoryData>(K.boxes.listeningHistoryBox).clear();
+    await settingsBox.clear();
+    await subscriptionBox.clear();
+    await listeningHistoryBox.clear();
 
     // Restore settings
     final settingsData = data['settings'] as Map<String, dynamic>;
-    final settingsBox = Hive.box(K.boxes.settingsBox);
+
     settingsData.forEach((key, value) {
       settingsBox.put(key, value);
     });
 
     // Restore subscriptions
     final subscriptionsData = data['subscriptions'] as List<dynamic>;
-    final subscriptionBox = Hive.box<SubscriptionData>(K.boxes.subscriptionBox);
+
     for (var subData in subscriptionsData) {
       final sub = SubscriptionData.fromJson(subData);
       subscriptionBox.put(sub.podcastId, sub);
@@ -130,8 +135,7 @@ class BackupRestoreController extends StateNotifier<bool> {
 
     // Restore listening history
     final listeningHistoryData = data['listening_history'] as List<dynamic>;
-    final listeningHistoryBox =
-        Hive.box<ListeningHistoryData>(K.boxes.listeningHistoryBox);
+
     for (var historyData in listeningHistoryData) {
       final history = ListeningHistoryData.fromJson(historyData);
       listeningHistoryBox.put(history.episodeData.guid, history);
@@ -143,9 +147,7 @@ class BackupRestoreController extends StateNotifier<bool> {
     for (var entry in podcastEpisodesData.entries) {
       final podcastId = entry.key;
       final episodesData = entry.value as List<dynamic>;
-      final episodeBox = Hive.isBoxOpen(podcastId)
-          ? await Hive.box<EpisodeData>(podcastId)
-          : await Hive.openBox<EpisodeData>(podcastId);
+      final episodeBox = await _boxService.getBox<EpisodeData>(podcastId);
       await episodeBox.clear();
       for (var episodeData in episodesData) {
         final episode = EpisodeData.fromJson(episodeData);

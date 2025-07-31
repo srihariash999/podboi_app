@@ -106,10 +106,13 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
   late MyAudioHandler _audioHandler;
 
   final ListeningHistoryBoxController _listeningHistoryBoxController =
-      ListeningHistoryBoxController.initialize();
+      ListeningHistoryBoxController();
 
   final PlaybackCacheController _playbackCacheController =
-      PlaybackCacheController.initialize();
+      PlaybackCacheController();
+
+  final PodcastEpisodeBoxController podcastEpisodeBoxController =
+      PodcastEpisodeBoxController();
 
   // debounce throttle
   var throttle = false;
@@ -128,6 +131,12 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
       _audioHandler = service;
     });
 
+    getLastSavedPlaybackQueue().then((queue) {
+      if (queue != null) {
+        _playlist = queue;
+      }
+    });
+
     getLastSavedPlaybackPosition().then((pos) {
       if (pos != null) {
         requestPlayingSong(
@@ -135,12 +144,6 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
           initialPosition: pos.duration,
           pauseOnLoad: true,
         );
-      }
-    });
-
-    getLastSavedPlaybackQueue().then((queue) {
-      if (queue != null) {
-        _playlist = queue;
       }
     });
   }
@@ -181,7 +184,7 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
       print(" directly playing stuff.");
 
       // get played duration of the next item
-      var playedDuration = await PodcastEpisodeBoxController.getPlayedDuration(
+      var playedDuration = await podcastEpisodeBoxController.getPlayedDuration(
           song.episodeData.guid, song.episodeData.podcastId);
 
       requestPlayingSong(song, initialPosition: playedDuration);
@@ -239,7 +242,7 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
 
           // get played duration of the next item
           var playedDuration =
-              await PodcastEpisodeBoxController.getPlayedDuration(
+              await podcastEpisodeBoxController.getPlayedDuration(
                   nextItem.episodeData.guid, nextItem.episodeData.podcastId);
 
           requestPlayingSong(nextItem, initialPosition: playedDuration);
@@ -326,7 +329,7 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
             ),
           );
 
-          await PodcastEpisodeBoxController.storePlayedDuration(
+          await podcastEpisodeBoxController.storePlayedDuration(
             song.episodeData.guid,
             positionData.inSeconds,
             song.episodeData.podcastId,
@@ -440,7 +443,7 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
     // print(" length of playlist after skip : ${_playlist.length}");
 
     // get played duration of the next item
-    var playedDuration = await PodcastEpisodeBoxController.getPlayedDuration(
+    var playedDuration = await podcastEpisodeBoxController.getPlayedDuration(
       itemAtIndex.episodeData.guid,
       itemAtIndex.episodeData.podcastId,
     );

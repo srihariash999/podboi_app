@@ -23,8 +23,7 @@ class WelcomePageState {
 class WelcomePageStateNotifier extends StateNotifier<WelcomePageState> {
   WelcomePageStateNotifier() : super(WelcomePageState.initial());
 
-  final SettingsBoxController _settingsBoxController =
-      SettingsBoxController.initialize();
+  final SettingsBoxController _settingsBoxController = SettingsBoxController();
 
   void setAvatar(String newAvatar) {
     state = WelcomePageState(avatar: newAvatar);

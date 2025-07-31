@@ -16,6 +16,12 @@ final podcastPageViewController = StateNotifierProvider.autoDispose
 class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
   final SubscriptionData podcast;
 
+  final PodcastEpisodeBoxController podcastEpisodeBoxController =
+      PodcastEpisodeBoxController();
+
+  final SubscriptionBoxController subscriptionBoxController =
+      SubscriptionBoxController();
+
   List<EpisodeData> _filteredEpisodes = [];
   List<EpisodeData> _episodes = [];
 
@@ -24,7 +30,7 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
   PodcastPageViewNotifier(this.podcast) : super(PodcastPageState.initial()) {
     loadPodcastEpisodes(podcast.feedUrl, podcast.podcastId!, initial: true);
 
-    SubscriptionBoxController.isPodcastSubbed(podcast).then((value) {
+    subscriptionBoxController.isPodcastSubbed(podcast).then((value) {
       state = state.copyWith(
         isSubscribed: value,
       );
@@ -39,7 +45,7 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
     try {
       // try and load stuff from local storage.
       var storedEps =
-          await PodcastEpisodeBoxController.maybeGetEpisodesForPodcast(id);
+          await podcastEpisodeBoxController.maybeGetEpisodesForPodcast(id);
 
       // If local storage has episodes, show them.
       if (storedEps != null && storedEps.isNotEmpty) {
@@ -103,7 +109,7 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
         var toSave = [..._episodes];
         toSave.sort((a, b) => (b.publicationDate ?? DateTime.now())
             .compareTo((a.publicationDate ?? DateTime.now())));
-        await PodcastEpisodeBoxController.saveEpisodesForPodcast(toSave, id);
+        await podcastEpisodeBoxController.saveEpisodesForPodcast(toSave, id);
 
         state = state.copyWith(
           podcastEpisodes: _filteredEpisodes,
@@ -138,7 +144,7 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
       SubscriptionData podcast, WidgetRef ref) async {
     try {
       state = state.copyWith(isSubscribeButtonLoading: true);
-      await SubscriptionBoxController.saveSubscription(podcast, ref: ref);
+      await subscriptionBoxController.saveSubscription(podcast, ref: ref);
       state =
           state.copyWith(isSubscribeButtonLoading: false, isSubscribed: true);
     } catch (e) {
@@ -161,7 +167,7 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
       SubscriptionData podcast, WidgetRef ref) async {
     try {
       state = state.copyWith(isSubscribeButtonLoading: true);
-      await SubscriptionBoxController.removeSubscription(podcast, ref: ref);
+      await subscriptionBoxController.removeSubscription(podcast, ref: ref);
       state =
           state.copyWith(isSubscribeButtonLoading: false, isSubscribed: false);
     } catch (e) {
@@ -207,7 +213,7 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
 
   Future<void> markEpisodeAsPlayed(EpisodeData episode) async {
     try {
-      await PodcastEpisodeBoxController.markEpisodeAsPlayed(
+      await podcastEpisodeBoxController.markEpisodeAsPlayed(
         episode.guid,
         episode.podcastId,
       );
