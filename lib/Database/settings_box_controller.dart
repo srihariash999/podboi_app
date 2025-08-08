@@ -113,4 +113,20 @@ class SettingsBoxController {
     final box = await getBox();
     return box.get(K.settingsKeys.forwardDurationKey) ?? 30;
   }
+
+  Future<bool> saveAutoDeleteSetting(bool autoDelete) async {
+    try {
+      final box = await getBox();
+      await box.put(K.settingsKeys.autoDeleteKey, autoDelete);
+      return true;
+    } catch (e) {
+      print(" error saving autoDelete to settings box $e");
+      return false;
+    }
+  }
+
+  Future<bool> getAutoDeleteSetting() async {
+    final box = await getBox();
+    return box.get(K.settingsKeys.autoDeleteKey) ?? true;
+  }
 }

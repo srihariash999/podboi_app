@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:podboi/Constants/constants.dart';
+import 'package:podboi/DataModels/downloaded_episode.dart';
 import 'package:podboi/DataModels/listening_history.dart';
 import 'package:podboi/Database/settings_box_controller.dart';
 import 'package:podboi/Controllers/theme_controller.dart';
@@ -28,11 +29,13 @@ void main() async {
   Hive.registerAdapter(CachedPlaybackStateAdapter());
   Hive.registerAdapter(SubscriptionDataAdapter());
   Hive.registerAdapter(ListeningHistoryDataAdapter());
+  Hive.registerAdapter(DownloadedEpisodeAdapter());
 
   // Open all boxes.
   await Hive.openBox(K.boxes.settingsBox);
   await Hive.openBox<SubscriptionData>(K.boxes.subscriptionBox);
   await Hive.openBox<ListeningHistoryData>(K.boxes.listeningHistoryBox);
+  await Hive.openBox<DownloadedEpisode>(K.boxes.downloadsBox);
 
   final session = await AudioSession.instance;
   await session.configure(const AudioSessionConfiguration.speech());
