@@ -240,9 +240,8 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
           final downloadedEpisode =
               await _downloadBoxController.getDownload(song.episodeData.guid);
           if (downloadedEpisode != null) {
-            final downloadController =
-                ref.read(downloadController.notifier);
-            await downloadController.deleteEpisode(song.episodeData.guid);
+            final dc = ref.read(downloadController.notifier);
+            await dc.deleteEpisode(song.episodeData.guid);
           }
         }
 

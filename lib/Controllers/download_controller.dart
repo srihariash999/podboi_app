@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
@@ -12,9 +13,9 @@ final downloadController =
 });
 
 class DownloadController extends StateNotifier<Map<String, double>> {
-  DownloadController(this._ref) : super({});
+  DownloadController(this.ref) : super({});
 
-  final Ref _ref;
+  final Ref ref;
   final Dio _dio = Dio();
   final DownloadBoxController _downloadBoxController = DownloadBoxController();
 

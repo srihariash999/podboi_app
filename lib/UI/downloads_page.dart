@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podboi/Controllers/audio_controller.dart';
 import 'package:podboi/DataModels/downloaded_episode.dart';
-import 'package:podboi/DataModels/song.dart';
+import 'package:podboi/DataModels/subscription_data.dart';
 import 'package:podboi/Database/download_box_controller.dart';
 import 'package:podboi/Shared/detailed_episode_widget.dart';
-import 'package:podboi/DataModels/subscription_data.dart';
 import 'package:podboi/UI/player/mini_player.dart';
 
 final downloadsProvider = FutureProvider<List<DownloadedEpisode>>((ref) async {
@@ -45,6 +43,7 @@ class DownloadsPage extends ConsumerWidget {
                       podcastName: download.episode.author ?? 'Unknown',
                       artworkUrl: download.episode.imageUrl ?? '',
                       feedUrl: '',
+                      dateAdded: DateTime.now(),
                     );
                     return DetailedEpsiodeViewWidget(
                       episodeData: download.episode,
