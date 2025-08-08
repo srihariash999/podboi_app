@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 import 'package:podboi/Controllers/audio_controller.dart';
+import 'package:podboi/Controllers/download_controller.dart';
 import 'package:podboi/Controllers/history_controller.dart';
 import 'package:podboi/Controllers/podcast_page_controller.dart';
 import 'package:podboi/DataModels/episode_data.dart';
@@ -315,65 +316,116 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                         ),
                       ),
                     ),
-                    Container(
-                      alignment: Alignment.center,
-                      child: Stack(
-                        children: [
-                          if (playedDuration > 0.0)
-                            CircularProgressIndicator(
-                              value: playedDuration,
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                Theme.of(context)
-                                    .colorScheme
-                                    .secondary
-                                    .withOpacityValue(0.70),
-                              ),
-                              backgroundColor: Theme.of(context)
-                                  .colorScheme
-                                  .secondary
-                                  .withOpacityValue(0.2),
-                              strokeWidth: 2.0,
-                            ),
-                          SizedBox(
-                            width: 39.0,
-                            height: 36.0,
-                            child: InkWell(
-                              onTap: () async {
-                                _ref
-                                    .read(audioController.notifier)
-                                    .requestPlayingSong(
-                                      Song(
-                                        url: _episodeData.contentUrl!,
-                                        icon: _episodeData.imageUrl ??
-                                            _podcast.artworkUrl,
-                                        name: _episodeData.title,
-                                        duration: _episodeData.duration ?? 0,
-                                        artist: "${_episodeData.author}",
-                                        album: _podcast.podcastName,
-                                        episodeData: _episodeData,
-                                      ),
-                                    );
+                    Row(
+                      children: [
+                        Container(
+                          alignment: Alignment.center,
+                          child: Stack(
+                            children: [
+                              if (playedDuration > 0.0)
+                                CircularProgressIndicator(
+                                  value: playedDuration,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    Theme.of(context)
+                                        .colorScheme
+                                        .secondary
+                                        .withOpacityValue(0.70),
+                                  ),
+                                  backgroundColor: Theme.of(context)
+                                      .colorScheme
+                                      .secondary
+                                      .withOpacityValue(0.2),
+                                  strokeWidth: 2.0,
+                                ),
+                              SizedBox(
+                                width: 39.0,
+                                height: 36.0,
+                                child: InkWell(
+                                  onTap: () async {
+                                    _ref
+                                        .read(audioController.notifier)
+                                        .requestPlayingSong(
+                                          Song(
+                                            url: _episodeData.contentUrl!,
+                                            icon: _episodeData.imageUrl ??
+                                                _podcast.artworkUrl,
+                                            name: _episodeData.title,
+                                            duration:
+                                                _episodeData.duration ?? 0,
+                                            artist: "${_episodeData.author}",
+                                            album: _podcast.podcastName,
+                                            episodeData: _episodeData,
+                                          ),
+                                        );
 
-                                _ref
-                                    .read(historyController.notifier)
-                                    .saveToHistoryAction(
-                                      data: ListeningHistoryData(
-                                        listenedOn: DateTime.now().toString(),
-                                        episodeData: _episodeData,
-                                      ),
-                                    );
-                              },
-                              child: Icon(
-                                (playedDuration > 0.99)
-                                    ? FeatherIcons.check
-                                    : FeatherIcons.play,
-                                color: Theme.of(context).colorScheme.secondary,
-                                size: 20.0,
+                                    _ref
+                                        .read(historyController.notifier)
+                                        .saveToHistoryAction(
+                                          data: ListeningHistoryData(
+                                            listenedOn:
+                                                DateTime.now().toString(),
+                                            episodeData: _episodeData,
+                                          ),
+                                        );
+                                  },
+                                  child: Icon(
+                                    (playedDuration > 0.99)
+                                        ? FeatherIcons.check
+                                        : FeatherIcons.play,
+                                    color:
+                                        Theme.of(context).colorScheme.secondary,
+                                    size: 20.0,
+                                  ),
+                                ),
                               ),
-                            ),
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                        SizedBox(width: 12.0),
+                        Consumer(
+                          builder: (context, ref, child) {
+                            final downloadState =
+                                ref.watch(downloadController);
+                            final isDownloading = downloadState
+                                .containsKey(_episodeData.guid);
+                            final progress =
+                                downloadState[_episodeData.guid] ?? 0.0;
+
+                            return SizedBox(
+                              width: 39.0,
+                              height: 36.0,
+                              child: isDownloading
+                                  ? Stack(
+                                      alignment: Alignment.center,
+                                      children: [
+                                        CircularProgressIndicator(
+                                          value: progress,
+                                          strokeWidth: 2.0,
+                                        ),
+                                        Text(
+                                          '${(progress * 100).toInt()}%',
+                                          style: TextStyle(fontSize: 10.0),
+                                        ),
+                                      ],
+                                    )
+                                  : InkWell(
+                                      onTap: () {
+                                        ref
+                                            .read(downloadController.notifier)
+                                            .downloadEpisode(_episodeData);
+                                      },
+                                      child: Icon(
+                                        FeatherIcons.download,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .secondary,
+                                        size: 20.0,
+                                      ),
+                                    ),
+                            );
+                          },
+                        ),
+                      ],
                     )
                   ],
                 ),

@@ -5,6 +5,8 @@ import 'package:podboi/DataModels/cached_playback_state.dart';
 import 'package:podboi/DataModels/listening_history.dart';
 import 'package:podboi/DataModels/position_data.dart';
 import 'package:podboi/DataModels/song.dart';
+import 'package:podboi/Database/download_box_controller.dart';
+import 'package:podboi/Controllers/download_controller.dart';
 import 'package:podboi/Database/listening_history_box_controller.dart';
 import 'package:podboi/Database/playback_cache_controller.dart';
 import 'package:podboi/Database/podcast_episode_box_controller.dart';
@@ -107,6 +109,8 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
 
   final ListeningHistoryBoxController _listeningHistoryBoxController =
       ListeningHistoryBoxController();
+
+  final DownloadBoxController _downloadBoxController = DownloadBoxController();
 
   final PlaybackCacheController _playbackCacheController =
       PlaybackCacheController();
@@ -231,6 +235,17 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
           throttle = false;
         });
 
+        // Auto-delete logic
+        if (ref.read(settingsController).autoDelete) {
+          final downloadedEpisode =
+              await _downloadBoxController.getDownload(song.episodeData.guid);
+          if (downloadedEpisode != null) {
+            final downloadController =
+                ref.read(downloadController.notifier);
+            await downloadController.deleteEpisode(song.episodeData.guid);
+          }
+        }
+
         var res = await _playbackCacheController.clearSavedPlaybackPosition();
         print(" cleared saved playback position : $res");
         // If there are items in the queue, play the next item.
@@ -269,13 +284,26 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
         artUri: Uri.parse(song.icon),
         duration: Duration(seconds: song.duration ?? 0),
       );
-      epDur = await _player.setAudioSource(
-        AudioSource.uri(
-          Uri.parse(song.url),
-          tag: mi,
-        ),
-        initialPosition: Duration(seconds: initialPosition ?? 0),
-      );
+      final downloadedEpisode =
+          await _downloadBoxController.getDownload(song.episodeData.guid);
+
+      if (downloadedEpisode != null) {
+        epDur = await _player.setAudioSource(
+          AudioSource.file(
+            downloadedEpisode.filePath,
+            tag: mi,
+          ),
+          initialPosition: Duration(seconds: initialPosition ?? 0),
+        );
+      } else {
+        epDur = await _player.setAudioSource(
+          AudioSource.uri(
+            Uri.parse(song.url),
+            tag: mi,
+          ),
+          initialPosition: Duration(seconds: initialPosition ?? 0),
+        );
+      }
 
       _audioHandler.setMediaItem(mi);
       // _player.play();

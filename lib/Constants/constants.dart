@@ -9,6 +9,7 @@ class BoxNames {
   String settingsBox = "settings-box";
   String subscriptionBox = "subscription-box";
   String listeningHistoryBox = "listening-history-box";
+  String downloadsBox = "downloads-box";
 }
 
 class SettingsKeys {
@@ -19,6 +20,7 @@ class SettingsKeys {
   String tokenKey = "token";
   String rewindDurationKey = "rewindDuration";
   String forwardDurationKey = "forwardDuration";
+  String autoDeleteKey = "autoDelete";
 }
 
 class AnimationAssets {

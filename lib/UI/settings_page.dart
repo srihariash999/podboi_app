@@ -168,6 +168,69 @@ class SettingsPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
+                  "Download Settings",
+                  style: TextStyle(
+                    fontSize: 14.0,
+                    fontWeight: FontWeight.w600,
+                    color: Theme.of(context).highlightColor,
+                    fontFamily: 'Segoe',
+                  ),
+                ),
+                const SizedBox(height: 16.0),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        "Auto-delete download after listening",
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.w500,
+                          color: Theme.of(context).colorScheme.secondary,
+                          fontFamily: 'Segoe',
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12.0),
+                    SizedBox(
+                      width: 48.0,
+                      height: 32.0,
+                      child: FittedBox(
+                        fit: BoxFit.fitWidth,
+                        child: Consumer(
+                          builder: (context, ref, child) {
+                            final stateVal =
+                                ref.watch(settingsController).autoDelete;
+                            return Switch(
+                              activeColor: Theme.of(context).highlightColor,
+                              value: stateVal,
+                              onChanged: (val) {
+                                ref
+                                    .read(settingsController.notifier)
+                                    .saveSettings(
+                                      newAutoDelete: val,
+                                    );
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                    )
+                  ],
+                )
+              ],
+            ),
+          ),
+          Divider(
+            color:
+                Theme.of(context).colorScheme.secondary.withOpacityValue(0.2),
+            height: 1.0,
+          ),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 28.0, vertical: 16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
                   "Player Settings",
                   style: TextStyle(
                     fontSize: 14.0,

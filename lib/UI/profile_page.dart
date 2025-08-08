@@ -9,6 +9,7 @@ import 'package:line_icons/line_icons.dart';
 import 'package:podboi/Controllers/profile_screen_controller.dart';
 import 'package:podboi/Controllers/theme_controller.dart';
 import 'package:podboi/Helpers/helpers.dart';
+import 'package:podboi/UI/downloads_page.dart';
 import 'package:podboi/UI/listening_history_page.dart';
 import 'package:podboi/UI/player/mini_player.dart';
 import 'package:podboi/UI/podboi_primary_button.dart';
@@ -147,6 +148,53 @@ class ProfileScreen extends StatelessWidget {
                             ref.watch(themeController).currentTheme;
                         return Column(
                           children: [
+                            Divider(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .secondary
+                                  .withOpacityValue(0.2),
+                              height: 1.0,
+                            ),
+
+                            // Downloads Tile
+                            ProfilePageTileWidget(
+                              tailingWidget: Icon(
+                                LineIcons.download,
+                                size: 28.0,
+                                color: Theme.of(context).primaryColorLight,
+                              ),
+                              tileName: "Downloads",
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  PageRouteBuilder(
+                                    transitionDuration:
+                                        Duration(milliseconds: 500),
+                                    transitionsBuilder: (context, animation,
+                                        secondaryAnimation, child) {
+                                      const begin = Offset(1.0, 0.0);
+                                      const end = Offset.zero;
+                                      const curve = Curves.ease;
+
+                                      final tween =
+                                          Tween(begin: begin, end: end);
+                                      final curvedAnimation = CurvedAnimation(
+                                        parent: animation,
+                                        curve: curve,
+                                      );
+
+                                      return SlideTransition(
+                                        position:
+                                            tween.animate(curvedAnimation),
+                                        child: child,
+                                      );
+                                    },
+                                    pageBuilder: (_, __, ___) =>
+                                        DownloadsPage(),
+                                  ),
+                                );
+                              },
+                            ),
+
                             Divider(
                               color: Theme.of(context)
                                   .colorScheme
