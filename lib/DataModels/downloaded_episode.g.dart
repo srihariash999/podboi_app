@@ -20,19 +20,22 @@ class DownloadedEpisodeAdapter extends TypeAdapter<DownloadedEpisode> {
       episode: fields[0] as EpisodeData,
       downloadedOn: fields[1] as String,
       filePath: fields[2] as String,
+      subscriptionData: fields[3] as SubscriptionData,
     );
   }
 
   @override
   void write(BinaryWriter writer, DownloadedEpisode obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(4)
       ..writeByte(0)
       ..write(obj.episode)
       ..writeByte(1)
       ..write(obj.downloadedOn)
       ..writeByte(2)
-      ..write(obj.filePath);
+      ..write(obj.filePath)
+      ..writeByte(3)
+      ..write(obj.subscriptionData);
   }
 
   @override

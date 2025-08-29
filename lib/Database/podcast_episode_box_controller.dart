@@ -120,4 +120,54 @@ class PodcastEpisodeBoxController {
       return false;
     }
   }
+
+  // Store download path for an episode of a podcast.
+  Future<bool> storeDownloadPath(
+      String guid, String path, int podcast_id) async {
+    try {
+      final episodeBox = await getBox(podcast_id.toString());
+
+      // get episode
+      var episode = episodeBox.get(guid);
+      if (episode != null) {
+        // update download path
+        episodeBox.put(guid, episode.updateDownloadPath(downloadPath: path));
+        print(
+            " stored download path for episode with guid: $guid and pod id $podcast_id. Download file path: $path");
+        return true;
+      } else {
+        print(
+            "Episode with guid: $guid not found for podcast id $podcast_id to update download path");
+        return false;
+      }
+    } catch (e) {
+      print(
+          " Error while trying to store download path for episode with guid: $guid. Error: $e");
+      return false;
+    }
+  }
+
+  // remove download path for an episode of a podcast.
+  Future<bool> removeDownloadPath(String guid, int podcast_id) async {
+    try {
+      final episodeBox = await getBox(podcast_id.toString());
+      // get episode
+      var episode = episodeBox.get(guid);
+      if (episode != null) {
+        // update download path
+        episodeBox.put(guid, episode.updateDownloadPath(downloadPath: null));
+        print(
+            " removed download path for episode with guid: $guid and pod id $podcast_id.");
+        return true;
+      } else {
+        print(
+            "Episode with guid: $guid not found for podcast id $podcast_id to remove download path");
+        return false;
+      }
+    } catch (e) {
+      print(
+          " Error while trying to remove download path for episode with guid: $guid. Error: $e");
+      return false;
+    }
+  }
 }

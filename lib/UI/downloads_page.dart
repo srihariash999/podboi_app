@@ -1,64 +1,83 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:podboi/DataModels/downloaded_episode.dart';
-import 'package:podboi/DataModels/subscription_data.dart';
-import 'package:podboi/Database/download_box_controller.dart';
+import 'package:podboi/Controllers/download_controller.dart';
 import 'package:podboi/Shared/detailed_episode_widget.dart';
+import 'package:podboi/Shared/simple_appbar.dart';
 import 'package:podboi/UI/player/mini_player.dart';
 
-final downloadsProvider = FutureProvider<List<DownloadedEpisode>>((ref) async {
-  final downloadBoxController = DownloadBoxController();
-  return downloadBoxController.getDownloads();
-});
-
-class DownloadsPage extends ConsumerWidget {
-  const DownloadsPage({Key? key}) : super(key: key);
+class DownloadsPage extends ConsumerStatefulWidget {
+  const DownloadsPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final downloadsAsyncValue = ref.watch(downloadsProvider);
+  ConsumerState<ConsumerStatefulWidget> createState() => _DownloadsPageState();
+}
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Downloads'),
+class _DownloadsPageState extends ConsumerState<DownloadsPage> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(downloadController.notifier).loadDownloads();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final downloadState = ref.watch(downloadController);
+
+    final isLoading = downloadState.isLoading;
+    final downloads = downloadState.downloads;
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
+        statusBarColor: Theme.of(context).colorScheme.primary,
+        statusBarIconBrightness: Theme.of(context).brightness == Brightness.dark
+            ? Brightness.light
+            : Brightness.dark,
+        statusBarBrightness: Theme.of(context).brightness,
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: downloadsAsyncValue.when(
-              data: (downloads) {
-                if (downloads.isEmpty) {
-                  return Center(
-                    child: Text('No downloaded episodes yet.'),
-                  );
-                }
-                return ListView.builder(
-                  itemCount: downloads.length,
-                  itemBuilder: (context, index) {
-                    final download = downloads[index];
-                    // This is a hack, DetailedEpsiodeViewWidget needs a SubscriptionData object.
-                    // I will create a dummy one for now.
-                    final dummySubscription = SubscriptionData(
-                      id: 0,
-                      podcastName: download.episode.author ?? 'Unknown',
-                      artworkUrl: download.episode.imageUrl ?? '',
-                      feedUrl: '',
-                      dateAdded: DateTime.now(),
-                    );
-                    return DetailedEpsiodeViewWidget(
-                      episodeData: download.episode,
-                      podcast: dummySubscription,
-                      ref: ref,
-                    );
-                  },
-                );
-              },
-              loading: () => Center(child: CircularProgressIndicator()),
-              error: (err, stack) => Center(child: Text('Error: $err')),
-            ),
+      child: Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        body: SafeArea(
+          child: Column(
+            children: [
+              SimplePodboiAppBar(title: 'Downloads'),
+              const SizedBox(height: 24.0),
+              Expanded(
+                child: RefreshIndicator(
+                  color: Theme.of(context).colorScheme.secondary,
+                  onRefresh: () =>
+                      ref.read(downloadController.notifier).loadDownloads(),
+                  child: isLoading
+                      ? Center(
+                          child: CircularProgressIndicator(
+                            color: Theme.of(context).primaryColorLight,
+                          ),
+                        )
+                      : downloads.isEmpty
+                          ? Center(
+                              child: Text('No downloaded episodes yet.'),
+                            )
+                          : Consumer(
+                              builder: (context, ref, child) {
+                                return ListView.builder(
+                                  itemCount: downloads.length,
+                                  itemBuilder: (context, index) {
+                                    final download = downloads[index];
+                                    return DetailedEpsiodeViewWidget(
+                                      episodeData: download.episode,
+                                      podcast: download.subscriptionData,
+                                    );
+                                  },
+                                );
+                              },
+                            ),
+                ),
+              ),
+              Align(alignment: Alignment.bottomCenter, child: MiniPlayer()),
+            ],
           ),
-          Align(alignment: Alignment.bottomCenter, child: MiniPlayer()),
-        ],
+        ),
       ),
     );
   }

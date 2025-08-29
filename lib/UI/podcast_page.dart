@@ -335,7 +335,6 @@ class PodcastPage extends StatelessWidget {
                                     EpisodeData _episode = eps[index - 1];
                                     return DetailedEpsiodeViewWidget(
                                       episodeData: _episode,
-                                      ref: ref,
                                       podcast: subscription,
                                     );
                                   },

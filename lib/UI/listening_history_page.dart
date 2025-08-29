@@ -82,6 +82,9 @@ class ListeningHistoryView extends StatelessWidget {
                                       ),
                                     )
                                   : RefreshIndicator(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondary,
                                       onRefresh: _refresh,
                                       child: ListView.separated(
                                         itemCount: _list.length,

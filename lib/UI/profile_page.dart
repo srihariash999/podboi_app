@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +7,7 @@ import 'package:line_icons/line_icons.dart';
 import 'package:podboi/Controllers/profile_screen_controller.dart';
 import 'package:podboi/Controllers/theme_controller.dart';
 import 'package:podboi/Helpers/helpers.dart';
+import 'package:podboi/Shared/simple_appbar.dart';
 import 'package:podboi/UI/downloads_page.dart';
 import 'package:podboi/UI/listening_history_page.dart';
 import 'package:podboi/UI/player/mini_player.dart';
@@ -38,18 +37,7 @@ class ProfileScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    IconButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      icon: Icon(
-                        Platform.isAndroid
-                            ? FeatherIcons.arrowLeft
-                            : FeatherIcons.chevronLeft,
-                        size: !Platform.isAndroid ? 32.0 : null,
-                        color: Theme.of(context).colorScheme.secondary,
-                      ),
-                    ),
+                    SimplePodboiAppBar(title: 'Profile'),
                     SizedBox(
                       height: 24.0,
                     ),

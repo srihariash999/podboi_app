@@ -17,6 +17,9 @@ class DownloadBoxController {
   Future<void> addDownload(DownloadedEpisode download) async {
     final box = await getBox();
     await box.put(download.episode.guid, download);
+    print('Added download for episode: ${download.episode.guid}');
+
+    print('length of downloads box: ${box.values.length}');
   }
 
   Future<void> deleteDownload(String guid) async {

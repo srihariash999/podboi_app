@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:podboi/Controllers/download_controller.dart';
 import 'package:podboi/DataModels/episode_data.dart';
 import 'package:podboi/DataModels/subscription_data.dart';
 import 'package:podboi/Database/podcast_episode_box_controller.dart';
@@ -236,6 +237,94 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
       );
     } catch (e) {
       debugPrint(" cannot mark episode as played  : $e");
+    } finally {
+      state = state.copyWith(
+        isLoading: false,
+      );
+    }
+  }
+
+  Future<void> downloadEpisode(EpisodeData episode, WidgetRef ref) async {
+    try {
+      final path = await ref
+          .read(downloadController.notifier)
+          .downloadEpisode(episode, podcast);
+      if (path != null) {
+        podcastEpisodeBoxController.storeDownloadPath(
+          episode.guid,
+          path,
+          episode.podcastId,
+        );
+
+        var pods = [..._episodes];
+        for (var i = 0; i < pods.length; i++) {
+          if (pods[i].guid == episode.guid) {
+            pods[i] = pods[i].updateDownloadPath(
+              downloadPath: path,
+            );
+            break;
+          }
+        }
+        _episodes = [...pods];
+        _filteredEpisodes = [..._episodes];
+
+        state = state.copyWith(
+          podcastEpisodes: _filteredEpisodes,
+        );
+      } else {
+        await ref.read(downloadController.notifier).deleteEpisode(episode.guid);
+      }
+    } on EpisodeAlreadyDownloadedException catch (e) {
+      print(" cannot download episode  : $e");
+      Fluttertoast.showToast(
+        msg: e.message,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+    } catch (e) {
+      debugPrint(" cannot download episode  : $e");
+      Fluttertoast.showToast(
+        msg: "Failed to download episode.",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+    }
+  }
+
+  Future<void> deleteDownloadedEpisode(
+      EpisodeData episode, WidgetRef ref) async {
+    try {
+      await ref.read(downloadController.notifier).deleteEpisode(episode.guid);
+
+      await podcastEpisodeBoxController.removeDownloadPath(
+        episode.guid,
+        episode.podcastId,
+      );
+
+      var pods = [..._episodes];
+      for (var i = 0; i < pods.length; i++) {
+        if (pods[i].guid == episode.guid) {
+          pods[i] = pods[i].updateDownloadPath(
+            downloadPath: null,
+          );
+          break;
+        }
+      }
+      _episodes = [...pods];
+      _filteredEpisodes = [..._episodes];
+
+      state = state.copyWith(
+        podcastEpisodes: _filteredEpisodes,
+      );
+    } catch (e) {
+      debugPrint(" cannot delete downloaded episode  : $e");
     } finally {
       state = state.copyWith(
         isLoading: false,

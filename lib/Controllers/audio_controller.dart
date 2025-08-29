@@ -235,13 +235,17 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
           throttle = false;
         });
 
-        // Auto-delete logic
-        if (ref.read(settingsController).autoDelete) {
-          final downloadedEpisode =
-              await _downloadBoxController.getDownload(song.episodeData.guid);
-          if (downloadedEpisode != null) {
-            final dc = ref.read(downloadController.notifier);
-            await dc.deleteEpisode(song.episodeData.guid);
+        final currPlaying = getCurrentPlayingSong;
+
+        if (currPlaying != null) {
+          // Auto-delete logic
+          if (ref.read(settingsController).autoDelete) {
+            final downloadedEpisode = await _downloadBoxController
+                .getDownload(currPlaying.episodeData.guid);
+            if (downloadedEpisode != null) {
+              final dc = ref.read(downloadController.notifier);
+              await dc.deleteEpisode(currPlaying.episodeData.guid);
+            }
           }
         }
 
@@ -287,6 +291,7 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
           await _downloadBoxController.getDownload(song.episodeData.guid);
 
       if (downloadedEpisode != null) {
+        print("playing downloaded episode: ${downloadedEpisode.filePath}");
         epDur = await _player.setAudioSource(
           AudioSource.file(
             downloadedEpisode.filePath,
@@ -295,6 +300,7 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
           initialPosition: Duration(seconds: initialPosition ?? 0),
         );
       } else {
+        print("streaming episode: ${song.url}");
         epDur = await _player.setAudioSource(
           AudioSource.uri(
             Uri.parse(song.url),
@@ -344,22 +350,24 @@ class AudioStateNotifier extends StateNotifier<AudioState> {
             playbackCacheThrottle = false;
           });
 
-          await _playbackCacheController.storePlaybackPosition(
-            positionData.inSeconds,
-            song,
-          );
-
-          await _listeningHistoryBoxController.saveEpisodeToHistory(
-            ListeningHistoryData(
-              listenedOn: DateTime.now().toString(),
-              episodeData: song.episodeData,
-            ),
-          );
-
-          await podcastEpisodeBoxController.storePlayedDuration(
-            song.episodeData.guid,
-            positionData.inSeconds,
-            song.episodeData.podcastId,
+          await Future.wait(
+            [
+              _playbackCacheController.storePlaybackPosition(
+                positionData.inSeconds,
+                song,
+              ),
+              _listeningHistoryBoxController.saveEpisodeToHistory(
+                ListeningHistoryData(
+                  listenedOn: DateTime.now().toString(),
+                  episodeData: song.episodeData,
+                ),
+              ),
+              podcastEpisodeBoxController.storePlayedDuration(
+                song.episodeData.guid,
+                positionData.inSeconds,
+                song.episodeData.podcastId,
+              )
+            ],
           );
         }
       });
