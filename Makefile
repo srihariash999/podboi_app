@@ -7,3 +7,6 @@ testcov:
 
 open-testcov:
 	open coverage/html/index.html
+
+build-runner:
+	flutter pub run build_runner build --delete-conflicting-outputs

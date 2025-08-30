@@ -25,17 +25,20 @@ class SettingsStateNotifier extends StateNotifier<SettingsState> {
         loading: true,
         rewindDuration: 30,
         forwardDuration: 30,
+        autoDelete: true,
       );
       var _subsFirst = await _settingsBoxController.getSubsFirst();
       var _rewindDuration =
           await _settingsBoxController.getRewindDurationSetting();
       var _forwardDuration =
           await _settingsBoxController.getForwardDurationSetting();
+      var _autoDelete = await _settingsBoxController.getAutoDeleteSetting();
       state = SettingsState(
         subsFirst: _subsFirst,
         loading: false,
         rewindDuration: _rewindDuration,
         forwardDuration: _forwardDuration,
+        autoDelete: _autoDelete,
       );
     } catch (e) {
       print(" error in loading settings : $e");
@@ -46,12 +49,14 @@ class SettingsStateNotifier extends StateNotifier<SettingsState> {
     bool? newSubsFirst,
     int? newRewindDuration,
     int? newForwardDuration,
+    bool? newAutoDelete,
   }) async {
     try {
       // Store current state values to preserve them if not being updated
       final currentSubsFirst = state.subsFirst;
       final currentRewindDuration = state.rewindDuration;
       final currentForwardDuration = state.forwardDuration;
+      final currentAutoDelete = state.autoDelete;
 
       // Set loading state, using new values if provided, otherwise current
       state = SettingsState(
@@ -59,6 +64,7 @@ class SettingsStateNotifier extends StateNotifier<SettingsState> {
         loading: true,
         rewindDuration: newRewindDuration ?? currentRewindDuration,
         forwardDuration: newForwardDuration ?? currentForwardDuration,
+        autoDelete: newAutoDelete ?? currentAutoDelete,
       );
 
       // Perform save operations for provided values
@@ -73,6 +79,9 @@ class SettingsStateNotifier extends StateNotifier<SettingsState> {
         await _settingsBoxController
             .saveForwardDurationSetting(newForwardDuration);
       }
+      if (newAutoDelete != null) {
+        await _settingsBoxController.saveAutoDeleteSetting(newAutoDelete);
+      }
 
       // Set final state with new values and loading false
       state = SettingsState(
@@ -80,6 +89,7 @@ class SettingsStateNotifier extends StateNotifier<SettingsState> {
         loading: false,
         rewindDuration: newRewindDuration ?? currentRewindDuration,
         forwardDuration: newForwardDuration ?? currentForwardDuration,
+        autoDelete: newAutoDelete ?? currentAutoDelete,
       );
     } catch (e) {
       print(" error in saving settings : $e");
@@ -92,12 +102,14 @@ class SettingsState {
   final bool loading;
   final int rewindDuration;
   final int forwardDuration;
+  final bool autoDelete;
 
   SettingsState({
     required this.subsFirst,
     required this.loading,
     required this.rewindDuration,
     required this.forwardDuration,
+    required this.autoDelete,
   });
 
   factory SettingsState.defaultState() {
@@ -106,6 +118,7 @@ class SettingsState {
       loading: false,
       rewindDuration: 30,
       forwardDuration: 30,
+      autoDelete: true,
     );
   }
 }

@@ -49,22 +49,27 @@ class EpisodeData {
   @HiveField(14)
   final int? playedDuration;
 
-  const EpisodeData(
-      {required this.id,
-      required this.guid,
-      required this.title,
-      required this.description,
-      required this.podcastId,
-      this.link,
-      this.publicationDate,
-      this.contentUrl,
-      this.imageUrl,
-      this.author,
-      this.season,
-      this.episodeNumber,
-      this.duration,
-      this.podcastName,
-      this.playedDuration});
+  @HiveField(15)
+  final String? downloadPath;
+
+  const EpisodeData({
+    required this.id,
+    required this.guid,
+    required this.title,
+    required this.description,
+    required this.podcastId,
+    this.link,
+    this.publicationDate,
+    this.contentUrl,
+    this.imageUrl,
+    this.author,
+    this.season,
+    this.episodeNumber,
+    this.duration,
+    this.podcastName,
+    this.playedDuration,
+    this.downloadPath,
+  });
 
   EpisodeData copyWith({int? playedDuration}) {
     return EpisodeData(
@@ -86,6 +91,27 @@ class EpisodeData {
     );
   }
 
+  EpisodeData updateDownloadPath({String? downloadPath}) {
+    return EpisodeData(
+      id: this.id,
+      guid: this.guid,
+      title: this.title,
+      description: this.description,
+      link: this.link,
+      publicationDate: this.publicationDate,
+      contentUrl: this.contentUrl,
+      imageUrl: this.imageUrl,
+      author: this.author,
+      season: this.season,
+      episodeNumber: this.episodeNumber,
+      duration: this.duration,
+      podcastId: this.podcastId,
+      podcastName: this.podcastName,
+      playedDuration: this.playedDuration,
+      downloadPath: downloadPath,
+    );
+  }
+
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -103,6 +129,7 @@ class EpisodeData {
       'podcastId': podcastId,
       'podcastName': podcastName,
       'playedDuration': playedDuration,
+      'downloadPath': downloadPath,
     };
   }
 
@@ -125,6 +152,7 @@ class EpisodeData {
       podcastId: json['podcastId'],
       podcastName: json['podcastName'],
       playedDuration: json['playedDuration'],
+      downloadPath: json['downloadPath'],
     );
   }
 }

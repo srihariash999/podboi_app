@@ -116,7 +116,7 @@ class SubscriptionsPage extends StatelessWidget {
                             padding:
                                 const EdgeInsets.only(left: 8.0, right: 8.0),
                             child: RefreshIndicator(
-                              color: Theme.of(context).primaryColorLight,
+                              color: Theme.of(context).colorScheme.secondary,
                               onRefresh: refresh,
                               child: GridView.builder(
                                 gridDelegate:
