@@ -109,6 +109,15 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
         print(" nothing to load from local cache");
       }
 
+      // Let the route's entrance animation complete before parsing a feed and
+      // writing its episode metadata. Those operations run on the UI isolate;
+      // doing them during MaterialPageRoute's transition is visible as jank.
+      // Manual refreshes intentionally remain immediate.
+      if (initial) {
+        await Future<void>.delayed(const Duration(milliseconds: 350));
+        if (!mounted) return;
+      }
+
       // Refresh metadata even when the feed's item count is unchanged. The
       // sync service upserts rather than clearing the cache, so progress and
       // download paths are retained.

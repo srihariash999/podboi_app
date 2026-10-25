@@ -266,13 +266,10 @@ class _HomePageState extends State<HomePage> {
                               ),
                             );
                           },
-                          child: Hero(
-                            tag: 'logo${_item.collectionId}',
-                            child: PodcastDisplayWidget(
-                              name: _item.collectionName ?? 'N/A',
-                              posterUrl: _item.bestArtworkUrl ?? '',
-                              context: context,
-                            ),
+                          child: PodcastDisplayWidget(
+                            name: _item.collectionName ?? 'N/A',
+                            posterUrl: _item.bestArtworkUrl ?? '',
+                            context: context,
                           ),
                         );
                       }),

@@ -13,7 +13,7 @@ final subscriptionsPageViewController =
 
 class SubscriptionsPageNotifier extends StateNotifier<SubscriptionState> {
   SubscriptionsPageNotifier() : super(SubscriptionState.initial()) {
-    loadSubscriptions();
+    loadSubscriptions(showInitialLoader: true);
     _watchSubscriptions();
   }
 
@@ -35,8 +35,15 @@ class SubscriptionsPageNotifier extends StateNotifier<SubscriptionState> {
         Timer(const Duration(milliseconds: 120), loadSubscriptions);
   }
 
-  Future<void> loadSubscriptions() async {
-    state = state.copyWith(isLoading: true);
+  /// Rebuild the local projection without replacing an already-visible grid.
+  ///
+  /// Episode syncs can emit many Hive events. Showing the page-wide loader for
+  /// every one disposes the [GridView] and its image widgets, making cached
+  /// artwork look as if it is being downloaded again when the user returns.
+  Future<void> loadSubscriptions({bool showInitialLoader = false}) async {
+    if (showInitialLoader && state.subscriptionsList.isEmpty) {
+      state = state.copyWith(isLoading: true);
+    }
     final _subs = await _subscriptionBoxController.getSubscriptions();
     final metadata = await Future.wait(_subs.map(_subscriptionMetadata));
     final rows = <_SubscriptionRow>[];

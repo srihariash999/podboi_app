@@ -320,47 +320,56 @@ class PodcastPage extends StatelessWidget {
                                           subscription.id);
                             }
 
-                            return isLoading
-                                ? Container(
-                                    alignment: Alignment.center,
-                                    child: PodboiLoader(),
-                                  )
-                                : RefreshIndicator(
-                                    onRefresh: refresh,
-                                    color:
-                                        Theme.of(context).colorScheme.secondary,
-                                    child: ListView.separated(
-                                      physics: BouncingScrollPhysics(),
-                                      separatorBuilder: (context, index) {
-                                        return Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 12.0),
-                                          child: Divider(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .secondary
-                                                .withOpacityValue(0.2),
-                                          ),
-                                        );
-                                      },
-                                      itemCount: eps.length + 1,
-                                      itemBuilder: (context, index) {
-                                        if (index == 0) {
-                                          return EpisodeDetailComponent(
-                                            subscription: subscription,
-                                            artworkUrl: artworkUrl,
-                                            podcastName: podcastName,
-                                          );
-                                        }
-                                        EpisodeData _episode = eps[index - 1];
-                                        return DetailedEpsiodeViewWidget(
-                                          episodeData: _episode,
-                                          podcast: subscription,
-                                          artworkUrl: artworkUrl,
-                                        );
-                                      },
+                            return RefreshIndicator(
+                              onRefresh: refresh,
+                              color: Theme.of(context).colorScheme.secondary,
+                              child: ListView.separated(
+                                physics: BouncingScrollPhysics(),
+                                separatorBuilder: (context, index) {
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 12.0),
+                                    child: Divider(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondary
+                                          .withOpacityValue(0.2),
                                     ),
                                   );
+                                },
+                                      // Keep the cover in the destination route
+                                      // from its first frame so the initial
+                                      // loading state has a stable layout.
+                                itemCount: eps.length + (isLoading ? 2 : 1),
+                                itemBuilder: (context, index) {
+                                  if (index == 0) {
+                                    return EpisodeDetailComponent(
+                                      subscription: subscription,
+                                      artworkUrl: artworkUrl,
+                                      podcastName: podcastName,
+                                    );
+                                  }
+                                  if (isLoading && index == 1) {
+                                    return SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.35,
+                                      child: Center(
+                                        child: PodboiLoader(),
+                                      ),
+                                    );
+                                  }
+                                  final episodeIndex =
+                                      index - (isLoading ? 2 : 1);
+                                  EpisodeData _episode = eps[episodeIndex];
+                                  return DetailedEpsiodeViewWidget(
+                                    episodeData: _episode,
+                                    podcast: subscription,
+                                    artworkUrl: artworkUrl,
+                                  );
+                                },
+                              ),
+                            );
                           },
                         ),
                       ),
@@ -433,6 +442,14 @@ class _EpisodeDetailComponentState extends State<EpisodeDetailComponent> {
                         width: 100.0,
                         height: 100.0,
                         fit: BoxFit.cover,
+                        memCacheWidth:
+                            (110.0 * MediaQuery.devicePixelRatioOf(context))
+                                .round(),
+                        memCacheHeight:
+                            (110.0 * MediaQuery.devicePixelRatioOf(context))
+                                .round(),
+                        fadeInDuration: Duration.zero,
+                        fadeOutDuration: Duration.zero,
                         errorWidget: (_, __, ___) => const Icon(Icons.podcasts),
                       ),
                     ),

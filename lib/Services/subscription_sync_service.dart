@@ -112,6 +112,7 @@ class SubscriptionSyncService {
     }
     final seen = <String>{};
     final episodes = <EpisodeData>[];
+    final sourceEpisodes = <podcast_search.Episode>[];
     for (final feedEpisode in podcast.episodes) {
       final guid = feedEpisode.guid.trim();
       if (guid.isEmpty || !seen.add(guid)) continue;
@@ -132,8 +133,9 @@ class SubscriptionSyncService {
         podcastName: podcast.title ?? targetSubscription.podcastName,
       );
       episodes.add(episode);
-      await _podcasting20.saveEpisode(feedEpisode, episode);
+      sourceEpisodes.add(feedEpisode);
     }
+    await _podcasting20.saveEpisodes(sourceEpisodes, episodes);
     await _podcasting20.savePodcast(podcast, podcastId);
     await _episodes.saveEpisodesForPodcast(episodes, podcastId);
     return (await _episodes.maybeGetEpisodesForPodcast(podcastId)) ?? const [];

@@ -24,7 +24,24 @@ class Podcasting20Repository {
   }
 
   Future<void> saveEpisode(ps.Episode source, EpisodeData episode) async {
-    await (await _box).put(keyFor(episode), {
+    await (await _box).put(keyFor(episode), _episodeMetadata(source));
+  }
+
+  /// Persist a feed in one Hive transaction rather than one transaction per
+  /// episode. Large feeds otherwise compete with the route transition for UI
+  /// isolate time.
+  Future<void> saveEpisodes(
+      List<ps.Episode> sources, List<EpisodeData> episodes) async {
+    assert(sources.length == episodes.length);
+    final entries = <dynamic, dynamic>{
+      for (var index = 0; index < episodes.length; index++)
+        keyFor(episodes[index]): _episodeMetadata(sources[index]),
+    };
+    if (entries.isNotEmpty) await (await _box).putAll(entries);
+  }
+
+  Map<String, dynamic> _episodeMetadata(ps.Episode source) {
+    return {
       'chaptersUrl': source.chapters?.url ?? '',
       'chaptersType': source.chapters?.type ?? '',
       'transcripts': source.transcripts
@@ -43,7 +60,7 @@ class Podcasting20Repository {
                 'sources': item.sources.map((source) => source.uri).toList(),
               })
           .toList(),
-    });
+    };
   }
 
   Future<Map<String, dynamic>> metadataFor(EpisodeData episode) async {

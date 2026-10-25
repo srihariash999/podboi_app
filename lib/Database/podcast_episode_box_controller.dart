@@ -33,16 +33,22 @@ class PodcastEpisodeBoxController {
       final updates = <dynamic, EpisodeData>{};
       for (var episode in episodes) {
         final existing = episodeBox.get(episode.guid);
-        updates[episode.guid] = existing == null
+        final merged = existing == null
             ? episode
             : episode.copyWith(
                 playedDuration: existing.playedDuration,
                 downloadPath: existing.downloadPath,
               );
+        // A sync normally finds the same feed data. Avoiding no-op puts also
+        // avoids box-watch events that unnecessarily rebuild the subscriptions
+        // grid behind the details page.
+        if (existing == null || !existing.hasSameContentAs(merged)) {
+          updates[episode.guid] = merged;
+        }
       }
-      await episodeBox.putAll(updates);
+      if (updates.isNotEmpty) await episodeBox.putAll(updates);
       print(
-          " upserted : ${episodes.length} episodes for podcast: $podcast_id to local cache");
+          " upserted : ${updates.length} episodes for podcast: $podcast_id to local cache");
       return true;
     } catch (e) {
       print(

@@ -102,6 +102,28 @@ class EpisodeData {
         clearDownloadPath: downloadPath == null,
       );
 
+  /// Whether two persisted rows contain the same data. This deliberately
+  /// includes listening and download state so callers can skip redundant Hive
+  /// writes without losing either local field.
+  bool hasSameContentAs(EpisodeData other) {
+    return id == other.id &&
+        guid == other.guid &&
+        title == other.title &&
+        description == other.description &&
+        link == other.link &&
+        publicationDate == other.publicationDate &&
+        contentUrl == other.contentUrl &&
+        imageUrl == other.imageUrl &&
+        author == other.author &&
+        season == other.season &&
+        episodeNumber == other.episodeNumber &&
+        duration == other.duration &&
+        podcastId == other.podcastId &&
+        podcastName == other.podcastName &&
+        playedDuration == other.playedDuration &&
+        downloadPath == other.downloadPath;
+  }
+
   Map<String, dynamic> toJson() {
     return {
       'id': id,

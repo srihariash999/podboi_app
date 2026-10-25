@@ -14,6 +14,7 @@ class PodcastDisplayWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cacheSize = (128.0 * MediaQuery.devicePixelRatioOf(context)).round();
     return Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(6.0),
@@ -21,8 +22,15 @@ class PodcastDisplayWidget extends StatelessWidget {
         clipBehavior: Clip.antiAlias,
         child: CachedNetworkImage(
           imageUrl: posterUrl,
-          fadeInDuration: Duration(seconds: 1),
-          fadeOutDuration: Duration(seconds: 1),
+          fit: BoxFit.cover,
+          memCacheWidth: cacheSize,
+          memCacheHeight: cacheSize,
+          maxWidthDiskCache: cacheSize,
+          maxHeightDiskCache: cacheSize,
+          // The grid is retained now, but disabling fades also prevents a
+          // cached image from looking like a network refresh after a rebuild.
+          fadeInDuration: Duration.zero,
+          fadeOutDuration: Duration.zero,
           errorWidget: (context, url, error) => Icon(Icons.error),
           placeholder: (context, url) => Center(
             child: Text(

@@ -136,6 +136,10 @@ class SubscriptionsPage extends StatelessWidget {
                                 itemBuilder: (context, index) {
                                   SubscriptionData _subscription =
                                       _viewController.subscriptionsList[index];
+                                  final artworkCacheSize = (120.0 *
+                                          MediaQuery.devicePixelRatioOf(
+                                              context))
+                                      .round();
                                   final unlistenedCount =
                                       _viewController.unlistenedCounts[
                                           _subscription.podcastId];
@@ -167,29 +171,32 @@ class SubscriptionsPage extends StatelessWidget {
                                             ),
                                           ),
                                         ),
-                                        Hero(
-                                          tag: 'logo${_subscription.podcastId}',
-                                          child: Container(
-                                            height: 120.0,
-                                            width: 120.0,
-                                            // margin: EdgeInsets.all(4.0),
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(12.0),
-                                            ),
-                                            clipBehavior: Clip.antiAlias,
-                                            child: CachedNetworkImage(
-                                              imageUrl:
-                                                  _subscription.artworkUrl,
-                                              fit: BoxFit.cover,
-                                              // Keep the podcast name beneath
-                                              // the image as the intentional
-                                              // fallback when artwork is absent.
-                                              placeholder: (_, __) =>
-                                                  const SizedBox.expand(),
-                                              errorWidget: (_, __, ___) =>
-                                                  const SizedBox.expand(),
-                                            ),
+                                        Container(
+                                          height: 120.0,
+                                          width: 120.0,
+                                          // margin: EdgeInsets.all(4.0),
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(12.0),
+                                          ),
+                                          clipBehavior: Clip.antiAlias,
+                                          child: CachedNetworkImage(
+                                            imageUrl: _subscription.artworkUrl,
+                                            fit: BoxFit.cover,
+                                            memCacheWidth: artworkCacheSize,
+                                            memCacheHeight: artworkCacheSize,
+                                            maxWidthDiskCache: artworkCacheSize,
+                                            maxHeightDiskCache:
+                                                artworkCacheSize,
+                                            fadeInDuration: Duration.zero,
+                                            fadeOutDuration: Duration.zero,
+                                            // Keep the podcast name beneath
+                                            // the image as the intentional
+                                            // fallback when artwork is absent.
+                                            placeholder: (_, __) =>
+                                                const SizedBox.expand(),
+                                            errorWidget: (_, __, ___) =>
+                                                const SizedBox.expand(),
                                           ),
                                         ),
                                         if ((unlistenedCount ?? 0) > 0)
