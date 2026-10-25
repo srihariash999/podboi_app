@@ -129,7 +129,7 @@ class SubscriptionsPage extends StatelessWidget {
                                   crossAxisSpacing: 4.0,
                                   mainAxisSpacing: 4.0,
                                   maxCrossAxisExtent: 130.0,
-                                  mainAxisExtent: 130.0,
+                                  childAspectRatio: 1.0,
                                 ),
                                 itemCount:
                                     _viewController.subscriptionsList.length,
@@ -155,48 +155,49 @@ class SubscriptionsPage extends StatelessWidget {
                                     },
                                     child: Stack(
                                       children: [
-                                        Container(
-                                          height: 120.0,
-                                          width: 120.0,
-                                          margin: EdgeInsets.all(4.0),
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(12.0),
-                                          ),
-                                          clipBehavior: Clip.antiAlias,
-                                          child: Center(
-                                            child: Text(
-                                              '${_subscription.podcastName}',
-                                              textAlign: TextAlign.center,
+                                        Positioned.fill(
+                                          child: Container(
+                                            margin: EdgeInsets.all(4.0),
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(12.0),
+                                            ),
+                                            clipBehavior: Clip.antiAlias,
+                                            child: Center(
+                                              child: Text(
+                                                '${_subscription.podcastName}',
+                                                textAlign: TextAlign.center,
+                                              ),
                                             ),
                                           ),
                                         ),
-                                        Container(
-                                          height: 120.0,
-                                          width: 120.0,
-                                          // margin: EdgeInsets.all(4.0),
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(12.0),
-                                          ),
-                                          clipBehavior: Clip.antiAlias,
-                                          child: CachedNetworkImage(
-                                            imageUrl: _subscription.artworkUrl,
-                                            fit: BoxFit.cover,
-                                            memCacheWidth: artworkCacheSize,
-                                            memCacheHeight: artworkCacheSize,
-                                            maxWidthDiskCache: artworkCacheSize,
-                                            maxHeightDiskCache:
-                                                artworkCacheSize,
-                                            fadeInDuration: Duration.zero,
-                                            fadeOutDuration: Duration.zero,
-                                            // Keep the podcast name beneath
-                                            // the image as the intentional
-                                            // fallback when artwork is absent.
-                                            placeholder: (_, __) =>
-                                                const SizedBox.expand(),
-                                            errorWidget: (_, __, ___) =>
-                                                const SizedBox.expand(),
+                                        Positioned.fill(
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(12.0),
+                                            ),
+                                            clipBehavior: Clip.antiAlias,
+                                            child: CachedNetworkImage(
+                                              imageUrl:
+                                                  _subscription.artworkUrl,
+                                              fit: BoxFit.cover,
+                                              memCacheWidth: artworkCacheSize,
+                                              memCacheHeight: artworkCacheSize,
+                                              maxWidthDiskCache:
+                                                  artworkCacheSize,
+                                              maxHeightDiskCache:
+                                                  artworkCacheSize,
+                                              fadeInDuration: Duration.zero,
+                                              fadeOutDuration: Duration.zero,
+                                              // Keep the podcast name beneath
+                                              // the image as the intentional
+                                              // fallback when artwork is absent.
+                                              placeholder: (_, __) =>
+                                                  const SizedBox.expand(),
+                                              errorWidget: (_, __, ___) =>
+                                                  const SizedBox.expand(),
+                                            ),
                                           ),
                                         ),
                                         if ((unlistenedCount ?? 0) > 0)

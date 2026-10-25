@@ -228,6 +228,7 @@ class _HomePageState extends State<HomePage> {
                       maxCrossAxisExtent: 128.0,
                       mainAxisSpacing: 10.0,
                       crossAxisSpacing: 10.0,
+                      childAspectRatio: 1.0,
                     ),
                     delegate: SliverChildBuilderDelegate(
                       ((context, index) {
