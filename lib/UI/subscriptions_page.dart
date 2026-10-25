@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,6 +9,7 @@ import 'package:podboi/DataModels/subscription_data.dart';
 import 'package:podboi/UI/podboi_loader.dart';
 import 'package:podboi/UI/podcast_page.dart';
 import 'package:podboi/UI/profile_page.dart';
+import 'package:podboi/Services/subscription_sync_service.dart';
 
 class SubscriptionsPage extends StatelessWidget {
   const SubscriptionsPage({Key? key}) : super(key: key);
@@ -97,6 +99,9 @@ class SubscriptionsPage extends StatelessWidget {
                   var _viewController =
                       ref.watch(subscriptionsPageViewController);
                   Future<void> refresh() async {
+                    // Pull-to-refresh explicitly bypasses the hourly automatic
+                    // sync guard, then reloads the reactive local projection.
+                    await SubscriptionSyncService().refreshNow();
                     ref
                         .read(subscriptionsPageViewController.notifier)
                         .loadSubscriptions();
@@ -131,6 +136,9 @@ class SubscriptionsPage extends StatelessWidget {
                                 itemBuilder: (context, index) {
                                   SubscriptionData _subscription =
                                       _viewController.subscriptionsList[index];
+                                  final unlistenedCount =
+                                      _viewController.unlistenedCounts[
+                                          _subscription.podcastId];
                                   return GestureDetector(
                                     onTap: () {
                                       Navigator.of(context).push(
@@ -170,12 +178,56 @@ class SubscriptionsPage extends StatelessWidget {
                                                   BorderRadius.circular(12.0),
                                             ),
                                             clipBehavior: Clip.antiAlias,
-                                            child: Image.network(
-                                              _subscription.artworkUrl,
+                                            child: CachedNetworkImage(
+                                              imageUrl:
+                                                  _subscription.artworkUrl,
                                               fit: BoxFit.cover,
+                                              // Keep the podcast name beneath
+                                              // the image as the intentional
+                                              // fallback when artwork is absent.
+                                              placeholder: (_, __) =>
+                                                  const SizedBox.expand(),
+                                              errorWidget: (_, __, ___) =>
+                                                  const SizedBox.expand(),
                                             ),
                                           ),
                                         ),
+                                        if ((unlistenedCount ?? 0) > 0)
+                                          Positioned(
+                                            top: 4,
+                                            right: 4,
+                                            child: Semantics(
+                                              label:
+                                                  '$unlistenedCount unlistened episodes',
+                                              child: Container(
+                                                constraints:
+                                                    const BoxConstraints(
+                                                        minWidth: 22),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 6,
+                                                        vertical: 3),
+                                                decoration: BoxDecoration(
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .secondary,
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
+                                                ),
+                                                child: Text(
+                                                  '$unlistenedCount',
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .primary,
+                                                    fontSize: 11,
+                                                    fontWeight: FontWeight.w700,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
                                       ],
                                     ),
                                   );

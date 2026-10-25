@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:podboi/DataModels/song.dart';
 import 'package:podboi/Helpers/helpers.dart';
@@ -75,11 +76,12 @@ class QueueItem extends StatelessWidget {
             // Album artwork
             ClipRRect(
               borderRadius: BorderRadius.circular(8.0),
-              child: Image.network(
-                song.icon,
+              child: CachedNetworkImage(
+                imageUrl: song.icon,
                 height: 64.0,
                 width: 64.0,
                 fit: BoxFit.cover,
+                errorWidget: (_, __, ___) => const Icon(Icons.podcasts),
               ),
             ),
 

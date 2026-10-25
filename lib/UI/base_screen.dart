@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:podboi/Controllers/audio_controller.dart';
 import 'package:podboi/Controllers/settings_controller.dart';
 import 'package:podboi/Helpers/helpers.dart';
-import 'package:podboi/UI/player/mini_player.dart';
 import 'package:podboi/UI/podboi_loader.dart';
 import 'package:podboi/UI/home_page.dart';
 import 'package:podboi/UI/subscriptions_page.dart';
+import 'package:podboi/Services/subscription_sync_service.dart';
+import 'package:podboi/UI/player/mini_player.dart';
 
 class BaseScreen extends StatefulWidget {
   const BaseScreen({Key? key}) : super(key: key);
@@ -15,9 +17,41 @@ class BaseScreen extends StatefulWidget {
   _BaseScreenState createState() => _BaseScreenState();
 }
 
-class _BaseScreenState extends State<BaseScreen> {
+class _BaseScreenState extends State<BaseScreen> with WidgetsBindingObserver {
   int _selectedPage = 0;
-  PageController _pageController = PageController();
+  final PageController _pageController = PageController();
+  final SubscriptionSyncService _subscriptionSync = SubscriptionSyncService();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    // Cached Hive content paints independently; this work is deliberately not
+    // awaited by the first frame.
+    _subscriptionSync.syncIfDue();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _subscriptionSync.syncIfDue();
+    }
+    if (state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.paused ||
+        state == AppLifecycleState.detached) {
+      ProviderScope.containerOf(context, listen: false)
+          .read(audioController.notifier)
+          .checkpoint();
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _pageController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -71,7 +105,7 @@ class _BaseScreenState extends State<BaseScreen> {
                     },
                   ),
                 ),
-                Align(
+                const Align(
                   alignment: Alignment.bottomCenter,
                   child: MiniPlayer(),
                 ),

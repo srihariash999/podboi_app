@@ -38,45 +38,57 @@ class _DownloadsPageState extends ConsumerState<DownloadsPage> {
       ),
       child: Scaffold(
         backgroundColor: Theme.of(context).colorScheme.primary,
-        body: SafeArea(
-          child: Column(
-            children: [
-              SimplePodboiAppBar(title: 'Downloads'),
-              const SizedBox(height: 24.0),
-              Expanded(
-                child: RefreshIndicator(
-                  color: Theme.of(context).colorScheme.secondary,
-                  onRefresh: () =>
-                      ref.read(downloadController.notifier).loadDownloads(),
-                  child: isLoading
-                      ? Center(
-                          child: CircularProgressIndicator(
-                            color: Theme.of(context).primaryColorLight,
-                          ),
-                        )
-                      : downloads.isEmpty
+        body: Stack(
+          children: [
+            SafeArea(
+              child: Column(
+                children: [
+                  SimplePodboiAppBar(title: 'Downloads'),
+                  const SizedBox(height: 24.0),
+                  Expanded(
+                    child: RefreshIndicator(
+                      color: Theme.of(context).colorScheme.secondary,
+                      onRefresh: () =>
+                          ref.read(downloadController.notifier).loadDownloads(),
+                      child: isLoading
                           ? Center(
-                              child: Text('No downloaded episodes yet.'),
+                              child: CircularProgressIndicator(
+                                color: Theme.of(context).primaryColorLight,
+                              ),
                             )
-                          : Consumer(
-                              builder: (context, ref, child) {
-                                return ListView.builder(
-                                  itemCount: downloads.length,
-                                  itemBuilder: (context, index) {
-                                    final download = downloads[index];
-                                    return DetailedEpsiodeViewWidget(
-                                      episodeData: download.episode,
-                                      podcast: download.subscriptionData,
+                          : downloads.isEmpty
+                              ? Center(
+                                  child: Text('No downloaded episodes yet.'),
+                                )
+                              : Consumer(
+                                  builder: (context, ref, child) {
+                                    return ListView.builder(
+                                      itemCount: downloads.length,
+                                      itemBuilder: (context, index) {
+                                        final download = downloads[index];
+                                        return DetailedEpsiodeViewWidget(
+                                          episodeData: download.episode,
+                                          podcast: download.subscriptionData,
+                                        );
+                                      },
                                     );
                                   },
-                                );
-                              },
-                            ),
-                ),
+                                ),
+                    ),
+                  ),
+                ],
               ),
-              Align(alignment: Alignment.bottomCenter, child: MiniPlayer()),
-            ],
-          ),
+            ),
+            const Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: SafeArea(
+                top: false,
+                child: MiniPlayer(),
+              ),
+            ),
+          ],
         ),
       ),
     );

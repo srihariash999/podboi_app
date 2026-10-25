@@ -23,20 +23,26 @@ class PodcastEpisodeBoxController {
     }
   }
 
-  // Save episodes for a podcast.
+  /// Upserts feed metadata without ever discarding local listening or download
+  /// state. A feed can temporarily omit old episodes, so replacing the box is
+  /// data loss rather than reconciliation.
   Future<bool> saveEpisodesForPodcast(
       List<EpisodeData> episodes, int podcast_id) async {
     try {
-      // Open the box
       final episodeBox = await getBox(podcast_id.toString());
-      // Clear the box
-      await episodeBox.clear();
-      // Add episodes to the box
+      final updates = <dynamic, EpisodeData>{};
       for (var episode in episodes) {
-        await episodeBox.put(episode.guid, episode);
+        final existing = episodeBox.get(episode.guid);
+        updates[episode.guid] = existing == null
+            ? episode
+            : episode.copyWith(
+                playedDuration: existing.playedDuration,
+                downloadPath: existing.downloadPath,
+              );
       }
+      await episodeBox.putAll(updates);
       print(
-          " saved : ${episodes.length} episodes for podcast: $podcast_id to local cache");
+          " upserted : ${episodes.length} episodes for podcast: $podcast_id to local cache");
       return true;
     } catch (e) {
       print(
@@ -55,7 +61,8 @@ class PodcastEpisodeBoxController {
       var episode = episodeBox.get(guid);
       if (episode != null) {
         // update played duration
-        episodeBox.put(guid, episode.copyWith(playedDuration: playedDuration));
+        await episodeBox.put(
+            guid, episode.copyWith(playedDuration: playedDuration));
         print(
             " stored played duration for episode with guid: $guid and pod id $podcast_id. Updated duration: $playedDuration");
         return true;
@@ -104,7 +111,7 @@ class PodcastEpisodeBoxController {
       var episode = episodeBox.get(guid);
       if (episode != null) {
         // update played duration
-        episodeBox.put(
+        await episodeBox.put(
             guid, episode.copyWith(playedDuration: episode.duration));
         print(
             " stored played duration for episode with guid: $guid and pod id $podcast_id. Updated duration: ${episode.duration}");
@@ -131,7 +138,8 @@ class PodcastEpisodeBoxController {
       var episode = episodeBox.get(guid);
       if (episode != null) {
         // update download path
-        episodeBox.put(guid, episode.updateDownloadPath(downloadPath: path));
+        await episodeBox.put(
+            guid, episode.updateDownloadPath(downloadPath: path));
         print(
             " stored download path for episode with guid: $guid and pod id $podcast_id. Download file path: $path");
         return true;
@@ -155,7 +163,8 @@ class PodcastEpisodeBoxController {
       var episode = episodeBox.get(guid);
       if (episode != null) {
         // update download path
-        episodeBox.put(guid, episode.updateDownloadPath(downloadPath: null));
+        await episodeBox.put(
+            guid, episode.updateDownloadPath(downloadPath: null));
         print(
             " removed download path for episode with guid: $guid and pod id $podcast_id.");
         return true;

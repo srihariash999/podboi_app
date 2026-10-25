@@ -1,12 +1,15 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:hive/hive.dart';
 import 'package:podboi/Controllers/download_controller.dart';
 import 'package:podboi/DataModels/episode_data.dart';
 import 'package:podboi/DataModels/subscription_data.dart';
 import 'package:podboi/Database/podcast_episode_box_controller.dart';
 import 'package:podboi/Database/subscription_box_controller.dart';
-import 'package:podcast_search/podcast_search.dart' as ps;
+import 'package:podboi/Services/subscription_sync_service.dart';
 
 final podcastPageViewController = StateNotifierProvider.autoDispose
     .family<PodcastPageViewNotifier, PodcastPageState, SubscriptionData>(
@@ -25,28 +28,67 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
 
   List<EpisodeData> _filteredEpisodes = [];
   List<EpisodeData> _episodes = [];
+  StreamSubscription<BoxEvent>? _episodeBoxSubscription;
 
   int realSubId = -1;
 
   PodcastPageViewNotifier(this.podcast) : super(PodcastPageState.initial()) {
     loadPodcastEpisodes(podcast.feedUrl, podcast.podcastId!, initial: true);
+    unawaited(_watchEpisodeUpdates());
 
     subscriptionBoxController.isPodcastSubbed(podcast).then((value) {
+      if (!mounted) return;
       state = state.copyWith(
         isSubscribed: value,
       );
     });
   }
 
+  Future<void> _watchEpisodeUpdates() async {
+    final savedSubscription = await subscriptionBoxController
+        .findSubscriptionByFeedUrl(podcast.feedUrl);
+    final podcastId = savedSubscription?.podcastId ?? podcast.podcastId;
+    if (podcastId == null) return;
+    final box = await podcastEpisodeBoxController.getBox(podcastId.toString());
+    _episodeBoxSubscription = box.watch().listen((event) {
+      final updatedEpisode = event.value;
+      if (updatedEpisode is! EpisodeData) return;
+      final index = _episodes.indexWhere(
+        (episode) => episode.guid == updatedEpisode.guid,
+      );
+      if (index < 0) return;
+
+      _episodes = [..._episodes]..[index] = updatedEpisode;
+      _filteredEpisodes = _filteredEpisodes
+          .map((episode) =>
+              episode.guid == updatedEpisode.guid ? updatedEpisode : episode)
+          .toList();
+      if (mounted) {
+        state = state.copyWith(podcastEpisodes: _filteredEpisodes);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _episodeBoxSubscription?.cancel();
+    super.dispose();
+  }
+
   Future<void> loadPodcastEpisodes(String feedUrl, int id,
       {bool initial = false}) async {
+    if (!mounted) return;
     if (initial) state = state.copyWith(isLoading: true);
 
     _episodes.clear();
     try {
+      final savedSubscription =
+          await subscriptionBoxController.findSubscriptionByFeedUrl(feedUrl);
+      final targetPodcastId = savedSubscription?.podcastId ?? id;
       // try and load stuff from local storage.
-      var storedEps =
-          await podcastEpisodeBoxController.maybeGetEpisodesForPodcast(id);
+      var storedEps = await podcastEpisodeBoxController
+          .maybeGetEpisodesForPodcast(targetPodcastId);
+      if (!mounted) return;
 
       // If local storage has episodes, show them.
       if (storedEps != null && storedEps.isNotEmpty) {
@@ -67,59 +109,25 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
         print(" nothing to load from local cache");
       }
 
-      // load from network.
-      ps.Podcast _podcast = await ps.Feed.loadFeed(url: feedUrl);
-
-      if (_podcast.episodes.length != _episodes.length) {
-        print(
-            " more episodes found in network than local  network len: ${_podcast.episodes.length} local len: ${_episodes.length} ");
-        // clear the episodes;
-        _episodes.clear();
-        _filteredEpisodes.clear();
-
-        Map<String, int> storedPlaybackValDict = {};
-        for (var i in storedEps ?? []) {
-          storedPlaybackValDict[i.guid] = i.playedDuration ?? 0;
-        }
-
-        for (var i in _podcast.episodes) {
-          _episodes.add(
-            EpisodeData(
-              id: 0,
-              guid: i.guid,
-              title: i.title,
-              description: i.description,
-              link: i.link,
-              publicationDate: i.publicationDate,
-              contentUrl: i.contentUrl,
-              imageUrl: i.imageUrl,
-              author: i.author,
-              season: i.season,
-              episodeNumber: i.episode,
-              duration: i.duration?.inSeconds,
-              podcastId: id,
-              podcastName: _podcast.title,
-              playedDuration: storedPlaybackValDict[i.guid] ?? 0,
-            ),
-          );
-        }
-
-        _filteredEpisodes = [..._episodes];
-
-        // store new episodes to local storage.
-        var toSave = [..._episodes];
-        toSave.sort((a, b) => (b.publicationDate ?? DateTime.now())
-            .compareTo((a.publicationDate ?? DateTime.now())));
-        await podcastEpisodeBoxController.saveEpisodesForPodcast(toSave, id);
-
-        state = state.copyWith(
-          podcastEpisodes: _filteredEpisodes,
-          description: _podcast.description,
-          isLoading: false,
-        );
-      }
-    } on ps.PodcastFailedException catch (e) {
-      print(" error in getting pod eps: ${e.toString()}");
+      // Refresh metadata even when the feed's item count is unchanged. The
+      // sync service upserts rather than clearing the cache, so progress and
+      // download paths are retained.
+      final syncedEpisodes =
+          await SubscriptionSyncService().syncPodcast(podcast);
+      if (!mounted) return;
+      syncedEpisodes.sort((a, b) => (b.publicationDate ?? DateTime(0))
+          .compareTo(a.publicationDate ?? DateTime(0)));
+      _episodes = syncedEpisodes;
+      _filteredEpisodes = [..._episodes];
+      state = state.copyWith(
+        podcastEpisodes: _filteredEpisodes,
+        description: savedSubscription?.podcastName ?? podcast.podcastName,
+        icon: savedSubscription?.artworkUrl,
+        isLoading: false,
+      );
+    } catch (e) {
+      print(" error in getting podcast episodes: $e");
+      if (!mounted) return;
       state = state.copyWith(
         podcastEpisodes: _filteredEpisodes,
         isLoading: false,
@@ -146,6 +154,7 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
     try {
       state = state.copyWith(isSubscribeButtonLoading: true);
       await subscriptionBoxController.saveSubscription(podcast, ref: ref);
+      if (!mounted) return;
       state =
           state.copyWith(isSubscribeButtonLoading: false, isSubscribed: true);
     } catch (e) {
@@ -160,6 +169,7 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
           textColor: Colors.white,
           fontSize: 16.0);
     } finally {
+      if (!mounted) return;
       state = state.copyWith(isSubscribeButtonLoading: false);
     }
   }
@@ -169,6 +179,7 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
     try {
       state = state.copyWith(isSubscribeButtonLoading: true);
       await subscriptionBoxController.removeSubscription(podcast, ref: ref);
+      if (!mounted) return;
       state =
           state.copyWith(isSubscribeButtonLoading: false, isSubscribed: false);
     } catch (e) {
@@ -182,6 +193,7 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
           textColor: Colors.white,
           fontSize: 16.0);
     } finally {
+      if (!mounted) return;
       state = state.copyWith(isSubscribeButtonLoading: false);
     }
   }
@@ -218,6 +230,7 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
         episode.guid,
         episode.podcastId,
       );
+      if (!mounted) return;
 
       var pods = [..._episodes];
 
@@ -238,6 +251,7 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
     } catch (e) {
       debugPrint(" cannot mark episode as played  : $e");
     } finally {
+      if (!mounted) return;
       state = state.copyWith(
         isLoading: false,
       );
@@ -249,6 +263,7 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
       final path = await ref
           .read(downloadController.notifier)
           .downloadEpisode(episode, podcast);
+      if (!mounted) return;
       if (path != null) {
         podcastEpisodeBoxController.storeDownloadPath(
           episode.guid,
@@ -302,11 +317,13 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
       EpisodeData episode, WidgetRef ref) async {
     try {
       await ref.read(downloadController.notifier).deleteEpisode(episode.guid);
+      if (!mounted) return;
 
       await podcastEpisodeBoxController.removeDownloadPath(
         episode.guid,
         episode.podcastId,
       );
+      if (!mounted) return;
 
       var pods = [..._episodes];
       for (var i = 0; i < pods.length; i++) {
@@ -326,6 +343,7 @@ class PodcastPageViewNotifier extends StateNotifier<PodcastPageState> {
     } catch (e) {
       debugPrint(" cannot delete downloaded episode  : $e");
     } finally {
+      if (!mounted) return;
       state = state.copyWith(
         isLoading: false,
       );

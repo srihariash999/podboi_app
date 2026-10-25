@@ -36,6 +36,7 @@ void main() async {
   await Hive.openBox<SubscriptionData>(K.boxes.subscriptionBox);
   await Hive.openBox<ListeningHistoryData>(K.boxes.listeningHistoryBox);
   await Hive.openBox<DownloadedEpisode>(K.boxes.downloadsBox);
+  await Hive.openBox<dynamic>(K.boxes.podcasting20Box);
 
   final session = await AudioSession.instance;
   await session.configure(const AudioSessionConfiguration.speech());
@@ -91,7 +92,7 @@ class _MyAppState extends State<MyApp> {
 
       return MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'Flutter Demo',
+        title: 'podBoi',
         // Setting theme setting to current selected theme
         theme: _currTheme,
         // home: LoginScreen(),

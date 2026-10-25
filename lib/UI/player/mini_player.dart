@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:podboi/Controllers/audio_controller.dart';
+import 'package:podboi/DataModels/position_data.dart';
 import 'package:podboi/DataModels/song.dart';
 import 'package:podboi/Helpers/helpers.dart';
 import 'package:podboi/UI/player/large_player.dart';
@@ -15,15 +16,20 @@ class MiniPlayer extends StatefulWidget {
 }
 
 class _MiniPlayerState extends State<MiniPlayer> {
-  PageController pageController = PageController();
+  late final PageController _pageController;
 
   bool isLargePlayerOpen = false;
-
-  bool throttle = false;
 
   @override
   void initState() {
     super.initState();
+    _pageController = PageController();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 
   @override
@@ -60,15 +66,23 @@ class _MiniPlayerState extends State<MiniPlayer> {
   /// Method to call when the user wants the small player UI to expand.
   /// This method opens a Bottom Sheet which fills the entire screen.
   Future<void> showLargePlayer() async {
+    if (isLargePlayerOpen || !mounted) return;
     isLargePlayerOpen = true;
-    await showModalBottomSheet(
-      isScrollControlled: true,
-      context: context,
-      builder: (context) {
-        return LargePlayer(pageController: pageController);
-      },
-    );
-    isLargePlayerOpen = false;
+    try {
+      // Keep the sheet in the current navigator. Using the root navigator
+      // bypasses route-local inherited state on detail screens and was the
+      // reason this control stopped opening reliably.
+      await showModalBottomSheet<void>(
+        context: context,
+        isScrollControlled: true,
+        enableDrag: true,
+        backgroundColor: Colors.transparent,
+        barrierColor: Colors.black54,
+        builder: (_) => LargePlayer(pageController: _pageController),
+      );
+    } finally {
+      isLargePlayerOpen = false;
+    }
   }
 
   /// SmallPlayer Widget. Height is restricted to `_smallPlayerHeight`
@@ -93,96 +107,149 @@ class _MiniPlayerState extends State<MiniPlayer> {
     }
 
     return Material(
-      color: Theme.of(context).highlightColor.withOpacityValue(0.1),
+      color: Colors.transparent,
       child: Container(
-        constraints: BoxConstraints(
-          maxHeight: MediaQuery.of(context).size.height * 0.08,
-        ),
+        height: 64.0,
         clipBehavior: Clip.antiAlias,
-        decoration: BoxDecoration(),
-        padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 4.0),
-        child: GestureDetector(
-          onTap: () {
-            // if (_contState is! LoadedAudioState) return;
-            showLargePlayer();
-          },
-          child: Card(
-            elevation: 0.0,
-            color: Colors.transparent,
-            child: Row(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(4.0),
-                  child: CachedNetworkImage(
-                    imageUrl: song.icon,
-                    height: 52.0,
-                    width: 52.0,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                const SizedBox(width: 8.0),
-
-                // Episode and Podcast details
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
+        decoration: BoxDecoration(
+          // This is deliberately an opaque surface. A translucent mini player
+          // becomes unreadable over episode art and scrolling content.
+          color: Theme.of(context).colorScheme.primary,
+          border: Border(
+            top: BorderSide(
+              color: Theme.of(context)
+                  .colorScheme
+                  .secondary
+                  .withOpacityValue(0.16),
+            ),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacityValue(0.18),
+              blurRadius: 12.0,
+              offset: const Offset(0, -3),
+            ),
+          ],
+        ),
+        child: Stack(
+          children: [
+            Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 4.0, vertical: 4.0),
+              child: GestureDetector(
+                onTap: showLargePlayer,
+                onVerticalDragEnd: (details) {
+                  if ((details.primaryVelocity ?? 0) < -120) {
+                    showLargePlayer();
+                  }
+                },
+                child: Card(
+                  elevation: 0.0,
+                  color: Colors.transparent,
+                  child: Row(
                     children: [
-                      Text(
-                        song.name,
-                        style: TextStyle(
-                          fontSize: 15.0,
-                          color: Theme.of(context).colorScheme.secondary,
-                          fontFamily: 'Segoe',
-                          fontWeight: FontWeight.w400,
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(4.0),
+                        child: CachedNetworkImage(
+                          imageUrl: song.icon,
+                          height: 52.0,
+                          width: 52.0,
+                          fit: BoxFit.cover,
                         ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
                       ),
-                      Text(
-                        song.album,
-                        style: TextStyle(
-                          fontSize: 14.0,
-                          color: Theme.of(context)
-                              .colorScheme
-                              .secondary
-                              .withOpacityValue(0.8),
-                          fontFamily: 'Segoe',
-                          fontWeight: FontWeight.w400,
+                      const SizedBox(width: 8.0),
+
+                      // Episode and Podcast details
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              song.name,
+                              style: TextStyle(
+                                fontSize: 15.0,
+                                color: Theme.of(context).colorScheme.secondary,
+                                fontFamily: 'Segoe',
+                                fontWeight: FontWeight.w400,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            Text(
+                              song.album,
+                              style: TextStyle(
+                                fontSize: 14.0,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .secondary
+                                    .withOpacityValue(0.8),
+                                fontFamily: 'Segoe',
+                                fontWeight: FontWeight.w400,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
                         ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
                       ),
+
+                      const SizedBox(width: 16.0),
+                      // Loader to indicate episode loading
+                      if (_contState is LoadingAudioState)
+                        MiniplayerLoadingIndicator(),
+
+                      if (_contState is LoadedAudioState && !isError)
+                        MiniplayerActionButtons(
+                          state: _contState,
+                          ref: ref,
+                        ),
+
+                      // Retry button.
+                      if (isError)
+                        IconButton(
+                          icon: const Icon(Icons.refresh),
+                          iconSize: 34.0,
+                          onPressed: () {
+                            ref
+                                .read(audioController.notifier)
+                                .requestPlayingSong(song);
+                          },
+                        ),
+                      const SizedBox(width: 8.0),
                     ],
                   ),
                 ),
-
-                const SizedBox(width: 16.0),
-                // Loader to indicate episode loading
-                if (_contState is LoadingAudioState)
-                  MiniplayerLoadingIndicator(),
-
-                if (_contState is LoadedAudioState && !isError)
-                  MiniplayerActionButtons(
-                    state: _contState,
-                    ref: ref,
-                  ),
-
-                // Retry button.
-                if (isError)
-                  IconButton(
-                    icon: const Icon(Icons.refresh),
-                    iconSize: 34.0,
-                    onPressed: () {
-                      ref
-                          .read(audioController.notifier)
-                          .requestPlayingSong(song);
-                    },
-                  ),
-                const SizedBox(width: 8.0),
-              ],
+              ),
             ),
-          ),
+            if (_contState is LoadedAudioState)
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: StreamBuilder<PositionData>(
+                  stream: _contState.positionStream,
+                  builder: (context, snapshot) {
+                    final data = snapshot.data;
+                    final duration =
+                        data?.duration ?? _contState.episodeDuration;
+                    final progress = duration.inMilliseconds == 0
+                        ? 0.0
+                        : (data?.position.inMilliseconds ?? 0) /
+                            duration.inMilliseconds;
+                    return LinearProgressIndicator(
+                      value: progress.clamp(0.0, 1.0),
+                      minHeight: 2,
+                      color: Theme.of(context).colorScheme.secondary,
+                      backgroundColor: Theme.of(context)
+                          .colorScheme
+                          .secondary
+                          .withOpacityValue(0.18),
+                    );
+                  },
+                ),
+              ),
+          ],
         ),
       ),
     );
@@ -198,37 +265,32 @@ class MiniplayerActionButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-      stream: state.processingStateStream,
+    return StreamBuilder<PlayerState>(
+      stream: state.player.playerStateStream,
+      initialData: state.player.playerState,
       builder: (context, snapshot) {
-        return Row(
-          children: [
-            if (snapshot.data == ProcessingState.loading ||
-                snapshot.data == ProcessingState.buffering)
-              MiniplayerLoadingIndicator(),
-            if (snapshot.data == ProcessingState.ready)
-              StreamBuilder<PlayerState>(
-                stream: state.player.playerStateStream,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    final playing = snapshot.data!.playing;
-                    if (playing != true) {
-                      return IconButton(
-                        icon: const Icon(Icons.play_arrow),
-                        iconSize: 34.0,
-                        onPressed: ref.read(audioController.notifier).play,
-                      );
-                    }
-                    return IconButton(
-                      icon: const Icon(Icons.pause),
-                      iconSize: 34.0,
-                      onPressed: ref.read(audioController.notifier).pause,
-                    );
-                  }
-                  return MiniplayerLoadingIndicator();
-                },
-              ),
-          ],
+        final playerState = snapshot.data;
+        if (playerState == null) return const MiniplayerLoadingIndicator();
+        // Buffering while playing must still expose Pause. Hiding the control
+        // behind a spinner made active playback look stuck.
+        if (playerState.playing) {
+          return IconButton(
+            icon: const Icon(Icons.pause),
+            iconSize: 34.0,
+            onPressed: ref.read(audioController.notifier).pause,
+          );
+        }
+        if (playerState.processingState == ProcessingState.loading) {
+          return const MiniplayerLoadingIndicator();
+        }
+        return IconButton(
+          icon: Icon(
+            playerState.processingState == ProcessingState.completed
+                ? Icons.replay
+                : Icons.play_arrow,
+          ),
+          iconSize: 34.0,
+          onPressed: ref.read(audioController.notifier).play,
         );
       },
     );

@@ -129,4 +129,27 @@ class SettingsBoxController {
     final box = await getBox();
     return box.get(K.settingsKeys.autoDeleteKey) ?? true;
   }
+
+  Future<DateTime?> getSubscriptionSyncAttempt() =>
+      _getDateTime(K.settingsKeys.subscriptionSyncAttemptKey);
+
+  Future<DateTime?> getLastSuccessfulSubscriptionSync() =>
+      _getDateTime(K.settingsKeys.subscriptionSyncSuccessKey);
+
+  Future<void> saveSubscriptionSyncAttempt(DateTime value) =>
+      _saveDateTime(K.settingsKeys.subscriptionSyncAttemptKey, value);
+
+  Future<void> saveSuccessfulSubscriptionSync(DateTime value) =>
+      _saveDateTime(K.settingsKeys.subscriptionSyncSuccessKey, value);
+
+  Future<DateTime?> _getDateTime(String key) async {
+    final value = (await getBox()).get(key);
+    if (value is DateTime) return value;
+    if (value is String) return DateTime.tryParse(value);
+    return null;
+  }
+
+  Future<void> _saveDateTime(String key, DateTime value) async {
+    await (await getBox()).put(key, value.toUtc().toIso8601String());
+  }
 }

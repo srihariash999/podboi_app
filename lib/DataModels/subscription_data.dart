@@ -55,6 +55,28 @@ class SubscriptionData {
     this.contentAdvisory,
   });
 
+  SubscriptionData copyWith({
+    String? podcastName,
+    String? artworkUrl,
+    int? trackCount,
+    DateTime? lastEpisodeDate,
+  }) {
+    return SubscriptionData(
+      id: id,
+      podcastName: podcastName ?? this.podcastName,
+      podcastId: podcastId,
+      feedUrl: feedUrl,
+      artworkUrl: artworkUrl ?? this.artworkUrl,
+      dateAdded: dateAdded,
+      lastEpisodeDate: lastEpisodeDate ?? this.lastEpisodeDate,
+      trackCount: trackCount ?? this.trackCount,
+      releaseDate: releaseDate,
+      country: country,
+      genre: genre,
+      contentAdvisory: contentAdvisory,
+    );
+  }
+
   Map<String, dynamic> toJson() {
     return {
       'id': id,

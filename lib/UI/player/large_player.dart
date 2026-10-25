@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
@@ -8,6 +9,7 @@ import 'package:podboi/DataModels/song.dart';
 import 'package:podboi/Helpers/helpers.dart';
 import 'package:podboi/Shared/audio_player_resources.dart';
 import 'package:podboi/UI/player/queue_item.dart';
+import 'package:podboi/UI/player/podcasting2_0_sheet.dart';
 
 class LargePlayer extends StatefulWidget {
   const LargePlayer({super.key, required this.pageController});
@@ -24,289 +26,306 @@ class _LargePlayerState extends State<LargePlayer> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.92,
-      child: Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primary.withOpacityValue(0.7),
-          // color: Colors.red,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(16.0),
-            topRight: Radius.circular(16.0),
+      height: MediaQuery.sizeOf(context).height * .94,
+      child: SafeArea(
+        top: false,
+        child: Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.primary,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(22)),
           ),
-        ),
-        padding: const EdgeInsets.only(top: 12.0),
-        child: Consumer(
-          builder: (context, ref, child) {
-            var state = ref.watch(audioController);
+          padding: const EdgeInsets.only(top: 12.0),
+          child: Consumer(
+            builder: (context, ref, child) {
+              var state = ref.watch(audioController);
 
-            List<Song> playlist = ref.watch(audioController).playlist;
+              List<Song> playlist = ref.watch(audioController).playlist;
 
-            if (state is ErrorAudioState) {
-              return Column(
-                children: [
-                  LargePlayerAlbumArtWidget(
-                    song: (ref.read(audioController.notifier).getCurrentPlayingSong)!,
+              if (state is ErrorAudioState) {
+                return Column(
+                  children: [
+                    LargePlayerAlbumArtWidget(
+                      song: (ref
+                          .read(audioController.notifier)
+                          .getCurrentPlayingSong)!,
+                    ),
+                    SizedBox(height: 12.0),
+                    IconButton(
+                      icon: const Icon(Icons.refresh),
+                      iconSize: 64.0,
+                      onPressed: () {
+                        ref.read(audioController.notifier).requestPlayingSong(
+                              (ref
+                                  .read(audioController.notifier)
+                                  .getCurrentPlayingSong)!,
+                            );
+                      },
+                    ),
+                  ],
+                );
+              }
+
+              if (state is! LoadedAudioState && state is! LoadingAudioState) {
+                return Container(
+                  decoration: BoxDecoration(
+                    color:
+                        Theme.of(context).highlightColor.withOpacityValue(0.1),
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(16.0),
+                      topRight: Radius.circular(16.0),
+                    ),
                   ),
-                  SizedBox(height: 12.0),
-                  IconButton(
-                    icon: const Icon(Icons.refresh),
-                    iconSize: 64.0,
-                    onPressed: () {
-                      ref.read(audioController.notifier).requestPlayingSong(
-                            (ref.read(audioController.notifier).getCurrentPlayingSong)!,
-                          );
-                    },
+                  padding: const EdgeInsets.only(top: 12.0),
+                  alignment: Alignment.center,
+                  child: CircularProgressIndicator(
+                    color: Theme.of(context).colorScheme.secondary,
+                    strokeWidth: 2.0,
                   ),
-                ],
-              );
-            }
+                );
+              }
+              late Song song;
+              AudioPlayer? player;
 
-            if (state is! LoadedAudioState && state is! LoadingAudioState) {
-              return Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).highlightColor.withOpacityValue(0.1),
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(16.0),
-                    topRight: Radius.circular(16.0),
-                  ),
-                ),
-                padding: const EdgeInsets.only(top: 12.0),
-                alignment: Alignment.center,
-                child: CircularProgressIndicator(
-                  color: Theme.of(context).colorScheme.secondary,
-                  strokeWidth: 2.0,
-                ),
-              );
-            }
-            late Song song;
-            AudioPlayer? player;
+              if (state is LoadedAudioState) {
+                song = state.currentPlaying;
+                player = state.player;
+              }
 
-            if (state is LoadedAudioState) {
-              song = state.currentPlaying;
-              player = state.player;
-            }
+              if (state is LoadingAudioState) {
+                song = state.song;
+              }
 
-            if (state is LoadingAudioState) {
-              song = state.song;
-            }
-
-            return Padding(
-              padding: const EdgeInsets.only(top: 16.0),
-              child: Column(
-                children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: AnimatedSlide(
-                      offset: Offset(currentPage == 0 ? 0.08 : 0.88, 0),
-                      duration: Duration(milliseconds: 150),
-                      child: Container(
-                        height: 4.0,
-                        width: MediaQuery.of(context).size.width * 0.5,
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.secondary,
-                          borderRadius: BorderRadius.circular(24.0),
+              return Padding(
+                padding: const EdgeInsets.only(top: 16.0),
+                child: Column(
+                  children: [
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: AnimatedSlide(
+                        offset: Offset(currentPage == 0 ? 0.08 : 0.88, 0),
+                        duration: Duration(milliseconds: 150),
+                        child: Container(
+                          height: 4.0,
+                          width: MediaQuery.of(context).size.width * 0.5,
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.secondary,
+                            borderRadius: BorderRadius.circular(24.0),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 16.0),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0,
-                    ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        if (currentPage == 0)
-                          Text(
-                            "Current Playing",
-                            style: TextStyle(
-                              fontSize: 22.0,
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .secondary
-                                  .withOpacityValue(0.8),
-                              fontFamily: 'Segoe',
-                              fontWeight: FontWeight.w700,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        InkWell(
-                          onTap: () {
-                            if (currentPage == 0) {
-                              widget.pageController.nextPage(
-                                duration: Duration(milliseconds: 150),
-                                curve: Curves.easeInOut,
-                              );
-                            } else {
-                              widget.pageController.previousPage(
-                                duration: Duration(milliseconds: 150),
-                                curve: Curves.easeInOut,
-                              );
-                            }
-                          },
-                          child: Icon(
-                            currentPage == 0
-                                ? Icons.arrow_forward
-                                : Icons.arrow_back,
-                            size: 28.0,
-                          ),
-                        ),
-                        if (currentPage == 1)
-                          Text(
-                            "Queue ${playlist.isEmpty ? "" : "(${playlist.length})"}",
-                            style: TextStyle(
-                              fontSize: 22.0,
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .secondary
-                                  .withOpacityValue(0.8),
-                              fontFamily: 'Segoe',
-                              fontWeight: FontWeight.w700,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 24.0),
-                  Expanded(
-                    child: PageView.builder(
-                      controller: widget.pageController,
-                      itemCount: 2,
-                      onPageChanged: (v) {
-                        setState(() {
-                          currentPage = v;
-                        });
-                      },
-                      itemBuilder: (context, index) {
-                        if (index == 0) {
-                          return Column(
-                            children: [
-                              // Album Art and title
-                              LargePlayerAlbumArtWidget(song: song),
-
-                              SizedBox(height: 12.0),
-
-                              // Play/Pause, Rewind, Fast Forward buttons
-                              ControlButtons(
-                                player,
-                                ref: ref,
-                                goToQueueAction: () {
-                                  widget.pageController.nextPage(
-                                    duration: Duration(milliseconds: 150),
-                                    curve: Curves.easeInOut,
-                                  );
-                                },
+                    const SizedBox(height: 16.0),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0,
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          if (currentPage == 0)
+                            Text(
+                              "Current Playing",
+                              style: TextStyle(
+                                fontSize: 22.0,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .secondary
+                                    .withOpacityValue(0.8),
+                                fontFamily: 'Segoe',
+                                fontWeight: FontWeight.w700,
                               ),
+                              textAlign: TextAlign.center,
+                            ),
+                          if (currentPage == 0)
+                            IconButton(
+                              tooltip: 'Chapters and transcript',
+                              onPressed: () => Podcasting20Sheet.show(
+                                context,
+                                song,
+                                (position) => ref
+                                    .read(audioController.notifier)
+                                    .seek(position),
+                              ),
+                              icon: const Icon(Icons.format_list_bulleted),
+                            ),
+                          InkWell(
+                            onTap: () {
+                              if (currentPage == 0) {
+                                widget.pageController.nextPage(
+                                  duration: Duration(milliseconds: 150),
+                                  curve: Curves.easeInOut,
+                                );
+                              } else {
+                                widget.pageController.previousPage(
+                                  duration: Duration(milliseconds: 150),
+                                  curve: Curves.easeInOut,
+                                );
+                              }
+                            },
+                            child: Icon(
+                              currentPage == 0
+                                  ? Icons.arrow_forward
+                                  : Icons.arrow_back,
+                              size: 28.0,
+                            ),
+                          ),
+                          if (currentPage == 1)
+                            Text(
+                              "Queue ${playlist.isEmpty ? "" : "(${playlist.length})"}",
+                              style: TextStyle(
+                                fontSize: 22.0,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .secondary
+                                    .withOpacityValue(0.8),
+                                fontFamily: 'Segoe',
+                                fontWeight: FontWeight.w700,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 24.0),
+                    Expanded(
+                      child: PageView.builder(
+                        controller: widget.pageController,
+                        itemCount: 2,
+                        onPageChanged: (v) {
+                          setState(() {
+                            currentPage = v;
+                          });
+                        },
+                        itemBuilder: (context, index) {
+                          if (index == 0) {
+                            return Column(
+                              children: [
+                                // Album Art and title
+                                LargePlayerAlbumArtWidget(song: song),
 
-                              // Seekbar
-                              if (state is LoadedAudioState)
-                                StreamBuilder<PositionData>(
-                                  stream: (state).positionStream,
-                                  builder: (context, snapshot) {
-                                    final positionData = snapshot.data;
-                                    return SeekBar(
-                                      duration: positionData?.duration ??
-                                          state.player.duration ??
-                                          state.episodeDuration,
-                                      position: positionData?.position ??
-                                          state.player.position,
-                                      bufferedPosition:
-                                          positionData?.bufferedPosition ??
-                                              state.player.position,
-                                      onChangeEnd: (newPosition) {
-                                        ref
-                                            .read(audioController.notifier)
-                                            .seek(newPosition);
-                                      },
+                                SizedBox(height: 12.0),
+
+                                // Play/Pause, Rewind, Fast Forward buttons
+                                ControlButtons(
+                                  player,
+                                  ref: ref,
+                                  goToQueueAction: () {
+                                    widget.pageController.nextPage(
+                                      duration: Duration(milliseconds: 150),
+                                      curve: Curves.easeInOut,
                                     );
                                   },
                                 ),
 
-                              SizedBox(height: 18.0)
-                            ],
-                          );
-                        }
+                                // Seekbar
+                                if (state is LoadedAudioState)
+                                  StreamBuilder<PositionData>(
+                                    stream: (state).positionStream,
+                                    builder: (context, snapshot) {
+                                      final positionData = snapshot.data;
+                                      return SeekBar(
+                                        duration: positionData?.duration ??
+                                            state.player.duration ??
+                                            state.episodeDuration,
+                                        position: positionData?.position ??
+                                            state.player.position,
+                                        bufferedPosition:
+                                            positionData?.bufferedPosition ??
+                                                state.player.position,
+                                        onChangeEnd: (newPosition) {
+                                          ref
+                                              .read(audioController.notifier)
+                                              .seek(newPosition);
+                                        },
+                                      );
+                                    },
+                                  ),
 
-                        return Column(
-                          children: [
-                            // Empty Queue Tile
-                            if (playlist.isEmpty)
-                              QueueItem(
-                                index: -1,
-                                isEmptyState: true,
-                                showDragHandle: playlist.length >= 2,
-                                onTap: (int index) {},
-                                song: Song.dummy(),
-                              ),
-                            Expanded(
-                              child: CustomScrollView(
-                                slivers: [
-                                  // Playlist / Queue
-                                  if (playlist.isNotEmpty)
-                                    SliverReorderableList(
-                                      itemCount: playlist.length,
-                                      onReorder: (x, y) {
-                                        ref
-                                            .read(audioController.notifier)
-                                            .reorderQueue(x, y);
-                                      },
-                                      itemBuilder: (context, i) {
-                                        return Dismissible(
-                                          key: ValueKey(playlist[i].url),
-                                          background: Container(
-                                            color: Colors.redAccent,
-                                            alignment: Alignment.centerRight,
-                                            child: const Padding(
-                                              padding:
-                                                  EdgeInsets.only(right: 8.0),
-                                              child: Icon(Icons.delete,
-                                                  color: Colors.white),
+                                SizedBox(height: 18.0)
+                              ],
+                            );
+                          }
+
+                          return Column(
+                            children: [
+                              // Empty Queue Tile
+                              if (playlist.isEmpty)
+                                QueueItem(
+                                  index: -1,
+                                  isEmptyState: true,
+                                  showDragHandle: playlist.length >= 2,
+                                  onTap: (int index) {},
+                                  song: Song.dummy(),
+                                ),
+                              Expanded(
+                                child: CustomScrollView(
+                                  slivers: [
+                                    // Playlist / Queue
+                                    if (playlist.isNotEmpty)
+                                      SliverReorderableList(
+                                        itemCount: playlist.length,
+                                        onReorder: (x, y) {
+                                          ref
+                                              .read(audioController.notifier)
+                                              .reorderQueue(x, y);
+                                        },
+                                        itemBuilder: (context, i) {
+                                          return Dismissible(
+                                            key: ValueKey(playlist[i].url),
+                                            background: Container(
+                                              color: Colors.redAccent,
+                                              alignment: Alignment.centerRight,
+                                              child: const Padding(
+                                                padding:
+                                                    EdgeInsets.only(right: 8.0),
+                                                child: Icon(Icons.delete,
+                                                    color: Colors.white),
+                                              ),
                                             ),
-                                          ),
-                                          onDismissed: (dismissDirection) {
-                                            ref
-                                                .read(audioController.notifier)
-                                                .removeFromQueue(i);
-                                          },
-                                          child: QueueItem(
-                                            index: i,
-                                            song: playlist[i],
-                                            showDragHandle:
-                                                playlist.length >= 2,
-                                            onTap: (int s) {
+                                            onDismissed: (dismissDirection) {
                                               ref
                                                   .read(
                                                       audioController.notifier)
-                                                  .skipToSpecificIndex(s);
+                                                  .removeFromQueue(i);
                                             },
-                                          ),
-                                        );
-                                      },
-                                    ),
+                                            child: QueueItem(
+                                              index: i,
+                                              song: playlist[i],
+                                              showDragHandle:
+                                                  playlist.length >= 2,
+                                              onTap: (int s) {
+                                                ref
+                                                    .read(audioController
+                                                        .notifier)
+                                                    .skipToSpecificIndex(s);
+                                              },
+                                            ),
+                                          );
+                                        },
+                                      ),
 
-                                  // Bottom Spacing
-                                  SliverToBoxAdapter(
-                                    child: SizedBox(
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              0.03,
-                                    ),
-                                  )
-                                ],
+                                    // Bottom Spacing
+                                    SliverToBoxAdapter(
+                                      child: SizedBox(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.03,
+                                      ),
+                                    )
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
-                        );
-                      },
+                            ],
+                          );
+                        },
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            );
-          },
+                  ],
+                ),
+              );
+            },
+          ),
         ),
       ),
     );
@@ -337,7 +356,12 @@ class ControlButtons extends StatelessWidget {
                 size: 48.0,
               ),
               onPressed: (snapshot.data?.playing ?? false)
-                  ? ref.read(audioController.notifier).stop
+                  ? () async {
+                      await ref.read(audioController.notifier).stop();
+                      if (context.mounted) {
+                        Navigator.of(context).pop();
+                      }
+                    }
                   : null,
             ),
           ),
@@ -345,8 +369,10 @@ class ControlButtons extends StatelessWidget {
           // Rewind button
           Consumer(
             builder: (context, ref, child) {
-              final rewindSec = ref.watch(settingsController.select((s) => s.rewindDuration));
-              final rewindIcon = rewindSec == 10 ? Icons.replay_10 : Icons.replay_30;
+              final rewindSec =
+                  ref.watch(settingsController.select((s) => s.rewindDuration));
+              final rewindIcon =
+                  rewindSec == 10 ? Icons.replay_10 : Icons.replay_30;
               return StreamBuilder<PlayerState?>(
                 stream: player?.playerStateStream,
                 builder: (context, snapshot) => IconButton(
@@ -365,13 +391,14 @@ class ControlButtons extends StatelessWidget {
           // Play/Pause Button
           StreamBuilder<PlayerState>(
             stream: player?.playerStateStream,
+            initialData: player?.playerState,
             builder: (context, snapshot) {
               final playerState = snapshot.data;
               final processingState =
                   playerState?.processingState ?? ProcessingState.loading;
               final playing = playerState?.playing ?? false;
-              if (processingState == ProcessingState.loading ||
-                  processingState == ProcessingState.buffering) {
+              if (!snapshot.hasData ||
+                  (processingState == ProcessingState.loading && !playing)) {
                 return Container(
                   margin: const EdgeInsets.all(8.0),
                   width: 64.0,
@@ -408,8 +435,10 @@ class ControlButtons extends StatelessWidget {
           // Fast forward button
           Consumer(
             builder: (context, ref, child) {
-              final forwardSec = ref.watch(settingsController.select((s) => s.forwardDuration));
-              final forwardIcon = forwardSec == 10 ? Icons.forward_10 : Icons.forward_30;
+              final forwardSec = ref
+                  .watch(settingsController.select((s) => s.forwardDuration));
+              final forwardIcon =
+                  forwardSec == 10 ? Icons.forward_10 : Icons.forward_30;
               return StreamBuilder<PlayerState>(
                 stream: player?.playerStateStream,
                 builder: (context, snapshot) => IconButton(
@@ -459,10 +488,14 @@ class LargePlayerAlbumArtWidget extends StatelessWidget {
           child: Center(
             child: ClipRRect(
               borderRadius: BorderRadius.circular(12.0),
-              child: Image.network(
+              child: CachedNetworkImage(
+                imageUrl: song.icon,
                 height: MediaQuery.of(context).size.height * 0.4,
-                song.icon,
+                width: MediaQuery.of(context).size.height * 0.4,
                 fit: BoxFit.cover,
+                placeholder: (_, __) =>
+                    const Center(child: CircularProgressIndicator()),
+                errorWidget: (_, __, ___) => const Icon(Icons.podcasts),
               ),
             ),
           ),

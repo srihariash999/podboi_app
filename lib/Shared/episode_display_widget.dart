@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:podboi/Helpers/helpers.dart';
 
@@ -31,9 +32,10 @@ class EpisodeDisplayWidget extends StatelessWidget {
               borderRadius: BorderRadius.circular(12.0),
             ),
             clipBehavior: Clip.antiAlias,
-            child: Image.network(
-              posterUrl,
+            child: CachedNetworkImage(
+              imageUrl: posterUrl,
               fit: BoxFit.cover,
+              errorWidget: (_, __, ___) => const Icon(Icons.podcasts),
             ),
           ),
           Expanded(

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:feather_icons/feather_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,8 +11,8 @@ import 'package:podboi/DataModels/episode_data.dart';
 import 'package:podboi/DataModels/subscription_data.dart';
 import 'package:podboi/Helpers/helpers.dart';
 import 'package:podboi/Shared/detailed_episode_widget.dart';
-import 'package:podboi/UI/player/mini_player.dart';
 import 'package:podboi/UI/podboi_loader.dart';
+import 'package:podboi/UI/player/mini_player.dart';
 
 class PodcastPage extends StatelessWidget {
   final SubscriptionData subscription;
@@ -125,227 +126,254 @@ class PodcastPage extends StatelessWidget {
         body: Padding(
           padding: const EdgeInsets.only(top: 8.0),
           child: SafeArea(
-            child: NestedScrollView(
-              headerSliverBuilder: (context, b) {
-                return [
-                  // Container(
-                  //   color: Colors.yellowAccent,
-                  //   height: 200,
-                  //   width: double.infinity,
-                  // ),
-                  SliverAppBar(
-                    leading: InkWell(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      child: Icon(
-                        Icons.arrow_back_ios_new,
-                        color: Theme.of(context).colorScheme.secondary,
-                      ),
-                    ),
-                    titleSpacing: 0.0,
-                    actions: [
-                      Consumer(
-                        builder: (context, ref, child) {
-                          // True --> new to old
-                          // False --> old to new
-                          bool _episodesSort = ref
-                              .watch(
-                                podcastPageViewController(subscription),
-                              )
-                              .epSortingIncr;
-                          return Padding(
-                            padding: const EdgeInsets.only(right: 6.0),
-                            child: InkWell(
-                              onTap: () {
-                                onTapThreeDot(context, ref, _episodesSort);
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 6.0, vertical: 6.0),
-                                child: Icon(
-                                  Icons.more_vert,
-                                  color:
-                                      Theme.of(context).colorScheme.secondary,
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ],
-                    centerTitle: false,
-                    expandedHeight: 32.0,
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    elevation: 0.0,
-                    floating: true,
-                    snap: true,
-                    stretch: true,
-                    title: Consumer(
-                      builder: (context, ref, child) {
-                        var _viewController = ref.watch(
-                          podcastPageViewController(subscription),
-                        );
-
-                        if (_viewController.isLoading) {
-                          return Container();
-                        }
-                        return Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              height: 38.0,
-                              width: MediaQuery.of(context).size.width * 0.76,
-                              child: TextField(
-                                controller: episodeSearchController,
-                                onChanged: (String s) {
-                                  ref
-                                      .read(podcastPageViewController(
-                                              subscription)
-                                          .notifier)
-                                      .filterEpisodesWithQuery(s);
-                                },
-                                decoration: InputDecoration(
-                                  prefixIcon: Icon(
-                                    LineIcons.search,
-                                    size: 20.0,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .secondary
-                                        .withOpacityValue(0.7),
-                                  ),
-                                  suffixIcon: episodeSearchController
-                                          .text.isEmpty
-                                      ? null
-                                      : InkWell(
-                                          onTap: () {
-                                            episodeSearchController.clear();
-                                            ref
-                                                .read(podcastPageViewController(
-                                                        subscription)
-                                                    .notifier)
-                                                .filterEpisodesWithQuery('');
-                                          },
-                                          child: Icon(
-                                            LineIcons.timesCircle,
-                                            size: 20.0,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .secondary
-                                                .withOpacityValue(0.7),
-                                          ),
-                                        ),
-                                  contentPadding:
-                                      const EdgeInsets.only(top: 16.0),
-                                  hintText: "Search Episodes",
-                                  alignLabelWithHint: true,
-                                  hintStyle: TextStyle(
-                                    fontSize: 16.0,
-                                    fontWeight: FontWeight.w400,
-                                    color:
-                                        Theme.of(context).colorScheme.secondary,
-                                  ),
-                                  fillColor: Theme.of(context)
-                                      .highlightColor
-                                      .withOpacityValue(0.5),
-                                  filled: true,
-                                  focusColor:
-                                      Colors.black.withOpacityValue(0.30),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide.none,
-                                    borderRadius: BorderRadius.circular(20.0),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide.none,
-                                    borderRadius: BorderRadius.circular(20.0),
-                                  ),
-                                  border: OutlineInputBorder(
-                                    borderSide: BorderSide.none,
-                                    borderRadius: BorderRadius.circular(20.0),
+            child: Stack(
+              children: [
+                NestedScrollView(
+                  headerSliverBuilder: (context, b) {
+                    return [
+                      // Container(
+                      //   color: Colors.yellowAccent,
+                      //   height: 200,
+                      //   width: double.infinity,
+                      // ),
+                      SliverAppBar(
+                        leading: InkWell(
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                          child: Icon(
+                            Icons.arrow_back_ios_new,
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
+                        ),
+                        titleSpacing: 0.0,
+                        actions: [
+                          Consumer(
+                            builder: (context, ref, child) {
+                              // True --> new to old
+                              // False --> old to new
+                              bool _episodesSort = ref
+                                  .watch(
+                                    podcastPageViewController(subscription),
+                                  )
+                                  .epSortingIncr;
+                              return Padding(
+                                padding: const EdgeInsets.only(right: 6.0),
+                                child: InkWell(
+                                  onTap: () {
+                                    onTapThreeDot(context, ref, _episodesSort);
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 6.0, vertical: 6.0),
+                                    child: Icon(
+                                      Icons.more_vert,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondary,
+                                    ),
                                   ),
                                 ),
-                                style: TextStyle(
-                                  color:
-                                      Theme.of(context).colorScheme.secondary,
-                                ),
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                    ),
-                    // flexibleSpace: FlexibleSpaceBar(
-                    //   title:
-                    // ),
-                  ),
-                ];
-              },
-              body: Column(
-                children: [
-                  Expanded(
-                    child: Consumer(
-                      builder: (context, ref, child) {
-                        var isLoading = ref.watch(
-                          podcastPageViewController(subscription)
-                              .select((value) => value.isLoading),
-                        );
+                              );
+                            },
+                          ),
+                        ],
+                        centerTitle: false,
+                        expandedHeight: 32.0,
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        elevation: 0.0,
+                        floating: true,
+                        snap: true,
+                        stretch: true,
+                        title: Consumer(
+                          builder: (context, ref, child) {
+                            var _viewController = ref.watch(
+                              podcastPageViewController(subscription),
+                            );
 
-                        var eps = ref.watch(
-                          podcastPageViewController(subscription)
-                              .select((value) => value.podcastEpisodes),
-                        );
-
-                        Future<void> refresh() async {
-                          ref
-                              .read(podcastPageViewController(subscription)
-                                  .notifier)
-                              .loadPodcastEpisodes(subscription.feedUrl,
-                                  subscription.podcastId ?? subscription.id);
-                        }
-
-                        return isLoading
-                            ? Container(
-                                alignment: Alignment.center,
-                                child: PodboiLoader(),
-                              )
-                            : RefreshIndicator(
-                                onRefresh: refresh,
-                                color: Theme.of(context).colorScheme.secondary,
-                                child: ListView.separated(
-                                  physics: BouncingScrollPhysics(),
-                                  separatorBuilder: (context, index) {
-                                    return Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 12.0),
-                                      child: Divider(
+                            if (_viewController.isLoading) {
+                              return Container();
+                            }
+                            return Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  height: 38.0,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.76,
+                                  child: TextField(
+                                    controller: episodeSearchController,
+                                    onChanged: (String s) {
+                                      ref
+                                          .read(podcastPageViewController(
+                                                  subscription)
+                                              .notifier)
+                                          .filterEpisodesWithQuery(s);
+                                    },
+                                    decoration: InputDecoration(
+                                      prefixIcon: Icon(
+                                        LineIcons.search,
+                                        size: 20.0,
                                         color: Theme.of(context)
                                             .colorScheme
                                             .secondary
-                                            .withOpacityValue(0.2),
+                                            .withOpacityValue(0.7),
                                       ),
-                                    );
-                                  },
-                                  itemCount: eps.length + 1,
-                                  itemBuilder: (context, index) {
-                                    if (index == 0) {
-                                      return EpisodeDetailComponent(
-                                        subscription: subscription,
-                                      );
-                                    }
-                                    EpisodeData _episode = eps[index - 1];
-                                    return DetailedEpsiodeViewWidget(
-                                      episodeData: _episode,
-                                      podcast: subscription,
-                                    );
-                                  },
+                                      suffixIcon: episodeSearchController
+                                              .text.isEmpty
+                                          ? null
+                                          : InkWell(
+                                              onTap: () {
+                                                episodeSearchController.clear();
+                                                ref
+                                                    .read(
+                                                        podcastPageViewController(
+                                                                subscription)
+                                                            .notifier)
+                                                    .filterEpisodesWithQuery(
+                                                        '');
+                                              },
+                                              child: Icon(
+                                                LineIcons.timesCircle,
+                                                size: 20.0,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .secondary
+                                                    .withOpacityValue(0.7),
+                                              ),
+                                            ),
+                                      contentPadding:
+                                          const EdgeInsets.only(top: 16.0),
+                                      hintText: "Search Episodes",
+                                      alignLabelWithHint: true,
+                                      hintStyle: TextStyle(
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.w400,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .secondary,
+                                      ),
+                                      fillColor: Theme.of(context)
+                                          .highlightColor
+                                          .withOpacityValue(0.5),
+                                      filled: true,
+                                      focusColor:
+                                          Colors.black.withOpacityValue(0.30),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide.none,
+                                        borderRadius:
+                                            BorderRadius.circular(20.0),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide.none,
+                                        borderRadius:
+                                            BorderRadius.circular(20.0),
+                                      ),
+                                      border: OutlineInputBorder(
+                                        borderSide: BorderSide.none,
+                                        borderRadius:
+                                            BorderRadius.circular(20.0),
+                                      ),
+                                    ),
+                                    style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondary,
+                                    ),
+                                  ),
                                 ),
-                              );
-                      },
-                    ),
+                              ],
+                            );
+                          },
+                        ),
+                        // flexibleSpace: FlexibleSpaceBar(
+                        //   title:
+                        // ),
+                      ),
+                    ];
+                  },
+                  body: Column(
+                    children: [
+                      Expanded(
+                        child: Consumer(
+                          builder: (context, ref, child) {
+                            final viewState = ref.watch(
+                              podcastPageViewController(subscription),
+                            );
+                            final isLoading = viewState.isLoading;
+                            final eps = viewState.podcastEpisodes;
+                            final artworkUrl =
+                                viewState.icon?.isNotEmpty ?? false
+                                    ? viewState.icon
+                                    : subscription.artworkUrl;
+                            final podcastName = viewState.description.isEmpty
+                                ? subscription.podcastName
+                                : viewState.description;
+
+                            Future<void> refresh() async {
+                              ref
+                                  .read(podcastPageViewController(subscription)
+                                      .notifier)
+                                  .loadPodcastEpisodes(
+                                      subscription.feedUrl,
+                                      subscription.podcastId ??
+                                          subscription.id);
+                            }
+
+                            return isLoading
+                                ? Container(
+                                    alignment: Alignment.center,
+                                    child: PodboiLoader(),
+                                  )
+                                : RefreshIndicator(
+                                    onRefresh: refresh,
+                                    color:
+                                        Theme.of(context).colorScheme.secondary,
+                                    child: ListView.separated(
+                                      physics: BouncingScrollPhysics(),
+                                      separatorBuilder: (context, index) {
+                                        return Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 12.0),
+                                          child: Divider(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .secondary
+                                                .withOpacityValue(0.2),
+                                          ),
+                                        );
+                                      },
+                                      itemCount: eps.length + 1,
+                                      itemBuilder: (context, index) {
+                                        if (index == 0) {
+                                          return EpisodeDetailComponent(
+                                            subscription: subscription,
+                                            artworkUrl: artworkUrl,
+                                            podcastName: podcastName,
+                                          );
+                                        }
+                                        EpisodeData _episode = eps[index - 1];
+                                        return DetailedEpsiodeViewWidget(
+                                          episodeData: _episode,
+                                          podcast: subscription,
+                                          artworkUrl: artworkUrl,
+                                        );
+                                      },
+                                    ),
+                                  );
+                          },
+                        ),
+                      ),
+                    ],
                   ),
-                  Align(alignment: Alignment.bottomCenter, child: MiniPlayer()),
-                ],
-              ),
+                ),
+                const Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  child: MiniPlayer(),
+                ),
+              ],
             ),
           ),
         ),
@@ -355,8 +383,15 @@ class PodcastPage extends StatelessWidget {
 }
 
 class EpisodeDetailComponent extends StatefulWidget {
-  const EpisodeDetailComponent({super.key, required this.subscription});
+  const EpisodeDetailComponent({
+    super.key,
+    required this.subscription,
+    this.artworkUrl,
+    this.podcastName,
+  });
   final SubscriptionData subscription;
+  final String? artworkUrl;
+  final String? podcastName;
   @override
   State<EpisodeDetailComponent> createState() => _EpisodeDetailComponentState();
 }
@@ -391,11 +426,14 @@ class _EpisodeDetailComponentState extends State<EpisodeDetailComponent> {
                     curve: Curves.fastOutSlowIn,
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(12.0),
-                      child: Image.network(
+                      child: CachedNetworkImage(
+                        imageUrl: widget.artworkUrl?.isNotEmpty ?? false
+                            ? widget.artworkUrl!
+                            : widget.subscription.artworkUrl,
                         width: 100.0,
                         height: 100.0,
-                        widget.subscription.artworkUrl,
                         fit: BoxFit.cover,
+                        errorWidget: (_, __, ___) => const Icon(Icons.podcasts),
                       ),
                     ),
                   ),
@@ -414,7 +452,9 @@ class _EpisodeDetailComponentState extends State<EpisodeDetailComponent> {
                       width: MediaQuery.of(context).size.width * 0.60,
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        widget.subscription.podcastName,
+                        widget.podcastName?.isNotEmpty ?? false
+                            ? widget.podcastName!
+                            : widget.subscription.podcastName,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(

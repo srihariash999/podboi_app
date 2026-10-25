@@ -22,11 +22,26 @@ class DownloadController extends StateNotifier<DownloadPageState> {
   final DownloadBoxController _downloadBoxController = DownloadBoxController();
   final PodcastEpisodeBoxController _podcastEpisodeBoxController =
       PodcastEpisodeBoxController();
+  final Map<String, CancelToken> _activeDownloads = {};
 
   Future<void> loadDownloads() async {
     state = state.copyWith(isLoading: true);
     final downloadBoxController = DownloadBoxController();
-    final _downloads = await downloadBoxController.getDownloads();
+    final savedDownloads = await downloadBoxController.getDownloads();
+    // A database entry is not enough to prove that a file survived storage
+    // cleanup or a partially interrupted legacy download.
+    final _downloads = <DownloadedEpisode>[];
+    for (final download in savedDownloads) {
+      if (await File(download.filePath).exists()) {
+        _downloads.add(download);
+      } else {
+        await _downloadBoxController.deleteDownload(download.episode.guid);
+        await _podcastEpisodeBoxController.removeDownloadPath(
+          download.episode.guid,
+          download.episode.podcastId,
+        );
+      }
+    }
     state = state.copyWith(
       downloads: _downloads,
       isLoading: false,
@@ -46,17 +61,35 @@ class DownloadController extends StateNotifier<DownloadPageState> {
       );
     }
 
+    if (_activeDownloads.containsKey(episode.guid)) {
+      throw EpisodeAlreadyDownloadedException('Episode is already downloading');
+    }
+
     final directory = await getApplicationDocumentsDirectory();
-    final filePath = '${directory.path}/${episode.guid}.mp3';
+    final downloadsDirectory = Directory('${directory.path}/downloads');
+    if (!await downloadsDirectory.exists()) {
+      await downloadsDirectory.create(recursive: true);
+    }
+    final safeGuid = episode.guid.replaceAll(RegExp(r'[^A-Za-z0-9._-]'), '_');
+    final filePath = '${downloadsDirectory.path}/$safeGuid.mp3';
+    final temporaryPath = '$filePath.part';
+    final cancelToken = CancelToken();
+    _activeDownloads[episode.guid] = cancelToken;
 
     state = state.copyWith(
       downloadProgress: {...state.downloadProgress, episode.guid: 0.0},
     );
 
     try {
+      try {
+        await File(temporaryPath).delete();
+      } on FileSystemException {
+        // There is no previous partial file to clean up.
+      }
       await _dio.download(
         episode.contentUrl!,
-        filePath,
+        temporaryPath,
+        cancelToken: cancelToken,
         onReceiveProgress: (received, total) {
           if (total != -1) {
             final progress = received / total;
@@ -69,6 +102,12 @@ class DownloadController extends StateNotifier<DownloadPageState> {
           }
         },
       );
+      final temporaryFile = File(temporaryPath);
+      if (!await temporaryFile.exists() || await temporaryFile.length() == 0) {
+        throw const FileSystemException(
+            'Download did not produce an audio file');
+      }
+      await temporaryFile.rename(filePath);
       episode = episode.updateDownloadPath(
         downloadPath: filePath,
       );
@@ -96,15 +135,25 @@ class DownloadController extends StateNotifier<DownloadPageState> {
       state = state.copyWith(
         downloadProgress: {...state.downloadProgress}..remove(episode.guid),
       );
-      print(
-        "Error downloading episode ${episode.guid}: $e",
-      );
+      try {
+        await File(temporaryPath).delete();
+      } on FileSystemException {
+        // The failed request did not create a partial file.
+      }
+      print("Error downloading episode ${episode.guid}: $e");
       // Handle error
       return null;
+    } finally {
+      _activeDownloads.remove(episode.guid);
     }
   }
 
+  void cancelDownload(String guid) {
+    _activeDownloads[guid]?.cancel('Cancelled by user');
+  }
+
   Future<void> deleteEpisode(String guid) async {
+    cancelDownload(guid);
     final download = await _downloadBoxController.getDownload(guid);
     if (download != null) {
       final file = File(download.filePath);

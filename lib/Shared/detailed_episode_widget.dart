@@ -21,12 +21,14 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
     Key? key,
     required EpisodeData episodeData,
     required SubscriptionData podcast,
+    this.artworkUrl,
   })  : _episodeData = episodeData,
         _podcast = podcast,
         super(key: key);
 
   final EpisodeData _episodeData;
   final SubscriptionData _podcast;
+  final String? artworkUrl;
 
   double _computePlayingDuration(EpisodeData episodeData) {
     if (episodeData.playedDuration == null ||
@@ -36,16 +38,37 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
     return (episodeData.playedDuration! / episodeData.duration!).toDouble();
   }
 
+  bool _isCurrentEpisode(AudioState audioState) {
+    Song? currentSong;
+    if (audioState is LoadedAudioState) {
+      currentSong = audioState.currentPlaying;
+    } else if (audioState is LoadingAudioState) {
+      currentSong = audioState.song;
+    }
+    if (currentSong == null) return false;
+
+    // A search result and an imported OPML entry can use different local
+    // podcast IDs for the same feed. The enclosure URL remains the reliable
+    // identity while that metadata is being reconciled.
+    return (currentSong.episodeData.guid == _episodeData.guid &&
+            currentSong.episodeData.podcastId == _episodeData.podcastId) ||
+        (currentSong.url.isNotEmpty &&
+            currentSong.url == _episodeData.contentUrl);
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_episodeData.episodeNumber == 431) {
       print("Episode number is 431, skipping download button rendering.");
     }
     final playedDuration = _computePlayingDuration(_episodeData);
+    final displayArtworkUrl =
+        artworkUrl?.isNotEmpty ?? false ? artworkUrl! : _podcast.artworkUrl;
 
     return Consumer(
       builder: (context, ref, child) {
         final downloadState = ref.watch(downloadController);
+        final isCurrentEpisode = _isCurrentEpisode(ref.watch(audioController));
 
         return InkWell(
           onTap: () {
@@ -53,6 +76,21 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
           },
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 8.0),
+            decoration: isCurrentEpisode
+                ? BoxDecoration(
+                    color: Theme.of(context)
+                        .colorScheme
+                        .secondary
+                        .withOpacityValue(0.18),
+                    borderRadius: BorderRadius.circular(8.0),
+                    border: Border.all(
+                      color: Theme.of(context)
+                          .colorScheme
+                          .secondary
+                          .withOpacityValue(0.80),
+                    ),
+                  )
+                : null,
             child: Slidable(
               key: ValueKey(_episodeData.contentUrl),
               startActionPane: ActionPane(
@@ -180,7 +218,7 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                           borderRadius: BorderRadius.circular(4.0),
                           child: CachedNetworkImage(
                             imageUrl:
-                                _episodeData.imageUrl ?? _podcast.artworkUrl,
+                                _episodeData.imageUrl ?? displayArtworkUrl,
                             errorWidget: (context, url, error) => Container(
                               color: Colors.grey[300],
                               height: 42.0,
@@ -234,42 +272,54 @@ class DetailedEpsiodeViewWidget extends StatelessWidget {
                                     width: 39.0,
                                     height: 36.0,
                                     child: InkWell(
-                                      onTap: () async {
-                                        ref
-                                            .read(audioController.notifier)
-                                            .requestPlayingSong(
-                                              Song(
-                                                url: _episodeData.contentUrl!,
-                                                icon: _episodeData.imageUrl ??
-                                                    _podcast.artworkUrl,
-                                                name: _episodeData.title,
-                                                duration:
-                                                    _episodeData.duration ?? 0,
-                                                artist:
-                                                    "${_episodeData.author}",
-                                                album: _podcast.podcastName,
-                                                episodeData: _episodeData,
-                                              ),
-                                            );
+                                      onTap: isCurrentEpisode
+                                          ? null
+                                          : () async {
+                                              ref
+                                                  .read(
+                                                      audioController.notifier)
+                                                  .requestPlayingSong(
+                                                    Song(
+                                                      url: _episodeData
+                                                          .contentUrl!,
+                                                      icon: _episodeData
+                                                              .imageUrl ??
+                                                          displayArtworkUrl,
+                                                      name: _episodeData.title,
+                                                      duration: _episodeData
+                                                              .duration ??
+                                                          0,
+                                                      artist:
+                                                          "${_episodeData.author}",
+                                                      album:
+                                                          _podcast.podcastName,
+                                                      episodeData: _episodeData,
+                                                    ),
+                                                  );
 
-                                        ref
-                                            .read(historyController.notifier)
-                                            .saveToHistoryAction(
-                                              data: ListeningHistoryData(
-                                                listenedOn:
-                                                    DateTime.now().toString(),
-                                                episodeData: _episodeData,
-                                              ),
-                                            );
-                                      },
+                                              ref
+                                                  .read(historyController
+                                                      .notifier)
+                                                  .saveToHistoryAction(
+                                                    data: ListeningHistoryData(
+                                                      listenedOn: DateTime.now()
+                                                          .toString(),
+                                                      episodeData: _episodeData,
+                                                    ),
+                                                  );
+                                            },
                                       child: Icon(
-                                        (playedDuration > 0.99)
-                                            ? FeatherIcons.check
-                                            : FeatherIcons.play,
+                                        isCurrentEpisode
+                                            ? Icons.graphic_eq_rounded
+                                            : (playedDuration > 0.99)
+                                                ? FeatherIcons.check
+                                                : FeatherIcons.play,
                                         color: Theme.of(context)
                                             .colorScheme
-                                            .secondary,
-                                        size: 20.0,
+                                            .secondary
+                                            .withOpacityValue(
+                                                isCurrentEpisode ? 1.0 : 0.8),
+                                        size: isCurrentEpisode ? 24.0 : 20.0,
                                       ),
                                     ),
                                   ),

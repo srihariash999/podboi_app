@@ -71,7 +71,11 @@ class EpisodeData {
     this.downloadPath,
   });
 
-  EpisodeData copyWith({int? playedDuration}) {
+  EpisodeData copyWith({
+    int? playedDuration,
+    String? downloadPath,
+    bool clearDownloadPath = false,
+  }) {
     return EpisodeData(
       id: this.id,
       guid: this.guid,
@@ -88,29 +92,15 @@ class EpisodeData {
       podcastId: this.podcastId,
       podcastName: this.podcastName,
       playedDuration: playedDuration ?? this.playedDuration,
+      downloadPath:
+          clearDownloadPath ? null : downloadPath ?? this.downloadPath,
     );
   }
 
-  EpisodeData updateDownloadPath({String? downloadPath}) {
-    return EpisodeData(
-      id: this.id,
-      guid: this.guid,
-      title: this.title,
-      description: this.description,
-      link: this.link,
-      publicationDate: this.publicationDate,
-      contentUrl: this.contentUrl,
-      imageUrl: this.imageUrl,
-      author: this.author,
-      season: this.season,
-      episodeNumber: this.episodeNumber,
-      duration: this.duration,
-      podcastId: this.podcastId,
-      podcastName: this.podcastName,
-      playedDuration: this.playedDuration,
-      downloadPath: downloadPath,
-    );
-  }
+  EpisodeData updateDownloadPath({String? downloadPath}) => copyWith(
+        downloadPath: downloadPath,
+        clearDownloadPath: downloadPath == null,
+      );
 
   Map<String, dynamic> toJson() {
     return {

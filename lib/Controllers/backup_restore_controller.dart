@@ -10,6 +10,9 @@ import 'package:podboi/DataModels/episode_data.dart';
 import 'package:podboi/DataModels/listening_history.dart';
 import 'package:podboi/DataModels/subscription_data.dart';
 import 'package:podboi/Database/box_service.dart';
+import 'package:podboi/Services/opml_subscription_parser.dart';
+import 'package:podboi/Services/subscription_sync_service.dart';
+import 'package:xml/xml.dart';
 
 final backupRestoreController =
     StateNotifierProvider<BackupRestoreController, bool>((ref) {
@@ -20,6 +23,7 @@ class BackupRestoreController extends StateNotifier<bool> {
   BackupRestoreController() : super(false);
 
   final BoxService _boxService = BoxService();
+  final OpmlSubscriptionParser _opmlParser = const OpmlSubscriptionParser();
 
   Future<void> exportData() async {
     state = true;
@@ -106,6 +110,84 @@ class BackupRestoreController extends StateNotifier<bool> {
     }
   }
 
+  /// Imports subscriptions exported by other podcast apps as an OPML file.
+  /// This deliberately merges into the subscription list; unlike a podboi
+  /// backup restore, it never clears playback, settings, or current feeds.
+  Future<OpmlImportResult> importOpmlSubscriptions() async {
+    state = true;
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['opml', 'xml'],
+      );
+      if (result == null || result.files.single.path == null) {
+        return const OpmlImportResult.cancelled();
+      }
+
+      final source = await File(result.files.single.path!).readAsString();
+      final imported = _opmlParser.parse(source);
+      final subscriptionBox =
+          await _boxService.getBox<SubscriptionData>(K.boxes.subscriptionBox);
+      final existingUrls = subscriptionBox.values
+          .map((subscription) => subscription.feedUrl.trim().toLowerCase())
+          .toSet();
+      final usedIds = subscriptionBox.keys.whereType<int>().toSet();
+      var added = 0;
+      var skipped = 0;
+
+      for (final item in imported) {
+        final urlKey = item.feedUrl.toLowerCase();
+        if (!existingUrls.add(urlKey)) {
+          skipped++;
+          continue;
+        }
+
+        final podcastId = _uniquePodcastId(item.feedUrl, usedIds);
+        usedIds.add(podcastId);
+        await subscriptionBox.put(
+          podcastId,
+          SubscriptionData(
+            id: podcastId,
+            podcastId: podcastId,
+            podcastName: item.title,
+            feedUrl: item.feedUrl,
+            artworkUrl: '',
+            dateAdded: DateTime.now(),
+          ),
+        );
+        added++;
+      }
+
+      // OPML contains feed URLs but generally not podcast artwork. Refreshing
+      // the feeds immediately fills the grid/detail metadata and episode cache.
+      if (imported.isNotEmpty) {
+        await SubscriptionSyncService().refreshNow();
+      }
+
+      return OpmlImportResult(imported: added, skipped: skipped);
+    } on XmlParserException {
+      return const OpmlImportResult.invalidFile();
+    } catch (error) {
+      print('Error importing OPML subscriptions: $error');
+      return const OpmlImportResult.failed();
+    } finally {
+      state = false;
+    }
+  }
+
+  int _uniquePodcastId(String feedUrl, Set<int> usedIds) {
+    var hash = 0x811c9dc5;
+    for (final codeUnit in feedUrl.codeUnits) {
+      hash ^= codeUnit;
+      hash = (hash * 0x01000193) & 0x7fffffff;
+    }
+    if (hash == 0) hash = 1;
+    while (usedIds.contains(hash)) {
+      hash = hash == 0x7fffffff ? 1 : hash + 1;
+    }
+    return hash;
+  }
+
   Future<void> _restoreAllData(Map<String, dynamic> data) async {
     final settingsBox = await _boxService.getBox<dynamic>(K.boxes.settingsBox);
     final subscriptionBox =
@@ -155,4 +237,38 @@ class BackupRestoreController extends StateNotifier<bool> {
       }
     }
   }
+}
+
+class OpmlImportResult {
+  const OpmlImportResult({required this.imported, required this.skipped})
+      : cancelled = false,
+        invalidFile = false,
+        failed = false;
+
+  const OpmlImportResult.cancelled()
+      : imported = 0,
+        skipped = 0,
+        cancelled = true,
+        invalidFile = false,
+        failed = false;
+
+  const OpmlImportResult.invalidFile()
+      : imported = 0,
+        skipped = 0,
+        cancelled = false,
+        invalidFile = true,
+        failed = false;
+
+  const OpmlImportResult.failed()
+      : imported = 0,
+        skipped = 0,
+        cancelled = false,
+        invalidFile = false,
+        failed = true;
+
+  final int imported;
+  final int skipped;
+  final bool cancelled;
+  final bool invalidFile;
+  final bool failed;
 }

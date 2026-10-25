@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -170,9 +171,11 @@ class CustomSearchDelegate extends SearchDelegate<String> {
                                             BorderRadius.circular(12.0),
                                       ),
                                       clipBehavior: Clip.antiAlias,
-                                      child: Image.network(
-                                        result.bestArtworkUrl ?? '',
+                                      child: CachedNetworkImage(
+                                        imageUrl: result.bestArtworkUrl ?? '',
                                         fit: BoxFit.cover,
+                                        errorWidget: (_, __, ___) =>
+                                            const Icon(Icons.podcasts),
                                       ),
                                     ),
                                     Expanded(

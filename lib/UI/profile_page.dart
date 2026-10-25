@@ -10,9 +10,9 @@ import 'package:podboi/Helpers/helpers.dart';
 import 'package:podboi/Shared/simple_appbar.dart';
 import 'package:podboi/UI/downloads_page.dart';
 import 'package:podboi/UI/listening_history_page.dart';
-import 'package:podboi/UI/player/mini_player.dart';
 import 'package:podboi/UI/podboi_primary_button.dart';
 import 'package:podboi/UI/settings_page.dart';
+import 'package:podboi/UI/player/mini_player.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -29,350 +29,368 @@ class ProfileScreen extends StatelessWidget {
       ),
       child: Scaffold(
         backgroundColor: Theme.of(context).colorScheme.primary,
-        body: SafeArea(
-          child: Column(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    SimplePodboiAppBar(title: 'Profile'),
-                    SizedBox(
-                      height: 24.0,
-                    ),
-                    Consumer(
-                      builder: (context, ref, child) {
-                        String _name = ref.watch(profileController
-                            .select((value) => value.userName));
-                        String _avatar = ref.watch(profileController
-                            .select((value) => value.userAvatar));
+        body: Stack(
+          children: [
+            SafeArea(
+              child: Column(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        SimplePodboiAppBar(title: 'Profile'),
+                        SizedBox(
+                          height: 24.0,
+                        ),
+                        Consumer(
+                          builder: (context, ref, child) {
+                            String _name = ref.watch(profileController
+                                .select((value) => value.userName));
+                            String _avatar = ref.watch(profileController
+                                .select((value) => value.userAvatar));
 
-                        return Column(
-                          children: [
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Expanded(
-                                    flex: 3,
-                                    child: Center(
-                                      child: Text(
-                                        "$_name",
-                                        style: TextStyle(
-                                          // fontFamily: 'Segoe',
-                                          fontSize: 28.0,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .secondary,
-                                          fontWeight: FontWeight.w700,
+                            return Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20.0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Expanded(
+                                        flex: 3,
+                                        child: Center(
+                                          child: Text(
+                                            "$_name",
+                                            style: TextStyle(
+                                              // fontFamily: 'Segoe',
+                                              fontSize: 28.0,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .secondary,
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                          ),
                                         ),
                                       ),
-                                    ),
+                                      Expanded(
+                                        child: Container(
+                                          height: 60.0,
+                                          width: 55.0,
+                                          child: Icon(
+                                            _avatar == 'user'
+                                                ? LineIcons.user
+                                                : _avatar == 'userNinja'
+                                                    ? LineIcons.userNinja
+                                                    : LineIcons.userAstronaut,
+                                            size: 38.0,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .secondary,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  Expanded(
-                                    child: Container(
-                                      height: 60.0,
-                                      width: 55.0,
-                                      child: Icon(
-                                        _avatar == 'user'
-                                            ? LineIcons.user
-                                            : _avatar == 'userNinja'
-                                                ? LineIcons.userNinja
-                                                : LineIcons.userAstronaut,
-                                        size: 38.0,
+                                ),
+                                SizedBox(
+                                  height: 24.0,
+                                ),
+                                Center(
+                                  child: PodboiPrimaryButton(
+                                    onTap: () async {
+                                      //TODO: Logic to update the profile is duplicated from welcome page. Need to refactor
+                                      showModalBottomSheet<void>(
+                                        context: context,
+                                        isScrollControlled: true,
+                                        builder: (BuildContext context) {
+                                          return ProfileEditWidget(
+                                            userName: _name,
+                                            userAvatar: _avatar,
+                                          );
+                                        },
+                                      );
+                                    },
+                                    child: Text(
+                                      'EDIT',
+                                      style: TextStyle(
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.w500,
                                         color: Theme.of(context)
                                             .colorScheme
                                             .secondary,
                                       ),
                                     ),
                                   ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(
-                              height: 24.0,
-                            ),
-                            Center(
-                              child: PodboiPrimaryButton(
-                                onTap: () async {
-                                  //TODO: Logic to update the profile is duplicated from welcome page. Need to refactor
-                                  showModalBottomSheet<void>(
-                                    context: context,
-                                    isScrollControlled: true,
-                                    builder: (BuildContext context) {
-                                      return ProfileEditWidget(
-                                        userName: _name,
-                                        userAvatar: _avatar,
-                                      );
-                                    },
-                                  );
-                                },
-                                child: Text(
-                                  'EDIT',
-                                  style: TextStyle(
-                                    fontSize: 16.0,
-                                    fontWeight: FontWeight.w500,
-                                    color:
-                                        Theme.of(context).colorScheme.secondary,
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                        SizedBox(
+                          height: 52.0,
+                        ),
+                        Consumer(
+                          builder: (context, ref, child) {
+                            String _currentTheme =
+                                ref.watch(themeController).currentTheme;
+                            return Column(
+                              children: [
+                                Divider(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .secondary
+                                      .withOpacityValue(0.2),
+                                  height: 1.0,
+                                ),
+
+                                // Downloads Tile
+                                ProfilePageTileWidget(
+                                  tailingWidget: Icon(
+                                    LineIcons.download,
+                                    size: 28.0,
+                                    color: Theme.of(context).primaryColorLight,
+                                  ),
+                                  tileName: "Downloads",
+                                  onTap: () {
+                                    Navigator.of(context).push(
+                                      PageRouteBuilder(
+                                        transitionDuration:
+                                            Duration(milliseconds: 500),
+                                        transitionsBuilder: (context, animation,
+                                            secondaryAnimation, child) {
+                                          const begin = Offset(1.0, 0.0);
+                                          const end = Offset.zero;
+                                          const curve = Curves.ease;
+
+                                          final tween =
+                                              Tween(begin: begin, end: end);
+                                          final curvedAnimation =
+                                              CurvedAnimation(
+                                            parent: animation,
+                                            curve: curve,
+                                          );
+
+                                          return SlideTransition(
+                                            position:
+                                                tween.animate(curvedAnimation),
+                                            child: child,
+                                          );
+                                        },
+                                        pageBuilder: (_, __, ___) =>
+                                            DownloadsPage(),
+                                      ),
+                                    );
+                                  },
+                                ),
+
+                                Divider(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .secondary
+                                      .withOpacityValue(0.2),
+                                  height: 1.0,
+                                ),
+
+                                // Listening History Tile
+                                ProfilePageTileWidget(
+                                  tailingWidget: Icon(
+                                    LineIcons.history,
+                                    size: 28.0,
+                                    color: Theme.of(context).primaryColorLight,
+                                  ),
+                                  tileName: "Listening history",
+                                  onTap: () {
+                                    Navigator.of(context).push(
+                                      PageRouteBuilder(
+                                        transitionDuration:
+                                            Duration(milliseconds: 500),
+                                        transitionsBuilder: (context, animation,
+                                            secondaryAnimation, child) {
+                                          const begin = Offset(1.0, 0.0);
+                                          const end = Offset.zero;
+                                          const curve = Curves.ease;
+
+                                          final tween =
+                                              Tween(begin: begin, end: end);
+                                          final curvedAnimation =
+                                              CurvedAnimation(
+                                            parent: animation,
+                                            curve: curve,
+                                          );
+
+                                          return SlideTransition(
+                                            position:
+                                                tween.animate(curvedAnimation),
+                                            child: child,
+                                          );
+                                        },
+                                        pageBuilder: (_, __, ___) =>
+                                            ListeningHistoryView(ref: ref),
+                                      ),
+                                    );
+                                  },
+                                ),
+
+                                Divider(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .secondary
+                                      .withOpacityValue(0.2),
+                                  height: 1.0,
+                                ),
+
+                                // Theme Tile
+                                ProfilePageTileWidget(
+                                  onTap: () {
+                                    if (_currentTheme == 'light') {
+                                      ref
+                                          .read(themeController.notifier)
+                                          .changeTheme('dark');
+                                    } else {
+                                      ref
+                                          .read(themeController.notifier)
+                                          .changeTheme('light');
+                                    }
+                                  },
+                                  tileName: "Theme",
+                                  tailingWidget: Row(
+                                    children: [
+                                      AnimatedSwitcher(
+                                        duration: Duration(milliseconds: 500),
+                                        switchInCurve: Curves.easeInSine,
+                                        switchOutCurve: Curves.easeOutSine,
+                                        transitionBuilder: (Widget child,
+                                            Animation<double> animation) {
+                                          final offsetAnimation = Tween<Offset>(
+                                                  begin: Offset(0.0, 0.8),
+                                                  end: Offset(0.0, 0.0))
+                                              .animate(animation);
+                                          return SlideTransition(
+                                            position: offsetAnimation,
+                                            child: child,
+                                          );
+                                        },
+                                        child: _currentTheme == 'light'
+                                            ? Icon(
+                                                FeatherIcons.sun,
+                                                key: UniqueKey(),
+                                                size: 30.0,
+                                                color: Theme.of(context)
+                                                    .primaryColorLight,
+                                              )
+                                            : Icon(
+                                                FeatherIcons.moon,
+                                                key: UniqueKey(),
+                                                size: 30.0,
+                                                color: Theme.of(context)
+                                                    .primaryColorLight,
+                                              ),
+                                      ),
+                                      SizedBox(
+                                        width: 6.0,
+                                      ),
+                                      CupertinoSwitch(
+                                        value: _currentTheme == 'light',
+                                        inactiveTrackColor:
+                                            Theme.of(context).primaryColor,
+                                        activeTrackColor:
+                                            Theme.of(context).highlightColor,
+                                        onChanged: (val) async {
+                                          if (val) {
+                                            ref
+                                                .read(themeController.notifier)
+                                                .changeTheme('light');
+                                          } else {
+                                            ref
+                                                .read(themeController.notifier)
+                                                .changeTheme('dark');
+                                          }
+                                        },
+                                      ),
+                                    ],
                                   ),
                                 ),
-                              ),
-                            ),
-                          ],
-                        );
-                      },
+
+                                Divider(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .secondary
+                                      .withOpacityValue(0.2),
+                                  height: 1.0,
+                                ),
+
+                                // Settings Tile
+                                ProfilePageTileWidget(
+                                  onTap: () {
+                                    Navigator.of(context).push(
+                                      PageRouteBuilder(
+                                        transitionDuration:
+                                            Duration(milliseconds: 500),
+                                        transitionsBuilder: (context, animation,
+                                            secondaryAnimation, child) {
+                                          const begin = Offset(1.0, 0.0);
+                                          const end = Offset.zero;
+                                          const curve = Curves.ease;
+
+                                          final tween =
+                                              Tween(begin: begin, end: end);
+                                          final curvedAnimation =
+                                              CurvedAnimation(
+                                            parent: animation,
+                                            curve: curve,
+                                          );
+
+                                          return SlideTransition(
+                                            position:
+                                                tween.animate(curvedAnimation),
+                                            child: child,
+                                          );
+                                        },
+                                        pageBuilder: (_, __, ___) =>
+                                            SettingsPage(),
+                                      ),
+                                    );
+                                  },
+                                  tileName: "Settings",
+                                  tailingWidget: Icon(
+                                    Icons.settings_rounded,
+                                    size: 28.0,
+                                    color: Theme.of(context).primaryColorLight,
+                                  ),
+                                ),
+
+                                Divider(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .secondary
+                                      .withOpacityValue(0.2),
+                                  height: 1.0,
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                      ],
                     ),
-                    SizedBox(
-                      height: 52.0,
-                    ),
-                    Consumer(
-                      builder: (context, ref, child) {
-                        String _currentTheme =
-                            ref.watch(themeController).currentTheme;
-                        return Column(
-                          children: [
-                            Divider(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .secondary
-                                  .withOpacityValue(0.2),
-                              height: 1.0,
-                            ),
-
-                            // Downloads Tile
-                            ProfilePageTileWidget(
-                              tailingWidget: Icon(
-                                LineIcons.download,
-                                size: 28.0,
-                                color: Theme.of(context).primaryColorLight,
-                              ),
-                              tileName: "Downloads",
-                              onTap: () {
-                                Navigator.of(context).push(
-                                  PageRouteBuilder(
-                                    transitionDuration:
-                                        Duration(milliseconds: 500),
-                                    transitionsBuilder: (context, animation,
-                                        secondaryAnimation, child) {
-                                      const begin = Offset(1.0, 0.0);
-                                      const end = Offset.zero;
-                                      const curve = Curves.ease;
-
-                                      final tween =
-                                          Tween(begin: begin, end: end);
-                                      final curvedAnimation = CurvedAnimation(
-                                        parent: animation,
-                                        curve: curve,
-                                      );
-
-                                      return SlideTransition(
-                                        position:
-                                            tween.animate(curvedAnimation),
-                                        child: child,
-                                      );
-                                    },
-                                    pageBuilder: (_, __, ___) =>
-                                        DownloadsPage(),
-                                  ),
-                                );
-                              },
-                            ),
-
-                            Divider(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .secondary
-                                  .withOpacityValue(0.2),
-                              height: 1.0,
-                            ),
-
-                            // Listening History Tile
-                            ProfilePageTileWidget(
-                              tailingWidget: Icon(
-                                LineIcons.history,
-                                size: 28.0,
-                                color: Theme.of(context).primaryColorLight,
-                              ),
-                              tileName: "Listening history",
-                              onTap: () {
-                                Navigator.of(context).push(
-                                  PageRouteBuilder(
-                                    transitionDuration:
-                                        Duration(milliseconds: 500),
-                                    transitionsBuilder: (context, animation,
-                                        secondaryAnimation, child) {
-                                      const begin = Offset(1.0, 0.0);
-                                      const end = Offset.zero;
-                                      const curve = Curves.ease;
-
-                                      final tween =
-                                          Tween(begin: begin, end: end);
-                                      final curvedAnimation = CurvedAnimation(
-                                        parent: animation,
-                                        curve: curve,
-                                      );
-
-                                      return SlideTransition(
-                                        position:
-                                            tween.animate(curvedAnimation),
-                                        child: child,
-                                      );
-                                    },
-                                    pageBuilder: (_, __, ___) =>
-                                        ListeningHistoryView(ref: ref),
-                                  ),
-                                );
-                              },
-                            ),
-
-                            Divider(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .secondary
-                                  .withOpacityValue(0.2),
-                              height: 1.0,
-                            ),
-
-                            // Theme Tile
-                            ProfilePageTileWidget(
-                              onTap: () {
-                                if (_currentTheme == 'light') {
-                                  ref
-                                      .read(themeController.notifier)
-                                      .changeTheme('dark');
-                                } else {
-                                  ref
-                                      .read(themeController.notifier)
-                                      .changeTheme('light');
-                                }
-                              },
-                              tileName: "Theme",
-                              tailingWidget: Row(
-                                children: [
-                                  AnimatedSwitcher(
-                                    duration: Duration(milliseconds: 500),
-                                    switchInCurve: Curves.easeInSine,
-                                    switchOutCurve: Curves.easeOutSine,
-                                    transitionBuilder: (Widget child,
-                                        Animation<double> animation) {
-                                      final offsetAnimation = Tween<Offset>(
-                                              begin: Offset(0.0, 0.8),
-                                              end: Offset(0.0, 0.0))
-                                          .animate(animation);
-                                      return SlideTransition(
-                                        position: offsetAnimation,
-                                        child: child,
-                                      );
-                                    },
-                                    child: _currentTheme == 'light'
-                                        ? Icon(
-                                            FeatherIcons.sun,
-                                            key: UniqueKey(),
-                                            size: 30.0,
-                                            color: Theme.of(context)
-                                                .primaryColorLight,
-                                          )
-                                        : Icon(
-                                            FeatherIcons.moon,
-                                            key: UniqueKey(),
-                                            size: 30.0,
-                                            color: Theme.of(context)
-                                                .primaryColorLight,
-                                          ),
-                                  ),
-                                  SizedBox(
-                                    width: 6.0,
-                                  ),
-                                  CupertinoSwitch(
-                                    value: _currentTheme == 'light',
-                                    inactiveTrackColor:
-                                        Theme.of(context).primaryColor,
-                                    activeTrackColor:
-                                        Theme.of(context).highlightColor,
-                                    onChanged: (val) async {
-                                      if (val) {
-                                        ref
-                                            .read(themeController.notifier)
-                                            .changeTheme('light');
-                                      } else {
-                                        ref
-                                            .read(themeController.notifier)
-                                            .changeTheme('dark');
-                                      }
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ),
-
-                            Divider(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .secondary
-                                  .withOpacityValue(0.2),
-                              height: 1.0,
-                            ),
-
-                            // Settings Tile
-                            ProfilePageTileWidget(
-                              onTap: () {
-                                Navigator.of(context).push(
-                                  PageRouteBuilder(
-                                    transitionDuration:
-                                        Duration(milliseconds: 500),
-                                    transitionsBuilder: (context, animation,
-                                        secondaryAnimation, child) {
-                                      const begin = Offset(1.0, 0.0);
-                                      const end = Offset.zero;
-                                      const curve = Curves.ease;
-
-                                      final tween =
-                                          Tween(begin: begin, end: end);
-                                      final curvedAnimation = CurvedAnimation(
-                                        parent: animation,
-                                        curve: curve,
-                                      );
-
-                                      return SlideTransition(
-                                        position:
-                                            tween.animate(curvedAnimation),
-                                        child: child,
-                                      );
-                                    },
-                                    pageBuilder: (_, __, ___) => SettingsPage(),
-                                  ),
-                                );
-                              },
-                              tileName: "Settings",
-                              tailingWidget: Icon(
-                                Icons.settings_rounded,
-                                size: 28.0,
-                                color: Theme.of(context).primaryColorLight,
-                              ),
-                            ),
-
-                            Divider(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .secondary
-                                  .withOpacityValue(0.2),
-                              height: 1.0,
-                            ),
-                          ],
-                        );
-                      },
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              Align(alignment: Alignment.bottomCenter, child: MiniPlayer()),
-            ],
-          ),
+            ),
+            const Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: SafeArea(
+                top: false,
+                child: MiniPlayer(),
+              ),
+            ),
+          ],
         ),
       ),
     );

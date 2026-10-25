@@ -417,6 +417,59 @@ class SettingsPage extends StatelessWidget {
                           ),
                         ),
                       ),
+                      const SizedBox(height: 16.0),
+                      Divider(
+                        color: Theme.of(context)
+                            .colorScheme
+                            .secondary
+                            .withOpacityValue(0.2),
+                        height: 1.0,
+                      ),
+                      const SizedBox(height: 16.0),
+                      ElevatedButton(
+                        onPressed: () async {
+                          final importResult = await ref
+                              .read(backupRestoreController.notifier)
+                              .importOpmlSubscriptions();
+                          if (!context.mounted || importResult.cancelled)
+                            return;
+
+                          final message = importResult.invalidFile
+                              ? 'That file is not a valid OPML file.'
+                              : importResult.failed
+                                  ? 'Unable to import subscriptions from that file.'
+                                  : importResult.imported == 0
+                                      ? 'No new podcast subscriptions were found.'
+                                      : 'Imported ${importResult.imported} subscription${importResult.imported == 1 ? '' : 's'}${importResult.skipped > 0 ? '; skipped ${importResult.skipped} duplicate${importResult.skipped == 1 ? '' : 's'}.' : '.'}';
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(message)),
+                          );
+                        },
+                        child: const Text('Import Data from Other Apps'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              Theme.of(context).colorScheme.secondary,
+                          textStyle: TextStyle(
+                            fontFamily: 'Segoe',
+                            fontWeight: FontWeight.w600,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Text(
+                          'Import podcast subscriptions from an OPML file exported by another podcast app. Your current subscriptions and data will be kept.',
+                          style: TextStyle(
+                            fontSize: 12.0,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .secondary
+                                .withOpacityValue(0.7),
+                            fontFamily: 'Segoe',
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 );
